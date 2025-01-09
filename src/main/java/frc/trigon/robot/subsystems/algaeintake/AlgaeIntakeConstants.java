@@ -123,6 +123,7 @@ public class AlgaeIntakeConstants {
         INTAKE_MOTOR.setPhysicsSimulation(INTAKE_MOTOR_SIMULATION);
 
         INTAKE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
+        INTAKE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);`
     }
 
     private static void configureAngleMotor() {
