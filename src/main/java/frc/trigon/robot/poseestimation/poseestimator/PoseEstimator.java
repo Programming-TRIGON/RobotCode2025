@@ -164,9 +164,9 @@ public class PoseEstimator implements AutoCloseable {
     private void logTargetPath() {
         PathPlannerLogging.setLogActivePathCallback((pathPoses) -> {
             field.getObject("path").setPoses(pathPoses);
-            Logger.recordOutput("Path", pathPoses.toArray(new Pose2d[0]));
+            Logger.recordOutput("PathPlanner/Path", pathPoses.toArray(new Pose2d[0]));
         });
-        PathPlannerLogging.setLogTargetPoseCallback((pose) -> Logger.recordOutput("TargetPPPose", pose));
+        PathPlannerLogging.setLogTargetPoseCallback((pose) -> Logger.recordOutput("PathPlanner/TargetPose", pose));
     }
 
     /**
@@ -322,7 +322,7 @@ public class PoseEstimator implements AutoCloseable {
      *
      * @param swerveModulePositions the current positions of each swerve module
      * @param gyroHeading           the current heading of the gyro
-     * @return the difference as a {@link edu.wpi.first.math.geometry.Twist2d}
+     * @return the difference as a {@link Twist2d}
      */
     private Twist2d calculateNewOdometryPoseDifference(SwerveModulePosition[] swerveModulePositions, Rotation2d gyroHeading) {
         final Twist2d odometryDifferenceTwist2d = SwerveConstants.KINEMATICS.toTwist2d(lastSwerveModulePositions, swerveModulePositions);
