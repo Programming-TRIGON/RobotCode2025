@@ -20,7 +20,9 @@ public class AlgaeIntake extends MotorSubsystem {
             intakeMotor = AlgaeIntakeConstants.INTAKE_MOTOR,
             angleMotor = AlgaeIntakeConstants.ANGLE_MOTOR;
     private final CANcoderEncoder encoder = AlgaeIntakeConstants.ENCODER;
-    private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(AlgaeIntakeConstants.ENABLE_FOC);
+    private final VoltageOut
+            intakeVoltageRequest = new VoltageOut(0).withEnableFOC(AlgaeIntakeConstants.ENABLE_FOC),
+            angleVoltageRequest = new VoltageOut(0).withEnableFOC(AlgaeIntakeConstants.ENABLE_FOC);
     private final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0).withEnableFOC(AlgaeIntakeConstants.ENABLE_FOC);
 
     public AlgaeIntake() {
@@ -35,7 +37,7 @@ public class AlgaeIntake extends MotorSubsystem {
 
     @Override
     public void drive(double targetDrivePower) {
-        angleMotor.setControl(voltageRequest.withOutput(targetDrivePower));
+        angleMotor.setControl(angleVoltageRequest.withOutput(targetDrivePower));
     }
 
     @Override
@@ -97,7 +99,7 @@ public class AlgaeIntake extends MotorSubsystem {
     }
 
     void setTargetVoltage(double targetVoltage) {
-        intakeMotor.setControl(voltageRequest.withOutput(targetVoltage));
+        intakeMotor.setControl(intakeVoltageRequest.withOutput(targetVoltage));
         AlgaeIntakeConstants.INTAKE_MECHANISM.setTargetVelocity(targetVoltage);
     }
 

@@ -44,7 +44,7 @@ public class AlgaeIntakeConstants {
             ANGLE_MOTOR_NEUTRAL_MODE = NeutralModeValue.Brake;
     private static final double
             INTAKE_MOTOR_GEAR_RATIO = 1,
-            ANGLE_MOTOR_GEAR_RATIO = 1;
+            ANGLE_MOTOR_GEAR_RATIO = 200;
     private static final double
             ANGLE_P = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
@@ -54,8 +54,8 @@ public class AlgaeIntakeConstants {
             ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_KG = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final double
-            MOTION_MAGIC_ACCELERATION = 10,
-            MOTION_MAGIC_VELOCITY = 10,
+            MOTION_MAGIC_ACCELERATION = 100,
+            MOTION_MAGIC_VELOCITY = 100,
             MOTION_MAGIC_JERK = 0.5;
     private static final SensorDirectionValue ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.Clockwise_Positive;
     private static final Rotation2d ENCODER_MAGNET_OFFSET = Rotation2d.fromRotations(0);
@@ -93,7 +93,7 @@ public class AlgaeIntakeConstants {
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(5).per(Units.Second),
-            Units.Volts.of(9),
+            Units.Volts.of(12),
             Units.Second.of(1000)
     );
 
