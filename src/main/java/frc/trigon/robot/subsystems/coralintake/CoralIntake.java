@@ -24,8 +24,6 @@ public class CoralIntake extends MotorSubsystem {
     private final CANcoderEncoder encoder = CoralIntakeConstants.ENCODER;
     private final SimpleSensor beamBreak = CoralIntakeConstants.BEAM_BREAK;
     private final VoltageOut
-            sysIdVoltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED),
-            intakeVoltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED),
             funnelVoltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private final MotionMagicExpoTorqueCurrentFOC positionRequest = new MotionMagicExpoTorqueCurrentFOC(0);
 
@@ -40,7 +38,7 @@ public class CoralIntake extends MotorSubsystem {
 
     @Override
     public void sysIdDrive(double targetDrivePower) {
-        angleMotor.setControl(sysIdVoltageRequest.withOutput(targetDrivePower));
+        angleMotor.setControl(funnelVoltageRequest.withOutput(targetDrivePower));
     }
 
     @Override
@@ -105,7 +103,7 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     void setTargetIntakeVoltage(double voltage) {
-        intakeMotor.setControl(intakeVoltageRequest.withOutput(voltage));
+        intakeMotor.setControl(funnelVoltageRequest.withOutput(voltage));
     }
 
     void setTargetFunnelVoltage(double voltage) {
