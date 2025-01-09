@@ -251,9 +251,9 @@ public class CoralIntakeConstants {
         public final double intakeVoltage, funnelVoltage;
         public final Rotation2d targetAngle;
 
-        CoralIntakeState(double intakeVoltage, double funnelVoltage, Rotation2d targetAngle) {
-            this.intakeVoltage = intakeVoltage;
-            this.funnelVoltage = funnelVoltage;
+        CoralIntakeState(double targetIntakeVoltage, double targetFunnelVoltage, Rotation2d targetAngle) {
+            this.intakeVoltage = targetIntakeVoltage;
+            this.funnelVoltage = targetFunnelVoltage;
             this.targetAngle = targetAngle;
         }
     }
