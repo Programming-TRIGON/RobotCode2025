@@ -117,7 +117,7 @@ public abstract class MotorSubsystem extends edu.wpi.first.wpilibj2.command.Subs
      *
      * @param targetDrivePower the target drive power, unitless. This can be amps, volts, etc. Depending on the characterization type
      */
-    public void drive(double targetDrivePower) {
+    public void sysIdDrive(double targetDrivePower) {
     }
 
     /**
@@ -161,7 +161,7 @@ public abstract class MotorSubsystem extends edu.wpi.first.wpilibj2.command.Subs
         return new SysIdRoutine(
                 getSysIdConfig(),
                 new SysIdRoutine.Mechanism(
-                        (voltage) -> drive(voltage.in(Units.Volts)),
+                        (voltage) -> sysIdDrive(voltage.in(Units.Volts)),
                         this::updateLog,
                         this,
                         getName()
