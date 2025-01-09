@@ -210,8 +210,8 @@ public class CoralIntakeConstants {
 
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MINIMUM_ANGLE.getRotations();
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MAXIMUM_ANGLE.getRotations();
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAXIMUM_ANGLE.getRotations();
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MINIMUM_ANGLE.getRotations();
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ANGLE_SIMULATION);
