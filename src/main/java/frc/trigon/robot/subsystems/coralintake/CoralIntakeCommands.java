@@ -12,12 +12,12 @@ import java.util.Set;
 public class CoralIntakeCommands {
     public static Command getDebuggingCommand() {
         return new NetworkTablesCommand(
-                (Double[] targetStates) -> CoralIntakeCommands.getSetTargetStateCommand(
+                (Double[] targetStates) -> RobotContainer.CORAL_INTAKE.setTargetState(
                         targetStates[0],
                         targetStates[1],
                         Rotation2d.fromDegrees(targetStates[2])
                 ),
-                true,
+                false,
                 Set.of(RobotContainer.CORAL_INTAKE),
                 "Debugging/TargetCoralIntakeVoltage",
                 "Debugging/TargetCoralIntakeFunnelVoltage",

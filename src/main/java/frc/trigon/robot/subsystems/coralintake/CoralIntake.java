@@ -21,8 +21,7 @@ public class CoralIntake extends MotorSubsystem {
             angleMotor = CoralIntakeConstants.ANGLE_MOTOR;
     private final CANcoderEncoder encoder = CoralIntakeConstants.ANGLE_ENCODER;
     private final SimpleSensor beamBreak = CoralIntakeConstants.BEAM_BREAK;
-    private final VoltageOut
-            voltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
+    private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private CoralIntakeConstants.CoralIntakeState targetState = CoralIntakeConstants.CoralIntakeState.REST;
 
@@ -86,7 +85,7 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     public boolean atState(CoralIntakeConstants.CoralIntakeState targetState) {
-        return targetState == this.targetState;
+        return targetState == this.targetState && atTargetState();
     }
 
     public boolean hasGamePiece() {
@@ -131,11 +130,11 @@ public class CoralIntake extends MotorSubsystem {
 
     private Pose3d calculateVisualizationPose() {
         final Pose3d intakeVisualizationOriginPoint = CoralIntakeConstants.INTAKE_VISUALIZATION_ORIGIN_POINT;
-        return intakeVisualizationOriginPoint.transformBy(
-                new Transform3d(
-                        new Translation3d(),
-                        new Rotation3d(0, getCurrentEncoderAngle().getRadians(), 0)
-                )
+        final Transform3d intakeMovement = new Transform3d(
+                new Translation3d(),
+                new Rotation3d(0, getCurrentEncoderAngle().getRadians(), 0)
         );
+
+        return intakeVisualizationOriginPoint.transformBy(intakeMovement);
     }
 }

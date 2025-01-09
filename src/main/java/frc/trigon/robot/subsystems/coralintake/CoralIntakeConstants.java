@@ -220,12 +220,11 @@ public class CoralIntakeConstants {
         ANGLE_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
 
         ANGLE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
-        ANGLE_MOTOR.registerSignal(TalonFXSignal.TORQUE_CURRENT, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.POSITION, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.ROTOR_POSITION, 100);
-        ANGLE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
     }
 
     private static void configureEncoder() {
@@ -239,6 +238,7 @@ public class CoralIntakeConstants {
         ANGLE_ENCODER.setSimulationInputsFromTalonFX(ANGLE_MOTOR);
 
         ANGLE_ENCODER.registerSignal(CANcoderSignal.POSITION, 100);
+        ANGLE_ENCODER.registerSignal(CANcoderSignal.VELOCITY, 100);
     }
 
     private static void configureBeamBreak() {
