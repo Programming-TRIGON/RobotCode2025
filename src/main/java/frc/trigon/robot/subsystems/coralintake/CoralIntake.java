@@ -29,6 +29,10 @@ public class CoralIntake extends MotorSubsystem {
 
     private CoralIntakeConstants.CoralIntakeState targetState = CoralIntakeConstants.CoralIntakeState.REST;
 
+    public CoralIntake() {
+        setName("CoralIntake");
+    }
+
     @Override
     public void setBrake(boolean brake) {
         intakeMotor.setBrake(brake);
