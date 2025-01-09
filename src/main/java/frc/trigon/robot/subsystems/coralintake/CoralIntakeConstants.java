@@ -115,7 +115,7 @@ public class CoralIntakeConstants {
     private static final DoubleSupplier BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> SimulationObjectDetectionCameraIO.HAS_OBJECTS ? 1 : 0;
 
     static final SysIdRoutine.Config ANGLE_SYSID_CONFIG = new SysIdRoutine.Config(
-            Units.Volts.of(5).per(Units.Second.getBaseUnit()),
+            Units.Volts.of(5).per(Units.Second),
             Units.Volts.of(9),
             Units.Second.of(1000)
     );
