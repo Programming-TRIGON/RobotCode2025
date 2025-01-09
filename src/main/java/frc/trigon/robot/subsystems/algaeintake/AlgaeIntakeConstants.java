@@ -57,11 +57,11 @@ public class AlgaeIntakeConstants {
     private static final double
             MOTION_MAGIC_VELOCITY = 10,
             MOTION_MAGIC_ACCELERATION = 10,
-            MOTION_MAGIC_JERK = 10;
+            MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseVelocitySign;
     private static final FeedbackSensorSourceValue ENCODER_TYPE = FeedbackSensorSourceValue.FusedCANcoder;
-    private static final SensorDirectionValue ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.Clockwise_Positive;
+    private static final SensorDirectionValue ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final Rotation2d ENCODER_MAGNET_OFFSET = Rotation2d.fromRotations(0);
     private static final double ENCODER_DISCONTINUITY_POINT = 0.5;
     static final boolean ENABLE_FOC = true;
