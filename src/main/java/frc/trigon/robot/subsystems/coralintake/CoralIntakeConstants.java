@@ -104,7 +104,7 @@ public class CoralIntakeConstants {
                     MOMENT_OF_INERTIA
             );
     private static final SingleJointedArmSimulation
-            ANGLE_SIMULATION = new SingleJointedArmSimulation(
+            ANGLE_MOTOR_SIMULATION = new SingleJointedArmSimulation(
             ANGLE_GEARBOX,
             ANGLE_MOTOR_GEAR_RATIO,
             INTAKE_LENGTH_METERS,
@@ -215,7 +215,7 @@ public class CoralIntakeConstants {
         config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MINIMUM_ANGLE.getRotations();
 
         ANGLE_MOTOR.applyConfiguration(config);
-        ANGLE_MOTOR.setPhysicsSimulation(ANGLE_SIMULATION);
+        ANGLE_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
 
         ANGLE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.TORQUE_CURRENT, 100);
