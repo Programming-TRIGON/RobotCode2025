@@ -2,6 +2,10 @@ package frc.trigon.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -49,9 +53,22 @@ public class Elevator extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
+        getElevatorComponentPose();
         ElevatorConstants.MECHANISM.update(getPositionMeters(), toMeters(motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
     }
 
+    @Override
+    public void updatePeriodically() {
+        motor.update();
+    }
+
+    private Pose3d getElevatorComponentPose() {
+        final Transform3d elevatorTransform = new Transform3d(
+                new Translation3d(0, 0, getPositionMeters()),
+                new Rotation3d()
+        );
+        return ElevatorConstants.ELEVATOR_ORIGIN_POINT.transformBy(elevatorTransform);
+    }
 
     void setTargetElevatorState(ElevatorConstants.ElevatorState targetState) {
         setTargetPosition(targetState.positionMeters);

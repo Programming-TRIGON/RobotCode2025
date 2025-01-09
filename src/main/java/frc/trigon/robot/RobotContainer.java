@@ -48,7 +48,7 @@ public class RobotContainer {
 
     private void bindDefaultCommands() {
         SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
-        ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetPositionCommand(0.5));
+        ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetPositionCommand(2));
     }
 
     /**

@@ -44,13 +44,13 @@ public class ElevatorConstants {
     private static final double ENCODER_MAGNET_OFFSET_VALUE = 0;
     private static final FeedbackSensorSourceValue ENCODER_TYPE = FeedbackSensorSourceValue.RemoteCANcoder;
     private static final double
-            P = 0,
-            I = 0,
-            D = 0,
-            KS = 0,
-            KV = 0,
-            KG = 0,
-            KA = 0;
+            P = 110,
+            I = 110,
+            D = 110,
+            KS = 100,
+            KV = 100,
+            KG = 5100,
+            KA = 500;
     private static final double GEAR_RATIO = 1;
     static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
