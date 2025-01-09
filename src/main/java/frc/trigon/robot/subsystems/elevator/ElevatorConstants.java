@@ -52,7 +52,7 @@ public class ElevatorConstants {
 
     private static final double
             MASS_KILOGRAMS = 5,
-            DRUM_RADIUS_METERS = 0.3,
+            DRUM_RADIUS_METERS = 0.5,
             MAXIMUM_HEIGHT_METERS = 1,
             RETRACTED_ELEVATOR_LENGTH_METERS = 0.5;
     private static final int MOTOR_AMOUNT = 2;
@@ -64,6 +64,7 @@ public class ElevatorConstants {
             Units.Volts.of(2),
             Units.Second.of(1000)
     );
+    static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
 
     static {
         configureMasterMotor();
@@ -131,5 +132,21 @@ public class ElevatorConstants {
         config.MagnetSensor.MagnetOffset = ENCODER_MAGNET_OFFSET_VALUE;
 
         ENCODER.applyConfiguration(config);
+    }
+
+    public enum ElevatorState {
+        RESTING(0, 100),
+        REEF_L1(0.1, 100),
+        REEF_L2(0.2, 10),
+        REEF_L3(0.3, 10),
+        REEF_L4(0.4, 10);
+
+        final double positionMeters;
+        final double speedPercentage;
+
+        ElevatorState(double positionMeters, double speedPercentage) {
+            this.positionMeters = positionMeters;
+            this.speedPercentage = speedPercentage;
+        }
     }
 }
