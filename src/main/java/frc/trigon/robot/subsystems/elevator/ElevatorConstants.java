@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.constants.RobotConstants;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
+import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.hardware.simulation.ElevatorSimulation;
@@ -31,27 +32,34 @@ public class ElevatorConstants {
             FOLLOWER_MOTOR = new TalonFXMotor(FOLLOWER_MOTOR_ID, FOLLOWER_MOTOR_NAME);
     static final CANcoderEncoder ENCODER = new CANcoderEncoder(ENCODER_ID, ENCODER_NAME, RobotConstants.CANIVORE_NAME);
 
-    private static final NeutralModeValue MOTOR_NEUTRAL_MODE = NeutralModeValue.Brake;
+    private static final NeutralModeValue NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
     private static final InvertedValue
             MASTER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             FOLLOWER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
-    private static final boolean FOLLOWER_MOTOR_OPPOSITE = false;
-    private static final double ABSOLUTE_SENSOR_DISCONTINUITY_POINT = 1;
+    private static final boolean SHOULD_FOLLOWER_MOTOR_OPPOSITE = false;
+    private static final double ABSOLUTE_SENSOR_DISCONTINUITY_POINT = 0.5;
     private static final SensorDirectionValue ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final double ENCODER_MAGNET_OFFSET_VALUE = 0;
     private static final FeedbackSensorSourceValue ENCODER_TYPE = FeedbackSensorSourceValue.RemoteCANcoder;
     private static final double
             P = 110,
-            I = 110,
-            D = 110,
-            KS = 100,
-            KV = 100,
-            KG = 1,
-            KA = 500;
+            I = 0,
+            D = 0,
+            KS = 0,
+            KV = 0,
+            KG = 0,
+            KA = 0;
+    private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
+    private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
+    private static final double REVERSE_SOFT_LIMIT_THRESHOLD_VALUE = 0;
+    private static final double FORWARD_SOFT_LIMIT_THRESHOLD_VALUE = 10;
+
     private static final double GEAR_RATIO = 20;
     static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
-            MOTION_MAGIC_ACCELERATION = 25;
+            MOTION_MAGIC_ACCELERATION = 25,
+            JERK_VALUE = MOTION_MAGIC_ACCELERATION * 10;
+
     static final boolean FOC_ENABLED = true;
 
     private static final double
@@ -61,13 +69,21 @@ public class ElevatorConstants {
             RETRACTED_ELEVATOR_LENGTH_METERS = 0.5;
     private static final int MOTOR_AMOUNT = 2;
     private static final DCMotor GEARBOX = DCMotor.getKrakenX60Foc(MOTOR_AMOUNT);
-    private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(GEARBOX, GEAR_RATIO, MASS_KILOGRAMS, DRUM_RADIUS_METERS, RETRACTED_ELEVATOR_LENGTH_METERS, MAXIMUM_HEIGHT_METERS, true);
+    private static final boolean SIMULATE_GRAVITY = true;
+    private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(GEARBOX,
+            GEAR_RATIO,
+            MASS_KILOGRAMS,
+            DRUM_RADIUS_METERS,
+            RETRACTED_ELEVATOR_LENGTH_METERS,
+            MAXIMUM_HEIGHT_METERS,
+            SIMULATE_GRAVITY);
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
-            Units.Volts.of(0.25).per(Units.Seconds.of(1).unit()),
+            Units.Volts.of(0.25).per(Units.Seconds),
             Units.Volts.of(2),
             Units.Second.of(1000)
     );
+
     static final Pose3d ELEVATOR_ORIGIN_POINT = new Pose3d(1, 0, 1, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(10), 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
@@ -89,7 +105,7 @@ public class ElevatorConstants {
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
 
-        config.MotorOutput.NeutralMode = MOTOR_NEUTRAL_MODE;
+        config.MotorOutput.NeutralMode = NEUTRAL_MODE_VALUE;
         config.MotorOutput.Inverted = MASTER_MOTOR_INVERTED_VALUE;
 
         config.Feedback.FeedbackRemoteSensorID = ENCODER_ID;
@@ -103,13 +119,13 @@ public class ElevatorConstants {
         config.Slot0.kV = KV;
         config.Slot0.kG = KG;
         config.Slot0.kA = KA;
-        config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-        config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+        config.Slot0.GravityType = GRAVITY_TYPE_VALUE;
+        config.Slot0.StaticFeedforwardSign = STATIC_FEEDFORWARD_SIGN_VALUE;
 
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = REVERSE_SOFT_LIMIT_THRESHOLD_VALUE;
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 10;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = FORWARD_SOFT_LIMIT_THRESHOLD_VALUE;
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
@@ -121,6 +137,7 @@ public class ElevatorConstants {
         MASTER_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
         MASTER_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
         MASTER_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
+        MASTER_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
     }
 
     private static void configureFollowerMotor() {
@@ -129,11 +146,11 @@ public class ElevatorConstants {
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
 
-        config.MotorOutput.NeutralMode = MOTOR_NEUTRAL_MODE;
+        config.MotorOutput.NeutralMode = NEUTRAL_MODE_VALUE;
         config.MotorOutput.Inverted = FOLLOWER_MOTOR_INVERTED_VALUE;
 
         FOLLOWER_MOTOR.applyConfiguration(config);
-        FOLLOWER_MOTOR.setControl(new Follower(MASTER_MOTOR_ID, FOLLOWER_MOTOR_OPPOSITE));
+        FOLLOWER_MOTOR.setControl(new Follower(MASTER_MOTOR_ID, SHOULD_FOLLOWER_MOTOR_OPPOSITE));
     }
 
     private static void configureEncoder() {
@@ -143,23 +160,24 @@ public class ElevatorConstants {
         config.MagnetSensor.SensorDirection = ENCODER_SENSOR_DIRECTION_VALUE;
         config.MagnetSensor.MagnetOffset = ENCODER_MAGNET_OFFSET_VALUE;
 
+        ENCODER.registerSignal(CANcoderSignal.POSITION, 100);
         ENCODER.applyConfiguration(config);
         ENCODER.setSimulationInputsFromTalonFX(MASTER_MOTOR);
     }
 
     public enum ElevatorState {
-        RESTING(0, 100),
-        REEF_L1(0.1, 100),
-        REEF_L2(0.2, 10),
-        REEF_L3(0.3, 10),
-        REEF_L4(0.4, 10);
+        REST(0, 100),
+        REEF_LEVEL_1(0.1, 100),
+        REEF_LEVEL_2(0.2, 10),
+        REEF_LEVEL_3(0.3, 10),
+        REEF_LEVEL_4(0.4, 10);
 
         final double positionMeters;
-        final double speedPercentage;
+        final double velocity;
 
-        ElevatorState(double positionMeters, double speedPercentage) {
+        ElevatorState(double positionMeters, double velocity) {
             this.positionMeters = positionMeters;
-            this.speedPercentage = speedPercentage;
+            this.velocity = velocity;
         }
     }
 }
