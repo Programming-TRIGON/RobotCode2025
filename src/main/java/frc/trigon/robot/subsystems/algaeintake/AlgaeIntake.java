@@ -35,8 +35,7 @@ public class AlgaeIntake extends MotorSubsystem {
 
     @Override
     public void drive(double targetDrivePower) {
-        intakeMotor.setControl(voltageRequest.withOutput(targetDrivePower));
-        intakeMotor.setControl(voltageRequest.withOutput(targetDrivePower));
+        angleMotor.setControl(voltageRequest.withOutput(targetDrivePower));
     }
 
     @Override
