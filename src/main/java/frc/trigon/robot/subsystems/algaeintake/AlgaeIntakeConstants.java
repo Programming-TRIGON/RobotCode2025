@@ -2,9 +2,7 @@ package frc.trigon.robot.subsystems.algaeintake;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -37,8 +35,8 @@ public class AlgaeIntakeConstants {
     static final CANcoderEncoder ENCODER = new CANcoderEncoder(ENCODER_ID, ENCODER_NAME);
 
     private static final InvertedValue
-            INTAKE_MOTOR_INVERTED = InvertedValue.Clockwise_Positive,
-            ANGLE_MOTOR_INVERTED = InvertedValue.Clockwise_Positive;
+            INTAKE_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
+            ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
     private static final NeutralModeValue
             INTAKE_MOTOR_NEUTRAL_MODE = NeutralModeValue.Coast,
             ANGLE_MOTOR_NEUTRAL_MODE = NeutralModeValue.Brake;
@@ -59,6 +57,9 @@ public class AlgaeIntakeConstants {
     private static final double
             EXPO_KA = ANGLE_KA,
             EXPO_KV = ANGLE_KV;
+    private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
+    private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseVelocitySign;
+    private static final FeedbackSensorSourceValue ENCODER_TYPE = FeedbackSensorSourceValue.FusedCANcoder;
     private static final SensorDirectionValue ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.Clockwise_Positive;
     private static final Rotation2d ENCODER_MAGNET_OFFSET = Rotation2d.fromRotations(0);
     private static final double ENCODER_DISCONTINUITY_POINT = 0.5;
@@ -70,7 +71,7 @@ public class AlgaeIntakeConstants {
     private static final DCMotor
             INTAKE_MOTOR_GEARBOX = DCMotor.getKrakenX60(INTAKE_MOTOR_AMOUNT),
             ANGLE_MOTOR_GEARBOX = DCMotor.getKrakenX60(ANGLE_MOTOR_AMOUNT);
-    private static final double INTAKE_MOTOR_MOMENT_OF_INERTIA = 0.0003;
+    private static final double INTAKE_MOTOR_MOMENT_OF_INERTIA = 0.003;
     private static final double
             INTAKE_LENGTH_METERS = 0.5,
             INTAKE_MASS_KILOGRAMS = 0.5;
@@ -85,8 +86,8 @@ public class AlgaeIntakeConstants {
             ANGLE_MOTOR_GEAR_RATIO,
             INTAKE_MASS_KILOGRAMS,
             INTAKE_LENGTH_METERS,
-            INTAKE_MAXIMUM_ANGLE,
             INTAKE_MINIMUM_ANGLE,
+            INTAKE_MAXIMUM_ANGLE,
             SHOULD_SIMULATE_GRAVITY
     );
 
@@ -97,9 +98,8 @@ public class AlgaeIntakeConstants {
     );
 
     private static final double INTAKE_MOTOR_MAXIMUM_SPEED = 12;
-    private static final Color ANGLE_MOTOR_MECHANSIM_COLOR = Color.kGreen;
     static final SpeedMechanism2d INTAKE_MECHANISM = new SpeedMechanism2d("AlgaeIntakeMechanism", INTAKE_MOTOR_MAXIMUM_SPEED);
-    static final SingleJointedArmMechanism2d ANGLE_MECHANISM = new SingleJointedArmMechanism2d("AlgaeIntakeAngleMechanism", ANGLE_MOTOR_MECHANSIM_COLOR);
+    static final SingleJointedArmMechanism2d ANGLE_MECHANISM = new SingleJointedArmMechanism2d("AlgaeIntakeAngleMechanism", Color.kGreen);
     static final Pose3d ALGAE_INTAKE_VISUALIZATION_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(2);
@@ -116,7 +116,7 @@ public class AlgaeIntakeConstants {
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
 
-        config.MotorOutput.Inverted = INTAKE_MOTOR_INVERTED;
+        config.MotorOutput.Inverted = INTAKE_MOTOR_INVERTED_VALUE;
         config.MotorOutput.NeutralMode = INTAKE_MOTOR_NEUTRAL_MODE;
 
         INTAKE_MOTOR.applyConfiguration(config);
@@ -131,8 +131,9 @@ public class AlgaeIntakeConstants {
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
 
-        config.MotorOutput.Inverted = ANGLE_MOTOR_INVERTED;
+        config.MotorOutput.Inverted = ANGLE_MOTOR_INVERTED_VALUE;
         config.MotorOutput.NeutralMode = ANGLE_MOTOR_NEUTRAL_MODE;
+        config.Feedback.FeedbackSensorSource = ENCODER_TYPE;
 
         config.Slot0.kP = ANGLE_P;
         config.Slot0.kI = ANGLE_I;
@@ -141,13 +142,15 @@ public class AlgaeIntakeConstants {
         config.Slot0.kV = ANGLE_KV;
         config.Slot0.kA = ANGLE_KA;
         config.Slot0.kG = ANGLE_KG;
+        config.Slot0.GravityType = GRAVITY_TYPE_VALUE;
+        config.Slot0.StaticFeedforwardSign = STATIC_FEEDFORWARD_SIGN_VALUE;
 
         config.MotionMagic.MotionMagicExpo_kA = EXPO_KA;
         config.MotionMagic.MotionMagicExpo_kV = EXPO_KV;
 
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = INTAKE_MAXIMUM_ANGLE.getRotations();
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = INTAKE_MAXIMUM_ANGLE.getRotations();
         config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = INTAKE_MINIMUM_ANGLE.getRotations();
 
         ANGLE_MOTOR.applyConfiguration(config);
@@ -158,6 +161,8 @@ public class AlgaeIntakeConstants {
         ANGLE_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.ROTOR_POSITION, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.TORQUE_CURRENT, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
     }
 
     private static void configureEncoder() {
@@ -176,14 +181,14 @@ public class AlgaeIntakeConstants {
     public enum AlgaeIntakeState {
         COLLECT(Rotation2d.fromDegrees(0), 5),
         EJECT(Rotation2d.fromDegrees(0), -5),
-        REST(Rotation2d.fromDegrees(90), 0);
+        REST(Rotation2d.fromDegrees(90), 1);
 
-        public final Rotation2d angle;
-        public final double voltage;
+        public final Rotation2d targetAngle;
+        public final double targetVoltage;
 
-        AlgaeIntakeState(Rotation2d angle, double voltage) {
-            this.angle = angle;
-            this.voltage = voltage;
+        AlgaeIntakeState(Rotation2d targetAngle, double targetVoltage) {
+            this.targetAngle = targetAngle;
+            this.targetVoltage = targetVoltage;
         }
     }
 }

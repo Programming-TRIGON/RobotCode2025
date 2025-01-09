@@ -12,7 +12,7 @@ public class AlgaeIntakeCommands {
         return new NetworkTablesCommand(
                 AlgaeIntakeCommands::getSetTargetVoltageCommand,
                 false,
-                "AlgaeIntake/TargetVoltage"
+                "Debugging/AlgaeIntakeTargetAngleDegrees"
         );
     }
 
@@ -20,7 +20,7 @@ public class AlgaeIntakeCommands {
         return new NetworkTablesCommand(
                 (targetAngleDegrees) -> getSetTargetAngleCommand(Rotation2d.fromDegrees(targetAngleDegrees)),
                 false,
-                "AlgaeIntake/TargetAngle"
+                "Debugging/AlgaeIntakeTargetAngleDegrees"
         );
     }
 
