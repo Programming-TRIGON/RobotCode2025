@@ -6,18 +6,20 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.constants.RobotConstants;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.hardware.simulation.ElevatorSimulation;
+import org.trigon.utilities.mechanisms.ElevatorMechanism2d;
 
 public class ElevatorConstants {
     private static final int
-            MASTER_MOTOR_ID = 11,
-            FOLLOWER_MOTOR_ID = 12,
-            ENCODER_ID = 11;
+            MASTER_MOTOR_ID = 12,
+            FOLLOWER_MOTOR_ID = 13,
+            ENCODER_ID = 12;
     private static final String
             MASTER_MOTOR_NAME = "ElevatorMasterMotor",
             FOLLOWER_MOTOR_NAME = "ElevatorFollowerMotor",
@@ -64,6 +66,13 @@ public class ElevatorConstants {
             Units.Volts.of(2),
             Units.Second.of(1000)
     );
+
+    static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
+            "ElevatorMechanism",
+            MAXIMUM_HEIGHT_METERS,
+            RETRACTED_ELEVATOR_LENGTH_METERS,
+            Color.kYellow
+    );
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
 
     static {
@@ -104,6 +113,7 @@ public class ElevatorConstants {
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
 
         MASTER_MOTOR.applyConfiguration(config);
+        MASTER_MOTOR.setPhysicsSimulation(SIMULATION);
 
         MASTER_MOTOR.registerSignal(TalonFXSignal.POSITION, 100);
         MASTER_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
@@ -132,6 +142,7 @@ public class ElevatorConstants {
         config.MagnetSensor.MagnetOffset = ENCODER_MAGNET_OFFSET_VALUE;
 
         ENCODER.applyConfiguration(config);
+        ENCODER.setSimulationInputsFromTalonFX(MASTER_MOTOR);
     }
 
     public enum ElevatorState {

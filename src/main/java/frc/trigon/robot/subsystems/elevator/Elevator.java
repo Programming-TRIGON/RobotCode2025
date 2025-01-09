@@ -31,6 +31,12 @@ public class Elevator extends MotorSubsystem {
         motor.stopMotor();
     }
 
+    @Override
+    public void updateMechanism() {
+        ElevatorConstants.MECHANISM.update(getPositionMeters(), toMeters(motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
+    }
+
+
     void setTargetElevatorState(ElevatorConstants.ElevatorState targetState) {
         setTargetPosition(targetState.positionMeters);
     }
