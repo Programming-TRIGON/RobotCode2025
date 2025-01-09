@@ -1,10 +1,8 @@
 package frc.trigon.robot.subsystems.coralintake;
 
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -21,11 +19,11 @@ public class CoralIntake extends MotorSubsystem {
             intakeMotor = CoralIntakeConstants.INTAKE_MOTOR,
             funnelMotor = CoralIntakeConstants.FUNNEL_MOTOR,
             angleMotor = CoralIntakeConstants.ANGLE_MOTOR;
-    private final CANcoderEncoder encoder = CoralIntakeConstants.ENCODER;
+    private final CANcoderEncoder encoder = CoralIntakeConstants.ANGLE_ENCODER;
     private final SimpleSensor beamBreak = CoralIntakeConstants.BEAM_BREAK;
     private final VoltageOut
             voltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
-    private final MotionMagicTorqueCurrentFOC positionRequest = new MotionMagicTorqueCurrentFOC(0);
+    private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private CoralIntakeConstants.CoralIntakeState targetState = CoralIntakeConstants.CoralIntakeState.REST;
 
     public CoralIntake() {
@@ -34,8 +32,6 @@ public class CoralIntake extends MotorSubsystem {
 
     @Override
     public void setBrake(boolean brake) {
-        intakeMotor.setBrake(brake);
-        funnelMotor.setBrake(brake);
         angleMotor.setBrake(brake);
     }
 
@@ -48,7 +44,7 @@ public class CoralIntake extends MotorSubsystem {
     public void updateLog(SysIdRoutineLog log) {
         log.motor("CoralAngleMotor")
                 .angularPosition(Units.Rotations.of(getCurrentEncoderAngle().getRotations()))
-                .angularVelocity(Units.RotationsPerSecond.of(encoder.getSignal(CANcoderSignal.VELOCITY)))
+                .angularVelocity(Units.RotationsPerSecond.of(angleMotor.getSignal(TalonFXSignal.VELOCITY)))
                 .voltage(Units.Volts.of(angleMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
@@ -127,12 +123,10 @@ public class CoralIntake extends MotorSubsystem {
 
     private Pose3d calculateVisualizationPose() {
         final Pose3d intakeVisualizationOriginPoint = CoralIntakeConstants.INTAKE_VISUALIZATION_ORIGIN_POINT;
-        return new Pose3d(
-                intakeVisualizationOriginPoint.getTranslation(),
-                new Rotation3d(
-                        intakeVisualizationOriginPoint.getRotation().getX(),
-                        intakeVisualizationOriginPoint.getRotation().getY() + getCurrentEncoderAngle().getRadians(),
-                        intakeVisualizationOriginPoint.getRotation().getZ()
+        return intakeVisualizationOriginPoint.transformBy(
+                new Transform3d(
+                        new Translation3d(),
+                        new Rotation3d(0, getCurrentEncoderAngle().getRadians(), 0)
                 )
         );
     }

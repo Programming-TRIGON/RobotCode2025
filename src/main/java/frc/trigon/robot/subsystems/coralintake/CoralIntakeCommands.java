@@ -7,28 +7,27 @@ import frc.trigon.robot.RobotContainer;
 import org.trigon.commands.GearRatioCalculationCommand;
 import org.trigon.commands.NetworkTablesCommand;
 
-public class CoralIntakeCommands {
-    public static Command getIntakeAndFunnelDebuggingCommand() {
-        return new NetworkTablesCommand(
-                CoralIntakeCommands::getSetTargetVoltageCommand,
-                false,
-                "Debugging/TargetCoralIntakeVoltage",
-                "Debugging/TargetCoralFunnelVoltage"
-        );
-    }
+import java.util.Set;
 
-    public static Command getAngleDebuggingCommand() {
+public class CoralIntakeCommands {
+    public static Command getDebuggingCommand() {
         return new NetworkTablesCommand(
-                (targetAngleDegrees) -> getSetTargetAngleCommand(Rotation2d.fromDegrees(targetAngleDegrees)),
-                false,
-                "Debugging/TargetCoralAngle"
+                (Double[] targetStates) -> {
+                    RobotContainer.CORAL_INTAKE.setTargetVoltage(targetStates[0], targetStates[1]);
+                    RobotContainer.CORAL_INTAKE.setTargetAngle(Rotation2d.fromDegrees(targetStates[2]));
+                },
+                true,
+                Set.of(RobotContainer.CORAL_INTAKE),
+                "Debugging/TargetCoralIntakeVoltage",
+                "Debugging/TargetCoralIntakeFunnelVoltage",
+                "Debugging/TargetCoralIntakeAngle"
         );
     }
 
     public static Command getAngleMotorCalculateGearRatioCommand() {
         return new GearRatioCalculationCommand(
                 CoralIntakeConstants.ANGLE_MOTOR,
-                CoralIntakeConstants.ENCODER,
+                CoralIntakeConstants.ANGLE_ENCODER,
                 RobotContainer.CORAL_INTAKE
         );
     }
@@ -36,22 +35,6 @@ public class CoralIntakeCommands {
     public static Command getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState targetState) {
         return new StartEndCommand(
                 () -> RobotContainer.CORAL_INTAKE.setTargetState(targetState),
-                RobotContainer.CORAL_INTAKE::stop,
-                RobotContainer.CORAL_INTAKE
-        );
-    }
-
-    public static Command getSetTargetVoltageCommand(double targetIntakeVoltage, double targetFunnelVoltage) {
-        return new StartEndCommand(
-                () -> RobotContainer.CORAL_INTAKE.setTargetVoltage(targetIntakeVoltage, targetFunnelVoltage),
-                RobotContainer.CORAL_INTAKE::stop,
-                RobotContainer.CORAL_INTAKE
-        );
-    }
-
-    public static Command getSetTargetAngleCommand(Rotation2d targetAngle) {
-        return new StartEndCommand(
-                () -> RobotContainer.CORAL_INTAKE.setTargetAngle(targetAngle),
                 RobotContainer.CORAL_INTAKE::stop,
                 RobotContainer.CORAL_INTAKE
         );

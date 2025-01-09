@@ -29,7 +29,7 @@ public class CoralIntakeConstants {
             INTAKE_MOTOR_ID = 9,
             FUNNEL_MOTOR_ID = 10,
             ANGLE_MOTOR_ID = 11,
-            ENCODER_ID = 11,
+            ANGLE_ENCODER_ID = 11,
             BEAM_BREAK_PORT = 0;
     private static final String
             INTAKE_MOTOR_NAME = "CoralIntakeMotor",
@@ -41,7 +41,7 @@ public class CoralIntakeConstants {
             INTAKE_MOTOR = new TalonFXMotor(INTAKE_MOTOR_ID, INTAKE_MOTOR_NAME),
             FUNNEL_MOTOR = new TalonFXMotor(FUNNEL_MOTOR_ID, FUNNEL_MOTOR_NAME),
             ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
-    static final CANcoderEncoder ENCODER = new CANcoderEncoder(ENCODER_ID, ENCODER_NAME);
+    static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ENCODER_NAME);
     static final SimpleSensor BEAM_BREAK = SimpleSensor.createDigitalSensor(BEAM_BREAK_PORT, BEAM_BREAK_NAME);
 
     private static final NeutralModeValue
@@ -66,11 +66,11 @@ public class CoralIntakeConstants {
             ANGLE_MOTION_MAGIC_JERK = ANGLE_MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseVelocitySign;
-    private static final FeedbackSensorSourceValue ENCODER_TYPE = FeedbackSensorSourceValue.FusedCANcoder;
-    private static final SensorDirectionValue ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
+    private static final FeedbackSensorSourceValue ANGLE_ENCODER_TYPE = FeedbackSensorSourceValue.FusedCANcoder;
+    private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final double
-            ENCODER_MAGNET_OFFSET_VALUE = 0,
-            ENCODER_DISCONTINUITY_POINT = 0.5;
+            ANGLE_ENCODER_MAGNET_OFFSET_VALUE = 0,
+            ANGLE_ENCODER_DISCONTINUITY_POINT = 0.5;
     private static final double
             INTAKE_MOTOR_GEAR_RATIO = 1,
             FUNNEL_MOTOR_GEAR_RATIO = 1,
@@ -193,8 +193,8 @@ public class CoralIntakeConstants {
         config.MotorOutput.NeutralMode = ANGLE_MOTOR_NEUTRAL_MODE_VALUE;
         config.MotorOutput.Inverted = ANGLE_MOTOR_INVERTED_VALUE;
 
-        config.Feedback.FeedbackRemoteSensorID = ENCODER_ID;
-        config.Feedback.FeedbackSensorSource = ENCODER_TYPE;
+        config.Feedback.FeedbackRemoteSensorID = ANGLE_ENCODER_ID;
+        config.Feedback.FeedbackSensorSource = ANGLE_ENCODER_TYPE;
         config.Feedback.RotorToSensorRatio = ANGLE_MOTOR_GEAR_RATIO;
 
         config.Slot0.kP = ANGLE_P;
@@ -231,15 +231,14 @@ public class CoralIntakeConstants {
     private static void configureEncoder() {
         final CANcoderConfiguration config = new CANcoderConfiguration();
 
-        config.MagnetSensor.SensorDirection = ENCODER_SENSOR_DIRECTION_VALUE;
-        config.MagnetSensor.MagnetOffset = ENCODER_MAGNET_OFFSET_VALUE;
-        config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = ENCODER_DISCONTINUITY_POINT;
+        config.MagnetSensor.SensorDirection = ANGLE_ENCODER_SENSOR_DIRECTION_VALUE;
+        config.MagnetSensor.MagnetOffset = ANGLE_ENCODER_MAGNET_OFFSET_VALUE;
+        config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = ANGLE_ENCODER_DISCONTINUITY_POINT;
 
-        ENCODER.applyConfiguration(config);
-        ENCODER.setSimulationInputsFromTalonFX(ANGLE_MOTOR);
+        ANGLE_ENCODER.applyConfiguration(config);
+        ANGLE_ENCODER.setSimulationInputsFromTalonFX(ANGLE_MOTOR);
 
-        ENCODER.registerSignal(CANcoderSignal.POSITION, 100);
-        ENCODER.registerSignal(CANcoderSignal.VELOCITY, 100);
+        ANGLE_ENCODER.registerSignal(CANcoderSignal.POSITION, 100);
     }
 
     private static void configureBeamBreak() {
