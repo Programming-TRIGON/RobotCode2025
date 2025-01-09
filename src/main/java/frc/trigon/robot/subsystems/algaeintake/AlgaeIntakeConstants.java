@@ -24,15 +24,15 @@ public class AlgaeIntakeConstants {
     private static final int
             INTAKE_MOTOR_ID = 15,
             ANGLE_MOTOR_ID = 16,
-            ENCODER_ID = 16;
+            ANGLE_ENCODER_ID = 16;
     private static final String
             INTAKE_MOTOR_NAME = "AlgaeIntakeMotor",
             ANGLE_MOTOR_NAME = "AlgaeIntakeAngleMotor",
-            ENCODER_NAME = "AlgaeIntakeAngleEncoder";
+            ANGLE_ENCODER_NAME = "AlgaeIntakeAngleEncoder";
     static final TalonFXMotor
             INTAKE_MOTOR = new TalonFXMotor(INTAKE_MOTOR_ID, INTAKE_MOTOR_NAME),
             ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
-    static final CANcoderEncoder ENCODER = new CANcoderEncoder(ENCODER_ID, ENCODER_NAME);
+    static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
 
     private static final InvertedValue
             INTAKE_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
@@ -43,9 +43,8 @@ public class AlgaeIntakeConstants {
     private static final double
             INTAKE_MOTOR_GEAR_RATIO = 1,
             ANGLE_MOTOR_GEAR_RATIO = 200;
-    private static final Rotation2d
-            INTAKE_MAXIMUM_ANGLE = Rotation2d.fromDegrees(90),
-            INTAKE_MINIMUM_ANGLE = Rotation2d.fromDegrees(0);
+    private static final ForwardLimitTypeValue FORWARD_LIMIT_SWITCH_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
+    private static final ReverseLimitTypeValue REVERSE_LIMIT_SWITCH_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
     private static final double
             ANGLE_P = RobotHardwareStats.isSimulation() ? 3 : 0,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
@@ -61,9 +60,9 @@ public class AlgaeIntakeConstants {
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseVelocitySign;
     private static final FeedbackSensorSourceValue ENCODER_TYPE = FeedbackSensorSourceValue.FusedCANcoder;
-    private static final SensorDirectionValue ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
-    private static final Rotation2d ENCODER_MAGNET_OFFSET = Rotation2d.fromRotations(0);
-    private static final double ENCODER_DISCONTINUITY_POINT = 0.5;
+    private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
+    private static final Rotation2d AGNLE_ENCODER_MAGNET_OFFSET = Rotation2d.fromRotations(0);
+    private static final double ANGLE_ENCODER_DISCONTINUITY_POINT = 0.5;
     static final boolean ENABLE_FOC = true;
 
     private static final int
@@ -76,6 +75,9 @@ public class AlgaeIntakeConstants {
     private static final double
             INTAKE_LENGTH_METERS = 0.3,
             INTAKE_MASS_KILOGRAMS = 0.5;
+    private static final Rotation2d
+            INTAKE_MAXIMUM_ANGLE = Rotation2d.fromDegrees(90),
+            INTAKE_MINIMUM_ANGLE = Rotation2d.fromDegrees(0);
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final SimpleMotorSimulation INTAKE_MOTOR_SIMULATION = new SimpleMotorSimulation(
             INTAKE_MOTOR_GEARBOX,
@@ -108,7 +110,7 @@ public class AlgaeIntakeConstants {
     static {
         configureIntakeMotor();
         configureAngleMotor();
-        configureEncoder();
+        configureAngleEncoder();
     }
 
     private static void configureIntakeMotor() {
@@ -151,10 +153,10 @@ public class AlgaeIntakeConstants {
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
         config.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
 
-        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = INTAKE_MAXIMUM_ANGLE.getRotations();
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = INTAKE_MINIMUM_ANGLE.getRotations();
+        config.HardwareLimitSwitch.ForwardLimitEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitEnable = true;
+        config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_SWITCH_TYPE_VALUE;
+        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_SWITCH_TYPE_VALUE;
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
@@ -167,18 +169,18 @@ public class AlgaeIntakeConstants {
         ANGLE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
     }
 
-    private static void configureEncoder() {
-        CANcoderConfiguration config = new CANcoderConfiguration();
+    private static void configureAngleEncoder() {
+        final CANcoderConfiguration config = new CANcoderConfiguration();
 
-        config.MagnetSensor.SensorDirection = ENCODER_SENSOR_DIRECTION_VALUE;
-        config.MagnetSensor.MagnetOffset = ENCODER_MAGNET_OFFSET.getRotations();
-        config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = ENCODER_DISCONTINUITY_POINT;
+        config.MagnetSensor.SensorDirection = ANGLE_ENCODER_SENSOR_DIRECTION_VALUE;
+        config.MagnetSensor.MagnetOffset = AGNLE_ENCODER_MAGNET_OFFSET.getRotations();
+        config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = ANGLE_ENCODER_DISCONTINUITY_POINT;
 
-        ENCODER.applyConfiguration(config);
-        ENCODER.setSimulationInputsFromTalonFX(ANGLE_MOTOR);
+        ANGLE_ENCODER.applyConfiguration(config);
+        ANGLE_ENCODER.setSimulationInputsFromTalonFX(ANGLE_MOTOR);
 
-        ENCODER.registerSignal(CANcoderSignal.POSITION, 100);
-        ENCODER.registerSignal(CANcoderSignal.VELOCITY, 100);
+        ANGLE_ENCODER.registerSignal(CANcoderSignal.POSITION, 100);
+        ANGLE_ENCODER.registerSignal(CANcoderSignal.VELOCITY, 100);
     }
 
     public enum AlgaeIntakeState {

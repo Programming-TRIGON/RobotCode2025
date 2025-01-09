@@ -7,27 +7,23 @@ import frc.trigon.robot.RobotContainer;
 import org.trigon.commands.GearRatioCalculationCommand;
 import org.trigon.commands.NetworkTablesCommand;
 
-public class AlgaeIntakeCommands {
-    public static Command getIntakeDebuggingCommand() {
-        return new NetworkTablesCommand(
-                AlgaeIntakeCommands::getSetTargetVoltageCommand,
-                false,
-                "Debugging/AlgaeIntakeTargetAngleDegrees"
-        );
-    }
+import java.util.Set;
 
-    public static Command getAngleDebuggingCommand() {
+public class AlgaeIntakeCommands {
+    public static Command getDebuggingCommand() {
         return new NetworkTablesCommand(
-                (targetAngleDegrees) -> getSetTargetAngleCommand(Rotation2d.fromDegrees(targetAngleDegrees)),
+                (Double[] targetState) -> RobotContainer.ALGAE_INTAKE.setTargetState(targetState[0], Rotation2d.fromDegrees(targetState[1])),
                 false,
-                "Debugging/AlgaeIntakeTargetAngleDegrees"
+                Set.of(RobotContainer.ALGAE_INTAKE),
+                "Debugging/AlgaeIntakeVoltage",
+                "Debugging/AlgaeIntakeAngle"
         );
     }
 
     public static Command getCalculateGearRatioCommand() {
         return new GearRatioCalculationCommand(
                 AlgaeIntakeConstants.ANGLE_MOTOR,
-                AlgaeIntakeConstants.ENCODER,
+                AlgaeIntakeConstants.ANGLE_ENCODER,
                 RobotContainer.ALGAE_INTAKE
         );
     }
@@ -40,18 +36,10 @@ public class AlgaeIntakeCommands {
         );
     }
 
-    public static Command getSetTargetVoltageCommand(double targetVoltage) {
+    public static Command getSetTargetStateCommand(double targetVoltage, Rotation2d targetAngle) {
         return new StartEndCommand(
-                () -> RobotContainer.ALGAE_INTAKE.setTargetVoltage(targetVoltage),
+                () -> RobotContainer.ALGAE_INTAKE.setTargetState(targetVoltage, targetAngle),
                 RobotContainer.ALGAE_INTAKE::stopIntakeMotor,
-                RobotContainer.ALGAE_INTAKE
-        );
-    }
-
-    public static Command getSetTargetAngleCommand(Rotation2d targetAngle) {
-        return new StartEndCommand(
-                () -> RobotContainer.ALGAE_INTAKE.setTargetAngle(targetAngle),
-                RobotContainer.ALGAE_INTAKE::stopAngleMotor,
                 RobotContainer.ALGAE_INTAKE
         );
     }

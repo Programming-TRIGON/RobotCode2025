@@ -2,9 +2,7 @@ package frc.trigon.robot.subsystems.algaeintake;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -19,7 +17,7 @@ public class AlgaeIntake extends MotorSubsystem {
     private final TalonFXMotor
             intakeMotor = AlgaeIntakeConstants.INTAKE_MOTOR,
             angleMotor = AlgaeIntakeConstants.ANGLE_MOTOR;
-    private final CANcoderEncoder encoder = AlgaeIntakeConstants.ENCODER;
+    private final CANcoderEncoder encoder = AlgaeIntakeConstants.ANGLE_ENCODER;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(AlgaeIntakeConstants.ENABLE_FOC);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(AlgaeIntakeConstants.ENABLE_FOC);
     private AlgaeIntakeConstants.AlgaeIntakeState targetState = AlgaeIntakeConstants.AlgaeIntakeState.REST;
@@ -43,7 +41,7 @@ public class AlgaeIntake extends MotorSubsystem {
     public void updateLog(SysIdRoutineLog log) {
         log.motor("AlgaeAngleMotor")
                 .angularPosition(Units.Rotations.of(getEncoderPosition().getRotations()))
-                .angularVelocity(Units.RotationsPerSecond.of(encoder.getSignal(CANcoderSignal.VELOCITY)))
+                .angularVelocity(Units.RotationsPerSecond.of(angleMotor.getSignal(TalonFXSignal.VELOCITY)))
                 .voltage(Units.Volts.of(angleMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
@@ -54,6 +52,7 @@ public class AlgaeIntake extends MotorSubsystem {
                 getEncoderPosition(),
                 Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
         );
+        Logger.recordOutput("Poses/Components/AlgaeIntake", calculateVisualizationPose());
     }
 
     @Override
@@ -61,8 +60,6 @@ public class AlgaeIntake extends MotorSubsystem {
         intakeMotor.update();
         angleMotor.update();
         encoder.update();
-
-        Logger.recordOutput("Poses/Components/AlgaeIntake", calculateVisualizationPose());
     }
 
     @Override
@@ -94,12 +91,17 @@ public class AlgaeIntake extends MotorSubsystem {
         setTargetAngle(targetState.targetAngle);
     }
 
-    void setTargetVoltage(double targetVoltage) {
+    void setTargetState(double targetVoltage, Rotation2d targetAngle) {
+        setTargetVoltage(targetVoltage);
+        setTargetAngle(targetAngle);
+    }
+
+    private void setTargetVoltage(double targetVoltage) {
         intakeMotor.setControl(voltageRequest.withOutput(targetVoltage));
         AlgaeIntakeConstants.INTAKE_MECHANISM.setTargetVelocity(targetVoltage);
     }
 
-    void setTargetAngle(Rotation2d targetAngle) {
+    private void setTargetAngle(Rotation2d targetAngle) {
         angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
     }
 
@@ -109,9 +111,10 @@ public class AlgaeIntake extends MotorSubsystem {
 
     private Pose3d calculateVisualizationPose() {
         final Pose3d originPoint = AlgaeIntakeConstants.ALGAE_INTAKE_VISUALIZATION_ORIGIN_POINT;
-        return new Pose3d(
-                originPoint.getTranslation(),
-                new Rotation3d(originPoint.getRotation().getX(), originPoint.getRotation().getY() + getEncoderPosition().getRadians(), originPoint.getRotation().getZ())
+        final Transform3d transform = new Transform3d(
+                new Translation3d(),
+                new Rotation3d(0, getEncoderPosition().getRadians(), 0)
         );
+        return originPoint.transformBy(transform);
     }
 }
