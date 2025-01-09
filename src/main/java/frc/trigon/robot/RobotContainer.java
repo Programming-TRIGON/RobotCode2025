@@ -15,7 +15,10 @@ import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.poseestimation.poseestimator.PoseEstimator;
+import frc.trigon.robot.subsystems.gripper.Gripper;
 import frc.trigon.robot.subsystems.MotorSubsystem;
+import frc.trigon.robot.subsystems.gripper.GripperCommands;
+import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.Swerve;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
@@ -23,6 +26,7 @@ import org.trigon.utilities.flippable.Flippable;
 public class RobotContainer {
     public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator();
     public static final Swerve SWERVE = new Swerve();
+    public static final Gripper GRIPPER = new Gripper();
     private LoggedDashboardChooser<Command> autoChooser;
 
     public RobotContainer() {
@@ -45,6 +49,7 @@ public class RobotContainer {
 
     private void bindDefaultCommands() {
         SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
+        GRIPPER.setDefaultCommand(GripperCommands.getSetTargetVoltageCommand(12));
     }
 
     /**
