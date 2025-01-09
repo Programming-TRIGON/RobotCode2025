@@ -223,6 +223,7 @@ public class CoralIntakeConstants {
         ANGLE_MOTOR.registerSignal(TalonFXSignal.POSITION, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.ROTOR_POSITION, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
     }
 
     private static void configureEncoder() {
@@ -236,6 +237,7 @@ public class CoralIntakeConstants {
         ENCODER.setSimulationInputsFromTalonFX(ANGLE_MOTOR);
 
         ENCODER.registerSignal(CANcoderSignal.POSITION, 100);
+        ENCODER.registerSignal(CANcoderSignal.VELOCITY, 100);
     }
 
     private static void configureBeamBreak() {
@@ -248,12 +250,12 @@ public class CoralIntakeConstants {
         COLLECT_FEEDER(12, 12, Rotation2d.fromDegrees(90)),
         REST(0, 0, Rotation2d.fromDegrees(0));
 
-        public final double intakeVoltage, funnelVoltage;
+        public final double targetIntakeVoltage, targetFunnelVoltage;
         public final Rotation2d targetAngle;
 
         CoralIntakeState(double targetIntakeVoltage, double targetFunnelVoltage, Rotation2d targetAngle) {
-            this.intakeVoltage = targetIntakeVoltage;
-            this.funnelVoltage = targetFunnelVoltage;
+            this.targetIntakeVoltage = targetIntakeVoltage;
+            this.targetFunnelVoltage = targetFunnelVoltage;
             this.targetAngle = targetAngle;
         }
     }

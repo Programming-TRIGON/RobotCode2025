@@ -24,9 +24,8 @@ public class CoralIntake extends MotorSubsystem {
     private final CANcoderEncoder encoder = CoralIntakeConstants.ENCODER;
     private final SimpleSensor beamBreak = CoralIntakeConstants.BEAM_BREAK;
     private final VoltageOut
-            funnelVoltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
+            voltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private final MotionMagicExpoTorqueCurrentFOC positionRequest = new MotionMagicExpoTorqueCurrentFOC(0);
-
     private CoralIntakeConstants.CoralIntakeState targetState = CoralIntakeConstants.CoralIntakeState.REST;
 
     public CoralIntake() {
@@ -42,7 +41,7 @@ public class CoralIntake extends MotorSubsystem {
 
     @Override
     public void sysIdDrive(double targetDrivePower) {
-        angleMotor.setControl(funnelVoltageRequest.withOutput(targetDrivePower));
+        angleMotor.setControl(voltageRequest.withOutput(targetDrivePower));
     }
 
     @Override
@@ -97,7 +96,7 @@ public class CoralIntake extends MotorSubsystem {
     void setTargetState(CoralIntakeConstants.CoralIntakeState targetState) {
         this.targetState = targetState;
 
-        setTargetVoltage(targetState.intakeVoltage, targetState.funnelVoltage);
+        setTargetVoltage(targetState.targetIntakeVoltage, targetState.targetFunnelVoltage);
         setTargetAngle(targetState.targetAngle);
     }
 
@@ -106,12 +105,12 @@ public class CoralIntake extends MotorSubsystem {
         setTargetFunnelVoltage(targetFunnelVoltage);
     }
 
-    void setTargetIntakeVoltage(double voltage) {
-        intakeMotor.setControl(funnelVoltageRequest.withOutput(voltage));
+    void setTargetIntakeVoltage(double targetVoltage) {
+        intakeMotor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
-    void setTargetFunnelVoltage(double voltage) {
-        funnelMotor.setControl(funnelVoltageRequest.withOutput(voltage));
+    void setTargetFunnelVoltage(double targetVoltage) {
+        funnelMotor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
     void setTargetAngle(Rotation2d targetAngle) {

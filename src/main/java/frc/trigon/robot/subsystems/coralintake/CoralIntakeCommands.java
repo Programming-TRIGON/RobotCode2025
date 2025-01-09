@@ -33,17 +33,17 @@ public class CoralIntakeCommands {
         );
     }
 
-    public static Command getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState state) {
+    public static Command getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState targetState) {
         return new StartEndCommand(
-                () -> RobotContainer.CORAL_INTAKE.setTargetState(state),
+                () -> RobotContainer.CORAL_INTAKE.setTargetState(targetState),
                 RobotContainer.CORAL_INTAKE::stop,
                 RobotContainer.CORAL_INTAKE
         );
     }
 
-    public static Command getSetTargetVoltageCommand(double intakeVoltage, double funnelVoltage) {
+    public static Command getSetTargetVoltageCommand(double targetIntakeVoltage, double targetFunnelVoltage) {
         return new StartEndCommand(
-                () -> RobotContainer.CORAL_INTAKE.setTargetVoltage(intakeVoltage, funnelVoltage),
+                () -> RobotContainer.CORAL_INTAKE.setTargetVoltage(targetIntakeVoltage, targetFunnelVoltage),
                 RobotContainer.CORAL_INTAKE::stop,
                 RobotContainer.CORAL_INTAKE
         );
