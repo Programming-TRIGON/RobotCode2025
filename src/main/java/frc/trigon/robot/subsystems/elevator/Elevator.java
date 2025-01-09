@@ -84,8 +84,4 @@ public class Elevator extends MotorSubsystem {
     private double rotationsToMeters(double rotations) {
         return Conversions.rotationsToDistance(rotations, ElevatorConstants.DRUM_DIAMETER_METERS);
     }
-
-    private double metersToRotations(double meters) {
-        return Conversions.distanceToRotations(meters, ElevatorConstants.DRUM_DIAMETER_METERS);
-    }
 }
