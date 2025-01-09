@@ -121,7 +121,7 @@ public class CoralIntakeConstants {
     );
 
     static final Pose3d INTAKE_VISUALIZATION_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
-    private static final double MAXIMUM_DISPLAYABLE_VELOCITY = 15;
+    private static final double MAXIMUM_DISPLAYABLE_VELOCITY = 12;
     static final SpeedMechanism2d
             INTAKE_MECHANISM = new SpeedMechanism2d(
             "CoralIntakeMechanism",
