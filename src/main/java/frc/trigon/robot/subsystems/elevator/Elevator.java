@@ -62,6 +62,11 @@ public class Elevator extends MotorSubsystem {
         motor.update();
     }
 
+    @Override
+    public void drive(double targetDrivePower) {
+        motor.setControl(voltageRequest.withOutput(positionRequest.Velocity));
+    }
+
     private Pose3d getElevatorComponentPose() {
         final Transform3d elevatorTransform = new Transform3d(
                 new Translation3d(0, 0, getPositionMeters()),
