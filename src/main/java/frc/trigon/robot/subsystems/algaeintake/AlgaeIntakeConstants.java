@@ -45,6 +45,9 @@ public class AlgaeIntakeConstants {
     private static final double
             INTAKE_MOTOR_GEAR_RATIO = 1,
             ANGLE_MOTOR_GEAR_RATIO = 200;
+    private static final Rotation2d
+            INTAKE_MAXIMUM_ANGLE = Rotation2d.fromDegrees(90),
+            INTAKE_MINIMUM_ANGLE = Rotation2d.fromDegrees(0);
     private static final double
             ANGLE_P = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
@@ -72,9 +75,6 @@ public class AlgaeIntakeConstants {
     private static final double
             INTAKE_LENGTH_METERS = 0.5,
             INTAKE_MASS_KILOGRAMS = 0.5;
-    private static final Rotation2d
-            INTAKE_MAXIMUM_ANGLE = Rotation2d.fromDegrees(90),
-            INTAKE_MINIMUM_ANGLE = Rotation2d.fromDegrees(0);
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final SimpleMotorSimulation INTAKE_MOTOR_SIMULATION = new SimpleMotorSimulation(
             INTAKE_MOTOR_GEARBOX,
@@ -146,6 +146,11 @@ public class AlgaeIntakeConstants {
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_VELOCITY;
         config.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
+
+        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = INTAKE_MAXIMUM_ANGLE.getRotations();
+        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = INTAKE_MINIMUM_ANGLE.getRotations();
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
