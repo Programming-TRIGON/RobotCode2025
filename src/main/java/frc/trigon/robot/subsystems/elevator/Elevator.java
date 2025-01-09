@@ -2,6 +2,9 @@ package frc.trigon.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
+import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
@@ -22,6 +25,11 @@ public class Elevator extends MotorSubsystem {
     }
 
     @Override
+    public SysIdRoutine.Config getSysIdConfig() {
+        return ElevatorConstants.SYSID_CONFIG;
+    }
+
+    @Override
     public void setBrake(boolean brake) {
         motor.setBrake(brake);
     }
@@ -29,6 +37,14 @@ public class Elevator extends MotorSubsystem {
     @Override
     public void stop() {
         motor.stopMotor();
+    }
+
+    @Override
+    public void updateLog(SysIdRoutineLog log) {
+        log.motor("Elevator")
+                .linearPosition(Units.Meters.of(motor.getSignal(TalonFXSignal.POSITION)))
+                .linearVelocity(Units.MetersPerSecond.of(motor.getSignal(TalonFXSignal.VELOCITY)))
+                .voltage(Units.Volts.of(motor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
     @Override
