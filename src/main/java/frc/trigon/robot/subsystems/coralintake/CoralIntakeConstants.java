@@ -75,6 +75,10 @@ public class CoralIntakeConstants {
             INTAKE_MOTOR_GEAR_RATIO = 1,
             FUNNEL_MOTOR_GEAR_RATIO = 1,
             ANGLE_MOTOR_GEAR_RATIO = 200;
+    private static final ForwardLimitSourceValue FORWARD_LIMIT_SOURCE_VALUE = ForwardLimitSourceValue.LimitSwitchPin;
+    private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
+    private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
+    private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
     private static final Rotation2d
             MINIMUM_ANGLE = Rotation2d.fromDegrees(0),
             MAXIMUM_ANGLE = Rotation2d.fromDegrees(180);
@@ -211,10 +215,17 @@ public class CoralIntakeConstants {
         config.MotionMagic.MotionMagicAcceleration = ANGLE_MOTION_MAGIC_ACCELERATION;
         config.MotionMagic.MotionMagicJerk = ANGLE_MOTION_MAGIC_JERK;
 
-        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAXIMUM_ANGLE.getRotations();
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MINIMUM_ANGLE.getRotations();
+        config.HardwareLimitSwitch.ForwardLimitEnable = true;
+        config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
+        config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = MAXIMUM_ANGLE.getRotations();
+
+        config.HardwareLimitSwitch.ReverseLimitEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
+        config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = MINIMUM_ANGLE.getRotations();
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
