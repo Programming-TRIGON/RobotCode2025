@@ -96,8 +96,16 @@ public class CoralIntake extends MotorSubsystem {
     void setTargetState(CoralIntakeConstants.CoralIntakeState targetState) {
         this.targetState = targetState;
 
-        setTargetVoltage(targetState.targetIntakeVoltage, targetState.targetFunnelVoltage);
-        setTargetAngle(targetState.targetAngle);
+        setTargetState(
+                targetState.targetIntakeVoltage,
+                targetState.targetFunnelVoltage,
+                targetState.targetAngle
+        );
+    }
+
+    void setTargetState(double targetIntakeVoltage, double targetFunnelVoltage, Rotation2d targetAngle) {
+        setTargetVoltage(targetIntakeVoltage, targetFunnelVoltage);
+        setTargetAngle(targetAngle);
     }
 
     void setTargetVoltage(double targetIntakeVoltage, double targetFunnelVoltage) {
