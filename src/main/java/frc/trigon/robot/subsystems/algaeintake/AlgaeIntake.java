@@ -100,16 +100,11 @@ public class AlgaeIntake extends MotorSubsystem {
     }
 
     void setTargetAngle(Rotation2d targetAngle) {
-        System.out.println(targetAngle.getDegrees());
         angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
     }
 
     Rotation2d getEncoderPosition() {
         return Rotation2d.fromRotations(encoder.getSignal(CANcoderSignal.POSITION));
-    }
-
-    Rotation2d getRotorPosition() {
-        return Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.ROTOR_POSITION));
     }
 
     private Pose3d calculateVisualizationPose() {
