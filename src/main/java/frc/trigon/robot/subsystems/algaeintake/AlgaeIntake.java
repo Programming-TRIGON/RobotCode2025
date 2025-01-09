@@ -1,6 +1,6 @@
 package frc.trigon.robot.subsystems.algaeintake;
 
-import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -21,7 +21,7 @@ public class AlgaeIntake extends MotorSubsystem {
             angleMotor = AlgaeIntakeConstants.ANGLE_MOTOR;
     private final CANcoderEncoder encoder = AlgaeIntakeConstants.ENCODER;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(AlgaeIntakeConstants.ENABLE_FOC);
-    private final MotionMagicExpoTorqueCurrentFOC positionRequest = new MotionMagicExpoTorqueCurrentFOC(0);
+    private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(AlgaeIntakeConstants.ENABLE_FOC);
     private AlgaeIntakeConstants.AlgaeIntakeState targetState = AlgaeIntakeConstants.AlgaeIntakeState.REST;
 
     public AlgaeIntake() {
@@ -94,13 +94,14 @@ public class AlgaeIntake extends MotorSubsystem {
         setTargetAngle(targetState.targetAngle);
     }
 
-    void setTargetAngle(Rotation2d targetAngle) {
-        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
-    }
-
     void setTargetVoltage(double targetVoltage) {
         intakeMotor.setControl(voltageRequest.withOutput(targetVoltage));
         AlgaeIntakeConstants.INTAKE_MECHANISM.setTargetVelocity(targetVoltage);
+    }
+
+    void setTargetAngle(Rotation2d targetAngle) {
+        System.out.println(targetAngle.getDegrees());
+        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
     }
 
     Rotation2d getEncoderPosition() {

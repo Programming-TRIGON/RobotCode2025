@@ -47,7 +47,7 @@ public class AlgaeIntakeConstants {
             INTAKE_MAXIMUM_ANGLE = Rotation2d.fromDegrees(90),
             INTAKE_MINIMUM_ANGLE = Rotation2d.fromDegrees(0);
     private static final double
-            ANGLE_P = RobotHardwareStats.isSimulation() ? 0 : 0,
+            ANGLE_P = RobotHardwareStats.isSimulation() ? 3 : 0,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_D = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_KS = RobotHardwareStats.isSimulation() ? 0 : 0,
@@ -55,8 +55,9 @@ public class AlgaeIntakeConstants {
             ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_KG = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final double
-            EXPO_KA = ANGLE_KA,
-            EXPO_KV = ANGLE_KV;
+            MOTION_MAGIC_VELOCITY = 10,
+            MOTION_MAGIC_ACCELERATION = 10,
+            MOTION_MAGIC_JERK = 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseVelocitySign;
     private static final FeedbackSensorSourceValue ENCODER_TYPE = FeedbackSensorSourceValue.FusedCANcoder;
@@ -73,7 +74,7 @@ public class AlgaeIntakeConstants {
             ANGLE_MOTOR_GEARBOX = DCMotor.getKrakenX60(ANGLE_MOTOR_AMOUNT);
     private static final double INTAKE_MOTOR_MOMENT_OF_INERTIA = 0.003;
     private static final double
-            INTAKE_LENGTH_METERS = 0.5,
+            INTAKE_LENGTH_METERS = 0.3,
             INTAKE_MASS_KILOGRAMS = 0.5;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final SimpleMotorSimulation INTAKE_MOTOR_SIMULATION = new SimpleMotorSimulation(
@@ -146,8 +147,9 @@ public class AlgaeIntakeConstants {
         config.Slot0.GravityType = GRAVITY_TYPE_VALUE;
         config.Slot0.StaticFeedforwardSign = STATIC_FEEDFORWARD_SIGN_VALUE;
 
-        config.MotionMagic.MotionMagicExpo_kA = EXPO_KA;
-        config.MotionMagic.MotionMagicExpo_kV = EXPO_KV;
+        config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_VELOCITY;
+        config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
+        config.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
 
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
@@ -162,7 +164,6 @@ public class AlgaeIntakeConstants {
         ANGLE_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.ROTOR_POSITION, 100);
-        ANGLE_MOTOR.registerSignal(TalonFXSignal.TORQUE_CURRENT, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
     }
 
@@ -177,11 +178,13 @@ public class AlgaeIntakeConstants {
         ENCODER.setSimulationInputsFromTalonFX(ANGLE_MOTOR);
 
         ENCODER.registerSignal(CANcoderSignal.POSITION, 100);
+        ENCODER.registerSignal(CANcoderSignal.VELOCITY, 100);
     }
 
     public enum AlgaeIntakeState {
         COLLECT(Rotation2d.fromDegrees(0), 5),
         EJECT(Rotation2d.fromDegrees(0), -5),
+        FEED_PROCESSOR(Rotation2d.fromDegrees(25), -3),
         REST(Rotation2d.fromDegrees(90), 1);
 
         public final Rotation2d targetAngle;

@@ -26,9 +26,8 @@ public class AlgaeIntakeCommands {
 
     public static Command getCalculateGearRatioCommand() {
         return new GearRatioCalculationCommand(
-                () -> RobotContainer.ALGAE_INTAKE.getRotorPosition().getDegrees(),
-                () -> RobotContainer.ALGAE_INTAKE.getEncoderPosition().getDegrees(),
-                RobotContainer.ALGAE_INTAKE::setTargetVoltage,
+                AlgaeIntakeConstants.ANGLE_MOTOR,
+                AlgaeIntakeConstants.ENCODER,
                 RobotContainer.ALGAE_INTAKE
         );
     }
