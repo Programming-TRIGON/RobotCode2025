@@ -24,9 +24,9 @@ import org.trigon.utilities.mechanisms.SpeedMechanism2d;
 
 public class AlgaeIntakeConstants {
     private static final int
-            INTAKE_MOTOR_ID = 13,
-            ANGLE_MOTOR_ID = 14,
-            ENCODER_ID = 14;
+            INTAKE_MOTOR_ID = 15,
+            ANGLE_MOTOR_ID = 16,
+            ENCODER_ID = 16;
     private static final String
             INTAKE_MOTOR_NAME = "AlgaeIntakeMotor",
             ANGLE_MOTOR_NAME = "AlgaeIntakeAngleMotor",
@@ -57,9 +57,8 @@ public class AlgaeIntakeConstants {
             ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_KG = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final double
-            MOTION_MAGIC_ACCELERATION = 100,
-            MOTION_MAGIC_VELOCITY = 100,
-            MOTION_MAGIC_JERK = 0.5;
+            EXPO_KA = ANGLE_KA,
+            EXPO_KV = ANGLE_KV;
     private static final SensorDirectionValue ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.Clockwise_Positive;
     private static final Rotation2d ENCODER_MAGNET_OFFSET = Rotation2d.fromRotations(0);
     private static final double ENCODER_DISCONTINUITY_POINT = 0.5;
@@ -143,9 +142,8 @@ public class AlgaeIntakeConstants {
         config.Slot0.kA = ANGLE_KA;
         config.Slot0.kG = ANGLE_KG;
 
-        config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
-        config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_VELOCITY;
-        config.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
+        config.MotionMagic.MotionMagicExpo_kA = EXPO_KA;
+        config.MotionMagic.MotionMagicExpo_kV = EXPO_KV;
 
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = INTAKE_MAXIMUM_ANGLE.getRotations();

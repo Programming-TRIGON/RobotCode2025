@@ -1,6 +1,6 @@
 package frc.trigon.robot.subsystems.algaeintake;
 
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -23,7 +23,7 @@ public class AlgaeIntake extends MotorSubsystem {
     private final VoltageOut
             intakeVoltageRequest = new VoltageOut(0).withEnableFOC(AlgaeIntakeConstants.ENABLE_FOC),
             angleVoltageRequest = new VoltageOut(0).withEnableFOC(AlgaeIntakeConstants.ENABLE_FOC);
-    private final MotionMagicVoltage motionMagicRequest = new MotionMagicVoltage(0).withEnableFOC(AlgaeIntakeConstants.ENABLE_FOC);
+    private final MotionMagicExpoTorqueCurrentFOC motionMagicRequest = new MotionMagicExpoTorqueCurrentFOC(0);
 
     public AlgaeIntake() {
         setName("AlgaeIntake");
