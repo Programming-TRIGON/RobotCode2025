@@ -35,7 +35,7 @@ public class ElevatorConstants {
     private static final InvertedValue
             MASTER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             FOLLOWER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
-    private static final boolean SHOULD_FOLLOWER_MOTOR_OPPOSITE = false;
+    private static final boolean FOLLOWER_MOTOR_OPPOSE_MASTER = false;
     private static final double ABSOLUTE_SENSOR_DISCONTINUITY_POINT = 0.5;
     private static final SensorDirectionValue ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final double ENCODER_MAGNET_OFFSET_VALUE = 0;
@@ -149,7 +149,7 @@ public class ElevatorConstants {
         config.MotorOutput.Inverted = FOLLOWER_MOTOR_INVERTED_VALUE;
 
         FOLLOWER_MOTOR.applyConfiguration(config);
-        FOLLOWER_MOTOR.setControl(new Follower(MASTER_MOTOR_ID, SHOULD_FOLLOWER_MOTOR_OPPOSITE));
+        FOLLOWER_MOTOR.setControl(new Follower(MASTER_MOTOR_ID, FOLLOWER_MOTOR_OPPOSE_MASTER));
     }
 
     private static void configureEncoder() {
