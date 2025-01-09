@@ -10,7 +10,7 @@ import org.trigon.commands.NetworkTablesCommand;
 public class CoralIntakeCommands {
     public static Command getIntakeAndFunnelDebuggingCommand() {
         return new NetworkTablesCommand(
-                CoralIntakeCommands::getSetTargetVoltagesCommand,
+                CoralIntakeCommands::getSetTargetVoltageCommand,
                 false,
                 "Debugging/TargetCoralIntakeVoltage",
                 "Debugging/TargetCoralFunnelVoltage"
@@ -41,9 +41,9 @@ public class CoralIntakeCommands {
         );
     }
 
-    public static Command getSetTargetVoltagesCommand(double intakeVoltage, double funnelVoltage) {
+    public static Command getSetTargetVoltageCommand(double intakeVoltage, double funnelVoltage) {
         return new StartEndCommand(
-                () -> RobotContainer.CORAL_INTAKE.setTargetVoltages(intakeVoltage, funnelVoltage),
+                () -> RobotContainer.CORAL_INTAKE.setTargetVoltage(intakeVoltage, funnelVoltage),
                 RobotContainer.CORAL_INTAKE::stop,
                 RobotContainer.CORAL_INTAKE
         );

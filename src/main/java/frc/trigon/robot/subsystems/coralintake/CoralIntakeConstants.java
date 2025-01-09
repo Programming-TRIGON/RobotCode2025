@@ -91,6 +91,7 @@ public class CoralIntakeConstants {
     private static final double
             INTAKE_LENGTH_METERS = 0.5,
             INTAKE_MASS_KILOGRAMS = 0.5;
+    private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final SimpleMotorSimulation
             INTAKE_SIMULATION = new SimpleMotorSimulation(
             INTAKE_GEARBOX,
@@ -110,7 +111,7 @@ public class CoralIntakeConstants {
             INTAKE_MASS_KILOGRAMS,
             MINIMUM_ANGLE,
             MAXIMUM_ANGLE,
-            true
+            SHOULD_SIMULATE_GRAVITY
     );
     private static final DoubleSupplier BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> SimulationObjectDetectionCameraIO.HAS_OBJECTS ? 1 : 0;
 
@@ -235,7 +236,6 @@ public class CoralIntakeConstants {
         ENCODER.setSimulationInputsFromTalonFX(ANGLE_MOTOR);
 
         ENCODER.registerSignal(CANcoderSignal.POSITION, 100);
-        ENCODER.registerSignal(CANcoderSignal.VELOCITY, 100);
     }
 
     private static void configureBeamBreak() {
