@@ -12,7 +12,7 @@ import java.util.Set;
 public class AlgaeIntakeCommands {
     public static Command getDebuggingCommand() {
         return new NetworkTablesCommand(
-                (Double[] targetState) -> RobotContainer.ALGAE_INTAKE.setTargetState(targetState[0], Rotation2d.fromDegrees(targetState[1])),
+                (targetVoltage, targetAngleDegrees) -> RobotContainer.ALGAE_INTAKE.setTargetState(targetVoltage, Rotation2d.fromDegrees(targetAngleDegrees)),
                 false,
                 Set.of(RobotContainer.ALGAE_INTAKE),
                 "Debugging/AlgaeIntakeVoltage",
