@@ -69,11 +69,14 @@ public class CoralIntakeConstants {
     private static final SensorDirectionValue ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final double
             ENCODER_MAGNET_OFFSET_VALUE = 0,
-            ENCODER_DISCONTINUITY_POINT = 1;
+            ENCODER_DISCONTINUITY_POINT = 0.5;
     private static final double
             INTAKE_MOTOR_GEAR_RATIO = 1,
             FUNNEL_MOTOR_GEAR_RATIO = 1,
             ANGLE_MOTOR_GEAR_RATIO = 200;
+    private static final Rotation2d
+            MINIMUM_ANGLE = Rotation2d.fromDegrees(0),
+            MAXIMUM_ANGLE = Rotation2d.fromDegrees(180);
     static final boolean FOC_ENABLED = true;
 
     private static final int
@@ -88,9 +91,6 @@ public class CoralIntakeConstants {
     private static final double
             INTAKE_LENGTH_METERS = 0.5,
             INTAKE_MASS_KILOGRAMS = 0.5;
-    private static final Rotation2d
-            MINIMUM_ANGLE = Rotation2d.fromDegrees(0),
-            MAXIMUM_ANGLE = Rotation2d.fromDegrees(180);
     private static final SimpleMotorSimulation
             INTAKE_SIMULATION = new SimpleMotorSimulation(
             INTAKE_GEARBOX,
@@ -207,6 +207,11 @@ public class CoralIntakeConstants {
 
         config.MotionMagic.MotionMagicExpo_kA = ANGLE_EXPO_KA;
         config.MotionMagic.MotionMagicExpo_kV = ANGLE_EXPO_KV;
+
+        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MINIMUM_ANGLE.getRotations();
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = MAXIMUM_ANGLE.getRotations();
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ANGLE_SIMULATION);

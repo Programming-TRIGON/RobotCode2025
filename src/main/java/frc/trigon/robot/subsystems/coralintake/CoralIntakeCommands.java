@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
+import org.trigon.commands.GearRatioCalculationCommand;
 import org.trigon.commands.NetworkTablesCommand;
 
 public class CoralIntakeCommands {
@@ -21,6 +22,14 @@ public class CoralIntakeCommands {
                 (targetAngleDegrees) -> getSetTargetAngleCommand(Rotation2d.fromDegrees(targetAngleDegrees)),
                 false,
                 "Debugging/TargetCoralAngle"
+        );
+    }
+
+    public static Command getAngleMotorCalculateGearRatioCommand() {
+        return new GearRatioCalculationCommand(
+                CoralIntakeConstants.ANGLE_MOTOR,
+                CoralIntakeConstants.ENCODER,
+                RobotContainer.CORAL_INTAKE
         );
     }
 
