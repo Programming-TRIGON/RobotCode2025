@@ -139,7 +139,7 @@ public class CoralIntakeConstants {
             Color.kRed
     );
 
-    static final double ANGLE_TOLERANCE_DEGREES = 1;
+    static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
 
     static {
         configureIntakeMotor();

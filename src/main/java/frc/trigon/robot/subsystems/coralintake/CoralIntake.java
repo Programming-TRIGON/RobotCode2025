@@ -87,7 +87,7 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     public boolean atTargetState() {
-        return Math.abs(getCurrentEncoderAngle().minus(targetState.targetAngle).getDegrees()) < CoralIntakeConstants.ANGLE_TOLERANCE_DEGREES;
+        return Math.abs(getCurrentEncoderAngle().minus(targetState.targetAngle).getDegrees()) < CoralIntakeConstants.ANGLE_TOLERANCE.getDegrees();
     }
 
     public boolean hasGamePiece() {
