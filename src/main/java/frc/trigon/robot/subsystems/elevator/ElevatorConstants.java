@@ -90,7 +90,7 @@ public class ElevatorConstants {
             THIRD_POSE = new Pose3d();
 
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
-    static final double TARGET_STATE_OFFSET_METERS = 0.03;
+    static final double TARGET_STATE_TOLERANCE_ROTATIONS = 0.1;
 
     static {
         configureMasterMotor();

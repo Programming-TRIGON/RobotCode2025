@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.subsystems.MotorSubsystem;
@@ -23,11 +22,6 @@ public class Elevator extends MotorSubsystem {
 
     public Elevator() {
         setName("Elevator");
-    }
-
-    public boolean atTargetState() {
-        double targetStateDifferenceInMeters = Math.abs(targetState.targetPositionRotations - motor.getSignal(TalonFXSignal.POSITION));
-        return rotationsToMeters(targetStateDifferenceInMeters) < ElevatorConstants.TARGET_STATE_OFFSET_METERS;
     }
 
     @Override
@@ -49,8 +43,7 @@ public class Elevator extends MotorSubsystem {
     public void updateLog(SysIdRoutineLog log) {
         log.motor("Elevator")
                 .linearPosition(Units.Meters.of(getPositionMeters()))
-                .linearVelocity(Units.MetersPerSecond.of(rotationsToMeters(motor.getSignal(TalonFXSignal.VELOCITY))))
-                .voltage(Units.Volts.of(motor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
+                .linearVelocity(Units.MetersPerSecond.of(rotationsToMeters(motor.getSignal(TalonFXSignal.VELOCITY))));
     }
 
     @Override
@@ -67,6 +60,11 @@ public class Elevator extends MotorSubsystem {
     @Override
     public void sysIdDrive(double targetVoltage) {
         motor.setControl(voltageRequest.withOutput(targetVoltage));
+    }
+
+    public final boolean atTargetState() {
+        double difference = Math.abs(targetState.targetPositionRotations - motor.getSignal(TalonFXSignal.POSITION));
+        return difference < ElevatorConstants.TARGET_STATE_TOLERANCE_ROTATIONS;
     }
 
     void setTargetState(ElevatorConstants.ElevatorState targetState) {
