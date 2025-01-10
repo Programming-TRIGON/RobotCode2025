@@ -49,8 +49,8 @@ public class CoralIntake extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
-        CoralIntakeConstants.INTAKE_MECHANISM.update(intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
-        CoralIntakeConstants.FUNNEL_MECHANISM.update(funnelMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
+        CoralIntakeConstants.INTAKE_MECHANISM.update(intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE), targetState.targetIntakeVoltage);
+        CoralIntakeConstants.FUNNEL_MECHANISM.update(funnelMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE), targetState.targetFunnelVoltage);
         CoralIntakeConstants.ANGLE_MECHANISM.update(
                 getCurrentEncoderAngle(),
                 Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
@@ -129,12 +129,12 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     private Pose3d calculateVisualizationPose() {
-        final Pose3d intakeVisualizationOriginPoint = CoralIntakeConstants.INTAKE_VISUALIZATION_ORIGIN_POINT;
+        final Pose3d originPoint = CoralIntakeConstants.INTAKE_VISUALIZATION_ORIGIN_POINT;
         final Transform3d intakeTransform = new Transform3d(
                 new Translation3d(),
                 new Rotation3d(0, getCurrentEncoderAngle().getRadians(), 0)
         );
 
-        return intakeVisualizationOriginPoint.transformBy(intakeTransform);
+        return originPoint.transformBy(intakeTransform);
     }
 }
