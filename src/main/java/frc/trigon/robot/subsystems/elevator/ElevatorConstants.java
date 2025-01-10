@@ -43,22 +43,20 @@ public class ElevatorConstants {
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
     private static final Rotation2d FORWARD_HARD_LIMIT_DEGREES = Rotation2d.fromDegrees(500);
     private static final Rotation2d REVERSE_HARD_LIMIT_DEGREES = Rotation2d.fromDegrees(10);
-
-    private static final double GEAR_RATIO = 20;
+    private static final double GEAR_RATIO = 5;
     static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
             MOTION_MAGIC_ACCELERATION = 25,
             MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
-
     static final boolean FOC_ENABLED = true;
 
     private static final int MOTOR_AMOUNT = 2;
     private static final DCMotor GEARBOX = DCMotor.getKrakenX60Foc(MOTOR_AMOUNT);
     private static final double
-            MASS_KILOGRAMS = 5,
-            DRUM_RADIUS_METERS = 0.5,
-            RETRACTED_ELEVATOR_LENGTH_METERS = 0.5,
-            MAXIMUM_HEIGHT_METERS = 1;
+            MASS_KILOGRAMS = 9,
+            DRUM_RADIUS_METERS = 0.02,
+            RETRACTED_ELEVATOR_LENGTH_METERS = 0.2,
+            MAXIMUM_HEIGHT_METERS = 1.9;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
             GEARBOX,
@@ -79,7 +77,7 @@ public class ElevatorConstants {
     static final Pose3d ELEVATOR_ORIGIN_POINT = new Pose3d(1, 0, 1, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(10), 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
-            MAXIMUM_HEIGHT_METERS,
+            MAXIMUM_HEIGHT_METERS - 0.05,
             RETRACTED_ELEVATOR_LENGTH_METERS,
             Color.kYellow
     );
