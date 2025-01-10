@@ -22,9 +22,9 @@ import org.trigon.utilities.mechanisms.SpeedMechanism2d;
 
 public class AlgaeIntakeConstants {
     private static final int
-            INTAKE_MOTOR_ID = 15,
-            ANGLE_MOTOR_ID = 16,
-            ANGLE_ENCODER_ID = 16;
+            INTAKE_MOTOR_ID = 16,
+            ANGLE_MOTOR_ID = 17,
+            ANGLE_ENCODER_ID = 17;
     private static final String
             INTAKE_MOTOR_NAME = "AlgaeIntakeMotor",
             ANGLE_MOTOR_NAME = "AlgaeIntakeAngleMotor",
@@ -45,6 +45,8 @@ public class AlgaeIntakeConstants {
             ANGLE_MOTOR_GEAR_RATIO = 200;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_SWITCH_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final ReverseLimitTypeValue REVERSE_LIMIT_SWITCH_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
+    private static final ForwardLimitSourceValue FORWARD_LIMIT_SOURCE_VALUE = ForwardLimitSourceValue.LimitSwitchPin;
+    private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
     private static final double
             ANGLE_P = RobotHardwareStats.isSimulation() ? 3 : 0,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
@@ -157,6 +159,8 @@ public class AlgaeIntakeConstants {
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_SWITCH_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_SWITCH_TYPE_VALUE;
+        config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
+        config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);

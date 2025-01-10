@@ -39,7 +39,7 @@ public class AlgaeIntakeCommands {
     public static Command getSetTargetStateCommand(double targetVoltage, Rotation2d targetAngle) {
         return new StartEndCommand(
                 () -> RobotContainer.ALGAE_INTAKE.setTargetState(targetVoltage, targetAngle),
-                RobotContainer.ALGAE_INTAKE::stopIntakeMotor,
+                RobotContainer.ALGAE_INTAKE::stop,
                 RobotContainer.ALGAE_INTAKE
         );
     }

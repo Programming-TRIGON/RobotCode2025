@@ -33,7 +33,7 @@ public class AlgaeIntake extends MotorSubsystem {
     }
 
     @Override
-    public void drive(double targetDrivePower) {
+    public void sysIdDrive(double targetDrivePower) {
         angleMotor.setControl(voltageRequest.withOutput(targetDrivePower));
     }
 
@@ -69,20 +69,16 @@ public class AlgaeIntake extends MotorSubsystem {
 
     @Override
     public void stop() {
-        stopIntakeMotor();
-        stopAngleMotor();
-    }
-
-    public boolean atTargetAngle() {
-        return Math.abs(getEncoderPosition().minus(targetState.targetAngle).getDegrees()) < AlgaeIntakeConstants.ANGLE_TOLERANCE.getDegrees();
-    }
-
-    void stopIntakeMotor() {
         intakeMotor.stopMotor();
+        angleMotor.stopMotor();
     }
 
-    void stopAngleMotor() {
-        angleMotor.stopMotor();
+    public boolean atState(AlgaeIntakeConstants.AlgaeIntakeState targetState) {
+        return targetState == this.targetState && atTargetState();
+    }
+
+    public boolean atTargetState() {
+        return Math.abs(getEncoderPosition().minus(targetState.targetAngle).getDegrees()) < AlgaeIntakeConstants.ANGLE_TOLERANCE.getDegrees();
     }
 
     void setTargetState(AlgaeIntakeConstants.AlgaeIntakeState targetState) {
