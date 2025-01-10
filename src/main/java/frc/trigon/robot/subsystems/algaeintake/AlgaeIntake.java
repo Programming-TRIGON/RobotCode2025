@@ -17,7 +17,7 @@ public class AlgaeIntake extends MotorSubsystem {
     private final TalonFXMotor
             intakeMotor = AlgaeIntakeConstants.INTAKE_MOTOR,
             angleMotor = AlgaeIntakeConstants.ANGLE_MOTOR;
-    private final CANcoderEncoder encoder = AlgaeIntakeConstants.ANGLE_ENCODER;
+    private final CANcoderEncoder angleEncoder = AlgaeIntakeConstants.ANGLE_ENCODER;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(AlgaeIntakeConstants.ENABLE_FOC);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(AlgaeIntakeConstants.ENABLE_FOC);
     private AlgaeIntakeConstants.AlgaeIntakeState targetState = AlgaeIntakeConstants.AlgaeIntakeState.REST;
@@ -40,16 +40,19 @@ public class AlgaeIntake extends MotorSubsystem {
     @Override
     public void updateLog(SysIdRoutineLog log) {
         log.motor("AlgaeAngleMotor")
-                .angularPosition(Units.Rotations.of(getEncoderPosition().getRotations()))
+                .angularPosition(Units.Rotations.of(getAngleEncoderPosition().getRotations()))
                 .angularVelocity(Units.RotationsPerSecond.of(angleMotor.getSignal(TalonFXSignal.VELOCITY)))
                 .voltage(Units.Volts.of(angleMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
     @Override
     public void updateMechanism() {
-        AlgaeIntakeConstants.INTAKE_MECHANISM.update(intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
+        AlgaeIntakeConstants.INTAKE_MECHANISM.update(
+                intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE),
+                targetState.targetVoltage
+        );
         AlgaeIntakeConstants.ANGLE_MECHANISM.update(
-                getEncoderPosition(),
+                getAngleEncoderPosition(),
                 Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
         );
         Logger.recordOutput("Poses/Components/AlgaeIntake", calculateVisualizationPose());
@@ -59,7 +62,7 @@ public class AlgaeIntake extends MotorSubsystem {
     public void updatePeriodically() {
         intakeMotor.update();
         angleMotor.update();
-        encoder.update();
+        angleEncoder.update();
     }
 
     @Override
@@ -78,13 +81,12 @@ public class AlgaeIntake extends MotorSubsystem {
     }
 
     public boolean atTargetState() {
-        return Math.abs(getEncoderPosition().minus(targetState.targetAngle).getDegrees()) < AlgaeIntakeConstants.ANGLE_TOLERANCE.getDegrees();
+        return Math.abs(getAngleEncoderPosition().minus(targetState.targetAngle).getDegrees()) < AlgaeIntakeConstants.ANGLE_TOLERANCE.getDegrees();
     }
 
     void setTargetState(AlgaeIntakeConstants.AlgaeIntakeState targetState) {
         this.targetState = targetState;
-        setTargetVoltage(targetState.targetVoltage);
-        setTargetAngle(targetState.targetAngle);
+        setTargetState(targetState.targetVoltage, targetState.targetAngle);
     }
 
     void setTargetState(double targetVoltage, Rotation2d targetAngle) {
@@ -94,23 +96,22 @@ public class AlgaeIntake extends MotorSubsystem {
 
     private void setTargetVoltage(double targetVoltage) {
         intakeMotor.setControl(voltageRequest.withOutput(targetVoltage));
-        AlgaeIntakeConstants.INTAKE_MECHANISM.setTargetVelocity(targetVoltage);
     }
 
     private void setTargetAngle(Rotation2d targetAngle) {
         angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
     }
 
-    Rotation2d getEncoderPosition() {
-        return Rotation2d.fromRotations(encoder.getSignal(CANcoderSignal.POSITION));
-    }
-
     private Pose3d calculateVisualizationPose() {
         final Pose3d originPoint = AlgaeIntakeConstants.ALGAE_INTAKE_VISUALIZATION_ORIGIN_POINT;
         final Transform3d transform = new Transform3d(
                 new Translation3d(),
-                new Rotation3d(0, getEncoderPosition().getRadians(), 0)
+                new Rotation3d(0, getAngleEncoderPosition().getRadians(), 0)
         );
         return originPoint.transformBy(transform);
+    }
+    
+    private Rotation2d getAngleEncoderPosition() {
+        return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
     }
 }
