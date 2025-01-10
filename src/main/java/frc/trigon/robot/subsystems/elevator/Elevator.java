@@ -25,7 +25,7 @@ public class Elevator extends MotorSubsystem {
     }
 
     public boolean atTargetState() {
-        return motor.getSignal(TalonFXSignal.POSITION) == currentTargetState.targetPositionRotations;
+        return motor.getSignal(TalonFXSignal.POSITION) < ElevatorConstants.targetStateMax(currentTargetState) && ElevatorConstants.TargetStateMin(currentTargetState) < motor.getSignal(TalonFXSignal.POSITION);
     }
 
     @Override

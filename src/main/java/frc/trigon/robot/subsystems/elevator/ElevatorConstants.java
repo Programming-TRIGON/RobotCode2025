@@ -85,11 +85,11 @@ public class ElevatorConstants {
 
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
 
-    double TARGET_STATE_MAX(ElevatorState targetState) {
+   static double targetStateMax(ElevatorState targetState) {
         return targetState.targetPositionRotations + 0.05;
     }
 
-    double TARGET_STATE_MIN(ElevatorState targetState) {
+   static double TargetStateMin(ElevatorState targetState) {
         return targetState.targetPositionRotations - 0.05;
     }
 
