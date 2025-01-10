@@ -18,8 +18,8 @@ import org.trigon.utilities.mechanisms.ElevatorMechanism2d;
 
 public class ElevatorConstants {
     private static final int
-            MASTER_MOTOR_ID = 12,
-            FOLLOWER_MOTOR_ID = 13;
+            MASTER_MOTOR_ID = 13,
+            FOLLOWER_MOTOR_ID = 14;
     private static final String
             MASTER_MOTOR_NAME = "ElevatorMasterMotor",
             FOLLOWER_MOTOR_NAME = "ElevatorFollowerMotor";
