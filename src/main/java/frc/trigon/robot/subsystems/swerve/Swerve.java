@@ -46,7 +46,7 @@ public class Swerve extends MotorSubsystem {
     }
 
     @Override
-    public void drive(double targetCurrent) {
+    public void sysIdDrive(double targetCurrent) {
         for (SwerveModule swerveModule : swerveModules) {
             swerveModule.setDriveMotorTargetCurrent(targetCurrent);
             swerveModule.setTargetAngle(new Rotation2d());
