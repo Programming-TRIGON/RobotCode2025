@@ -2,10 +2,7 @@ package frc.trigon.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
+import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -45,8 +42,8 @@ public class ElevatorConstants {
             KA = 0;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final Rotation2d REVERSE_SOFT_LIMIT_THRESHOLD_VALUE = new Rotation2d(Angle.ofBaseUnits(5, Units.Rotations));
-    private static final Rotation2d FORWARD_SOFT_LIMIT_THRESHOLD_VALUE = new Rotation2d(Angle.ofBaseUnits(20, Units.Rotations));
+    private static final Rotation2d REVERSE_HARD_LIMIT_THRESHOLD_ANGLE = new Rotation2d(Angle.ofBaseUnits(5, Units.Rotations));
+    private static final Rotation2d FORWARD_HARD_LIMIT_THRESHOLD_ANGLE = new Rotation2d(Angle.ofBaseUnits(20, Units.Rotations));
 
     private static final double GEAR_RATIO = 20;
     static final double
@@ -86,6 +83,7 @@ public class ElevatorConstants {
             RETRACTED_ELEVATOR_LENGTH_METERS,
             Color.kYellow
     );
+
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
 
     static {
@@ -114,10 +112,14 @@ public class ElevatorConstants {
         config.Slot0.GravityType = GRAVITY_TYPE_VALUE;
         config.Slot0.StaticFeedforwardSign = STATIC_FEEDFORWARD_SIGN_VALUE;
 
-        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = REVERSE_SOFT_LIMIT_THRESHOLD_VALUE.getRotations();
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = FORWARD_SOFT_LIMIT_THRESHOLD_VALUE.getRotations();
+        config.HardwareLimitSwitch.ReverseLimitEnable = true;
+        config.HardwareLimitSwitch.ForwardLimitEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
+        config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_LIMIT_THRESHOLD_ANGLE.getRotations();
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_LIMIT_THRESHOLD_ANGLE.getRotations();
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
@@ -148,16 +150,16 @@ public class ElevatorConstants {
 
     public enum ElevatorState {
         REST(0, 100),
-        REEF_LEVEL_1(0.1, 100),
-        REEF_LEVEL_2(0.2, 10),
-        REEF_LEVEL_3(0.3, 10),
-        REEF_LEVEL_4(0.4, 10);
+        REEF_L1(0.1, 100),
+        REEF_L2(0.2, 10),
+        REEF_L3(0.3, 10),
+        REEF_L4(0.4, 10);
 
-        final double positionRotations;
+        final double targetPositionRotations;
         final double velocity;
 
-        ElevatorState(double positionRotations, double velocity) {
-            this.positionRotations = positionRotations;
+        ElevatorState(double targetPositionRotations, double velocity) {
+            this.targetPositionRotations = targetPositionRotations;
             this.velocity = velocity;
         }
     }
