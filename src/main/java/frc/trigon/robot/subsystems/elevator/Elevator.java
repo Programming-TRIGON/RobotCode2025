@@ -2,10 +2,7 @@ package frc.trigon.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -18,14 +15,14 @@ public class Elevator extends MotorSubsystem {
     private final TalonFXMotor motor = ElevatorConstants.MASTER_MOTOR;
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(ElevatorConstants.FOC_ENABLED);
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(ElevatorConstants.FOC_ENABLED);
-    private ElevatorConstants.ElevatorState currentState = ElevatorConstants.ElevatorState.REST;
+    private ElevatorConstants.ElevatorState currentTargetState = ElevatorConstants.ElevatorState.REST;
 
     public Elevator() {
         setName("Elevator");
     }
 
     public boolean atTargetState() {
-        return motor.getSignal(TalonFXSignal.POSITION) == currentState.targetPositionRotations;
+        return motor.getSignal(TalonFXSignal.POSITION) == currentTargetState.targetPositionRotations;
     }
 
     @Override
@@ -46,14 +43,14 @@ public class Elevator extends MotorSubsystem {
     @Override
     public void updateLog(SysIdRoutineLog log) {
         log.motor("Elevator")
-                .linearPosition(Units.Meters.of(rotationsToMeters(motor.getSignal(TalonFXSignal.VELOCITY))))
-                .linearVelocity(Units.MetersPerSecond.of(rotationsToMeters(motor.getSignal(TalonFXSignal.VELOCITY))))
-                .voltage(Units.Volts.of(motor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
+                .linearPosition(Units.Meters.of(getPositionMeters()))
+                .linearVelocity(Units.MetersPerSecond.of(getPositionMeters()))
+                .voltage(Units.Volts.of(motor.getSignal(TalonFXSignal.VELOCITY)));
     }
 
     @Override
     public void updateMechanism() {
-        ElevatorConstants.MECHANISM.update(getPositionRotation(), motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE));
+        ElevatorConstants.MECHANISM.update(getPositionAngle().getRotations(), motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE));
     }
 
     @Override
@@ -67,8 +64,8 @@ public class Elevator extends MotorSubsystem {
     }
 
     void setTargetState(ElevatorConstants.ElevatorState targetState) {
-        currentState = targetState;
-        setTargetPosition(currentState.targetPositionRotations);
+        currentTargetState = targetState;
+        setTargetPosition(currentTargetState.targetPositionRotations);
     }
 
     void setTargetPosition(double targetPositionRotations) {
@@ -84,15 +81,15 @@ public class Elevator extends MotorSubsystem {
         return originPoint.transformBy(elevatorTransform);
     }
 
-    private double getPositionRotation() {
-        return motor.getSignal(TalonFXSignal.POSITION);
+    private Rotation2d getPositionAngle() {
+        return new Rotation2d(motor.getSignal(TalonFXSignal.POSITION));
     }
 
     private double getPositionMeters() {
         return rotationsToMeters(motor.getSignal(TalonFXSignal.POSITION));
     }
 
-    private double rotationsToMeters(double rotations) {
-        return Conversions.rotationsToDistance(rotations, ElevatorConstants.DRUM_DIAMETER_METERS);
+    private double rotationsToMeters(double positionRotations) {
+        return Conversions.rotationsToDistance(positionRotations, ElevatorConstants.DRUM_DIAMETER_METERS);
     }
 }
