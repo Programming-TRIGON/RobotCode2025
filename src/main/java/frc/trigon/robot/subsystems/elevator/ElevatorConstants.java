@@ -41,8 +41,8 @@ public class ElevatorConstants {
             KA = 0;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final Rotation2d FORWARD_HARD_LIMIT_DEGREES = Rotation2d.fromDegrees(500);
-    private static final Rotation2d REVERSE_HARD_LIMIT_DEGREES = Rotation2d.fromDegrees(10);
+    private static final Rotation2d FORWARD_HARD_LIMIT_ROTATIONS = Rotation2d.fromRotations(4);
+    private static final Rotation2d REVERSE_HARD_LIMIT_ROTATIONS = Rotation2d.fromRotations(0);
     private static final double GEAR_RATIO = 5;
     static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
@@ -119,8 +119,8 @@ public class ElevatorConstants {
         config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_LIMIT_DEGREES.getRotations();
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_LIMIT_DEGREES.getRotations();
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_LIMIT_ROTATIONS.getRotations();
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_LIMIT_ROTATIONS.getRotations();
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
@@ -151,18 +151,16 @@ public class ElevatorConstants {
     }
 
     public enum ElevatorState {
-        REST(0, 100),
-        REEF_L1(0.1, 100),
-        REEF_L2(0.2, 10),
-        REEF_L3(0.3, 10),
-        REEF_L4(0.4, 10);
+        REST(0),
+        REEF_L1(0.1),
+        REEF_L2(0.2),
+        REEF_L3(0.3),
+        REEF_L4(0.4);
 
         final double targetPositionRotations;
-        final double targetSpeed;
 
-        ElevatorState(double targetPositionRotations, double targetSpeed) {
+        ElevatorState(double targetPositionRotations) {
             this.targetPositionRotations = targetPositionRotations;
-            this.targetSpeed = targetSpeed;
         }
     }
 }
