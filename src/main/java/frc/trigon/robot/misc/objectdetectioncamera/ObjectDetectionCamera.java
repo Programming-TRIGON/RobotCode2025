@@ -27,6 +27,16 @@ public class ObjectDetectionCamera extends SubsystemBase {
     }
 
     /**
+     * Sets which type of game piece to track.
+     * Only for use in simulation.
+     *
+     * @param shouldTrackCoral whether to track coral or algae
+     */
+    public void setTrackingObject(boolean shouldTrackCoral) {
+        objectDetectionCameraIO.setTrackingObject(shouldTrackCoral);
+    }
+
+    /**
      * Starts tracking the best visible target and remains tracking that target until it is no longer visible.
      * Tracking an object is locking on to one target and allows for you to remain locked on to one target even when there are more objects visible.
      * This should be called periodically.

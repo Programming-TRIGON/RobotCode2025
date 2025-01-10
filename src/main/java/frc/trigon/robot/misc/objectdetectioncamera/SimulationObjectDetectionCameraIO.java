@@ -23,11 +23,13 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
             MAXIMUM_VISIBLE_DISTANCE_METERS = 5,
             MINIMUM_VISIBLE_DISTANCE_METERS = 0.05;
     private static final double PICKING_UP_TOLERANCE_METERS = 0.3;
-    private static final double CORAL_CENTER_DISTANCE_FROM_GROUND = 0.15;
+    private static final double
+            CORAL_CENTER_DISTANCE_FROM_GROUND = 0.15,
+            ALGAE_CENTER_DISTANCE_FROM_GROUND = 0.40;
 
     private final ArrayList<Translation2d>
-            coralOnField = FieldConstants.CORAL_ON_FIELD,
-            algaeOnField = FieldConstants.ALGAE_ON_FIELD;
+            coralOnField = FieldConstants.GAME_PIECES_STARTING_LOCATIONS,
+            algaeOnField = FieldConstants.GAME_PIECES_STARTING_LOCATIONS;
     private Pose3d[]
             heldCoral = new Pose3d[0],
             heldAlgae = new Pose3d[0];
@@ -249,7 +251,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     }
 
     private boolean isCollectingAlgae() {
-        return true;
+        return true;//TODO: Implement for when an algae should be collected
     }
 
     private boolean isEjectingCoral() {
@@ -301,8 +303,8 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         Logger.recordOutput("Poses/GamePieces/HeldCoral", heldCoral);
         Logger.recordOutput("Poses/GamePieces/HeldAlgae", heldAlgae);
 
-        Logger.recordOutput("Poses/GamePieces/CoralOnField", toPosesArray(coralOnField));
-        Logger.recordOutput("Poses/GamePieces/AlgaeOnField", toPosesArray(algaeOnField));
+        Logger.recordOutput("Poses/GamePieces/CoralOnField", toPosesArray(coralOnField, CORAL_CENTER_DISTANCE_FROM_GROUND));
+        Logger.recordOutput("Poses/GamePieces/AlgaeOnField", toPosesArray(algaeOnField, ALGAE_CENTER_DISTANCE_FROM_GROUND));
     }
 
     /**
@@ -311,11 +313,11 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * @param translationsList the list of Translation2ds
      * @return the array of Pose3ds
      */
-    private Pose3d[] toPosesArray(List<Translation2d> translationsList) {
+    private Pose3d[] toPosesArray(List<Translation2d> translationsList, double distanceFromGroundMeters) {
         final Pose3d[] posesArray = new Pose3d[translationsList.size()];
         for (int i = 0; i < translationsList.size(); i++) {
             final Translation2d translation = translationsList.get(i);
-            posesArray[i] = new Pose3d(translation.getX(), translation.getY(), CORAL_CENTER_DISTANCE_FROM_GROUND, new Rotation3d());
+            posesArray[i] = new Pose3d(translation.getX(), translation.getY(), distanceFromGroundMeters, new Rotation3d(0, Math.PI / 2, 0));
         }
         return posesArray;
     }

@@ -17,17 +17,14 @@ public class FieldConstants {
     public static final double
             FIELD_WIDTH_METERS = 8.05,
             FIELD_LENGTH_METERS = 17.55;
-    public static final ArrayList<Translation2d> CORAL_ON_FIELD = new ArrayList<>(List.of(
+    public static final ArrayList<Translation2d> GAME_PIECES_STARTING_LOCATIONS = new ArrayList<>(List.of(
             new Translation2d(1.22, FIELD_WIDTH_METERS / 2),
             new Translation2d(1.22, FIELD_WIDTH_METERS / 2 - 1.83),
             new Translation2d(1.22, FIELD_WIDTH_METERS / 2 + 1.83),
             new Translation2d(FIELD_LENGTH_METERS - 1.22, FIELD_WIDTH_METERS / 2),
             new Translation2d(FIELD_LENGTH_METERS - 1.22, FIELD_WIDTH_METERS / 2 - 1.83),
             new Translation2d(FIELD_LENGTH_METERS - 1.22, FIELD_WIDTH_METERS / 2 + 1.83)
-    )),
-            ALGAE_ON_FIELD = new ArrayList<>(List.of(
-                    new Translation2d(0, 0)
-            ));
+    ));
 
 
     private static final boolean SHOULD_USE_HOME_TAG_LAYOUT = false;
