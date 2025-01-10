@@ -8,6 +8,7 @@ import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 public class Gripper extends MotorSubsystem {
     private final TalonFXMotor motor = GripperConstants.MOTOR;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(GripperConstants.FOC_ENABLED);
+    private double targetState;
 
     @Override
     public void updatePeriodically() {
@@ -21,7 +22,7 @@ public class Gripper extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
-        GripperConstants.GRIPPER_MECHANISM.update(motor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
+        GripperConstants.GRIPPER_MECHANISM.update(motor.getSignal(TalonFXSignal.MOTOR_VOLTAGE), targetState);
     }
 
     void stopMotor() {
@@ -29,7 +30,7 @@ public class Gripper extends MotorSubsystem {
     }
 
     void setTargetVoltage(GripperConstants.GripperState targetVoltage) {
-        GripperConstants.GRIPPER_MECHANISM.setTargetVelocity(targetVoltage.targetVoltage);
+        targetState = targetVoltage.targetVoltage;
         motor.setControl(voltageRequest.withOutput(targetVoltage.targetVoltage));
     }
 }

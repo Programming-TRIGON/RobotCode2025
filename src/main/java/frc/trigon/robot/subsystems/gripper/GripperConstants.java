@@ -12,37 +12,39 @@ import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.hardware.simulation.SimpleMotorSimulation;
 import org.trigon.utilities.mechanisms.SpeedMechanism2d;
 
+import java.util.function.DoubleSupplier;
+
+
 public class GripperConstants {
     private static final int
-            MOTOR_ID = 14,
-            LASER_CAN_ID = 15;
+            MOTOR_ID = 15,
+            LASER_CAN_ID = 5;
 
     static final TalonFXMotor MOTOR = new TalonFXMotor(MOTOR_ID, "GripperMotor");
-    static final LaserCAN LASER_CAN = new LaserCAN(LASER_CAN_ID, "GripperLaserCan");
+    static final LaserCAN LASER_CAN = new LaserCAN(LASER_CAN_ID, "GripperLaserCAN");
 
     private static final InvertedValue INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
     private static final NeutralModeValue NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
     private static final LaserCan.RangingMode LASER_CAN_RANGING_MODE = LaserCan.RangingMode.SHORT;
+    private static final LaserCan.TimingBudget LASER_CAN_LOOP_TIME = LaserCan.TimingBudget.TIMING_BUDGET_33MS;
+    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = LASER_CAN::getDistanceMillimeters;
     static final boolean FOC_ENABLED = true;
 
     private static final int
-            NUMBER_OF_MOTORS = 1,
             X = 8,
             Y = 8,
             W = 16,
             H = 16;
 
     private static final double
-            P = 1,
-            I = 1,
-            D = 1,
             GEAR_RATIO = 0.5,
             MOMENT_OF_INERTIA = 0.003,
             MAXIMUM_DISPLAYABLE_VELOCITY = 12;
 
-    private static final DCMotor GEAR_BOX = DCMotor.getKrakenX60(NUMBER_OF_MOTORS);
-    static final SpeedMechanism2d GRIPPER_MECHANISM = new SpeedMechanism2d("Gripper", MAXIMUM_DISPLAYABLE_VELOCITY);
-    private static final SimpleMotorSimulation GRIPPER_SIMULATION = new SimpleMotorSimulation(GEAR_BOX, GEAR_RATIO, MOMENT_OF_INERTIA);
+    private static final int NUMBER_OF_MOTORS = 1;
+    private static final DCMotor GEARBOX = DCMotor.getKrakenX60(NUMBER_OF_MOTORS);
+    static final SpeedMechanism2d GRIPPER_MECHANISM = new SpeedMechanism2d("GripperMechanism", MAXIMUM_DISPLAYABLE_VELOCITY);
+    private static final SimpleMotorSimulation GRIPPER_SIMULATION = new SimpleMotorSimulation(GEARBOX, GEAR_RATIO, MOMENT_OF_INERTIA);
 
     static {
         configureMotor();
@@ -58,20 +60,23 @@ public class GripperConstants {
 
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
+
         config.MotorOutput.Inverted = INVERTED_VALUE;
         config.MotorOutput.NeutralMode = NEUTRAL_MODE_VALUE;
+
         MOTOR.applyConfiguration(config);
 
         MOTOR.setPhysicsSimulation(GRIPPER_SIMULATION);
 
-        MOTOR.registerSignal(TalonFXSignal.POSITION, 100);
-        MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
+        MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
         MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
     }
 
     private static void configureLaser() throws ConfigurationFailedException {
         LASER_CAN.setRegionOfInterest(X, Y, W, H);
         LASER_CAN.setRangingMode(LASER_CAN_RANGING_MODE);
+        LASER_CAN.setLoopTime(LASER_CAN_LOOP_TIME);
+        LASER_CAN.setSimulationSupplier(LASER_CAN_SIMULATION_SUPPLIER);
     }
 
     public enum GripperState {
