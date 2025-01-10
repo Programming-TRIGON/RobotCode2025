@@ -10,6 +10,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.hardware.simulation.ElevatorSimulation;
@@ -32,13 +33,13 @@ public class ElevatorConstants {
             FOLLOWER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
     private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = false;
     private static final double
-            P = 110,
-            I = 0,
-            D = 0,
-            KS = 0,
-            KV = 0,
-            KG = 0,
-            KA = 0;
+            P = RobotHardwareStats.isSimulation() ? 110 : 50,
+            I = RobotHardwareStats.isSimulation() ? 0 : 0,
+            D = RobotHardwareStats.isSimulation() ? 0 : 0,
+            KS = RobotHardwareStats.isSimulation() ? 0 : 0,
+            KV = RobotHardwareStats.isSimulation() ? 0 : 0,
+            KG = RobotHardwareStats.isSimulation() ? 0 : 0,
+            KA = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
     private static final Rotation2d FORWARD_HARD_LIMIT_ROTATION2D = Rotation2d.fromRotations(4);
@@ -83,7 +84,7 @@ public class ElevatorConstants {
             RETRACTED_ELEVATOR_LENGTH_METERS,
             Color.kYellow
     );
-    static  Pose3d
+    static Pose3d
             FIRST_POSE = new Pose3d(),
             SECOND_POSE = new Pose3d(),
             THIRD_POSE = new Pose3d();
