@@ -18,9 +18,14 @@ public class Elevator extends MotorSubsystem {
     private final TalonFXMotor motor = ElevatorConstants.MASTER_MOTOR;
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(ElevatorConstants.FOC_ENABLED);
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(ElevatorConstants.FOC_ENABLED);
+    private ElevatorConstants.ElevatorState currentState = ElevatorConstants.ElevatorState.REST;
 
     public Elevator() {
         setName("Elevator");
+    }
+
+    public boolean atTargetState() {
+        return motor.getSignal(TalonFXSignal.POSITION) == currentState.targetPositionRotations;
     }
 
     @Override
@@ -62,7 +67,8 @@ public class Elevator extends MotorSubsystem {
     }
 
     void setTargetState(ElevatorConstants.ElevatorState targetState) {
-        setTargetPosition(targetState.targetPositionRotations);
+        currentState = targetState;
+        setTargetPosition(currentState.targetPositionRotations);
     }
 
     void setTargetPosition(double targetPositionRotations) {
