@@ -77,10 +77,10 @@ public class AlgaeIntake extends MotorSubsystem {
     }
 
     public boolean atState(AlgaeIntakeConstants.AlgaeIntakeState targetState) {
-        return targetState == this.targetState && atTargetState();
+        return targetState == this.targetState && atTargetAngle();
     }
 
-    public boolean atTargetState() {
+    public boolean atTargetAngle() {
         return Math.abs(getAngleEncoderPosition().minus(targetState.targetAngle).getDegrees()) < AlgaeIntakeConstants.ANGLE_TOLERANCE.getDegrees();
     }
 
@@ -110,7 +110,7 @@ public class AlgaeIntake extends MotorSubsystem {
         );
         return originPoint.transformBy(transform);
     }
-    
+
     private Rotation2d getAngleEncoderPosition() {
         return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
     }
