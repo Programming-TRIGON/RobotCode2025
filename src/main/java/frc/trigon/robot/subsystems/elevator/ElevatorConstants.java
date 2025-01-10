@@ -41,8 +41,8 @@ public class ElevatorConstants {
             KA = 0;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final Rotation2d FORWARD_HARD_LIMIT_ROTATIONS = Rotation2d.fromRotations(4);
-    private static final Rotation2d REVERSE_HARD_LIMIT_ROTATIONS = Rotation2d.fromRotations(0);
+    private static final Rotation2d FORWARD_HARD_LIMIT_ROTATION2D = Rotation2d.fromRotations(4);
+    private static final Rotation2d REVERSE_HARD_LIMIT_ROTATION2D = Rotation2d.fromRotations(0);
     private static final double GEAR_RATIO = 5;
     static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
@@ -57,7 +57,8 @@ public class ElevatorConstants {
             DRUM_RADIUS_METERS = 0.02,
             RETRACTED_ELEVATOR_LENGTH_METERS = 0.2,
             MAXIMUM_HEIGHT_METERS = 1.9,
-            MAXIMUM_LENGTH_METERS = MAXIMUM_HEIGHT_METERS - 0.05;
+            METERS_BEFORE_LIMIT = 0.05,
+            MAXIMUM_LENGTH_METERS = MAXIMUM_HEIGHT_METERS - METERS_BEFORE_LIMIT;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
             GEARBOX,
@@ -82,9 +83,13 @@ public class ElevatorConstants {
             RETRACTED_ELEVATOR_LENGTH_METERS,
             Color.kYellow
     );
+    static final Pose3d
+            FIRST_POSE = new Pose3d(),
+            SECOND_POSE = new Pose3d(),
+            THIRD_POSE = new Pose3d();
 
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
-    static final double TARGET_OFFSET_METERS = 0.03;
+    static final double TARGET_STATE_OFFSET_METERS = 0.03;
 
     static {
         configureMasterMotor();
@@ -120,8 +125,8 @@ public class ElevatorConstants {
         config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_LIMIT_ROTATIONS.getRotations();
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_LIMIT_ROTATIONS.getRotations();
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_LIMIT_ROTATION2D.getRotations();
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_LIMIT_ROTATION2D.getRotations();
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
@@ -153,10 +158,10 @@ public class ElevatorConstants {
 
     public enum ElevatorState {
         REST(0),
-        REEF_L1(0.1),
-        REEF_L2(0.2),
-        REEF_L3(0.3),
-        REEF_L4(0.4);
+        REEF_L1_POSITION(0.1),
+        REEF_L2_POSITION(0.2),
+        REEF_L3_POSITION(0.3),
+        REEF_L4_POSITION(0.4);
 
         final double targetPositionRotations;
 

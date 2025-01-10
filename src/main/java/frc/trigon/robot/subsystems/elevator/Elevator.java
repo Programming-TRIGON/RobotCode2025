@@ -25,8 +25,8 @@ public class Elevator extends MotorSubsystem {
     }
 
     public boolean atTargetState() {
-        double targetStateOffsetDifference = Math.abs(targetState.targetPositionRotations - motor.getSignal(TalonFXSignal.POSITION));
-        return rotationsToMeters(targetStateOffsetDifference) < ElevatorConstants.TARGET_OFFSET_METERS;
+        double targetStateDifferenceInMeters = Math.abs(targetState.targetPositionRotations - motor.getSignal(TalonFXSignal.POSITION));
+        return rotationsToMeters(targetStateDifferenceInMeters) < ElevatorConstants.TARGET_STATE_OFFSET_METERS;
     }
 
     @Override
@@ -48,8 +48,8 @@ public class Elevator extends MotorSubsystem {
     public void updateLog(SysIdRoutineLog log) {
         log.motor("Elevator")
                 .linearPosition(Units.Meters.of(getPositionMeters()))
-                .linearVelocity(Units.MetersPerSecond.of(getPositionMeters()))
-                .voltage(Units.Volts.of(motor.getSignal(TalonFXSignal.VELOCITY)));
+                .linearVelocity(Units.MetersPerSecond.of(rotationsToMeters(motor.getSignal(TalonFXSignal.VELOCITY))))
+                .voltage(Units.Volts.of(motor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
     @Override
@@ -63,13 +63,13 @@ public class Elevator extends MotorSubsystem {
     }
 
     @Override
-    public void sysIdDrive(double targetDrivePower) {
-        motor.setControl(voltageRequest.withOutput(targetDrivePower));
+    public void sysIdDrive(double targetVoltage) {
+        motor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
     void setTargetState(ElevatorConstants.ElevatorState targetState) {
         this.targetState = targetState;
-        setTargetPosition(this.targetState.targetPositionRotations);
+        setTargetPosition(targetState.targetPositionRotations);
     }
 
     void setTargetPosition(double targetPositionRotations) {
@@ -77,7 +77,9 @@ public class Elevator extends MotorSubsystem {
     }
 
     private Pose3d getElevatorComponentPose() {
-        final Pose3d originPoint = ElevatorConstants.ELEVATOR_ORIGIN_POINT;
+        final Pose3d
+                originPoint = ElevatorConstants.ELEVATOR_ORIGIN_POINT;
+
         final Transform3d elevatorTransform = new Transform3d(
                 new Translation3d(0, 0, getPositionMeters()),
                 new Rotation3d()
