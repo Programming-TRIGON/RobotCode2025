@@ -156,11 +156,11 @@ public class ElevatorConstants {
         REEF_L4(0.4, 10);
 
         final double targetPositionRotations;
-        final double velocity;
+        final double acceleration;
 
-        ElevatorState(double targetPositionRotations, double velocity) {
+        ElevatorState(double targetPositionRotations, double acceleration) {
             this.targetPositionRotations = targetPositionRotations;
-            this.velocity = velocity;
+            this.acceleration = acceleration;
         }
     }
 }
