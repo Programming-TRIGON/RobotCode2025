@@ -49,8 +49,8 @@ public class CoralIntake extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
-        CoralIntakeConstants.INTAKE_MECHANISM.update(intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
-        CoralIntakeConstants.FUNNEL_MECHANISM.update(funnelMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
+        CoralIntakeConstants.INTAKE_MECHANISM.update(intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE), targetState.targetIntakeVoltage);
+        CoralIntakeConstants.FUNNEL_MECHANISM.update(funnelMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE), targetState.targetFunnelVoltage);
         CoralIntakeConstants.ANGLE_MECHANISM.update(
                 getCurrentEncoderAngle(),
                 Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
