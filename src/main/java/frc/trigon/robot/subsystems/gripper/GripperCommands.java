@@ -5,7 +5,7 @@ import frc.trigon.robot.RobotContainer;
 import org.trigon.commands.ExecuteEndCommand;
 
 public class GripperCommands {
-    public static Command getSetTargetVoltageCommand(double targetVoltage) {
+    public static Command getSetTargetVoltageCommand(GripperConstants.GripperState targetVoltage) {
         return new ExecuteEndCommand(
                 () -> RobotContainer.GRIPPER.setTargetVoltage(targetVoltage),
                 RobotContainer.GRIPPER::stopMotor,

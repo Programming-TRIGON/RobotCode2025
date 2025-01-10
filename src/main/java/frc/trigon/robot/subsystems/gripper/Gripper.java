@@ -10,16 +10,6 @@ public class Gripper extends MotorSubsystem {
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(GripperConstants.FOC_ENABLED);
 
     @Override
-    public void setBrake(boolean brake) {
-        motor.setBrake(brake);
-    }
-
-    @Override
-    public void drive(double targetDrivePower) {
-        motor.setControl(voltageRequest);
-    }
-
-    @Override
     public void updatePeriodically() {
         motor.update();
     }
@@ -38,8 +28,8 @@ public class Gripper extends MotorSubsystem {
         motor.stopMotor();
     }
 
-    void setTargetVoltage(double targetVoltage) {
-        GripperConstants.GRIPPER_MECHANISM.setTargetVelocity(targetVoltage);
-        motor.setControl(voltageRequest.withOutput(targetVoltage));
+    void setTargetVoltage(GripperConstants.GripperState targetVoltage) {
+        GripperConstants.GRIPPER_MECHANISM.setTargetVelocity(targetVoltage.targetVoltage);
+        motor.setControl(voltageRequest.withOutput(targetVoltage.targetVoltage));
     }
 }

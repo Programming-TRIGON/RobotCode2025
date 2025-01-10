@@ -49,7 +49,7 @@ public class RobotContainer {
 
     private void bindDefaultCommands() {
         SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
-        GRIPPER.setDefaultCommand(GripperCommands.getSetTargetVoltageCommand(12));
+        GRIPPER.setDefaultCommand(GripperCommands.getSetTargetVoltageCommand(GripperConstants.GripperState.GRAB));
     }
 
     /**
