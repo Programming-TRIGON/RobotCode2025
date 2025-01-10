@@ -20,17 +20,17 @@ public class GripperConstants {
     static final TalonFXMotor MOTOR = new TalonFXMotor(MOTOR_ID, "GripperMotor");
     static final LaserCAN LASER_CAN = new LaserCAN(LASER_CAN_ID, "GripperLaserCan");
 
+    private static final InvertedValue INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
+    private static final NeutralModeValue NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
+    private static final LaserCan.RangingMode LASER_CAN_RANGING_MODE = LaserCan.RangingMode.SHORT;
+    static final boolean FOC_ENABLED = true;
+
     private static final int
             NUMBER_OF_MOTORS = 1,
             X = 8,
             Y = 8,
             W = 16,
             H = 16;
-
-
-    private static final InvertedValue INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
-    private static final NeutralModeValue NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
-    private static final LaserCan.RangingMode LASER_CAN_RANGING_MODE = LaserCan.RangingMode.SHORT;
 
     private static final double
             P = 1,
@@ -40,7 +40,6 @@ public class GripperConstants {
             MOMENT_OF_INERTIA = 0.003,
             MAXIMUM_DISPLAYABLE_VELOCITY = 12;
 
-    static final boolean FOC_ENABLED = true;
     private static final DCMotor GEAR_BOX = DCMotor.getKrakenX60(NUMBER_OF_MOTORS);
     static final SpeedMechanism2d GRIPPER_MECHANISM = new SpeedMechanism2d("Gripper", MAXIMUM_DISPLAYABLE_VELOCITY);
     private static final SimpleMotorSimulation GRIPPER_SIMULATION = new SimpleMotorSimulation(GEAR_BOX, GEAR_RATIO, MOMENT_OF_INERTIA);
