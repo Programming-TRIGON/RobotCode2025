@@ -56,7 +56,8 @@ public class ElevatorConstants {
             MASS_KILOGRAMS = 9,
             DRUM_RADIUS_METERS = 0.02,
             RETRACTED_ELEVATOR_LENGTH_METERS = 0.2,
-            MAXIMUM_HEIGHT_METERS = 1.9;
+            MAXIMUM_HEIGHT_METERS = 1.9,
+            MAXIMUM_LENGTH_METERS = MAXIMUM_HEIGHT_METERS - 0.05;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
             GEARBOX,
@@ -77,7 +78,7 @@ public class ElevatorConstants {
     static final Pose3d ELEVATOR_ORIGIN_POINT = new Pose3d(1, 0, 1, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(10), 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
-            MAXIMUM_HEIGHT_METERS - 0.05,
+            MAXIMUM_LENGTH_METERS,
             RETRACTED_ELEVATOR_LENGTH_METERS,
             Color.kYellow
     );
