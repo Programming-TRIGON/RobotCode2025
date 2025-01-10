@@ -31,7 +31,7 @@ public class ElevatorConstants {
     private static final InvertedValue
             MASTER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             FOLLOWER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
-    private static final boolean FOLLOWER_MOTOR_OPPOSE_MASTER = false;
+    private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = false;
     private static final double
             P = 110,
             I = 0,
@@ -42,8 +42,8 @@ public class ElevatorConstants {
             KA = 0;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final Rotation2d REVERSE_HARD_LIMIT_THRESHOLD_ANGLE = new Rotation2d(Angle.ofBaseUnits(5, Units.Rotations));
-    private static final Rotation2d FORWARD_HARD_LIMIT_THRESHOLD_ANGLE = new Rotation2d(Angle.ofBaseUnits(20, Units.Rotations));
+    private static final Rotation2d FORWARD_HARD_LIMIT_THRESHOLD = new Rotation2d(Angle.ofBaseUnits(500, Units.Degrees));
+    private static final Rotation2d REVERSE_HARD_LIMIT_THRESHOLD = new Rotation2d(Angle.ofBaseUnits(10, Units.Degrees));
 
     private static final double GEAR_RATIO = 20;
     static final double
@@ -60,14 +60,14 @@ public class ElevatorConstants {
             RETRACTED_ELEVATOR_LENGTH_METERS = 0.5;
     private static final int MOTOR_AMOUNT = 2;
     private static final DCMotor GEARBOX = DCMotor.getKrakenX60Foc(MOTOR_AMOUNT);
-    private static final boolean SIMULATE_GRAVITY = true;
+    private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(GEARBOX,
             GEAR_RATIO,
             MASS_KILOGRAMS,
             DRUM_RADIUS_METERS,
             RETRACTED_ELEVATOR_LENGTH_METERS,
             MAXIMUM_HEIGHT_METERS,
-            SIMULATE_GRAVITY
+            SHOULD_SIMULATE_GRAVITY
     );
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
@@ -114,12 +114,12 @@ public class ElevatorConstants {
 
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
-        config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
+        config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
+        config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_LIMIT_THRESHOLD_ANGLE.getRotations();
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_LIMIT_THRESHOLD_ANGLE.getRotations();
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_LIMIT_THRESHOLD.getRotations();
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_LIMIT_THRESHOLD.getRotations();
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
@@ -145,7 +145,7 @@ public class ElevatorConstants {
         config.MotorOutput.Inverted = FOLLOWER_MOTOR_INVERTED_VALUE;
 
         FOLLOWER_MOTOR.applyConfiguration(config);
-        FOLLOWER_MOTOR.setControl(new Follower(MASTER_MOTOR_ID, FOLLOWER_MOTOR_OPPOSE_MASTER));
+        FOLLOWER_MOTOR.setControl(new Follower(MASTER_MOTOR_ID, FOLLOWER_MOTOR_OPPOSES_MASTER));
     }
 
     public enum ElevatorState {
