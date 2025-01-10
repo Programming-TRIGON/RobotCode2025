@@ -41,14 +41,14 @@ public class Elevator extends MotorSubsystem {
     @Override
     public void updateLog(SysIdRoutineLog log) {
         log.motor("Elevator")
-                .angularPosition(Units.Rotations.of(motor.getSignal(TalonFXSignal.POSITION)))
-                .angularVelocity(Units.RotationsPerSecond.of(motor.getSignal(TalonFXSignal.VELOCITY)))
+                .linearPosition(Units.Meters.of(motor.getSignal(TalonFXSignal.POSITION)))
+                .linearVelocity(Units.MetersPerSecond.of(motor.getSignal(TalonFXSignal.VELOCITY)))
                 .voltage(Units.Volts.of(motor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
     @Override
     public void updateMechanism() {
-        ElevatorConstants.MECHANISM.update(getPositionMeters(), rotationsToMeters(motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
+        ElevatorConstants.MECHANISM.update(getPositionRotation(), motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE));
     }
 
     @Override
@@ -56,8 +56,8 @@ public class Elevator extends MotorSubsystem {
         motor.update();
     }
 
-
-    public void drive(double targetDrivePower) {
+    @Override
+    public void sysIdDrive(double targetDrivePower) {
         motor.setControl(voltageRequest.withOutput(targetDrivePower));
     }
 
@@ -70,12 +70,16 @@ public class Elevator extends MotorSubsystem {
     }
 
     private Pose3d getElevatorComponentPose() {
+        final Pose3d originPoint = ElevatorConstants.ELEVATOR_ORIGIN_POINT;
         final Transform3d elevatorTransform = new Transform3d(
                 new Translation3d(0, 0, getPositionMeters()),
                 new Rotation3d()
         );
-        var elevatorOriginPoint = ElevatorConstants.ELEVATOR_ORIGIN_POINT;
-        return elevatorOriginPoint.transformBy(elevatorTransform);
+        return originPoint.transformBy(elevatorTransform);
+    }
+
+    private double getPositionRotation() {
+        return motor.getSignal(TalonFXSignal.POSITION);
     }
 
     private double getPositionMeters() {

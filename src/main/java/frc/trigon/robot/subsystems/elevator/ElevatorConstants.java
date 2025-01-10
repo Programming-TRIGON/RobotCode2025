@@ -8,7 +8,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
@@ -42,8 +41,8 @@ public class ElevatorConstants {
             KA = 0;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final Rotation2d FORWARD_HARD_LIMIT_THRESHOLD = new Rotation2d(Angle.ofBaseUnits(500, Units.Degrees));
-    private static final Rotation2d REVERSE_HARD_LIMIT_THRESHOLD = new Rotation2d(Angle.ofBaseUnits(10, Units.Degrees));
+    private static final Rotation2d FORWARD_HARD_LIMIT_THRESHOLD = Rotation2d.fromDegrees(500);
+    private static final Rotation2d REVERSE_HARD_LIMIT_THRESHOLD = Rotation2d.fromDegrees(10);
 
     private static final double GEAR_RATIO = 20;
     static final double
@@ -53,15 +52,16 @@ public class ElevatorConstants {
 
     static final boolean FOC_ENABLED = true;
 
+    private static final int MOTOR_AMOUNT = 2;
+    private static final DCMotor GEARBOX = DCMotor.getKrakenX60Foc(MOTOR_AMOUNT);
     private static final double
             MASS_KILOGRAMS = 5,
             DRUM_RADIUS_METERS = 0.5,
-            MAXIMUM_HEIGHT_METERS = 1,
-            RETRACTED_ELEVATOR_LENGTH_METERS = 0.5;
-    private static final int MOTOR_AMOUNT = 2;
-    private static final DCMotor GEARBOX = DCMotor.getKrakenX60Foc(MOTOR_AMOUNT);
+            RETRACTED_ELEVATOR_LENGTH_METERS = 0.5,
+            MAXIMUM_HEIGHT_METERS = 1;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
-    private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(GEARBOX,
+    private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
+            GEARBOX,
             GEAR_RATIO,
             MASS_KILOGRAMS,
             DRUM_RADIUS_METERS,
@@ -114,6 +114,8 @@ public class ElevatorConstants {
 
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
+        config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
         config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
         config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
@@ -145,7 +147,8 @@ public class ElevatorConstants {
         config.MotorOutput.Inverted = FOLLOWER_MOTOR_INVERTED_VALUE;
 
         FOLLOWER_MOTOR.applyConfiguration(config);
-        FOLLOWER_MOTOR.setControl(new Follower(MASTER_MOTOR_ID, FOLLOWER_MOTOR_OPPOSES_MASTER));
+        final Follower followMasterMotor = new Follower(MASTER_MOTOR_ID, FOLLOWER_MOTOR_OPPOSES_MASTER);
+        FOLLOWER_MOTOR.setControl(followMasterMotor);
     }
 
     public enum ElevatorState {
@@ -156,11 +159,11 @@ public class ElevatorConstants {
         REEF_L4(0.4, 10);
 
         final double targetPositionRotations;
-        final double acceleration;
+        final double targetSpeed;
 
-        ElevatorState(double targetPositionRotations, double acceleration) {
+        ElevatorState(double targetPositionRotations, double targetSpeed) {
             this.targetPositionRotations = targetPositionRotations;
-            this.acceleration = acceleration;
+            this.targetSpeed = targetSpeed;
         }
     }
 }
