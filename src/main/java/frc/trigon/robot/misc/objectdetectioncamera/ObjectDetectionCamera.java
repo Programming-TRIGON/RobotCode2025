@@ -56,7 +56,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
      * @return the yaw (x-axis position) of the target object
      */
     public Rotation2d getBestObjectYaw() {
-        return objectDetectionCameraInputs.visibleObjectsYaw[0];
+        return objectDetectionCameraInputs.visibleTargetObjectsYaw[0];
     }
 
     /**
@@ -75,7 +75,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
         double closestTargetToTrackedTargetYawDifference = Double.POSITIVE_INFINITY;
         Rotation2d closestToTrackedTargetYaw = new Rotation2d();
 
-        for (Rotation2d currentObjectYaw : objectDetectionCameraInputs.visibleObjectsYaw) {
+        for (Rotation2d currentObjectYaw : objectDetectionCameraInputs.visibleTargetObjectsYaw) {
             final double currentObjectToTrackedTargetYawDifference = Math.abs(currentObjectYaw.getRadians() - trackedObjectYaw.getRadians());
             if (currentObjectToTrackedTargetYawDifference < closestTargetToTrackedTargetYawDifference) {
                 closestTargetToTrackedTargetYawDifference = currentObjectToTrackedTargetYawDifference;
@@ -90,7 +90,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
         if (RobotHardwareStats.isReplay())
             return new ObjectDetectionCameraIO();
         if (RobotHardwareStats.isSimulation())
-            return new SimulationObjectDetectionCameraIO(hostname);
+            return new SimulationObjectDetectionCameraIO();
         return new PhotonObjectDetectionCameraIO(hostname);
     }
 }

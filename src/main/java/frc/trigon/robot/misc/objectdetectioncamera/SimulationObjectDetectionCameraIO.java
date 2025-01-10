@@ -3,6 +3,8 @@ package frc.trigon.robot.misc.objectdetectioncamera;
 import edu.wpi.first.math.geometry.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
+import frc.trigon.robot.constants.FieldConstants;
+import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.ArrayList;
@@ -12,64 +14,69 @@ import java.util.List;
  * A simulation object detection camera simulates an object detection camera as well as game pieces on the field and allows for interaction with the game pieces.
  */
 public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
-    public static boolean HAS_OBJECTS = true;
+    public static boolean
+            IS_HOLDING_CORAL = true,
+            IS_HOLDING_ALGAE = true;
+    private static boolean SHOULD_TRACK_CORAL = true;
     private static final Rotation2d CAMERA_HORIZONTAL_FOV = Rotation2d.fromDegrees(75);
     private static final double
             MAXIMUM_VISIBLE_DISTANCE_METERS = 5,
             MINIMUM_VISIBLE_DISTANCE_METERS = 0.05;
     private static final double PICKING_UP_TOLERANCE_METERS = 0.3;
-    private static final double GAME_PIECE_CENTER_DISTANCE_FROM_GROUND = 0;//TODO: Change depending on height of game piece
+    private static final double CORAL_CENTER_DISTANCE_FROM_GROUND = 0.15;
 
-    private final ArrayList<Translation2d> objectsOnField = new ArrayList<>(List.of(
-            new Translation2d(0, 0)// TODO: Set game piece positions
-    ));
-    private final String hostname;
-    private Pose3d[] heldObject = new Pose3d[0];
-    private boolean isDelayingEjection = false;
-
-    protected SimulationObjectDetectionCameraIO(String hostname) {
-        this.hostname = hostname;
-    }
+    private final ArrayList<Translation2d>
+            coralOnField = FieldConstants.CORAL_ON_FIELD,
+            algaeOnField = FieldConstants.ALGAE_ON_FIELD;
+    private Pose3d[]
+            heldCoral = new Pose3d[0],
+            heldAlgae = new Pose3d[0];
+    private boolean
+            isDelayingCoralEjection = false,
+            isDelayingAlgaeEjection = false;
 
     @Override
     protected void updateInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
-        final Rotation2d closestObjectYaw = calculateClosestVisibleObjectYaw(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
-        if (closestObjectYaw == null)
+        final Rotation2d closestTargetObjectYaw = calculateClosestVisibleTargetObjectYaw(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
+        if (closestTargetObjectYaw == null)
             inputs.hasTargets = false;
         else {
             inputs.hasTargets = true;
-            inputs.visibleObjectsYaw = new Rotation2d[]{closestObjectYaw};
+            inputs.visibleTargetObjectsYaw = new Rotation2d[]{closestTargetObjectYaw};
         }
 
         updateHeldGamePiece();
 
-        HAS_OBJECTS = heldObject != null;
+        IS_HOLDING_CORAL = heldCoral != null;
+        IS_HOLDING_ALGAE = heldAlgae != null;
         logGamePieces();
     }
 
+    @Override
+    protected void setTrackingObject(boolean shouldTrackCoral) {
+        SHOULD_TRACK_CORAL = shouldTrackCoral;
+    }
+
     /**
-     * Calculates the yaw of the closest visible object relative to the camera by calculating the yaw of all objects visible to the camera and returning the one with the smallest yaw deviation from the camera's center.
+     * Calculates the yaw of the closest visible target game piece relative to the camera by calculating the yaw of all target objects visible to the camera and returning the one with the smallest yaw deviation from the camera's center.
      *
      * @param robotPose the pose of the robot on the field
-     * @return the yaw of the closest visible object
+     * @return the yaw of the closest visible target object
      */
-    private Rotation2d calculateClosestVisibleObjectYaw(Pose2d robotPose) {
-        Translation2d closestObject = null;
+    private Rotation2d calculateClosestVisibleTargetObjectYaw(Pose2d robotPose) {
         Rotation2d closestObjectYaw = null;
         double closestObjectDistance = Double.POSITIVE_INFINITY;
 
-        final List<Translation2d> visibleObjectsPlacements = calculateVisibleObjectsPlacements(robotPose);
+        final List<Translation2d> visibleTargetObjectsPlacements = calculateVisibleTargetObjectPlacements(robotPose);
 
-        for (Translation2d objectPlacement : visibleObjectsPlacements) {
-            final double robotDistanceToObject = calculateObjectDistance(objectPlacement, robotPose);
+        for (Translation2d targetObjectPlacement : visibleTargetObjectsPlacements) {
+            final double robotDistanceToObject = calculateObjectDistance(targetObjectPlacement, robotPose);
             if (robotDistanceToObject < closestObjectDistance) {
-                closestObject = objectPlacement;
-                closestObjectYaw = calculateCameraYawToObject(objectPlacement, robotPose).minus(robotPose.getRotation());
+                closestObjectYaw = calculateCameraYawToObject(targetObjectPlacement, robotPose).minus(robotPose.getRotation());
                 closestObjectDistance = robotDistanceToObject;
             }
         }
 
-        logClosestObjectPlacement(closestObject);
         return closestObjectYaw;
     }
 
@@ -79,18 +86,19 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * @param robotPose the position of the robot on the field
      * @return the placements of the visible objects
      */
-    private List<Translation2d> calculateVisibleObjectsPlacements(Pose2d robotPose) {
-        final List<Translation2d> visibleObjects = new ArrayList<>();
+    private List<Translation2d> calculateVisibleTargetObjectPlacements(Pose2d robotPose) {
+        final List<Translation2d> targetObjectsOnField = SHOULD_TRACK_CORAL ? coralOnField : algaeOnField;
+        final List<Translation2d> visibleTargetObjects = new ArrayList<>();
         int currentIndex = 0;
 
-        for (Translation2d currentObject : objectsOnField) {
-            final Rotation2d cameraYawToObject = calculateCameraYawToObject(currentObject, robotPose);
-            if (!isWithinHorizontalFOV(cameraYawToObject, robotPose) || !isWithinDistance(objectsOnField.get(0), robotPose))
+        for (Translation2d currentTargetObject : targetObjectsOnField) {
+            final Rotation2d cameraYawToObject = calculateCameraYawToObject(currentTargetObject, robotPose);
+            if (!isWithinHorizontalFOV(cameraYawToObject, robotPose) || !isWithinDistance(targetObjectsOnField.get(0), robotPose))
                 continue;
-            visibleObjects.add(currentIndex, currentObject);
+            visibleTargetObjects.add(currentIndex, currentTargetObject);
             currentIndex++;
         }
-        return visibleObjects;
+        return visibleTargetObjects;
     }
 
     /**
@@ -141,82 +149,136 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     }
 
     /**
-     * Logs the closest object's placement on the field.
-     *
-     * @param objectPlacement the placement of the closest object
-     */
-    private void logClosestObjectPlacement(Translation2d objectPlacement) {
-        if (objectPlacement != null)
-            Logger.recordOutput(hostname + "/ClosestObject", objectPlacement);
-        else
-            Logger.recordOutput(hostname + "/ClosestObject", new Translation2d[0]);
-    }
-
-    /**
-     * Updates the state of the held game piece (whether it is collecting, ejecting, etc.)
+     * Updates the state of the held game pieces (whether it is collecting, ejecting, etc.)
      */
     private void updateHeldGamePiece() {
-        updateObjectCollection();
-        updateObjectEjection();
-        updateHeldObjectPose();
+        updateCoralCollection();
+        updateCoralEjection();
+        updateHeldCoralPose();
+
+        updateAlgaeCollection();
+        updateAlgaeEjection();
+        updateHeldAlgaePose();
     }
 
     /**
-     * Handles when a game piece should collect by checking the state of the necessary subsystems of the robot and the position of the robot relative to the game piees.
-     * Also regenerates picked up game pieces.
+     * Handles when a coral should collect by checking the state of the necessary subsystems of the robot and the position of the robot relative to the coral.
+     * Also regenerates picked up coral.
      */
-    private void updateObjectCollection() {
-        if (heldObject.length > 0 || !isCollecting())
+    private void updateCoralCollection() {
+        if (heldCoral.length > 0 || !isCollectingCoral())
             return;
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
         final Translation2d robotTranslation = robotPose.getTranslation();
-        for (Translation2d objectPlacement : objectsOnField) {
-            if (objectPlacement.getDistance(robotTranslation) <= PICKING_UP_TOLERANCE_METERS) {
-                heldObject = new Pose3d[]{calculateHeldObjectPose(robotPose)};
-                objectsOnField.remove(objectPlacement);
-                GeneralCommands.getDelayedCommand(10, () -> objectsOnField.add(objectPlacement)).schedule();
+        for (Translation2d coralPlacement : coralOnField) {
+            if (coralPlacement.getDistance(robotTranslation) <= PICKING_UP_TOLERANCE_METERS) {
+                heldCoral = new Pose3d[]{calculateHeldCoralPose(robotPose)};
+                coralOnField.remove(coralPlacement);
+                GeneralCommands.getDelayedCommand(7, () -> coralOnField.add(coralPlacement)).schedule();
                 break;
             }
         }
     }
 
     /**
-     * Handles when a game piece should eject from the robot by checking the state of the necessary subsystems.
+     * Handles when an algae should collect by checking the state of the necessary subsystems of the robot and the position of the robot relative to the algae.
+     * Also regenerates picked up algae.
      */
-    private void updateObjectEjection() {
-        if (heldObject.length > 0 || !isEjecting() || isDelayingEjection)
+    private void updateAlgaeCollection() {
+        if (heldAlgae.length > 0 || !isCollectingAlgae())
             return;
-        isDelayingEjection = true;
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+        final Translation2d robotTranslation = robotPose.getTranslation();
+        for (Translation2d algaePlacement : algaeOnField) {
+            if (algaePlacement.getDistance(robotTranslation) <= PICKING_UP_TOLERANCE_METERS) {
+                heldAlgae = new Pose3d[]{calculateHeldAlgaePose(robotPose)};
+                algaeOnField.remove(algaePlacement);
+                GeneralCommands.getDelayedCommand(7, () -> algaeOnField.add(algaePlacement)).schedule();
+                break;
+            }
+        }
+    }
+
+    /**
+     * Handles when a held coral should eject from the robot by checking the states of the necessary subsystems.
+     */
+    private void updateCoralEjection() {
+        if (heldCoral.length > 0 || !isEjectingCoral() || isDelayingCoralEjection)
+            return;
+        isDelayingCoralEjection = true;
         GeneralCommands.getDelayedCommand(0.04, () -> {
-            heldObject = null;
-            isDelayingEjection = false;
+            heldCoral = null;
+            isDelayingCoralEjection = false;
         }).schedule();
     }
 
     /**
-     * Updates the position of the held game piece so that it stays inside the robot.
+     * Handles when a game piece should eject from the robot by checking the states of the necessary subsystems.
      */
-    private void updateHeldObjectPose() {
-        if (heldObject.length == 0)
+    private void updateAlgaeEjection() {
+        if (heldAlgae.length > 0 || !isEjectingAlgae() || isDelayingAlgaeEjection)
             return;
-        heldObject = new Pose3d[]{calculateHeldObjectPose(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose())};
-    }
-
-    private boolean isCollecting() {
-        return true;//TODO: Implement for when a game piece can enter the robot
-    }
-
-    private boolean isEjecting() {
-        return false;//TODO: Implement for when a game piece should exit the robot
+        isDelayingAlgaeEjection = true;
+        GeneralCommands.getDelayedCommand(0.04, () -> {
+            heldAlgae = null;
+            isDelayingAlgaeEjection = false;
+        }).schedule();
     }
 
     /**
-     * Calculate the position of the game piece relative to the field.
+     * Updates the position of the held coral so that it stays inside the robot.
+     */
+    private void updateHeldCoralPose() {
+        if (heldCoral.length == 0)
+            return;
+        heldCoral = new Pose3d[]{calculateHeldCoralPose(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose())};
+    }
+
+    /**
+     * Updates the position of the held algae so that it stays inside the robot.
+     */
+    private void updateHeldAlgaePose() {
+        if (heldAlgae.length == 0)
+            return;
+        heldAlgae = new Pose3d[]{calculateHeldAlgaePose(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose())};
+    }
+
+    private boolean isCollectingCoral() {
+        return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT) ||
+                RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT_FEEDER);
+    }
+
+    private boolean isCollectingAlgae() {
+        return true;
+    }
+
+    private boolean isEjectingCoral() {
+        return false;//TODO: Implement for when a coral should exit the robot
+    }
+
+    private boolean isEjectingAlgae() {
+        return false;//TODO: Implement for when an algae should exit the robot
+    }
+
+    /**
+     * Calculate the position of the held coral relative to the field.
      *
      * @param robotPose the position of the robot on the field
-     * @return the position of the game piece relative to the field
+     * @return the position of the coral relative to the field
      */
-    private Pose3d calculateHeldObjectPose(Pose2d robotPose) {
+    private Pose3d calculateHeldCoralPose(Pose2d robotPose) {
+        final Pose3d robotPose3d = new Pose3d(robotPose);
+        final Pose3d robotRelativeHeldGamePiecePosition = new Pose3d();// TODO:Set position
+        return robotPose3d.plus(toTransform(robotRelativeHeldGamePiecePosition));
+    }
+
+    /**
+     * Calculate the position of the held algae relative to the field.
+     *
+     * @param robotPose the position of the robot on the field
+     * @return the position of the algae relative to the field
+     */
+    private Pose3d calculateHeldAlgaePose(Pose2d robotPose) {
         final Pose3d robotPose3d = new Pose3d(robotPose);
         final Pose3d robotRelativeHeldGamePiecePosition = new Pose3d();// TODO:Set position
         return robotPose3d.plus(toTransform(robotRelativeHeldGamePiecePosition));
@@ -236,12 +298,15 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * Logs the position of all the game pieces on the field and in the robot.
      */
     private void logGamePieces() {
-        Logger.recordOutput("Poses/GamePieces/HeldGamePiece", heldObject);
-        Logger.recordOutput("Poses/GamePieces/ObjectsOnField", toPosesArray(objectsOnField));
+        Logger.recordOutput("Poses/GamePieces/HeldCoral", heldCoral);
+        Logger.recordOutput("Poses/GamePieces/HeldAlgae", heldAlgae);
+
+        Logger.recordOutput("Poses/GamePieces/CoralOnField", toPosesArray(coralOnField));
+        Logger.recordOutput("Poses/GamePieces/AlgaeOnField", toPosesArray(algaeOnField));
     }
 
     /**
-     * Changes a list of Translation2ds to an array of Pose3ds with the height of {@link #GAME_PIECE_CENTER_DISTANCE_FROM_GROUND}.
+     * Changes a list of Translation2ds to an array of Pose3ds with the height of {@link #CORAL_CENTER_DISTANCE_FROM_GROUND}.
      *
      * @param translationsList the list of Translation2ds
      * @return the array of Pose3ds
@@ -250,7 +315,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         final Pose3d[] posesArray = new Pose3d[translationsList.size()];
         for (int i = 0; i < translationsList.size(); i++) {
             final Translation2d translation = translationsList.get(i);
-            posesArray[i] = new Pose3d(translation.getX(), translation.getY(), GAME_PIECE_CENTER_DISTANCE_FROM_GROUND, new Rotation3d());
+            posesArray[i] = new Pose3d(translation.getX(), translation.getY(), CORAL_CENTER_DISTANCE_FROM_GROUND, new Rotation3d());
         }
         return posesArray;
     }

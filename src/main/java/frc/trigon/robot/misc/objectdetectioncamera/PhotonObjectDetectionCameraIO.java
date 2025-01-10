@@ -23,7 +23,7 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
 
         inputs.hasTargets = result != null && result.hasTargets();
         if (inputs.hasTargets) {
-            inputs.visibleObjectsYaw = getVisibleObjectsYaw(result);
+            inputs.visibleTargetObjectsYaw = getVisibleObjectsYaw(result);
         }
     }
 

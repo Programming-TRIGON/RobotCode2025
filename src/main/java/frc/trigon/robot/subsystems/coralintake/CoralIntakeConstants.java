@@ -124,7 +124,7 @@ public class CoralIntakeConstants {
             MAXIMUM_ANGLE,
             SHOULD_SIMULATE_GRAVITY
     );
-    private static final DoubleSupplier BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> SimulationObjectDetectionCameraIO.HAS_OBJECTS ? 1 : 0;
+    private static final DoubleSupplier BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> SimulationObjectDetectionCameraIO.IS_HOLDING_CORAL ? 1 : 0;
 
     static final SysIdRoutine.Config ANGLE_SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(5).per(Units.Second),

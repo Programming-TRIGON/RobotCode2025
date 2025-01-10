@@ -6,11 +6,30 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class FieldConstants {
+    public static final double
+            FIELD_WIDTH_METERS = 8.05,
+            FIELD_LENGTH_METERS = 17.55;
+    public static final ArrayList<Translation2d> CORAL_ON_FIELD = new ArrayList<>(List.of(
+            new Translation2d(1.22, FIELD_WIDTH_METERS / 2),
+            new Translation2d(1.22, FIELD_WIDTH_METERS / 2 - 1.83),
+            new Translation2d(1.22, FIELD_WIDTH_METERS / 2 + 1.83),
+            new Translation2d(FIELD_LENGTH_METERS - 1.22, FIELD_WIDTH_METERS / 2),
+            new Translation2d(FIELD_LENGTH_METERS - 1.22, FIELD_WIDTH_METERS / 2 - 1.83),
+            new Translation2d(FIELD_LENGTH_METERS - 1.22, FIELD_WIDTH_METERS / 2 + 1.83)
+    )),
+            ALGAE_ON_FIELD = new ArrayList<>(List.of(
+                    new Translation2d(0, 0)
+            ));
+
+
     private static final boolean SHOULD_USE_HOME_TAG_LAYOUT = false;
     public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = createAprilTagFieldLayout();
     private static final Transform3d TAG_OFFSET = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
