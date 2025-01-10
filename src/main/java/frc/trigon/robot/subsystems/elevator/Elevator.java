@@ -61,7 +61,7 @@ public class Elevator extends MotorSubsystem {
         motor.setControl(voltageRequest.withOutput(targetDrivePower));
     }
 
-    void setTargetElevatorState(ElevatorConstants.ElevatorState targetState) {
+    void setTargetState(ElevatorConstants.ElevatorState targetState) {
         setTargetPosition(targetState.targetPositionRotations);
     }
 

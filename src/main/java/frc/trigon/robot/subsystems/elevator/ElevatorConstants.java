@@ -41,8 +41,8 @@ public class ElevatorConstants {
             KA = 0;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final Rotation2d FORWARD_HARD_LIMIT_THRESHOLD = Rotation2d.fromDegrees(500);
-    private static final Rotation2d REVERSE_HARD_LIMIT_THRESHOLD = Rotation2d.fromDegrees(10);
+    private static final Rotation2d FORWARD_HARD_LIMIT_DEGREES = Rotation2d.fromDegrees(500);
+    private static final Rotation2d REVERSE_HARD_LIMIT_DEGREES = Rotation2d.fromDegrees(10);
 
     private static final double GEAR_RATIO = 20;
     static final double
@@ -120,8 +120,8 @@ public class ElevatorConstants {
         config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_LIMIT_THRESHOLD.getRotations();
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_LIMIT_THRESHOLD.getRotations();
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_LIMIT_DEGREES.getRotations();
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_LIMIT_DEGREES.getRotations();
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
