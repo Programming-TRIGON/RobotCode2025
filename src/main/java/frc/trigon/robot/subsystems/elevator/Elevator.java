@@ -61,20 +61,20 @@ public class Elevator extends MotorSubsystem {
         motor.setControl(voltageRequest.withOutput(targetDrivePower));
     }
 
+    void setTargetElevatorState(ElevatorConstants.ElevatorState targetState) {
+        setTargetPosition(targetState.positionRotations);
+    }
+
+    void setTargetPosition(double targetPositionRotations) {
+        motor.setControl(positionRequest.withPosition(targetPositionRotations));
+    }
+
     private Pose3d getElevatorComponentPose() {
         final Transform3d elevatorTransform = new Transform3d(
                 new Translation3d(0, 0, getPositionMeters()),
                 new Rotation3d()
         );
         return ElevatorConstants.ELEVATOR_ORIGIN_POINT.transformBy(elevatorTransform);
-    }
-
-    void setTargetElevatorState(ElevatorConstants.ElevatorState targetState) {
-        setTargetPosition(targetState.positionMeters);
-    }
-
-    void setTargetPosition(double targetPositionRotations) {
-        motor.setControl(positionRequest.withPosition(targetPositionRotations));
     }
 
     private double getPositionMeters() {

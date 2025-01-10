@@ -1,17 +1,19 @@
 package frc.trigon.robot.subsystems.elevator;
 
-import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.signals.*;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.units.measure.Angle;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
-import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.hardware.simulation.ElevatorSimulation;
@@ -20,26 +22,19 @@ import org.trigon.utilities.mechanisms.ElevatorMechanism2d;
 public class ElevatorConstants {
     private static final int
             MASTER_MOTOR_ID = 12,
-            FOLLOWER_MOTOR_ID = 13,
-            ENCODER_ID = 12;
+            FOLLOWER_MOTOR_ID = 13;
     private static final String
             MASTER_MOTOR_NAME = "ElevatorMasterMotor",
-            FOLLOWER_MOTOR_NAME = "ElevatorFollowerMotor",
-            ENCODER_NAME = "ElevatorEncoder";
+            FOLLOWER_MOTOR_NAME = "ElevatorFollowerMotor";
     static final TalonFXMotor
             MASTER_MOTOR = new TalonFXMotor(MASTER_MOTOR_ID, MASTER_MOTOR_NAME),
             FOLLOWER_MOTOR = new TalonFXMotor(FOLLOWER_MOTOR_ID, FOLLOWER_MOTOR_NAME);
-    static final CANcoderEncoder ENCODER = new CANcoderEncoder(ENCODER_ID, ENCODER_NAME);
 
     private static final NeutralModeValue NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
     private static final InvertedValue
             MASTER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             FOLLOWER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
     private static final boolean FOLLOWER_MOTOR_OPPOSE_MASTER = false;
-    private static final double ABSOLUTE_SENSOR_DISCONTINUITY_POINT = 0.5;
-    private static final SensorDirectionValue ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
-    private static final double ENCODER_MAGNET_OFFSET_VALUE = 0;
-    private static final FeedbackSensorSourceValue ENCODER_TYPE = FeedbackSensorSourceValue.RemoteCANcoder;
     private static final double
             P = 110,
             I = 0,
@@ -50,14 +45,14 @@ public class ElevatorConstants {
             KA = 0;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final double REVERSE_SOFT_LIMIT_THRESHOLD_VALUE = 0;
-    private static final double FORWARD_SOFT_LIMIT_THRESHOLD_VALUE = 10;
+    private static final Rotation2d REVERSE_SOFT_LIMIT_THRESHOLD_VALUE = new Rotation2d(Angle.ofBaseUnits(5, Units.Rotations));
+    private static final Rotation2d FORWARD_SOFT_LIMIT_THRESHOLD_VALUE = new Rotation2d(Angle.ofBaseUnits(20, Units.Rotations));
 
     private static final double GEAR_RATIO = 20;
     static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
             MOTION_MAGIC_ACCELERATION = 25,
-            JERK_VALUE = MOTION_MAGIC_ACCELERATION * 10;
+            MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
 
     static final boolean FOC_ENABLED = true;
 
@@ -75,7 +70,8 @@ public class ElevatorConstants {
             DRUM_RADIUS_METERS,
             RETRACTED_ELEVATOR_LENGTH_METERS,
             MAXIMUM_HEIGHT_METERS,
-            SIMULATE_GRAVITY);
+            SIMULATE_GRAVITY
+    );
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(0.25).per(Units.Seconds),
@@ -95,7 +91,6 @@ public class ElevatorConstants {
     static {
         configureMasterMotor();
         configureFollowerMotor();
-        configureEncoder();
     }
 
     private static void configureMasterMotor() {
@@ -107,9 +102,7 @@ public class ElevatorConstants {
         config.MotorOutput.NeutralMode = NEUTRAL_MODE_VALUE;
         config.MotorOutput.Inverted = MASTER_MOTOR_INVERTED_VALUE;
 
-        config.Feedback.FeedbackRemoteSensorID = ENCODER_ID;
         config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
-        config.Feedback.FeedbackSensorSource = ENCODER_TYPE;
 
         config.Slot0.kP = P;
         config.Slot0.kI = I;
@@ -122,12 +115,13 @@ public class ElevatorConstants {
         config.Slot0.StaticFeedforwardSign = STATIC_FEEDFORWARD_SIGN_VALUE;
 
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = REVERSE_SOFT_LIMIT_THRESHOLD_VALUE;
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = FORWARD_SOFT_LIMIT_THRESHOLD_VALUE;
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = REVERSE_SOFT_LIMIT_THRESHOLD_VALUE.getRotations();
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = FORWARD_SOFT_LIMIT_THRESHOLD_VALUE.getRotations();
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
+        config.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
 
         MASTER_MOTOR.applyConfiguration(config);
         MASTER_MOTOR.setPhysicsSimulation(SIMULATION);
@@ -152,18 +146,6 @@ public class ElevatorConstants {
         FOLLOWER_MOTOR.setControl(new Follower(MASTER_MOTOR_ID, FOLLOWER_MOTOR_OPPOSE_MASTER));
     }
 
-    private static void configureEncoder() {
-        final CANcoderConfiguration config = new CANcoderConfiguration();
-
-        config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = ABSOLUTE_SENSOR_DISCONTINUITY_POINT;
-        config.MagnetSensor.SensorDirection = ENCODER_SENSOR_DIRECTION_VALUE;
-        config.MagnetSensor.MagnetOffset = ENCODER_MAGNET_OFFSET_VALUE;
-
-        ENCODER.registerSignal(CANcoderSignal.POSITION, 100);
-        ENCODER.applyConfiguration(config);
-        ENCODER.setSimulationInputsFromTalonFX(MASTER_MOTOR);
-    }
-
     public enum ElevatorState {
         REST(0, 100),
         REEF_LEVEL_1(0.1, 100),
@@ -171,11 +153,11 @@ public class ElevatorConstants {
         REEF_LEVEL_3(0.3, 10),
         REEF_LEVEL_4(0.4, 10);
 
-        final double positionMeters;
+        final double positionRotations;
         final double velocity;
 
-        ElevatorState(double positionMeters, double velocity) {
-            this.positionMeters = positionMeters;
+        ElevatorState(double positionRotations, double velocity) {
+            this.positionRotations = positionRotations;
             this.velocity = velocity;
         }
     }
