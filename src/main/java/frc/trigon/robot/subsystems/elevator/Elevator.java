@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.subsystems.MotorSubsystem;
@@ -55,6 +56,7 @@ public class Elevator extends MotorSubsystem {
     @Override
     public void updateMechanism() {
         ElevatorConstants.MECHANISM.update(motor.getSignal(TalonFXSignal.POSITION), motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE));
+        setReefLevelToMechanism();
     }
 
     @Override
@@ -74,6 +76,29 @@ public class Elevator extends MotorSubsystem {
 
     void setTargetPosition(double targetPositionRotations) {
         motor.setControl(positionRequest.withPosition(targetPositionRotations));
+    }
+
+    private void setReefLevelToMechanism() {
+        if (this.targetState == ElevatorConstants.ElevatorState.REEF_L1_POSITION && atTargetState()) {
+            ElevatorConstants.FIRST_POSE = new Pose3d(0, 0.1, 0, new Rotation3d());
+            ElevatorConstants.SECOND_POSE = new Pose3d(0, 0.1, 0, new Rotation3d());
+            ElevatorConstants.THIRD_POSE = new Pose3d(0, 0.1, 0, new Rotation3d());
+        }
+        if (this.targetState == ElevatorConstants.ElevatorState.REEF_L2_POSITION && atTargetState()) {
+            ElevatorConstants.FIRST_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
+            ElevatorConstants.SECOND_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
+            ElevatorConstants.THIRD_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
+        }
+        if (this.targetState == ElevatorConstants.ElevatorState.REEF_L3_POSITION && atTargetState()) {
+            ElevatorConstants.FIRST_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
+            ElevatorConstants.SECOND_POSE = new Pose3d(0, 0.3, 0, new Rotation3d());
+            ElevatorConstants.THIRD_POSE = new Pose3d(0, 0.3, 0, new Rotation3d());
+        }
+        if (this.targetState == ElevatorConstants.ElevatorState.REEF_L4_POSITION && atTargetState()) {
+            ElevatorConstants.FIRST_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
+            ElevatorConstants.SECOND_POSE = new Pose3d(0, 0.3, 0, new Rotation3d());
+            ElevatorConstants.THIRD_POSE = new Pose3d(0, 0.4, 0, new Rotation3d());
+        }
     }
 
     private Pose3d getElevatorComponentPose() {

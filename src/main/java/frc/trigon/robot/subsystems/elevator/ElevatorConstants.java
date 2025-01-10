@@ -83,7 +83,7 @@ public class ElevatorConstants {
             RETRACTED_ELEVATOR_LENGTH_METERS,
             Color.kYellow
     );
-    static final Pose3d
+    static  Pose3d
             FIRST_POSE = new Pose3d(),
             SECOND_POSE = new Pose3d(),
             THIRD_POSE = new Pose3d();
