@@ -41,8 +41,8 @@ public class Elevator extends MotorSubsystem {
     @Override
     public void updateLog(SysIdRoutineLog log) {
         log.motor("Elevator")
-                .linearPosition(Units.Meters.of(motor.getSignal(TalonFXSignal.POSITION)))
-                .linearVelocity(Units.MetersPerSecond.of(motor.getSignal(TalonFXSignal.VELOCITY)))
+                .angularPosition(Units.Rotations.of(motor.getSignal(TalonFXSignal.POSITION)))
+                .angularVelocity(Units.RotationsPerSecond.of(motor.getSignal(TalonFXSignal.VELOCITY)))
                 .voltage(Units.Volts.of(motor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
@@ -74,7 +74,8 @@ public class Elevator extends MotorSubsystem {
                 new Translation3d(0, 0, getPositionMeters()),
                 new Rotation3d()
         );
-        return ElevatorConstants.ELEVATOR_ORIGIN_POINT.transformBy(elevatorTransform);
+        var elevatorOriginPoint = ElevatorConstants.ELEVATOR_ORIGIN_POINT;
+        return elevatorOriginPoint.transformBy(elevatorTransform);
     }
 
     private double getPositionMeters() {
