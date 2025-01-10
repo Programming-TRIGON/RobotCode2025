@@ -27,7 +27,7 @@ public class CoralIntakeCommands {
 
     public static Command getAngleMotorCalculateGearRatioCommand() {
         return new GearRatioCalculationCommand(
-                CoralIntakeConstants.ANGLE_MOTOR,
+                CoralIntakeConstants.MASTER_ANGLE_MOTOR,
                 CoralIntakeConstants.ANGLE_ENCODER,
                 RobotContainer.CORAL_INTAKE
         );
