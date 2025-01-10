@@ -84,14 +84,7 @@ public class ElevatorConstants {
     );
 
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
-
-   static double targetStateMax(ElevatorState targetState) {
-        return targetState.targetPositionRotations + 0.05;
-    }
-
-   static double TargetStateMin(ElevatorState targetState) {
-        return targetState.targetPositionRotations - 0.05;
-    }
+    static final double TARGET_OFFSET_METERS = 0.03;
 
     static {
         configureMasterMotor();
