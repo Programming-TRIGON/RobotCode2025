@@ -1,4 +1,4 @@
-package frc.trigon.robot.misc.objectdetectioncamera.simulatedfield;
+package frc.trigon.robot.misc.simulatedfield;
 
 import edu.wpi.first.math.geometry.Pose3d;
 

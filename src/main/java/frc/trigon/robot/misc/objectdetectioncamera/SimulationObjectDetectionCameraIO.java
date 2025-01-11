@@ -5,8 +5,8 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import frc.trigon.robot.RobotContainer;
-import frc.trigon.robot.misc.objectdetectioncamera.simulatedfield.SimulatedGamePiece;
-import frc.trigon.robot.misc.objectdetectioncamera.simulatedfield.SimulationFieldHandler;
+import frc.trigon.robot.misc.simulatedfield.SimulatedGamePiece;
+import frc.trigon.robot.misc.simulatedfield.SimulationFieldHandler;
 
 import java.util.ArrayList;
 

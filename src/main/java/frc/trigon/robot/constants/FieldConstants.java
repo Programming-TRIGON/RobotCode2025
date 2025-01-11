@@ -6,9 +6,9 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
-import frc.trigon.robot.misc.objectdetectioncamera.simulatedfield.SimulatedAlgae;
-import frc.trigon.robot.misc.objectdetectioncamera.simulatedfield.SimulatedCoral;
-import frc.trigon.robot.misc.objectdetectioncamera.simulatedfield.SimulatedGamePiece;
+import frc.trigon.robot.misc.simulatedfield.SimulatedAlgae;
+import frc.trigon.robot.misc.simulatedfield.SimulatedCoral;
+import frc.trigon.robot.misc.simulatedfield.SimulatedGamePiece;
 
 import java.io.IOException;
 import java.util.ArrayList;
