@@ -8,6 +8,8 @@ package frc.trigon.robot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.trigon.robot.constants.RobotConstants;
+import frc.trigon.robot.misc.objectdetectioncamera.simulatedfield.SimulationFieldHandler;
+import frc.trigon.robot.poseestimation.apriltagcamera.AprilTagCameraConstants;
 import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
@@ -54,6 +56,8 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void simulationPeriodic() {
+        AprilTagCameraConstants.VISION_SIMULATION.update(RobotContainer.POSE_ESTIMATOR.getCurrentOdometryPose());
+        SimulationFieldHandler.update();
     }
 
     @Override
