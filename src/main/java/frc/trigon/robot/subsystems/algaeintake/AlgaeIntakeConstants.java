@@ -63,7 +63,7 @@ public class AlgaeIntakeConstants {
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseVelocitySign;
     private static final FeedbackSensorSourceValue ENCODER_TYPE = FeedbackSensorSourceValue.FusedCANcoder;
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
-    private static final Rotation2d AGNLE_ENCODER_MAGNET_OFFSET = Rotation2d.fromRotations(0);
+    private static final Rotation2d ANGLE_ENCODER_MAGNET_OFFSET = Rotation2d.fromRotations(0);
     private static final double ANGLE_ENCODER_DISCONTINUITY_POINT = 0.5;
     static final boolean ENABLE_FOC = true;
 
@@ -177,7 +177,7 @@ public class AlgaeIntakeConstants {
         final CANcoderConfiguration config = new CANcoderConfiguration();
 
         config.MagnetSensor.SensorDirection = ANGLE_ENCODER_SENSOR_DIRECTION_VALUE;
-        config.MagnetSensor.MagnetOffset = AGNLE_ENCODER_MAGNET_OFFSET.getRotations();
+        config.MagnetSensor.MagnetOffset = ANGLE_ENCODER_MAGNET_OFFSET.getRotations();
         config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = ANGLE_ENCODER_DISCONTINUITY_POINT;
 
         ANGLE_ENCODER.applyConfiguration(config);

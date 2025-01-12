@@ -55,7 +55,7 @@ public class AlgaeIntake extends MotorSubsystem {
                 getAngleEncoderPosition(),
                 Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
         );
-        Logger.recordOutput("Poses/Components/AlgaeIntake", calculateVisualizationPose());
+        Logger.recordOutput("Poses/Components/AlgaeIntakePose", calculateVisualizationPose());
     }
 
     @Override
