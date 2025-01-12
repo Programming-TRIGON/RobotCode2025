@@ -73,7 +73,7 @@ public class AprilTagCamera {
      */
     public StandardDeviations calculateStandardDeviations() {
         final double averageDistanceFromTags = calculateAverageDistanceFromTags();
-        final double translationStandardDeviation = calculateStandardDeviation(standardDeviations.getThetaStandardDeviation(), averageDistanceFromTags, inputs.visibleTagIDs.length);
+        final double translationStandardDeviation = calculateStandardDeviation(standardDeviations.getTranslationStandardDeviation(), averageDistanceFromTags, inputs.visibleTagIDs.length);
         final double thetaStandardDeviation = calculateStandardDeviation(standardDeviations.getThetaStandardDeviation(), averageDistanceFromTags, inputs.visibleTagIDs.length);
 
         Logger.recordOutput("StandardDeviations/" + name + "/translations", translationStandardDeviation);
