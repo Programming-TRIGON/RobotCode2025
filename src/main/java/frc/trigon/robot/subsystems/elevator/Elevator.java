@@ -75,11 +75,11 @@ public class Elevator extends MotorSubsystem {
 
     void setTargetState(ElevatorConstants.ElevatorState targetState) {
         this.targetState = targetState;
-        setTargetPositionRotations(metersToRotations(targetState.targetPositionMeters));
+        setTargetPositionMeters(targetState.targetPositionMeters);
     }
 
-    void setTargetPositionRotations(double targetPositionRotations) {
-        motor.setControl(positionRequest.withPosition(targetPositionRotations));
+    void setTargetPositionMeters(double targetPositionMeters) {
+        motor.setControl(positionRequest.withPosition(rotationsToMeters(targetPositionMeters)));
     }
 
     private void setReefLevelToMechanism() {

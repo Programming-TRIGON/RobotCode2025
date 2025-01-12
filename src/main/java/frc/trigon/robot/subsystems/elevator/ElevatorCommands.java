@@ -24,7 +24,7 @@ public class ElevatorCommands {
 
     public static Command getSetTargetPositionCommand(double targetPositionRotations) {
         return new StartEndCommand(
-                () -> RobotContainer.ELEVATOR.setTargetPositionRotations(targetPositionRotations),
+                () -> RobotContainer.ELEVATOR.setTargetPositionMeters(targetPositionRotations),
                 RobotContainer.ELEVATOR::stop,
                 RobotContainer.ELEVATOR
         );
