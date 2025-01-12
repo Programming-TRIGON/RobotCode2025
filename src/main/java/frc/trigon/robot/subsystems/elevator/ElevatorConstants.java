@@ -160,10 +160,10 @@ public class ElevatorConstants {
 
     public enum ElevatorState {
         REST(0),
-        REEF_L1_POSITION(0.5),
-        REEF_L2_POSITION(1),
-        REEF_L3_POSITION(1.5),
-        REEF_L4_POSITION(2);
+        REEF_L1_POSITION(0.25),
+        REEF_L2_POSITION(0.5),
+        REEF_L3_POSITION(0.75),
+        REEF_L4_POSITION(1);
 
         public final double targetPositionMeters;
 
