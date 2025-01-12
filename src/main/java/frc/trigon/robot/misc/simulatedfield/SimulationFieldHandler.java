@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.FieldConstants;
+import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.ArrayList;
