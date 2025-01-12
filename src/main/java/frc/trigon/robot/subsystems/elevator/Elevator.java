@@ -86,7 +86,7 @@ public class Elevator extends MotorSubsystem {
     }
 
     private Pose3d getElevatorFirstComponentPose() {
-        final Pose3d originPoint = ElevatorConstants.ELEVATOR_ORIGIN_POINT;
+        final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
         final Transform3d elevatorTransform = new Transform3d(
                 new Translation3d(0, 0, getPositionMeters()),
@@ -96,7 +96,7 @@ public class Elevator extends MotorSubsystem {
     }
 
     private Pose3d getElevatorSecondComponentPose() {
-        final Pose3d originPoint = ElevatorConstants.ELEVATOR_ORIGIN_POINT;
+        final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
         final Transform3d elevatorTransform = new Transform3d(
                 new Translation3d(0, 0, getPositionMeters() * 2),
@@ -106,7 +106,7 @@ public class Elevator extends MotorSubsystem {
     }
 
     private Pose3d getElevatorThirdComponentPose() {
-        final Pose3d originPoint = ElevatorConstants.ELEVATOR_ORIGIN_POINT;
+        final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
         final Transform3d elevatorTransform = new Transform3d(
                 new Translation3d(0, 0, getPositionMeters() * 3),

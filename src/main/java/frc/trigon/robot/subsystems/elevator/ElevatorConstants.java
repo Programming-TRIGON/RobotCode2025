@@ -80,7 +80,7 @@ public class ElevatorConstants {
             Units.Second.of(1000)
     );
 
-    static final Pose3d ELEVATOR_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(0), 0, 0));
+    static final Pose3d ELEVATOR_VISUALIZATION_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(0), 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
             MAXIMUM_HEIGHT_METERS - ELEVATOR_MECHANISM_VISIBILITY_OFFSET,
