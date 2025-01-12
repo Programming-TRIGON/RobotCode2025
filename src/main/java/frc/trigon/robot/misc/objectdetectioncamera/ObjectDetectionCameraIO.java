@@ -11,7 +11,7 @@ public class ObjectDetectionCameraIO {
     }
 
     /**
-     * Sets which type of game piece to track.
+     * Sets if the camera should track coral or algae
      *
      * @param shouldTrackCoral whether to track coral or algae
      */
