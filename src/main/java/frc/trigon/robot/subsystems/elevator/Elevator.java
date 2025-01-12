@@ -58,6 +58,9 @@ public class Elevator extends MotorSubsystem {
     @Override
     public void updatePeriodically() {
         motor.update();
+        getElevatorFirstComponentPose();
+        getElevatorSecondComponentPose();
+        getElevatorThirdComponentPose();
     }
 
     @Override
