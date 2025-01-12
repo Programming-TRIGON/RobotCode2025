@@ -80,8 +80,8 @@ public class ElevatorConstants {
     );
 
     private static final double
-            METERS_BEFORE_LIMIT = 0,
-            MAX_LENGTH_METERS_BEFORE_LIMIT = MAXIMUM_HEIGHT_METERS - METERS_BEFORE_LIMIT;
+            METERS_BEFORE_MECHANICAL_LIMIT = 0,
+            MAX_LENGTH_METERS_BEFORE_LIMIT = MAXIMUM_HEIGHT_METERS - METERS_BEFORE_MECHANICAL_LIMIT;
     static final Pose3d ELEVATOR_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(0), 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
