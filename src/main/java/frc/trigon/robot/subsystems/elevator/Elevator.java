@@ -52,7 +52,6 @@ public class Elevator extends MotorSubsystem {
         ElevatorConstants.MECHANISM.update(
                 rotationsToMeters(getPositionRotations()),
                 rotationsToMeters(motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
-        setReefLevelToMechanism();
     }
 
     @Override
@@ -80,9 +79,6 @@ public class Elevator extends MotorSubsystem {
 
     void setTargetPositionMeters(double targetPositionMeters) {
         motor.setControl(positionRequest.withPosition(rotationsToMeters(targetPositionMeters)));
-    }
-
-    private void setReefLevelToMechanism() {
     }
 
     private Pose3d getElevatorFirstComponentPose() {
