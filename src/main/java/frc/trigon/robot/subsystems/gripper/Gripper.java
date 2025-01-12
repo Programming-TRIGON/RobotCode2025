@@ -10,6 +10,10 @@ public class Gripper extends MotorSubsystem {
     private final TalonFXMotor motor = GripperConstants.MOTOR;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(GripperConstants.FOC_ENABLED);
 
+    public Gripper() {
+        setName("Gripper");
+    }
+
     @Override
     public void updatePeriodically() {
         motor.update();
@@ -31,7 +35,7 @@ public class Gripper extends MotorSubsystem {
 
     void setTargetState(GripperConstants.GripperState targetState) {
         GripperConstants.GRIPPER_MECHANISM.setTargetVelocity(targetState.targetVoltage);
-        motor.setControl(voltageRequest.withOutput(targetState.targetVoltage));
+        setTargetVoltage(targetState.targetVoltage);
     }
     void setTargetVoltage(double targetVoltage) {
         motor.setControl(voltageRequest.withOutput(targetVoltage));

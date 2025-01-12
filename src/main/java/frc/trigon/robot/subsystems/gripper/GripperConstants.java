@@ -13,7 +13,6 @@ import org.trigon.hardware.simulation.SimpleMotorSimulation;
 import org.trigon.utilities.mechanisms.SpeedMechanism2d;
 
 import java.util.function.DoubleSupplier;
-import java.util.function.IntSupplier;
 
 
 public class GripperConstants {
@@ -28,23 +27,15 @@ public class GripperConstants {
 
     private static final double GEAR_RATIO = 1;
     private static final InvertedValue INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
-    private static final NeutralModeValue NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
+    private static final NeutralModeValue NEUTRAL_MODE_VALUE = NeutralModeValue.Coast;
     private static final int
-    LASER_CAN_X_AXIS_INTEREST = 6,
-    LASER_CAN_Y_AXIS_INTEREST = 6,
-    LASER_CAN_WIDTH_INTEREST = 4,
-    LASER_CAN_HEIGHT_INTEREST = 4;
+            LASER_CAN_X_COORDINATE_START_OF_DETECTION_REGION = 6,
+            LASER_CAN_Y_COORDINATE_START_OF_DETECTION_REGION = 6,
+            LASER_CAN_X_COORDINATE_END_OF_DETECTION_REGION = 4,
+            LASER_CAN_Y_COORDINATE_END_OF_DETECTION_REGION = 4;
     private static final LaserCan.RangingMode LASER_CAN_RANGING_MODE = LaserCan.RangingMode.SHORT;
     private static final LaserCan.TimingBudget LASER_CAN_LOOP_TIME = LaserCan.TimingBudget.TIMING_BUDGET_33MS;
-    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = ()-> {
-        double DISTANCE = LASER_CAN.getDistanceMillimeters();
-        double DISTANCE_THRESHOLD = 100.0;
-        if (DISTANCE < DISTANCE_THRESHOLD) {
-            return 1;
-        } else  {
-            return 0;
-        }
-    };
+    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER =
     static final boolean FOC_ENABLED = true;
 
     private static final double MOMENT_OF_INERTIA = 0.003;
@@ -53,12 +44,19 @@ public class GripperConstants {
 
     private static final DCMotor GEARBOX = DCMotor.getKrakenX60(NUMBER_OF_MOTORS);
 
-    static final SpeedMechanism2d GRIPPER_MECHANISM = new SpeedMechanism2d("GripperMechanism", MAXIMUM_DISPLAYABLE_VELOCITY);
-    private static final SimpleMotorSimulation GRIPPER_SIMULATION = new SimpleMotorSimulation(GEARBOX, GEAR_RATIO, MOMENT_OF_INERTIA);
+    static final SpeedMechanism2d GRIPPER_MECHANISM = new SpeedMechanism2d(
+            "GripperMechanism",
+            MAXIMUM_DISPLAYABLE_VELOCITY
+    );
+    private static final SimpleMotorSimulation GRIPPER_SIMULATION = new SimpleMotorSimulation(
+            GEARBOX,
+            GEAR_RATIO,
+            MOMENT_OF_INERTIA
+    );
 
     static {
         configureMotor();
-        configureLaser();
+        configureLaserCAN();
     }
 
     private static void configureMotor() {
@@ -69,6 +67,7 @@ public class GripperConstants {
 
         config.MotorOutput.Inverted = INVERTED_VALUE;
         config.MotorOutput.NeutralMode = NEUTRAL_MODE_VALUE;
+        config.Feedback.RotorToSensorRatio = GEAR_RATIO;
 
         MOTOR.applyConfiguration(config);
 
@@ -78,9 +77,9 @@ public class GripperConstants {
         MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
     }
 
-    private static void configureLaser() {
+    private static void configureLaserCAN() {
         try {
-            LASER_CAN.setRegionOfInterest(LASER_CAN_X_AXIS_INTEREST, LASER_CAN_Y_AXIS_INTEREST, LASER_CAN_WIDTH_INTEREST, LASER_CAN_HEIGHT_INTEREST);
+            LASER_CAN.setRegionOfInterest(LASER_CAN_X_COORDINATE_START_OF_DETECTION_REGION, LASER_CAN_Y_COORDINATE_START_OF_DETECTION_REGION, LASER_CAN_X_COORDINATE_END_OF_DETECTION_REGION, LASER_CAN_Y_COORDINATE_END_OF_DETECTION_REGION);
             LASER_CAN.setRangingMode(LASER_CAN_RANGING_MODE);
             LASER_CAN.setLoopTime(LASER_CAN_LOOP_TIME);
             LASER_CAN.setSimulationSupplier(LASER_CAN_SIMULATION_SUPPLIER);
