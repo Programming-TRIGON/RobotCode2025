@@ -15,8 +15,8 @@ public class AlgaeIntakeCommands {
                 (targetVoltage, targetAngleDegrees) -> RobotContainer.ALGAE_INTAKE.setTargetState(targetVoltage, Rotation2d.fromDegrees(targetAngleDegrees)),
                 false,
                 Set.of(RobotContainer.ALGAE_INTAKE),
-                "Debugging/AlgaeIntakeTargetVoltage",
-                "Debugging/AlgaeIntakeTargetAngle"
+                "Debugging/TargetAlgaeIntakeVoltage",
+                "Debugging/TargetAlgaeIntakeAngle"
         );
     }
 
