@@ -14,7 +14,6 @@ import java.util.ArrayList;
  * A simulation object detection camera simulates an object detection camera as well as game pieces on the field and allows for interaction with the game pieces.
  */
 public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
-    private static boolean SHOULD_TRACK_CORAL = true;
     private static final Rotation2d CAMERA_HORIZONTAL_FOV = Rotation2d.fromDegrees(75);
     private static final double
             MAXIMUM_VISIBLE_DISTANCE_METERS = 5,
@@ -22,18 +21,26 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
 
     @Override
     protected void updateInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
-        final Rotation2d closestTargetObjectYaw = calculateClosestVisibleTargetObjectYaw(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
-        if (closestTargetObjectYaw == null)
-            inputs.hasTargets = false;
-        else {
-            inputs.hasTargets = true;
-            inputs.visibleTargetObjectsYaw = new Rotation2d[]{closestTargetObjectYaw};
-        }
-    }
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+        final ArrayList<SimulatedGamePiece> visibleGamePieces = calculateVisibleGamePieces(robotPose);
+        final TrackedTarget closestTargetObject = calculateClosestVisibleObject(robotPose, visibleGamePieces);
+        boolean hasAnyTargets = false;
+        
+        if (hasTargets(SimulatedGamePiece.GamePieceType.CORAL, visibleGamePieces)) {
+            hasAnyTargets = true;
+            inputs.hasTargets[0] = true;
+        } else
+            inputs.hasTargets[0] = false;
 
-    @Override
-    protected void setTrackingObject(boolean shouldTrackCoral) {
-        SHOULD_TRACK_CORAL = shouldTrackCoral;
+        if (hasTargets(SimulatedGamePiece.GamePieceType.ALGAE, visibleGamePieces)) {
+            hasAnyTargets = true;
+            inputs.hasTargets[1] = true;
+        } else
+            inputs.hasTargets[1] = false;
+
+        if (hasAnyTargets) {
+            inputs.visibleTargetObjects = new TrackedTarget[]{closestTargetObject};
+        }
     }
 
     /**
@@ -42,21 +49,22 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * @param robotPose the pose of the robot on the field
      * @return the yaw of the closest visible target object
      */
-    private Rotation2d calculateClosestVisibleTargetObjectYaw(Pose2d robotPose) {
-        Rotation2d closestObjectYaw = null;
+    private TrackedTarget calculateClosestVisibleObject(Pose2d robotPose, ArrayList<SimulatedGamePiece> visibleGamePieces) {
+        TrackedTarget closestObject = null;
         double closestObjectDistance = Double.POSITIVE_INFINITY;
 
-        final ArrayList<SimulatedGamePiece> visibleTargetObjectsPlacements = calculateVisibleTargetObjectPlacements(robotPose);
-
-        for (SimulatedGamePiece targetObjectPlacement : visibleTargetObjectsPlacements) {
+        for (SimulatedGamePiece targetObjectPlacement : visibleGamePieces) {
             final double robotDistanceToObject = targetObjectPlacement.getDistanceMeters(new Pose3d(robotPose));
             if (robotDistanceToObject < closestObjectDistance) {
-                closestObjectYaw = calculateCameraYawToObject(targetObjectPlacement, robotPose).minus(robotPose.getRotation());
+                closestObject = new TrackedTarget(
+                        targetObjectPlacement.getGamePieceType() == SimulatedGamePiece.GamePieceType.CORAL ? 0 : 1,
+                        calculateCameraYawToObject(targetObjectPlacement, robotPose).minus(robotPose.getRotation())
+                );
                 closestObjectDistance = robotDistanceToObject;
             }
         }
 
-        return closestObjectYaw;
+        return closestObject;
     }
 
     /**
@@ -65,16 +73,16 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * @param robotPose the position of the robot on the field
      * @return the placements of the visible objects
      */
-    private ArrayList<SimulatedGamePiece> calculateVisibleTargetObjectPlacements(Pose2d robotPose) {
-        final ArrayList<SimulatedGamePiece> targetObjectsOnField = SHOULD_TRACK_CORAL ? SimulationFieldHandler.getSimulatedCoral() : SimulationFieldHandler.getSimulatedAlgae();
+    private ArrayList<SimulatedGamePiece> calculateVisibleGamePieces(Pose2d robotPose) {
+        final ArrayList<SimulatedGamePiece> gamePiecesOnField = SimulationFieldHandler.getAllSimulatedGamePieces();
         final ArrayList<SimulatedGamePiece> visibleTargetObjects = new ArrayList<>();
         int currentIndex = 0;
 
-        for (SimulatedGamePiece currentTargetObject : targetObjectsOnField) {
-            final Rotation2d cameraYawToObject = calculateCameraYawToObject(currentTargetObject, robotPose);
-            if (!isWithinHorizontalFOV(cameraYawToObject, robotPose) || !isWithinDistance(currentTargetObject, robotPose))
+        for (SimulatedGamePiece currentObject : gamePiecesOnField) {
+            final Rotation2d cameraYawToObject = calculateCameraYawToObject(currentObject, robotPose);
+            if (!isWithinHorizontalFOV(cameraYawToObject, robotPose) || !isWithinDistance(currentObject, robotPose))
                 continue;
-            visibleTargetObjects.add(currentIndex, currentTargetObject);
+            visibleTargetObjects.add(currentIndex, currentObject);
             currentIndex++;
         }
         return visibleTargetObjects;
@@ -114,5 +122,12 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private boolean isWithinDistance(SimulatedGamePiece objectPlacement, Pose2d robotPose) {
         final double robotToObjectDistanceMeters = objectPlacement.getDistanceMeters(new Pose3d(robotPose));
         return robotToObjectDistanceMeters <= MAXIMUM_VISIBLE_DISTANCE_METERS && robotToObjectDistanceMeters >= MINIMUM_VISIBLE_DISTANCE_METERS;
+    }
+
+    private boolean hasTargets(SimulatedGamePiece.GamePieceType targetGamePieceType, ArrayList<SimulatedGamePiece> visibleGamePieces) {
+        for (SimulatedGamePiece visibleGamePiece : visibleGamePieces)
+            if (visibleGamePiece.getGamePieceType() == targetGamePieceType)
+                return true;
+        return false;
     }
 }

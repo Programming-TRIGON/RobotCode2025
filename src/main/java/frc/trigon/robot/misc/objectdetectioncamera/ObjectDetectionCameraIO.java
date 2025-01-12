@@ -10,20 +10,11 @@ public class ObjectDetectionCameraIO {
     protected void updateInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
     }
 
-    /**
-     * Sets if the camera should track coral or algae
-     *
-     * @param shouldTrackCoral whether to track coral or algae
-     */
-    protected void setTrackingObject(boolean shouldTrackCoral) {
-    }
-
     @AutoLog
     public static class ObjectDetectionCameraInputs {
-        public boolean hasTargets = false;
-        /**
-         * An array that contains the yaw of all visible targets. The best target is first.
-         */
-        public Rotation2d[] visibleTargetObjectsYaw = new Rotation2d[0];
+        public boolean hasCoralTarget = false;
+        public boolean hasAlgaeTarget = false;
+        public Rotation2d[] visibleCoralYaws = new Rotation2d[0];
+        public Rotation2d[] visibleAlgaeYaws = new Rotation2d[0];
     }
 }

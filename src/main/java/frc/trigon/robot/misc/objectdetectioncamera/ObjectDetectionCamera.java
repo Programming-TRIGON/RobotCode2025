@@ -14,6 +14,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
     private final String hostname;
     private Rotation2d trackedObjectYaw = new Rotation2d();
     private boolean trackedTargetWasVisible = false;
+    private int currentTrackedObjectId;
 
     public ObjectDetectionCamera(String hostname) {
         this.hostname = hostname;
@@ -26,31 +27,27 @@ public class ObjectDetectionCamera extends SubsystemBase {
         Logger.processInputs(hostname, objectDetectionCameraInputs);
     }
 
-    /**
-     * Sets which type of game piece to track.
-     * Only for use in simulation.
-     *
-     * @param shouldTrackCoral whether to track coral or algae
-     */
-    public void setTrackingObject(boolean shouldTrackCoral) {
-        objectDetectionCameraIO.setTrackingObject(shouldTrackCoral);
+    public int getCurrentTrackedObjectId() {
+        return currentTrackedObjectId;
     }
 
     /**
-     * Starts tracking the best visible target and remains tracking that target until it is no longer visible.
+     * Starts tracking the best visible target of the target ID and remains tracking that target until it is no longer visible.
      * Tracking an object is locking on to one target and allows for you to remain locked on to one target even when there are more objects visible.
      * This should be called periodically.
      * This is used when there is more than one visible object and the best target might change as the robot moves.
      * When no objects are visible, the tracking resets to the best target the next time an object is visible.
      */
-    public void trackObject() {
-        if (hasTargets() && !trackedTargetWasVisible) {
+    public void trackObject(int targetId) {
+        this.currentTrackedObjectId = targetId;
+        final boolean hasTargets = hasTargets();
+        if (hasTargets && !trackedTargetWasVisible) {
             trackedTargetWasVisible = true;
             trackedObjectYaw = getBestObjectYaw();
             return;
         }
 
-        if (!hasTargets()) {
+        if (!hasTargets) {
             trackedTargetWasVisible = false;
             return;
         }
@@ -59,14 +56,14 @@ public class ObjectDetectionCamera extends SubsystemBase {
     }
 
     public boolean hasTargets() {
-        return objectDetectionCameraInputs.hasTargets;
+        return getTargetObjectYaws().length > 0;
     }
 
     /**
      * @return the yaw (x-axis position) of the target object
      */
     public Rotation2d getBestObjectYaw() {
-        return objectDetectionCameraInputs.visibleTargetObjectsYaw[0];
+        return getTargetObjectYaws()[0];
     }
 
     /**
@@ -85,7 +82,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
         double closestTargetToTrackedTargetYawDifference = Double.POSITIVE_INFINITY;
         Rotation2d closestToTrackedTargetYaw = new Rotation2d();
 
-        for (Rotation2d currentObjectYaw : objectDetectionCameraInputs.visibleTargetObjectsYaw) {
+        for (Rotation2d currentObjectYaw : getTargetObjectYaws()) {
             final double currentObjectToTrackedTargetYawDifference = Math.abs(currentObjectYaw.getRadians() - trackedObjectYaw.getRadians());
             if (currentObjectToTrackedTargetYawDifference < closestTargetToTrackedTargetYawDifference) {
                 closestTargetToTrackedTargetYawDifference = currentObjectToTrackedTargetYawDifference;
@@ -94,6 +91,12 @@ public class ObjectDetectionCamera extends SubsystemBase {
         }
 
         return closestToTrackedTargetYaw;
+    }
+
+    private Rotation2d[] getTargetObjectYaws() {
+        return currentTrackedObjectId == 0 ?
+                objectDetectionCameraInputs.visibleCoralYaws :
+                objectDetectionCameraInputs.visibleAlgaeYaws;
     }
 
     private ObjectDetectionCameraIO generateIO(String hostname) {

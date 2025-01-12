@@ -20,11 +20,41 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         if (!photonCamera.isConnected())
             return;
         final PhotonPipelineResult result = getLatestPipelineResult();
-
-        inputs.hasTargets = result != null && result.hasTargets();
-        if (inputs.hasTargets) {
-            inputs.visibleTargetObjectsYaw = getVisibleObjectsYaw(result);
+        if (result == null) {
+            updateNoResultInputs(inputs);
+            return;
         }
+
+        inputs.hasCoralTarget = hasTarget(0, result);
+        inputs.hasAlgaeTarget = hasTarget(1, result);
+
+        if (!inputs.hasCoralTarget && !inputs.hasAlgaeTarget) {
+            updateNoResultInputs(inputs);
+            return;
+        }
+
+        updateHasResultInputs(result, inputs);
+    }
+
+    private void updateNoResultInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
+        inputs.hasCoralTarget = false;
+        inputs.hasAlgaeTarget = false;
+        inputs.visibleCoralYaws = new Rotation2d[0];
+        inputs.visibleAlgaeYaws = new Rotation2d[0];
+    }
+
+    private void updateHasResultInputs(PhotonPipelineResult result, ObjectDetectionCameraInputsAutoLogged inputs) {
+        if (inputs.hasCoralTarget)
+            inputs.visibleCoralYaws = getTargetVisibleObjectYaws(result, 0);
+        if (inputs.hasAlgaeTarget)
+            inputs.visibleAlgaeYaws = getTargetVisibleObjectYaws(result, 1);
+    }
+
+    private boolean hasTarget(int targetId, PhotonPipelineResult result) {
+        for (int i = 0; i < result.getTargets().size(); i++)
+            if (result.getTargets().get(i).objDetectId == targetId)
+                return true;
+        return false;
     }
 
     private PhotonPipelineResult getLatestPipelineResult() {
@@ -32,33 +62,33 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         return unreadResults.isEmpty() ? null : unreadResults.get(unreadResults.size() - 1);
     }
 
-    private Rotation2d[] getVisibleObjectsYaw(PhotonPipelineResult result) {
+    private Rotation2d[] getTargetVisibleObjectYaws(PhotonPipelineResult result, int targetId) {
         final List<PhotonTrackedTarget> targets = result.getTargets();
-        final Rotation2d[] visibleObjectsYaw = new Rotation2d[targets.size()];
-        visibleObjectsYaw[0] = getBestTargetYaw(result);
+        final Rotation2d[] visibleObjectYaws = new Rotation2d[targets.size()];
+        visibleObjectYaws[0] = getBestTargetYaw(result, targetId);
 
         boolean hasSeenBestTarget = false;
-        for (int i = 0; i < visibleObjectsYaw.length; i++) {
+        for (int i = 0; i < visibleObjectYaws.length; i++) {
             final Rotation2d targetYaw = Rotation2d.fromDegrees(-targets.get(i).getYaw());
-            if (targetYaw.equals(visibleObjectsYaw[0])) {
+            if (targetYaw.equals(visibleObjectYaws[0])) {
                 hasSeenBestTarget = true;
                 continue;
             }
-            visibleObjectsYaw[hasSeenBestTarget ? i : i + 1] = targetYaw;
+            visibleObjectYaws[hasSeenBestTarget ? i : i + 1] = targetYaw;
         }
-        return visibleObjectsYaw;
+        return visibleObjectYaws;
     }
 
-    private Rotation2d getBestTargetYaw(PhotonPipelineResult result) {
+    private Rotation2d getBestTargetYaw(PhotonPipelineResult result, int targetId) {
         double closestTargetDistance = Double.POSITIVE_INFINITY;
-        Rotation2d bestTargetYaw = new Rotation2d();
+        Rotation2d bestTarget = null;
         for (PhotonTrackedTarget target : result.getTargets()) {
             final double currentTargetDistance = Math.abs(target.getYaw()) + Math.abs(target.getPitch());
             if (closestTargetDistance > currentTargetDistance) {
                 closestTargetDistance = currentTargetDistance;
-                bestTargetYaw = Rotation2d.fromDegrees(-target.getYaw());
+                bestTarget = Rotation2d.fromDegrees(-target.getYaw());
             }
         }
-        return bestTargetYaw;
+        return bestTarget;
     }
 }

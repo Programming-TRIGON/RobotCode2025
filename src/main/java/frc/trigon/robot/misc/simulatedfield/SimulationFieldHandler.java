@@ -3,7 +3,7 @@ package frc.trigon.robot.misc.simulatedfield;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import frc.trigon.robot.RobotContainer;
-import frc.trigon.robot.constants.FieldConstants;
+import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import org.littletonrobotics.junction.Logger;
 
@@ -14,8 +14,8 @@ import java.util.ArrayList;
  */
 public class SimulationFieldHandler {
     private static final ArrayList<SimulatedGamePiece>
-            CORAL_ON_FIELD = FieldConstants.CORAL_ON_FIELD,
-            ALGAE_ON_FIELD = FieldConstants.ALGAE_ON_FIELD;
+            CORAL_ON_FIELD = SimulatedGamePieceConstants.CORAL_ON_FIELD,
+            ALGAE_ON_FIELD = SimulatedGamePieceConstants.ALGAE_ON_FIELD;
     private static boolean
             CAN_EJECT_CORAL = false,
             CAN_EJECT_ALGAE = false;

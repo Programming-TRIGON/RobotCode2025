@@ -11,6 +11,10 @@ public class SimulatedGamePiece {
         this.gamePieceType = gamePieceType;
     }
 
+    public GamePieceType getGamePieceType() {
+        return gamePieceType;
+    }
+
     public void updatePose(Pose3d fieldRelativePose) {
         this.fieldRelativePose = fieldRelativePose;
     }
