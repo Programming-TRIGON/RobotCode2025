@@ -50,7 +50,7 @@ public class Elevator extends MotorSubsystem {
     @Override
     public void updateMechanism() {
         ElevatorConstants.MECHANISM.update(
-                rotationsToMeters(rotationsToMeters(motor.getSignal(TalonFXSignal.POSITION))),
+                rotationsToMeters(motor.getSignal(TalonFXSignal.POSITION)),
                 rotationsToMeters(motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
         setReefLevelToMechanism();
     }
@@ -124,6 +124,6 @@ public class Elevator extends MotorSubsystem {
     }
 
     private double metersToRotations(double positionMeters) {
-        return Conversions.degreesToRotations(positionMeters);
+        return Conversions.distanceToRotations(positionMeters, ElevatorConstants.DRUM_DIAMETER_METERS);
     }
 }

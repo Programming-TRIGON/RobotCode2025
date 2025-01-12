@@ -48,7 +48,7 @@ public class ElevatorConstants {
     private static final double
             ELEVATOR_MAX_HARD_SWITCH_LIMIT_METERS = 2,
             ELEVATOR_MIN_HARD_SWITCH_LIMIT_METERS = 0.1,
-            GEAR_RATIO = 5;
+            GEAR_RATIO = 20;
     private static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
             MOTION_MAGIC_ACCELERATION = 25,
@@ -160,10 +160,10 @@ public class ElevatorConstants {
 
     public enum ElevatorState {
         REST(0),
-        REEF_L1_POSITION(0.1),
-        REEF_L2_POSITION(0.2),
-        REEF_L3_POSITION(0.3),
-        REEF_L4_POSITION(0.4);
+        REEF_L1_POSITION(0.5),
+        REEF_L2_POSITION(1),
+        REEF_L3_POSITION(1.5),
+        REEF_L4_POSITION(2);
 
         public final double targetPositionMeters;
 
