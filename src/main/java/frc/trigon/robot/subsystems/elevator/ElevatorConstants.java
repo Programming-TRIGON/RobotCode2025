@@ -46,8 +46,8 @@ public class ElevatorConstants {
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final double
-            ELEVATOR_MAX_HARD_SWITCH_LIMIT_METERS = 2,
-            ELEVATOR_MIN_HARD_SWITCH_LIMIT_METERS = 0.1,
+            SWITCH_LIMIT_REVERSE_AUTO_POSITION = 2,
+            SWITCH_LIMIT_FORWARD_AUTO_POSITION = 0.1,
             GEAR_RATIO = 20;
     private static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
@@ -121,13 +121,13 @@ public class ElevatorConstants {
         config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = ELEVATOR_MAX_HARD_SWITCH_LIMIT_METERS;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = SWITCH_LIMIT_REVERSE_AUTO_POSITION;
 
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = ELEVATOR_MIN_HARD_SWITCH_LIMIT_METERS;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = SWITCH_LIMIT_FORWARD_AUTO_POSITION;
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
