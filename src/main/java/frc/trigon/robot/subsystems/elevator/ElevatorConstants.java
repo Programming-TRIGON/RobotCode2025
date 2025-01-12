@@ -46,10 +46,10 @@ public class ElevatorConstants {
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final double
-            REVERSE_HARD_SWITCH_LIMIT_METERS = 4,
-            FORWARD_HARD_SWITCH_LIMIT_METERS = 4,
+            ELEVATOR_MAX_HARD_SWITCH_LIMIT_METERS = 2,
+            ELEVATOR_MIN_HARD_SWITCH_LIMIT_METERS = 0.1,
             GEAR_RATIO = 5;
-    static final double
+    private static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
             MOTION_MAGIC_ACCELERATION = 25,
             MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
@@ -58,9 +58,9 @@ public class ElevatorConstants {
     private static final int MOTOR_AMOUNT = 2;
     private static final DCMotor GEARBOX = DCMotor.getKrakenX60Foc(MOTOR_AMOUNT);
     private static final double
-            MASS_KILOGRAMS = 9,
+            MASS_KILOGRAMS = 7,
             DRUM_RADIUS_METERS = 0.02,
-            RETRACTED_ELEVATOR_LENGTH_METERS = 0.2,
+            RETRACTED_ELEVATOR_HEIGHT_METERS = 0.2,
             MAXIMUM_HEIGHT_METERS = 1.9;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
@@ -68,7 +68,7 @@ public class ElevatorConstants {
             GEAR_RATIO,
             MASS_KILOGRAMS,
             DRUM_RADIUS_METERS,
-            RETRACTED_ELEVATOR_LENGTH_METERS,
+            RETRACTED_ELEVATOR_HEIGHT_METERS,
             MAXIMUM_HEIGHT_METERS,
             SHOULD_SIMULATE_GRAVITY
     );
@@ -86,7 +86,7 @@ public class ElevatorConstants {
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
             MAX_LENGTH_METERS_BEFORE_LIMIT,
-            RETRACTED_ELEVATOR_LENGTH_METERS,
+            RETRACTED_ELEVATOR_HEIGHT_METERS,
             Color.kYellow
     );
 
@@ -124,11 +124,11 @@ public class ElevatorConstants {
         config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_SWITCH_LIMIT_METERS;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = ELEVATOR_MAX_HARD_SWITCH_LIMIT_METERS;
         config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_SWITCH_LIMIT_METERS;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = ELEVATOR_MIN_HARD_SWITCH_LIMIT_METERS;
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
