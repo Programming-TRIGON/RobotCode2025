@@ -108,6 +108,10 @@ public class AlgaeIntakeConstants {
     static final Pose3d ALGAE_INTAKE_VISUALIZATION_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(2);
+    public static final double BLINKING_SPEED = 0.7;
+    public static final double
+            RUMBLE_DURATION_SECONDS = 0.6,
+            RUMBLE_POWER = 1;
 
     static {
         configureIntakeMotor();

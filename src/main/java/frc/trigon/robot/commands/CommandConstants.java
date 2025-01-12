@@ -9,6 +9,7 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
+import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.commands.WheelRadiusCharacterizationCommand;
 import org.trigon.hardware.misc.XboxController;
@@ -58,7 +59,8 @@ public class CommandConstants {
                     () -> RobotContainer.SWERVE.getHeading().getRadians(),
                     RobotContainer.SWERVE::runWheelRadiusCharacterization,
                     RobotContainer.SWERVE
-            );
+            ),
+            RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(AlgaeIntakeConstants.RUMBLE_DURATION_SECONDS, AlgaeIntakeConstants.RUMBLE_POWER));
 
     /**
      * Calculates the target drive power from an axis value by dividing it by the shift mode value.
@@ -66,6 +68,7 @@ public class CommandConstants {
      * @param axisValue the stick's value
      * @return the drive power
      */
+
     public static double calculateDriveStickAxisValue(double axisValue) {
         return axisValue / OperatorConstants.STICKS_SPEED_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER);
     }
