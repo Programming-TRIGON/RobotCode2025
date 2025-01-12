@@ -80,20 +80,15 @@ public class ElevatorConstants {
     );
 
     private static final double
-            METERS_BEFORE_LIMIT = 0.05,
+            METERS_BEFORE_LIMIT = 0,
             MAX_LENGTH_METERS_BEFORE_LIMIT = MAXIMUM_HEIGHT_METERS - METERS_BEFORE_LIMIT;
-    static final Pose3d ELEVATOR_ORIGIN_POINT = new Pose3d(1, 0, 1, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(10), 0, 0));
+    static final Pose3d ELEVATOR_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(0), 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
             MAX_LENGTH_METERS_BEFORE_LIMIT,
             RETRACTED_ELEVATOR_LENGTH_METERS,
             Color.kYellow
     );
-
-    static Pose3d
-            FIRST_POSE = new Pose3d(),
-            SECOND_POSE = new Pose3d(),
-            THIRD_POSE = new Pose3d();
 
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
     static final double TOLERANCE_ROTATIONS = 0.1;
@@ -127,12 +122,12 @@ public class ElevatorConstants {
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
         config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
-        config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
-        config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_SWITCH_LIMIT_METERS;
+        config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
+        config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_SWITCH_LIMIT_METERS;
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
@@ -170,7 +165,7 @@ public class ElevatorConstants {
         REEF_L3_POSITION(0.3),
         REEF_L4_POSITION(0.4);
 
-        final double targetPositionRotations;
+        public final double targetPositionRotations;
 
         ElevatorState(double targetPositionRotations) {
             this.targetPositionRotations = targetPositionRotations;

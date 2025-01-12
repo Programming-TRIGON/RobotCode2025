@@ -72,10 +72,10 @@ public class Elevator extends MotorSubsystem {
 
     void setTargetState(ElevatorConstants.ElevatorState targetState) {
         this.targetState = targetState;
-        setTargetPosition(targetState.targetPositionRotations);
+        setTargetPositionRotations(targetState.targetPositionRotations);
     }
 
-    void setTargetPosition(double targetPositionRotations) {
+    void setTargetPositionRotations(double targetPositionRotations) {
         motor.setControl(positionRequest.withPosition(targetPositionRotations));
     }
 
