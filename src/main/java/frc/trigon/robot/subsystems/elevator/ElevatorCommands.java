@@ -5,12 +5,15 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
 import org.trigon.commands.NetworkTablesCommand;
 
-public static Command setDebuggingCommand() {
-    return new NetworkTablesCommand(
-    );
-}
-
 public class ElevatorCommands {
+    public static Command setDebuggingCommand() {
+        return new NetworkTablesCommand(
+                ElevatorCommands::getSetTargetPositionCommand,
+                false,
+                ""
+        );
+    }
+
     public static Command getSetTargetStateCommand(ElevatorConstants.ElevatorState targetState) {
         return new StartEndCommand(
                 () -> RobotContainer.ELEVATOR.setTargetState(targetState),
