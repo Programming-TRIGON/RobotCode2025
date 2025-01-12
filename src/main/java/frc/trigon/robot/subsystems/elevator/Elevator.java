@@ -48,7 +48,9 @@ public class Elevator extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
-        ElevatorConstants.MECHANISM.update(motor.getSignal(TalonFXSignal.POSITION), motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE));
+        ElevatorConstants.MECHANISM.update(
+                Conversions.rotationsToDistance(motor.getSignal(TalonFXSignal.POSITION), ElevatorConstants.DRUM_DIAMETER_METERS),
+                Conversions.rotationsToDistance(motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE), ElevatorConstants.DRUM_DIAMETER_METERS));
         setReefLevelToMechanism();
     }
 
