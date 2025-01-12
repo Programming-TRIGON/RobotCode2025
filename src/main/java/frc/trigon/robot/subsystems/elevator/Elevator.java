@@ -66,7 +66,7 @@ public class Elevator extends MotorSubsystem {
     }
 
     public final boolean atTargetState() {
-        double difference = Math.abs(targetState.targetPositionRotations - motor.getSignal(TalonFXSignal.POSITION));
+        final double difference = Math.abs(targetState.targetPositionRotations - motor.getSignal(TalonFXSignal.POSITION));
         return difference < ElevatorConstants.TOLERANCE_ROTATIONS;
     }
 
@@ -80,31 +80,10 @@ public class Elevator extends MotorSubsystem {
     }
 
     private void setReefLevelToMechanism() {
-        if (this.targetState == ElevatorConstants.ElevatorState.REEF_L1_POSITION && atTargetState()) {
-            ElevatorConstants.FIRST_POSE = new Pose3d(0, 0.1, 0, new Rotation3d());
-            ElevatorConstants.SECOND_POSE = new Pose3d(0, 0.1, 0, new Rotation3d());
-            ElevatorConstants.THIRD_POSE = new Pose3d(0, 0.1, 0, new Rotation3d());
-        }
-        if (this.targetState == ElevatorConstants.ElevatorState.REEF_L2_POSITION && atTargetState()) {
-            ElevatorConstants.FIRST_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
-            ElevatorConstants.SECOND_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
-            ElevatorConstants.THIRD_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
-        }
-        if (this.targetState == ElevatorConstants.ElevatorState.REEF_L3_POSITION && atTargetState()) {
-            ElevatorConstants.FIRST_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
-            ElevatorConstants.SECOND_POSE = new Pose3d(0, 0.3, 0, new Rotation3d());
-            ElevatorConstants.THIRD_POSE = new Pose3d(0, 0.3, 0, new Rotation3d());
-        }
-        if (this.targetState == ElevatorConstants.ElevatorState.REEF_L4_POSITION && atTargetState()) {
-            ElevatorConstants.FIRST_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
-            ElevatorConstants.SECOND_POSE = new Pose3d(0, 0.3, 0, new Rotation3d());
-            ElevatorConstants.THIRD_POSE = new Pose3d(0, 0.4, 0, new Rotation3d());
-        }
     }
 
     private Pose3d getElevatorComponentPose() {
-        final Pose3d
-                originPoint = ElevatorConstants.ELEVATOR_ORIGIN_POINT;
+        final Pose3d originPoint = ElevatorConstants.ELEVATOR_ORIGIN_POINT;
 
         final Transform3d elevatorTransform = new Transform3d(
                 new Translation3d(0, 0, getPositionMeters()),
