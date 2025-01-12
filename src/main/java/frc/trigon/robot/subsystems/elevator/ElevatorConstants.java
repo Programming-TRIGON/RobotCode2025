@@ -41,9 +41,14 @@ public class ElevatorConstants {
             KA = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final double REVERSE_HARD_SWITCH_LIMIT_METERS = 4;
-    private static final double FORWARD_HARD_SWITCH_LIMIT_ROTATION_METERS = 4;
-    private static final double GEAR_RATIO = 5;
+    private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
+    private static final ForwardLimitSourceValue FORWARD_LIMIT_SOURCE_VALUE = ForwardLimitSourceValue.LimitSwitchPin;
+    private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
+    private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
+    private static final double
+            REVERSE_HARD_SWITCH_LIMIT_METERS = 4,
+            FORWARD_HARD_SWITCH_LIMIT_METERS = 4,
+            GEAR_RATIO = 5;
     static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
             MOTION_MAGIC_ACCELERATION = 25,
@@ -57,7 +62,6 @@ public class ElevatorConstants {
             DRUM_RADIUS_METERS = 0.02,
             RETRACTED_ELEVATOR_LENGTH_METERS = 0.2,
             MAXIMUM_HEIGHT_METERS = 1.9;
-
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
             GEARBOX,
@@ -74,23 +78,25 @@ public class ElevatorConstants {
             Units.Volts.of(2),
             Units.Second.of(1000)
     );
+
     private static final double
             METERS_BEFORE_LIMIT = 0.05,
-            LIMIT_LENGTH_METERS = MAXIMUM_HEIGHT_METERS - METERS_BEFORE_LIMIT;
+            MAX_LENGTH_METERS_BEFORE_LIMIT = MAXIMUM_HEIGHT_METERS - METERS_BEFORE_LIMIT;
     static final Pose3d ELEVATOR_ORIGIN_POINT = new Pose3d(1, 0, 1, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(10), 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
-            LIMIT_LENGTH_METERS,
+            MAX_LENGTH_METERS_BEFORE_LIMIT,
             RETRACTED_ELEVATOR_LENGTH_METERS,
             Color.kYellow
     );
+
     static Pose3d
             FIRST_POSE = new Pose3d(),
             SECOND_POSE = new Pose3d(),
             THIRD_POSE = new Pose3d();
 
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
-    static final double TARGET_STATE_TOLERANCE_ROTATIONS = 0.1;
+    static final double TOLERANCE_ROTATIONS = 0.1;
 
     static {
         configureMasterMotor();
@@ -120,14 +126,14 @@ public class ElevatorConstants {
 
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
-        config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
-        config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
-        config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
+        config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
+        config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
+        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
+        config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_SWITCH_LIMIT_METERS;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_SWITCH_LIMIT_ROTATION_METERS;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_SWITCH_LIMIT_METERS;
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
