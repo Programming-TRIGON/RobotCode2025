@@ -20,7 +20,7 @@ public class GripperConstants {
             MOTOR_ID = 15,
             LASER_CAN_ID = 15;
     private static final String
-            MOTOR_NAME = "GrippperMotor",
+            MOTOR_NAME = "GripperMotor",
             LASER_CAN_NAME = "GripperLaserCAN";
     static final TalonFXMotor MOTOR = new TalonFXMotor(MOTOR_ID, MOTOR_NAME);
     static final LaserCAN LASER_CAN = new LaserCAN(LASER_CAN_ID, LASER_CAN_NAME);
