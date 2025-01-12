@@ -4,7 +4,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
@@ -42,8 +41,8 @@ public class ElevatorConstants {
             KA = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final Rotation2d FORWARD_HARD_LIMIT_ROTATION2D = Rotation2d.fromRotations(4);
-    private static final Rotation2d REVERSE_HARD_LIMIT_ROTATION2D = Rotation2d.fromRotations(0);
+    private static final double REVERSE_HARD_SWITCH_LIMIT_METERS = 4;
+    private static final double FORWARD_HARD_SWITCH_LIMIT_ROTATION_METERS = 4;
     private static final double GEAR_RATIO = 5;
     static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
@@ -127,8 +126,8 @@ public class ElevatorConstants {
         config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_LIMIT_ROTATION2D.getRotations();
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_LIMIT_ROTATION2D.getRotations();
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_SWITCH_LIMIT_METERS;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_SWITCH_LIMIT_ROTATION_METERS;
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
