@@ -22,15 +22,19 @@ import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntake;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
+import frc.trigon.robot.subsystems.elevator.Elevator;
+import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
+import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.swerve.Swerve;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
 
 public class RobotContainer {
-    public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator();
-    public static final Swerve SWERVE = new Swerve();
     public static final AlgaeIntake ALGAE_INTAKE = new AlgaeIntake();
     public static final CoralIntake CORAL_INTAKE = new CoralIntake();
+    public static final Elevator ELEVATOR = new Elevator();
+    public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator();
+    public static final Swerve SWERVE = new Swerve();
     private LoggedDashboardChooser<Command> autoChooser;
 
     public RobotContainer() {
@@ -52,9 +56,10 @@ public class RobotContainer {
     }
 
     private void bindDefaultCommands() {
-        SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
         ALGAE_INTAKE.setDefaultCommand(AlgaeIntakeCommands.getSetTargetStateCommand(AlgaeIntakeConstants.AlgaeIntakeState.REST));
         CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
+        ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REEF_L4_POSITION));
+        SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
     }
 
     /**
