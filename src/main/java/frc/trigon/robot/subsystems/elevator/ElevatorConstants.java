@@ -91,7 +91,7 @@ public class ElevatorConstants {
     );
 
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
-    static final double TOLERANCE_ROTATIONS = 0.1;
+    static final double TOLERANCE_METERS = 0.1;
 
     static {
         configureMasterMotor();
@@ -165,10 +165,10 @@ public class ElevatorConstants {
         REEF_L3_POSITION(0.3),
         REEF_L4_POSITION(0.4);
 
-        public final double targetPositionRotations;
+        public final double targetPositionMeters;
 
-        ElevatorState(double targetPositionRotations) {
-            this.targetPositionRotations = targetPositionRotations;
+        ElevatorState(double targetPositionMeters) {
+            this.targetPositionMeters = targetPositionMeters;
         }
     }
 }

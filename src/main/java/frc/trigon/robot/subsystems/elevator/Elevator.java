@@ -66,13 +66,13 @@ public class Elevator extends MotorSubsystem {
     }
 
     public final boolean atTargetState() {
-        final double difference = Math.abs(targetState.targetPositionRotations - motor.getSignal(TalonFXSignal.POSITION));
-        return difference < ElevatorConstants.TOLERANCE_ROTATIONS;
+        final double difference = Math.abs(targetState.targetPositionMeters - motor.getSignal(TalonFXSignal.POSITION));
+        return difference < ElevatorConstants.TOLERANCE_METERS;
     }
 
     void setTargetState(ElevatorConstants.ElevatorState targetState) {
         this.targetState = targetState;
-        setTargetPositionRotations(targetState.targetPositionRotations);
+        setTargetPositionRotations(metersToRotations(targetState.targetPositionMeters));
     }
 
     void setTargetPositionRotations(double targetPositionRotations) {
@@ -98,5 +98,8 @@ public class Elevator extends MotorSubsystem {
 
     private double rotationsToMeters(double positionRotations) {
         return Conversions.rotationsToDistance(positionRotations, ElevatorConstants.DRUM_DIAMETER_METERS);
+    }
+    private double metersToRotations(double positionMeters) {
+        return Conversions.degreesToRotations(positionMeters);
     }
 }
