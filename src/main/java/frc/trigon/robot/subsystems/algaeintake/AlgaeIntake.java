@@ -27,6 +27,11 @@ public class AlgaeIntake extends MotorSubsystem {
     }
 
     @Override
+    public void setBrake(boolean brake) {
+        angleMotor.setBrake(brake);
+    }
+
+    @Override
     public void sysIdDrive(double targetDrivePower) {
         angleMotor.setControl(voltageRequest.withOutput(targetDrivePower));
     }
