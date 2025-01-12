@@ -10,6 +10,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.subsystems.MotorSubsystem;
+import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.utilities.Conversions;
@@ -49,6 +50,9 @@ public class Elevator extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
+        Logger.recordOutput("Poses/Components/ElevatorFirstPose", getElevatorFirstComponentPose());
+        Logger.recordOutput("Poses/Components/ElevatorSecondPose", getElevatorSecondComponentPose());
+        Logger.recordOutput("Poses/Components/ElevatorThirdPose", getElevatorThirdComponentPose());
         ElevatorConstants.MECHANISM.update(
                 rotationsToMeters(getPositionRotations()),
                 rotationsToMeters(motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
@@ -57,9 +61,6 @@ public class Elevator extends MotorSubsystem {
     @Override
     public void updatePeriodically() {
         motor.update();
-        getElevatorFirstComponentPose();
-        getElevatorSecondComponentPose();
-        getElevatorThirdComponentPose();
     }
 
     @Override
@@ -85,7 +86,7 @@ public class Elevator extends MotorSubsystem {
         final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
         final Transform3d elevatorTransform = new Transform3d(
-                new Translation3d(0, 0, getPositionMeters()),
+                new Translation3d(0, 0, getPositionMeters() / 3),
                 new Rotation3d()
         );
         return originPoint.transformBy(elevatorTransform);
@@ -95,7 +96,7 @@ public class Elevator extends MotorSubsystem {
         final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
         final Transform3d elevatorTransform = new Transform3d(
-                new Translation3d(0, 0, getPositionMeters() * 2),
+                new Translation3d(0, 0, getPositionMeters() / 2),
                 new Rotation3d()
         );
         return originPoint.transformBy(elevatorTransform);
@@ -105,7 +106,7 @@ public class Elevator extends MotorSubsystem {
         final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
         final Transform3d elevatorTransform = new Transform3d(
-                new Translation3d(0, 0, getPositionMeters() * 3),
+                new Translation3d(0, 0, getPositionMeters()),
                 new Rotation3d()
         );
         return originPoint.transformBy(elevatorTransform);
