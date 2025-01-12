@@ -4,6 +4,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
 
+  /*public static Command setDebuggingCommand(){
+        return new NetworkTablesCommand(
+
+        )
+    }*/
+
 public class ElevatorCommands {
     public static Command getSetTargetStateCommand(ElevatorConstants.ElevatorState targetState) {
         return new StartEndCommand(
@@ -20,9 +26,4 @@ public class ElevatorCommands {
                 RobotContainer.ELEVATOR
         );
     }
-    /*public static Command getSetDebugCommand(){
-        return new NetworkTablesCommand(
-
-        )
-    }*/
 }
