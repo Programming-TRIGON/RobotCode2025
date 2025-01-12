@@ -61,7 +61,8 @@ public class ElevatorConstants {
             MASS_KILOGRAMS = 7,
             DRUM_RADIUS_METERS = 0.02,
             RETRACTED_ELEVATOR_HEIGHT_METERS = 0.2,
-            MAXIMUM_HEIGHT_METERS = 1.9;
+            MAXIMUM_HEIGHT_METERS = 1.9,
+            ELEVATOR_MECHANISM_VISIBILITY_OFFSET = 0.05;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
             GEARBOX,
@@ -79,14 +80,11 @@ public class ElevatorConstants {
             Units.Second.of(1000)
     );
 
-    private static final double
-            METERS_BEFORE_MECHANICAL_LIMIT = 0,
-            MAX_LENGTH_METERS_BEFORE_LIMIT = MAXIMUM_HEIGHT_METERS - METERS_BEFORE_MECHANICAL_LIMIT;
     static final Pose3d ELEVATOR_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(0), 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
-            MAX_LENGTH_METERS_BEFORE_LIMIT,
-            RETRACTED_ELEVATOR_HEIGHT_METERS,
+            MAXIMUM_HEIGHT_METERS - ELEVATOR_MECHANISM_VISIBILITY_OFFSET,
+            RETRACTED_ELEVATOR_HEIGHT_METERS + ELEVATOR_MECHANISM_VISIBILITY_OFFSET,
             Color.kYellow
     );
 
@@ -154,6 +152,7 @@ public class ElevatorConstants {
         config.MotorOutput.Inverted = FOLLOWER_MOTOR_INVERTED_VALUE;
 
         FOLLOWER_MOTOR.applyConfiguration(config);
+
         final Follower followMasterMotor = new Follower(MASTER_MOTOR_ID, FOLLOWER_MOTOR_OPPOSES_MASTER);
         FOLLOWER_MOTOR.setControl(followMasterMotor);
     }
