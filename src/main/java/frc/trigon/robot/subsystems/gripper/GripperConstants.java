@@ -35,6 +35,7 @@ public class GripperConstants {
             LASER_CAN_Y_COORDINATE_END_OF_DETECTION_REGION = 4;
     private static final LaserCan.RangingMode LASER_CAN_RANGING_MODE = LaserCan.RangingMode.SHORT;
     private static final LaserCan.TimingBudget LASER_CAN_LOOP_TIME = LaserCan.TimingBudget.TIMING_BUDGET_33MS;
+    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> 1;
     static final boolean FOC_ENABLED = true;
 
     private static final double MOMENT_OF_INERTIA = 0.003;
@@ -81,6 +82,7 @@ public class GripperConstants {
             LASER_CAN.setRegionOfInterest(LASER_CAN_X_COORDINATE_START_OF_DETECTION_REGION, LASER_CAN_Y_COORDINATE_START_OF_DETECTION_REGION, LASER_CAN_X_COORDINATE_END_OF_DETECTION_REGION, LASER_CAN_Y_COORDINATE_END_OF_DETECTION_REGION);
             LASER_CAN.setRangingMode(LASER_CAN_RANGING_MODE);
             LASER_CAN.setLoopTime(LASER_CAN_LOOP_TIME);
+            LASER_CAN.setSimulationSupplier(LASER_CAN_SIMULATION_SUPPLIER);
         } catch (ConfigurationFailedException e) {
             System.out.println("Configuration failed! " + e);
         }
