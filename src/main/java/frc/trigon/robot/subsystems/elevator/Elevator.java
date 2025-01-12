@@ -42,15 +42,15 @@ public class Elevator extends MotorSubsystem {
     @Override
     public void updateLog(SysIdRoutineLog log) {
         log.motor("Elevator")
-                .linearPosition(Units.Meters.of(rotationsToMeters(motor.getSignal(TalonFXSignal.POSITION))))
-                .linearVelocity(Units.MetersPerSecond.of(rotationsToMeters(motor.getSignal(TalonFXSignal.VELOCITY))))
+                .linearPosition(Units.Meters.of(getPositionRotations()))
+                .linearVelocity(Units.MetersPerSecond.of(motor.getSignal(TalonFXSignal.VELOCITY)))
                 .voltage(Units.Volts.of(motor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
     @Override
     public void updateMechanism() {
         ElevatorConstants.MECHANISM.update(
-                rotationsToMeters(motor.getSignal(TalonFXSignal.POSITION)),
+                rotationsToMeters(getPositionRotations()),
                 rotationsToMeters(motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
         setReefLevelToMechanism();
     }
@@ -69,8 +69,8 @@ public class Elevator extends MotorSubsystem {
     }
 
     public final boolean atTargetState() {
-        final double difference = Math.abs(targetState.targetPositionMeters - motor.getSignal(TalonFXSignal.POSITION));
-        return difference < ElevatorConstants.TOLERANCE_METERS;
+        final double currentToTargetStateDifference = Math.abs(targetState.targetPositionMeters - getPositionRotations());
+        return currentToTargetStateDifference < ElevatorConstants.TOLERANCE_METERS;
     }
 
     void setTargetState(ElevatorConstants.ElevatorState targetState) {
@@ -113,6 +113,10 @@ public class Elevator extends MotorSubsystem {
                 new Rotation3d()
         );
         return originPoint.transformBy(elevatorTransform);
+    }
+
+    private double getPositionRotations() {
+        return motor.getSignal(TalonFXSignal.POSITION);
     }
 
     private double getPositionMeters() {
