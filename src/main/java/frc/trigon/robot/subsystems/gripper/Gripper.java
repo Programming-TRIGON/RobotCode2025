@@ -1,7 +1,6 @@
 package frc.trigon.robot.subsystems.gripper;
 
 import com.ctre.phoenix6.controls.VoltageOut;
-import edu.wpi.first.units.measure.Voltage;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
