@@ -29,13 +29,14 @@ public class GripperConstants {
     private static final InvertedValue INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
     private static final NeutralModeValue NEUTRAL_MODE_VALUE = NeutralModeValue.Coast;
     private static final int
-            LASER_CAN_X_COORDINATE_START_OF_DETECTION_REGION = 6,
-            LASER_CAN_Y_COORDINATE_START_OF_DETECTION_REGION = 6,
-            LASER_CAN_X_COORDINATE_END_OF_DETECTION_REGION = 4,
-            LASER_CAN_Y_COORDINATE_END_OF_DETECTION_REGION = 4;
+            LASER_CAN_DETECTION_REGION_START_X_COORDINATE = 6,
+            LASER_CAN_DETECTION_REGION_START_Y_COORDINATE = 6,
+            LASER_CAN_DETECTION_REGION_END_X_COORDINATE = 11,
+            LASER_CAN_DETECTION_REGION_END_Y_COORDINATE = 11;
     private static final LaserCan.RangingMode LASER_CAN_RANGING_MODE = LaserCan.RangingMode.SHORT;
     private static final LaserCan.TimingBudget LASER_CAN_LOOP_TIME = LaserCan.TimingBudget.TIMING_BUDGET_33MS;
     private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> 1;
+    static final double LASER_CAN_THRESHOLD = 10;
     static final boolean FOC_ENABLED = true;
 
     private static final double MOMENT_OF_INERTIA = 0.003;
@@ -70,7 +71,6 @@ public class GripperConstants {
         config.Feedback.RotorToSensorRatio = GEAR_RATIO;
 
         MOTOR.applyConfiguration(config);
-
         MOTOR.setPhysicsSimulation(GRIPPER_SIMULATION);
 
         MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
@@ -79,7 +79,7 @@ public class GripperConstants {
 
     private static void configureLaserCAN() {
         try {
-            LASER_CAN.setRegionOfInterest(LASER_CAN_X_COORDINATE_START_OF_DETECTION_REGION, LASER_CAN_Y_COORDINATE_START_OF_DETECTION_REGION, LASER_CAN_X_COORDINATE_END_OF_DETECTION_REGION, LASER_CAN_Y_COORDINATE_END_OF_DETECTION_REGION);
+            LASER_CAN.setRegionOfInterest(LASER_CAN_DETECTION_REGION_START_X_COORDINATE, LASER_CAN_DETECTION_REGION_START_Y_COORDINATE, LASER_CAN_DETECTION_REGION_END_X_COORDINATE, LASER_CAN_DETECTION_REGION_END_Y_COORDINATE);
             LASER_CAN.setRangingMode(LASER_CAN_RANGING_MODE);
             LASER_CAN.setLoopTime(LASER_CAN_LOOP_TIME);
             LASER_CAN.setSimulationSupplier(LASER_CAN_SIMULATION_SUPPLIER);
