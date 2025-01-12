@@ -1,12 +1,9 @@
 package frc.trigon.robot.misc.simulatedfield;
 
-import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import frc.trigon.robot.RobotContainer;
-import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.FieldConstants;
-import frc.trigon.robot.constants.OperatorConstants;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.ArrayList;
@@ -15,31 +12,16 @@ import java.util.ArrayList;
  * Handles the simulation of game pieces.
  */
 public class SimulationFieldHandler {
-    private static boolean
-            IS_HOLDING_CORAL = false,
-            IS_HOLDING_ALGAE = false;
     private static final ArrayList<SimulatedGamePiece>
             CORAL_ON_FIELD = FieldConstants.CORAL_ON_FIELD,
             ALGAE_ON_FIELD = FieldConstants.ALGAE_ON_FIELD;
-    private static boolean CAN_EJECT = false;
+    private static boolean
+            CAN_EJECT_CORAL = false,
+            CAN_EJECT_ALGAE = false;
     private static final double PICKUP_TOLERANCE_METERS = 0.3;
     private static Integer
             HELD_CORAL_INDEX = null,
             HELD_ALGAE_INDEX = null;
-
-    public static void update() {
-        updateGamePieces();
-        logGamePieces();
-    }
-
-    /**
-     * Updates the state of all game pieces.
-     */
-    private static void updateGamePieces() {
-        updateCoralCollection();
-        updateCoralEjection();
-        updateHeldCoralPose();
-    }
 
     public static ArrayList<SimulatedGamePiece> getSimulatedCoral() {
         return CORAL_ON_FIELD;
@@ -50,85 +32,110 @@ public class SimulationFieldHandler {
     }
 
     public static boolean isHoldingCoral() {
-        return IS_HOLDING_CORAL;
+        return HELD_CORAL_INDEX != null;
     }
 
     public static boolean isHoldingAlgae() {
-        return IS_HOLDING_ALGAE;
+        return HELD_ALGAE_INDEX != null;
     }
 
-    private static SimulatedCoral[] generateCoral(Pose3d[] startingPoses) {
-        final SimulatedCoral[] GAME_PIECES = new SimulatedCoral[120];
-        for (int i = 0; i < startingPoses.length; i++)
-            GAME_PIECES[i] = new SimulatedCoral(startingPoses[i]);
-        return GAME_PIECES;
+    public static void setCanEjectCoral(boolean canEject) {
+        CAN_EJECT_CORAL = canEject;
     }
 
-    private static SimulatedAlgae[] generateAlgae(Pose3d[] startingPoses) {
-        final SimulatedAlgae[] GAME_PIECES = new SimulatedAlgae[18];
-        for (int i = 0; i < startingPoses.length; i++)
-            GAME_PIECES[i] = new SimulatedAlgae(startingPoses[i]);
-        return GAME_PIECES;
+    public static void setCanEjectAlgae(boolean canEject) {
+        CAN_EJECT_ALGAE = canEject;
+    }
+
+    public static void update() {
+        updateGamePieces();
+        logGamePieces();
     }
 
     /**
-     * Handles when a coral should collect by checking the state of the necessary subsystems of the robot and the position of the robot relative to the coral.
-     * Also regenerates picked up coral.
+     * Updates the state of all game pieces.
      */
-    private static void updateCoralCollection() {
-        if (HELD_CORAL_INDEX != null || !isCollectingCoral())
-            return;
-        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
-        for (int i = 0; i < CORAL_ON_FIELD.size(); i++) {
-            final SimulatedGamePiece coral = CORAL_ON_FIELD.get(i);
-            if (coral.getDistanceMeters(new Pose3d(robotPose)) <= PICKUP_TOLERANCE_METERS && coral.isGrounded()) {
-                HELD_CORAL_INDEX = i;
-                IS_HOLDING_CORAL = true;
-                CAN_EJECT = true;
-                return;
+    private static void updateGamePieces() {
+        updateCollection();
+        updateEjection();
+        updateHeldGamePiecePoses();
+    }
+
+    /**
+     * Logs the position of all the game pieces.
+     */
+    private static void logGamePieces() {
+        Logger.recordOutput("Poses/GamePieces/Coral", mapSimulatedGamePieceListToPoseArray(CORAL_ON_FIELD));
+        Logger.recordOutput("Poses/GamePieces/Algae", mapSimulatedGamePieceListToPoseArray(ALGAE_ON_FIELD));
+    }
+
+    private static void updateCollection() {
+        final Pose3d robotPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
+
+        if (isCollectingCoral() && HELD_CORAL_INDEX == null)
+            HELD_CORAL_INDEX = getHeldGamePieceIndex(robotPose, CORAL_ON_FIELD);
+        if (isCollectingAlgae() && HELD_ALGAE_INDEX == null)
+            HELD_ALGAE_INDEX = getHeldGamePieceIndex(robotPose, ALGAE_ON_FIELD);
+    }
+
+    private static Integer getHeldGamePieceIndex(Pose3d collectionPose, ArrayList<SimulatedGamePiece> gamePieceList) {
+        for (SimulatedGamePiece gamePiece : gamePieceList) {
+            if (gamePiece.getDistanceMeters(collectionPose) <= PICKUP_TOLERANCE_METERS && gamePiece.isGrounded()) {
+                return gamePieceList.indexOf(gamePiece);
             }
         }
-    }
-
-    /**
-     * Handles when a held coral should eject from the robot by checking the states of the necessary subsystems.
-     */
-    private static void updateCoralEjection() {
-        if (HELD_CORAL_INDEX == null || !isEjectingCoral() || !CAN_EJECT)
-            return;
-        CAN_EJECT = false;
-        GeneralCommands.getDelayedCommand(0.04, () -> {
-            HELD_CORAL_INDEX = null;
-            IS_HOLDING_CORAL = false;
-        }).schedule();
-    }
-
-    /**
-     * Updates the position of the held coral so that it stays inside the robot.
-     */
-    private static void updateHeldCoralPose() {
-        if (HELD_CORAL_INDEX == null)
-            return;
-        CORAL_ON_FIELD.get(HELD_CORAL_INDEX).updatePose(calculateHeldCoralPose(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose()));
+        return null;
     }
 
     private static boolean isCollectingCoral() {
-        return OperatorConstants.OPERATOR_CONTROLLER.c().getAsBoolean();//RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT);
+        return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT);
+    }
+
+    private static boolean isCollectingAlgae() {
+        return false; //TODO: Implement for when an algae should enter the robot
+    }
+
+    private static void updateEjection() {
+        if (HELD_CORAL_INDEX != null && isEjectingCoral() && CAN_EJECT_CORAL)
+            HELD_CORAL_INDEX = null;
+        if (HELD_ALGAE_INDEX != null && isEjectingAlgae() && CAN_EJECT_ALGAE)
+            HELD_ALGAE_INDEX = null;
     }
 
     private static boolean isEjectingCoral() {
-        return OperatorConstants.OPERATOR_CONTROLLER.e().getAsBoolean();//TODO: Implement for when a coral should exit the robot
+        return false;//TODO: Implement for when a coral should exit the robot
+    }
+
+    private static boolean isEjectingAlgae() {
+        return false;//TODO: Implement for when an algae should exit the robot
+    }
+
+    /**
+     * Updates the position of the held game pieces so that they stay inside the robot.
+     */
+    private static void updateHeldGamePiecePoses() {
+        final Pose3d
+                robotRelativeHeldCoralPosition = new Pose3d(),
+                robotRelativeHeldAlgaePosition = new Pose3d();
+        updateHeldGamePiecePose(robotRelativeHeldCoralPosition, CORAL_ON_FIELD, HELD_CORAL_INDEX);
+        updateHeldGamePiecePose(robotRelativeHeldAlgaePosition, ALGAE_ON_FIELD, HELD_ALGAE_INDEX);
+    }
+
+    private static void updateHeldGamePiecePose(Pose3d robotRelativeHeldGamePiecePose, ArrayList<SimulatedGamePiece> gamePieceList, Integer heldGamePieceIndex) {
+        if (heldGamePieceIndex == null)
+            return;
+
+        gamePieceList.get(heldGamePieceIndex).updatePose(calculateHeldGamePiecePose(robotRelativeHeldGamePiecePose));
     }
 
     /**
      * Calculate the position of the held coral relative to the field.
      *
-     * @param robotPose the position of the robot on the field
+     * @param robotRelativeHeldGamePiecePosition the position of the held game piece relative to the robot
      * @return the position of the coral relative to the field
      */
-    private static Pose3d calculateHeldCoralPose(Pose2d robotPose) {
-        final Pose3d robotPose3d = new Pose3d(robotPose);
-        final Pose3d robotRelativeHeldGamePiecePosition = new Pose3d();// TODO:Set position
+    private static Pose3d calculateHeldGamePiecePose(Pose3d robotRelativeHeldGamePiecePosition) {
+        final Pose3d robotPose3d = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
         return robotPose3d.plus(toTransform(robotRelativeHeldGamePiecePosition));
     }
 
@@ -140,14 +147,6 @@ public class SimulationFieldHandler {
      */
     private static Transform3d toTransform(Pose3d pose) {
         return new Transform3d(pose.getTranslation(), pose.getRotation());
-    }
-
-    /**
-     * Logs the position of all the game pieces on the field and in the robot.
-     */
-    private static void logGamePieces() {
-        Logger.recordOutput("Poses/GamePieces/Coral", mapSimulatedGamePieceListToPoseArray(CORAL_ON_FIELD));
-        Logger.recordOutput("Poses/GamePieces/Algae", mapSimulatedGamePieceListToPoseArray(ALGAE_ON_FIELD));
     }
 
     private static Pose3d[] mapSimulatedGamePieceListToPoseArray(ArrayList<SimulatedGamePiece> gamePieces) {
