@@ -26,11 +26,11 @@ public class ElevatorConstants {
             MASTER_MOTOR = new TalonFXMotor(MASTER_MOTOR_ID, MASTER_MOTOR_NAME),
             FOLLOWER_MOTOR = new TalonFXMotor(FOLLOWER_MOTOR_ID, FOLLOWER_MOTOR_NAME);
 
-    private static final double GEAR_RATIO = 20;
     private static final NeutralModeValue NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
     private static final InvertedValue
             MASTER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             FOLLOWER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
+    private static final double GEAR_RATIO = 20;
     private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = false;
     private static final double
             P = RobotHardwareStats.isSimulation() ? 110 : 50,
@@ -47,15 +47,13 @@ public class ElevatorConstants {
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final double
-            REVERSE_LIMIT_AUTOSET_POSITION_VALUE = 2,
-            FORWARD_LIMIT_AUTOSET_POSITION_VALUE = 0.1;
+            REVERSE_LIMIT_SWITCH_RESET_POSITION = 2,
+            FORWARD_LIMIT_SWITCH_RESET_POSITION = 0.1;
     private static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
             MOTION_MAGIC_ACCELERATION = 25,
             MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
     static final boolean FOC_ENABLED = true;
-
-    private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final int MOTOR_AMOUNT = 2;
     private static final DCMotor GEARBOX = DCMotor.getKrakenX60Foc(MOTOR_AMOUNT);
     private static final double
@@ -63,6 +61,7 @@ public class ElevatorConstants {
             DRUM_RADIUS_METERS = 0.02,
             RETRACTED_ELEVATOR_HEIGHT_METERS = 0.5,
             MAXIMUM_ELEVATOR_HEIGHT_METERS = 1.9;
+    private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
             GEARBOX,
             GEAR_RATIO,
@@ -120,12 +119,12 @@ public class ElevatorConstants {
         config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_LIMIT_AUTOSET_POSITION_VALUE;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_LIMIT_SWITCH_RESET_POSITION;
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_LIMIT_AUTOSET_POSITION_VALUE;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_LIMIT_SWITCH_RESET_POSITION;
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
