@@ -81,7 +81,7 @@ public class ElevatorConstants {
             FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH = 0.9,
             SECOND_ELEVATOR_COMPONENT_EXTENDED_LENGTH = 0.9;
     static final Pose3d ELEVATOR_VISUALIZATION_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(0), 0, 0));
-    static final Pose3d SECOND_ELEVATOR_VISUALIZATION_ORIGIN_POINT = new Pose3d(0, 0, 0.2, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(0), 0, 0));
+    static final Pose3d SECOND_ELEVATOR_VISUALIZATION_ORIGIN_POINT = new Pose3d(0, 0, 0.05, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(0), 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
             MAXIMUM_ELEVATOR_HEIGHT_METERS,
@@ -91,8 +91,6 @@ public class ElevatorConstants {
 
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
     static final double TOLERANCE_METERS = 0.1;
-    static final double FIRST_ELEVATOR_COMPONENT_HEIGHT_DIFFERANCE_FROM_ROBOT = 0;
-    static final double SECOND_ELEVATOR_COMPONENT_HEIGHT_DIFFERANCE_FROM_FIRST_COMPONENT = 0.05;
 
     static {
         configureMasterMotor();
