@@ -24,6 +24,7 @@ public class CoralIntake extends MotorSubsystem {
     private final SimpleSensor beamBreak = CoralIntakeConstants.BEAM_BREAK;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
+    private final double positionToleranceRotations = metersToRotations(CoralIntakeConstants.POSITION_TOLERANCE_METERS);
     private CoralIntakeConstants.CoralIntakeState targetState = CoralIntakeConstants.CoralIntakeState.REST;
 
     public CoralIntake() {
@@ -85,9 +86,7 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     public boolean atTargetAngle() {
-        final double
-                elevatorDifferenceFromTargetStateRotations = Math.abs(getCurrentElevatorPositionRotations() - targetState.targetPositionRotations),
-                positionToleranceRotations = metersToRotations(CoralIntakeConstants.POSITION_TOLERANCE_METERS);
+        final double elevatorDifferenceFromTargetStateRotations = Math.abs(getCurrentElevatorPositionRotations() - targetState.targetPositionRotations);
         return elevatorDifferenceFromTargetStateRotations < positionToleranceRotations;
     }
 

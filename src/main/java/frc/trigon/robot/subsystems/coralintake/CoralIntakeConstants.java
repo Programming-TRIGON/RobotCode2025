@@ -255,8 +255,8 @@ public class CoralIntakeConstants {
 
         public final double
                 targetIntakeVoltage,
-                targetFunnelVoltage,
-                targetPositionRotations;
+                targetFunnelVoltage;
+        public final double targetPositionRotations;
 
         CoralIntakeState(double targetIntakeVoltage, double targetFunnelVoltage, double targetPositionRotations) {
             this.targetIntakeVoltage = targetIntakeVoltage;
