@@ -86,13 +86,10 @@ public class Elevator extends MotorSubsystem {
     private Pose3d getElevatorFirstComponentPose() {
         final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
-        if (getPositionMeters() < ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH)
+        if (elevatorDidNotExtendFirstComponentLength())
             return originPoint.transformBy(getCurrentElevatorTransform(ElevatorConstants.FIRST_ELEVATOR_COMPONENT_HEIGHT_DIFFERANCE_FROM_ROBOT));
         return originPoint.transformBy(
-                new Transform3d(
-                        new Translation3d(0, 0, ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH),
-                        new Rotation3d()
-                )
+                createNewTransform(ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH)
         );
     }
 
@@ -101,9 +98,17 @@ public class Elevator extends MotorSubsystem {
         return originPoint.transformBy(getCurrentElevatorTransform(ElevatorConstants.SECOND_ELEVATOR_COMPONENT_HEIGHT_DIFFERANCE_FROM_FIRST_COMPONENT));
     }
 
+    private boolean elevatorDidNotExtendFirstComponentLength() {
+        return getPositionMeters() < ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH;
+    }
+
     private Transform3d getCurrentElevatorTransform(double heightAboveLowerComponent) {
+        return createNewTransform(getPositionMeters() + heightAboveLowerComponent);
+    }
+
+    private Transform3d createNewTransform(double transformHeight) {
         return new Transform3d(
-                new Translation3d(0, 0, getPositionMeters() + heightAboveLowerComponent),
+                new Translation3d(0, 0, transformHeight),
                 new Rotation3d()
         );
     }
