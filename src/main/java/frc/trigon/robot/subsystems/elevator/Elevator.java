@@ -50,8 +50,8 @@ public class Elevator extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
-        Logger.recordOutput("Poses/Components/ElevatorFirstPose", getElevatorFirstComponentPose());
-        Logger.recordOutput("Poses/Components/ElevatorSecondPose", getElevatorSecondComponentPose());
+        Logger.recordOutput("Poses/Components/ElevatorFirstPose", getFirstComponentPose());
+        Logger.recordOutput("Poses/Components/ElevatorSecondPose", getSecondComponentPose());
 
         ElevatorConstants.MECHANISM.update(
                 rotationsToMeters(getPositionRotations()),
@@ -83,28 +83,28 @@ public class Elevator extends MotorSubsystem {
         motor.setControl(positionRequest.withPosition(targetPositionRotations));
     }
 
-    private Pose3d getElevatorFirstComponentPose() {
+    private Pose3d getFirstComponentPose() {
         final Pose3d originPoint = ElevatorConstants.FIRST_STAGE_VISUALIZATION_ORIGIN_POINT;
 
-        if (elevatorDidNotExtendFirstComponentLength())
+        if (!elevatorExtendedFirstComponentLimit())
             return calculateCurrentElevatorPoseFromOrigin(originPoint);
-        return getNewPose(ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH, originPoint);
+        return setComponentPose(ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH, originPoint);
     }
 
-    private Pose3d getElevatorSecondComponentPose() {
+    private Pose3d getSecondComponentPose() {
         final Pose3d originPoint = ElevatorConstants.SECOND_STAGE_VISUALIZATION_ORIGIN_POINT;
         return calculateCurrentElevatorPoseFromOrigin(originPoint);
     }
 
-    private boolean elevatorDidNotExtendFirstComponentLength() {
-        return getPositionMeters() < ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH;
+    private boolean elevatorExtendedFirstComponentLimit() {
+        return getPositionMeters() > ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH;
     }
 
     private Pose3d calculateCurrentElevatorPoseFromOrigin(Pose3d originPoint) {
-        return getNewPose(getPositionMeters(), originPoint);
+        return setComponentPose(getPositionMeters(), originPoint);
     }
 
-    private Pose3d getNewPose(double poseHeight, Pose3d originPoint) {
+    private Pose3d setComponentPose(double poseHeight, Pose3d originPoint) {
         return originPoint.transformBy(new Transform3d(
                         new Translation3d(0, 0, poseHeight),
                         new Rotation3d()
