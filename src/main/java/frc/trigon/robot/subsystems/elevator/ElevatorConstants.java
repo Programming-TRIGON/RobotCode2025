@@ -26,6 +26,7 @@ public class ElevatorConstants {
             MASTER_MOTOR = new TalonFXMotor(MASTER_MOTOR_ID, MASTER_MOTOR_NAME),
             FOLLOWER_MOTOR = new TalonFXMotor(FOLLOWER_MOTOR_ID, FOLLOWER_MOTOR_NAME);
 
+    private static final double GEAR_RATIO = 20;
     private static final NeutralModeValue NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
     private static final InvertedValue
             MASTER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
@@ -46,31 +47,30 @@ public class ElevatorConstants {
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final double
-            SWITCH_LIMIT_REVERSE_AUTO_POSITION = 2,
-            SWITCH_LIMIT_FORWARD_AUTO_POSITION = 0.1,
-            GEAR_RATIO = 20;
+            REVERSE_LIMIT_AUTOSET_POSITION_VALUE = 2,
+            FORWARD_LIMIT_AUTOSET_POSITION_VALUE = 0.1;
     private static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
             MOTION_MAGIC_ACCELERATION = 25,
             MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
     static final boolean FOC_ENABLED = true;
 
+    private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final int MOTOR_AMOUNT = 2;
     private static final DCMotor GEARBOX = DCMotor.getKrakenX60Foc(MOTOR_AMOUNT);
     private static final double
-            MASS_KILOGRAMS = 7,
+            ELEVATOR_MASS_KILOGRAMS = 7,
             DRUM_RADIUS_METERS = 0.02,
             RETRACTED_ELEVATOR_HEIGHT_METERS = 0.2,
-            MAXIMUM_HEIGHT_METERS = 1.9,
+            MAXIMUM_ELEVATOR_HEIGHT_METERS = 1.9,
             ELEVATOR_MECHANISM_VISIBILITY_OFFSET = 0.05;
-    private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
             GEARBOX,
             GEAR_RATIO,
-            MASS_KILOGRAMS,
+            ELEVATOR_MASS_KILOGRAMS,
             DRUM_RADIUS_METERS,
             RETRACTED_ELEVATOR_HEIGHT_METERS,
-            MAXIMUM_HEIGHT_METERS,
+            MAXIMUM_ELEVATOR_HEIGHT_METERS,
             SHOULD_SIMULATE_GRAVITY
     );
 
@@ -83,7 +83,7 @@ public class ElevatorConstants {
     static final Pose3d ELEVATOR_VISUALIZATION_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(0), 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
-            MAXIMUM_HEIGHT_METERS - ELEVATOR_MECHANISM_VISIBILITY_OFFSET,
+            MAXIMUM_ELEVATOR_HEIGHT_METERS - ELEVATOR_MECHANISM_VISIBILITY_OFFSET,
             RETRACTED_ELEVATOR_HEIGHT_METERS + ELEVATOR_MECHANISM_VISIBILITY_OFFSET,
             Color.kYellow
     );
@@ -121,13 +121,12 @@ public class ElevatorConstants {
         config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = SWITCH_LIMIT_REVERSE_AUTO_POSITION;
-
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_LIMIT_AUTOSET_POSITION_VALUE;
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = SWITCH_LIMIT_FORWARD_AUTO_POSITION;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_LIMIT_AUTOSET_POSITION_VALUE;
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
