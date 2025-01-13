@@ -91,8 +91,8 @@ public class ElevatorConstants {
 
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
     static final double TOLERANCE_METERS = 0.1;
-    static final double FIRST_ELEVATOR_COMPONENT_HEIGHT_DIFFERANCE = 0;
-    static final double SECOND_ELEVATOR_COMPONENT_HEIGHT_DIFFERANCE = 0.05;
+    static final double FIRST_ELEVATOR_COMPONENT_HEIGHT_DIFFERANCE_FROM_ROBOT = 0;
+    static final double SECOND_ELEVATOR_COMPONENT_HEIGHT_DIFFERANCE_FROM_FIRST_COMPONENT = 0.05;
 
     static {
         configureMasterMotor();
