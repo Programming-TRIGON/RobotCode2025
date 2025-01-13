@@ -43,18 +43,18 @@ public class CoralIntake extends MotorSubsystem {
     @Override
     public void updateLog(SysIdRoutineLog log) {
         log.motor("CoralElevatorMotor")
-                .linearPosition(Units.Meters.of(getCurrentElevatorPositionMeters()))
-                .linearVelocity(Units.MetersPerSecond.of(rotationsToMeters(elevatorMotor.getSignal(TalonFXSignal.VELOCITY))))
+                .linearPosition(Units.Meters.of(getCurrentElevatorPositionRotations()))
+                .linearVelocity(Units.MetersPerSecond.of(elevatorMotor.getSignal(TalonFXSignal.VELOCITY)))
                 .voltage(Units.Volts.of(elevatorMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
     @Override
     public void updateMechanism() {
-        CoralIntakeConstants.INTAKE_MECHANISM.update(intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE), targetState.targetIntakeVoltage);
-        CoralIntakeConstants.FUNNEL_MECHANISM.update(funnelMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE), targetState.targetFunnelVoltage);
+        CoralIntakeConstants.INTAKE_MECHANISM.update(intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
+        CoralIntakeConstants.FUNNEL_MECHANISM.update(funnelMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
         CoralIntakeConstants.ELEVATOR_MECHANISM.update(
-                getCurrentElevatorPositionMeters(),
-                rotationsToMeters(elevatorMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
+                getCurrentElevatorPositionRotations(),
+                elevatorMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)
         );
 
         Logger.recordOutput("Poses/Components/CoralIntakePose", calculateVisualizationPose());
@@ -85,7 +85,7 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     public boolean atTargetState() {
-        return Math.abs(getCurrentElevatorPositionMeters() - targetState.targetPositionMeters) < CoralIntakeConstants.POSITION_TOLERANCE_METERS;
+        return Math.abs(getCurrentElevatorPositionRotations() - targetState.targetPositionRotations) < CoralIntakeConstants.POSITION_TOLERANCE_METERS;
     }
 
     public boolean hasGamePiece() {
@@ -98,13 +98,13 @@ public class CoralIntake extends MotorSubsystem {
         setTargetState(
                 targetState.targetIntakeVoltage,
                 targetState.targetFunnelVoltage,
-                targetState.targetPositionMeters
+                targetState.targetPositionRotations
         );
     }
 
-    void setTargetState(double targetIntakeVoltage, double targetFunnelVoltage, double targetPositionMeters) {
+    void setTargetState(double targetIntakeVoltage, double targetFunnelVoltage, double targetPositionRotations) {
         setTargetVoltage(targetIntakeVoltage, targetFunnelVoltage);
-        setTargetPositionMeters(targetPositionMeters);
+        setTargetPositionRotations(targetPositionRotations);
     }
 
     void setTargetVoltage(double targetIntakeVoltage, double targetFunnelVoltage) {
@@ -113,27 +113,29 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     private void setTargetIntakeVoltage(double targetVoltage) {
+        CoralIntakeConstants.INTAKE_MECHANISM.setTargetVelocity(targetVoltage);
         intakeMotor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
     private void setTargetFunnelVoltage(double targetVoltage) {
+        CoralIntakeConstants.FUNNEL_MECHANISM.setTargetVelocity(targetVoltage);
         funnelMotor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
-    private void setTargetPositionMeters(double targetPositionMeters) {
-        elevatorMotor.setControl(positionRequest.withPosition(metersToRotations(targetPositionMeters)));
+    private void setTargetPositionRotations(double targetPositionRotations) {
+        elevatorMotor.setControl(positionRequest.withPosition(targetPositionRotations));
     }
 
     private double getCurrentElevatorPositionMeters() {
-        return rotationsToMeters(elevatorMotor.getSignal(TalonFXSignal.POSITION));
+        return rotationsToMeters(getCurrentElevatorPositionRotations());
+    }
+
+    private double getCurrentElevatorPositionRotations() {
+        return elevatorMotor.getSignal(TalonFXSignal.POSITION);
     }
 
     private double rotationsToMeters(double positionRotations) {
         return Conversions.rotationsToDistance(positionRotations, CoralIntakeConstants.ELEVATOR_DRUM_DIAMETER_METERS);
-    }
-
-    private double metersToRotations(double positionMeters) {
-        return Conversions.distanceToRotations(positionMeters, CoralIntakeConstants.ELEVATOR_DRUM_DIAMETER_METERS);
     }
 
     private Pose3d calculateVisualizationPose() {

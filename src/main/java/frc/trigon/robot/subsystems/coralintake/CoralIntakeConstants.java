@@ -141,7 +141,7 @@ public class CoralIntakeConstants {
             Color.kRed
     );
 
-    static final double POSITION_TOLERANCE_METERS = 0.03;
+    static final double POSITION_TOLERANCE_METERS = 0.01;
     static final double ELEVATOR_DRUM_DIAMETER_METERS = ELEVATOR_DRUM_RADIUS_METERS * 2;
 
     static {
@@ -252,20 +252,20 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        COLLECT(12, 12, 0.35),
+        COLLECT(12, 12, 100),
         FEED(-12, -12, 0),
-        EJECT(-12, -12, 0.35),
+        EJECT(-12, -12, 100),
         REST(0, 0, 0);
 
         public final double
                 targetIntakeVoltage,
                 targetFunnelVoltage,
-                targetPositionMeters;
+                targetPositionRotations;
 
-        CoralIntakeState(double targetIntakeVoltage, double targetFunnelVoltage, double targetPositionMeters) {
+        CoralIntakeState(double targetIntakeVoltage, double targetFunnelVoltage, double targetPositionRotations) {
             this.targetIntakeVoltage = targetIntakeVoltage;
             this.targetFunnelVoltage = targetFunnelVoltage;
-            this.targetPositionMeters = targetPositionMeters;
+            this.targetPositionRotations = targetPositionRotations;
         }
     }
 }
