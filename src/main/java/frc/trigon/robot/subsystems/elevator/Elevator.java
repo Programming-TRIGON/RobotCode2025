@@ -69,7 +69,7 @@ public class Elevator extends MotorSubsystem {
         motor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
-    public final boolean atTargetState() {
+    public boolean atTargetState() {
         final double currentToTargetStateDifference = Math.abs(targetState.targetPositionMeters - getPositionMeters());
         return currentToTargetStateDifference < ElevatorConstants.TOLERANCE_METERS;
     }
@@ -86,9 +86,8 @@ public class Elevator extends MotorSubsystem {
     private Pose3d getElevatorFirstComponentPose() {
         final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
-        if (getPositionMeters() < ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH) {
+        if (getPositionMeters() < ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH)
             return originPoint.transformBy(getCurrentElevatorTransform(ElevatorConstants.FIRST_ELEVATOR_COMPONENT_HEIGHT_DIFFERANCE_FROM_ROBOT));
-        }
         return originPoint.transformBy(
                 new Transform3d(
                         new Translation3d(0, 0, ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH),
