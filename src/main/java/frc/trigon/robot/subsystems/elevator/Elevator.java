@@ -84,7 +84,7 @@ public class Elevator extends MotorSubsystem {
     }
 
     private Pose3d getElevatorFirstComponentPose() {
-        final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
+        final Pose3d originPoint = ElevatorConstants.FIRST_STAGE_VISUALIZATION_ORIGIN_POINT;
 
         if (elevatorDidNotExtendFirstComponentLength())
             return calculateCurrentElevatorPoseFromOrigin(originPoint);
@@ -92,7 +92,7 @@ public class Elevator extends MotorSubsystem {
     }
 
     private Pose3d getElevatorSecondComponentPose() {
-        final Pose3d originPoint = ElevatorConstants.SECOND_ELEVATOR_VISUALIZATION_ORIGIN_POINT;
+        final Pose3d originPoint = ElevatorConstants.SECOND_STAGE_VISUALIZATION_ORIGIN_POINT;
         return calculateCurrentElevatorPoseFromOrigin(originPoint);
     }
 
