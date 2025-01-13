@@ -9,6 +9,7 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
+import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeCommands;
 import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.commands.WheelRadiusCharacterizationCommand;
@@ -63,7 +64,8 @@ public class CommandConstants {
             ),
             COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(AlgaeIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, AlgaeIntakeConstants.COLLECTION_RUMBLE_POWER)),
             ENABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> SHOULD_ALIGN_TO_CORAL = true),
-            DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> SHOULD_ALIGN_TO_CORAL = false);
+            DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> SHOULD_ALIGN_TO_CORAL = false),
+            ALGAE_EJECTION_COMMAND = AlgaeIntakeCommands.getSetTargetStateCommand(AlgaeIntakeConstants.AlgaeIntakeState.EJECT);
 
     /**
      * Calculates the target drive power from an axis value by dividing it by the shift mode value.

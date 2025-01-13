@@ -16,14 +16,14 @@ import org.trigon.hardware.misc.leds.LEDCommands;
  * A class that contains commands for collecting game pieces.
  */
 public class CollectionCommands {
-    public static Command getCollectAlgaeCommand() {
+    public static Command getAlgaeCollectionCommand() {
         return new ParallelCommandGroup(
                 AlgaeIntakeCommands.getSetTargetStateCommand(AlgaeIntakeConstants.AlgaeIntakeState.COLLECT),
                 LEDCommands.getBlinkingCommand(Color.kAqua, AlgaeIntakeConstants.COLLECTION_LEDS_BLINKING_SPEED)
         );
     }
 
-    public static Command getCollectCoralFromGroundCommand() {
+    public static Command getCoralCollectionCommand() {
         return new ParallelCommandGroup(
                 new CoralAlignmentCommand().onlyIf(() -> CommandConstants.SHOULD_ALIGN_TO_CORAL),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT).unless(() -> CommandConstants.SHOULD_ALIGN_TO_CORAL),
