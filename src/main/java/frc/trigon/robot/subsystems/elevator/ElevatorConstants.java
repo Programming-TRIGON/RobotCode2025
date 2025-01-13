@@ -52,7 +52,7 @@ public class ElevatorConstants {
             MOTION_MAGIC_ACCELERATION = 25,
             MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
     static final boolean FOC_ENABLED = true;
-    
+
     private static final int MOTOR_AMOUNT = 2;
     private static final DCMotor GEARBOX = DCMotor.getKrakenX60Foc(MOTOR_AMOUNT);
     private static final double
