@@ -139,7 +139,10 @@ public class CoralIntakeConstants {
             Color.kRed
     );
 
-    static final double POSITION_TOLERANCE_METERS = 0.01;
+    static final double
+            POSITION_TOLERANCE_METERS = 0.01,
+            INTAKE_VOLTAGE_TOLERANCE_METERS = 1,
+            FUNNEL_VOLTAGE_TOLERANCE_METERS = 1;
     static final double ELEVATOR_DRUM_DIAMETER_METERS = ELEVATOR_DRUM_RADIUS_METERS * 2;
 
     static {
