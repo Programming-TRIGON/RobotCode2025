@@ -85,7 +85,7 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     public boolean atTargetState() {
-        return Math.abs(getCurrentElevatorPositionRotations() - targetState.targetPositionRotations) < CoralIntakeConstants.POSITION_TOLERANCE_METERS;
+        return Math.abs(getCurrentElevatorPositionRotations() - targetState.targetPositionRotations) < metersToRotations(CoralIntakeConstants.POSITION_TOLERANCE_METERS);
     }
 
     public boolean hasGamePiece() {
@@ -136,6 +136,10 @@ public class CoralIntake extends MotorSubsystem {
 
     private double rotationsToMeters(double positionRotations) {
         return Conversions.rotationsToDistance(positionRotations, CoralIntakeConstants.ELEVATOR_DRUM_DIAMETER_METERS);
+    }
+
+    private double metersToRotations(double positionMeters) {
+        return Conversions.distanceToRotations(positionMeters, CoralIntakeConstants.ELEVATOR_DRUM_DIAMETER_METERS);
     }
 
     private Pose3d calculateVisualizationPose() {

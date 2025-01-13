@@ -74,8 +74,8 @@ public class CoralIntakeConstants {
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
     private static final double
-            ELEVATOR_FORWARD_LIMIT_POSITION_METERS = 0.35,
-            ELEVATOR_REVERSE_LIMIT_POSITION_METERS = 0;
+            ELEVATOR_FORWARD_LIMIT_POSITION_ROTATIONS = 0.1,
+            ELEVATOR_REVERSE_LIMIT_POSITION_ROTATIONS = 0;
     static final boolean FOC_ENABLED = true;
 
     private static final int
@@ -214,13 +214,13 @@ public class CoralIntakeConstants {
         config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = ELEVATOR_FORWARD_LIMIT_POSITION_METERS;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = ELEVATOR_FORWARD_LIMIT_POSITION_ROTATIONS;
 
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = ELEVATOR_REVERSE_LIMIT_POSITION_METERS;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = ELEVATOR_REVERSE_LIMIT_POSITION_ROTATIONS;
 
         MASTER_ELEVATOR_MOTOR.applyConfiguration(config);
         MASTER_ELEVATOR_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
@@ -252,9 +252,9 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        COLLECT(12, 12, 100),
+        COLLECT(12, 12, 0.1),
         FEED(-12, -12, 0),
-        EJECT(-12, -12, 100),
+        EJECT(-12, -12, 0.1),
         REST(0, 0, 0);
 
         public final double
