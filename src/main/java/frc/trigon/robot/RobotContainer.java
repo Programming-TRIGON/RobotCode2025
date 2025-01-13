@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
+import frc.trigon.robot.commands.commandfactories.CollectionCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
@@ -73,6 +74,10 @@ public class RobotContainer {
         OperatorConstants.DRIVE_FROM_DPAD_TRIGGER.whileTrue(CommandConstants.SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND);
         OperatorConstants.TOGGLE_ROTATION_MODE_TRIGGER.onTrue(GeneralCommands.getToggleRotationModeCommand());
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
+
+        OperatorConstants.COLLECT_CORAL_FROM_FEEDER_TRIGGER.whileTrue(CollectionCommands.getCollectCoralFromFeederCommand());
+        OperatorConstants.COLLECT_CORAL_FROM_GROUND_TRIGGER.whileTrue(CollectionCommands.getCollectCoralFromGroundCommand());
+        OperatorConstants.COLLECT_ALGAE_TRIGGER.whileTrue(CollectionCommands.getCollectAlgaeCommand());
     }
 
     private void configureSysIdBindings(MotorSubsystem subsystem) {
