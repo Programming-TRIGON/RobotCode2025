@@ -151,6 +151,7 @@ public class CoralIntakeConstants {
     );
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
+    public static final double BLINKING_SPEED = 0.5;
 
     static {
         configureIntakeMotor();
