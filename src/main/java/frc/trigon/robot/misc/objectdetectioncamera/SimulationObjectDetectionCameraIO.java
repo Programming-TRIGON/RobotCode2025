@@ -22,49 +22,19 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     @Override
     protected void updateInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
-        final ArrayList<SimulatedGamePiece> visibleGamePieces = calculateVisibleGamePieces(robotPose);
-        final TrackedTarget closestTargetObject = calculateClosestVisibleObject(robotPose, visibleGamePieces);
-        boolean hasAnyTargets = false;
-        
-        if (hasTargets(SimulatedGamePiece.GamePieceType.CORAL, visibleGamePieces)) {
-            hasAnyTargets = true;
-            inputs.hasTargets[0] = true;
-        } else
-            inputs.hasTargets[0] = false;
+        final ArrayList<SimulatedGamePiece>
+                visibleCoral = calculateVisibleGamePieces(robotPose, 0),
+                visibleAlgae = calculateVisibleGamePieces(robotPose, 1);
 
-        if (hasTargets(SimulatedGamePiece.GamePieceType.ALGAE, visibleGamePieces)) {
-            hasAnyTargets = true;
-            inputs.hasTargets[1] = true;
-        } else
-            inputs.hasTargets[1] = false;
+        inputs.hasCoralTarget = !visibleCoral.isEmpty();
+        inputs.hasAlgaeTarget = !visibleAlgae.isEmpty();
 
-        if (hasAnyTargets) {
-            inputs.visibleTargetObjects = new TrackedTarget[]{closestTargetObject};
-        }
-    }
-
-    /**
-     * Calculates the yaw of the closest visible target game piece relative to the camera by calculating the yaw of all target objects visible to the camera and returning the one with the smallest yaw deviation from the camera's center.
-     *
-     * @param robotPose the pose of the robot on the field
-     * @return the yaw of the closest visible target object
-     */
-    private TrackedTarget calculateClosestVisibleObject(Pose2d robotPose, ArrayList<SimulatedGamePiece> visibleGamePieces) {
-        TrackedTarget closestObject = null;
-        double closestObjectDistance = Double.POSITIVE_INFINITY;
-
-        for (SimulatedGamePiece targetObjectPlacement : visibleGamePieces) {
-            final double robotDistanceToObject = targetObjectPlacement.getDistanceMeters(new Pose3d(robotPose));
-            if (robotDistanceToObject < closestObjectDistance) {
-                closestObject = new TrackedTarget(
-                        targetObjectPlacement.getGamePieceType() == SimulatedGamePiece.GamePieceType.CORAL ? 0 : 1,
-                        calculateCameraYawToObject(targetObjectPlacement, robotPose).minus(robotPose.getRotation())
-                );
-                closestObjectDistance = robotDistanceToObject;
-            }
+        if (!inputs.hasCoralTarget && !inputs.hasAlgaeTarget) {
+            updateNoNewResultInputs(inputs);
+            return;
         }
 
-        return closestObject;
+        updateHasNewResultInputs(visibleCoral, visibleAlgae, robotPose, inputs);
     }
 
     /**
@@ -73,8 +43,8 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * @param robotPose the position of the robot on the field
      * @return the placements of the visible objects
      */
-    private ArrayList<SimulatedGamePiece> calculateVisibleGamePieces(Pose2d robotPose) {
-        final ArrayList<SimulatedGamePiece> gamePiecesOnField = SimulationFieldHandler.getAllSimulatedGamePieces();
+    private ArrayList<SimulatedGamePiece> calculateVisibleGamePieces(Pose2d robotPose, int targetId) {
+        final ArrayList<SimulatedGamePiece> gamePiecesOnField = targetId == 0 ? SimulationFieldHandler.getSimulatedCoral() : SimulationFieldHandler.getSimulatedAlgae();
         final ArrayList<SimulatedGamePiece> visibleTargetObjects = new ArrayList<>();
         int currentIndex = 0;
 
@@ -86,6 +56,43 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
             currentIndex++;
         }
         return visibleTargetObjects;
+    }
+
+    private void updateNoNewResultInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
+        inputs.visibleCoralYaws = new Rotation2d[0];
+        inputs.visibleAlgaeYaws = new Rotation2d[0];
+    }
+
+    private void updateHasNewResultInputs(ArrayList<SimulatedGamePiece> visibleCoral, ArrayList<SimulatedGamePiece> visibleAlgae, Pose2d robotPose, ObjectDetectionCameraInputsAutoLogged inputs) {
+        if (inputs.hasCoralTarget) {
+            final SimulatedGamePiece closestCoral = calculateClosestVisibleObject(robotPose, visibleCoral);
+            inputs.visibleCoralYaws[0] = calculateCameraYawToObject(closestCoral, robotPose);
+        }
+        if (inputs.hasAlgaeTarget) {
+            final SimulatedGamePiece closestAlgae = calculateClosestVisibleObject(robotPose, visibleAlgae);
+            inputs.visibleAlgaeYaws[0] = calculateCameraYawToObject(closestAlgae, robotPose);
+        }
+    }
+
+    /**
+     * Calculates the yaw of the closest visible target game piece relative to the camera by calculating the yaw of all target objects visible to the camera and returning the one with the smallest yaw deviation from the camera's center.
+     *
+     * @param robotPose the pose of the robot on the field
+     * @return the yaw of the closest visible target object
+     */
+    private SimulatedGamePiece calculateClosestVisibleObject(Pose2d robotPose, ArrayList<SimulatedGamePiece> visibleGamePieces) {
+        double closestObjectDistance = Double.POSITIVE_INFINITY;
+        SimulatedGamePiece closestObject = null;
+
+        for (SimulatedGamePiece targetObjectPlacement : visibleGamePieces) {
+            final double robotDistanceToObject = targetObjectPlacement.getDistanceMeters(new Pose3d(robotPose));
+            if (robotDistanceToObject < closestObjectDistance) {
+                closestObjectDistance = robotDistanceToObject;
+                closestObject = targetObjectPlacement;
+            }
+        }
+
+        return closestObject;
     }
 
     /**
@@ -122,12 +129,5 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private boolean isWithinDistance(SimulatedGamePiece objectPlacement, Pose2d robotPose) {
         final double robotToObjectDistanceMeters = objectPlacement.getDistanceMeters(new Pose3d(robotPose));
         return robotToObjectDistanceMeters <= MAXIMUM_VISIBLE_DISTANCE_METERS && robotToObjectDistanceMeters >= MINIMUM_VISIBLE_DISTANCE_METERS;
-    }
-
-    private boolean hasTargets(SimulatedGamePiece.GamePieceType targetGamePieceType, ArrayList<SimulatedGamePiece> visibleGamePieces) {
-        for (SimulatedGamePiece visibleGamePiece : visibleGamePieces)
-            if (visibleGamePiece.getGamePieceType() == targetGamePieceType)
-                return true;
-        return false;
     }
 }

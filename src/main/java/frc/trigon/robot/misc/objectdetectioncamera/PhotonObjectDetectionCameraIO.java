@@ -5,6 +5,7 @@ import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
@@ -21,40 +22,22 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
             return;
         final PhotonPipelineResult result = getLatestPipelineResult();
         if (result == null) {
-            updateNoResultInputs(inputs);
+            updateNoNewResultInputs(inputs);
             return;
         }
 
-        inputs.hasCoralTarget = hasTarget(0, result);
-        inputs.hasAlgaeTarget = hasTarget(1, result);
+        final List<PhotonTrackedTarget> visibleCoral = calculateVisibleTargetObjects(result, 0);
+        final List<PhotonTrackedTarget> visibleAlgae = calculateVisibleTargetObjects(result, 1);
+
+        inputs.hasCoralTarget = !visibleCoral.isEmpty();
+        inputs.hasAlgaeTarget = !visibleAlgae.isEmpty();
 
         if (!inputs.hasCoralTarget && !inputs.hasAlgaeTarget) {
-            updateNoResultInputs(inputs);
+            updateNoNewResultInputs(inputs);
             return;
         }
 
-        updateHasResultInputs(result, inputs);
-    }
-
-    private void updateNoResultInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
-        inputs.hasCoralTarget = false;
-        inputs.hasAlgaeTarget = false;
-        inputs.visibleCoralYaws = new Rotation2d[0];
-        inputs.visibleAlgaeYaws = new Rotation2d[0];
-    }
-
-    private void updateHasResultInputs(PhotonPipelineResult result, ObjectDetectionCameraInputsAutoLogged inputs) {
-        if (inputs.hasCoralTarget)
-            inputs.visibleCoralYaws = getTargetVisibleObjectYaws(result, 0);
-        if (inputs.hasAlgaeTarget)
-            inputs.visibleAlgaeYaws = getTargetVisibleObjectYaws(result, 1);
-    }
-
-    private boolean hasTarget(int targetId, PhotonPipelineResult result) {
-        for (int i = 0; i < result.getTargets().size(); i++)
-            if (result.getTargets().get(i).objDetectId == targetId)
-                return true;
-        return false;
+        updateHasNewResultInputs(visibleCoral, visibleAlgae, inputs);
     }
 
     private PhotonPipelineResult getLatestPipelineResult() {
@@ -62,14 +45,35 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         return unreadResults.isEmpty() ? null : unreadResults.get(unreadResults.size() - 1);
     }
 
-    private Rotation2d[] getTargetVisibleObjectYaws(PhotonPipelineResult result, int targetId) {
+    private List<PhotonTrackedTarget> calculateVisibleTargetObjects(PhotonPipelineResult result, int targetId) {
         final List<PhotonTrackedTarget> targets = result.getTargets();
-        final Rotation2d[] visibleObjectYaws = new Rotation2d[targets.size()];
-        visibleObjectYaws[0] = getBestTargetYaw(result, targetId);
+        final ArrayList<PhotonTrackedTarget> visibleTargetObjects = new ArrayList<>();
+        for (PhotonTrackedTarget target : targets) {
+            if (target.objDetectId == targetId)
+                visibleTargetObjects.add(target);
+        }
+        return visibleTargetObjects;
+    }
+
+    private void updateNoNewResultInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
+        inputs.visibleCoralYaws = new Rotation2d[0];
+        inputs.visibleAlgaeYaws = new Rotation2d[0];
+    }
+
+    private void updateHasNewResultInputs(List<PhotonTrackedTarget> visibleCoral, List<PhotonTrackedTarget> visibleAlgae, ObjectDetectionCameraInputsAutoLogged inputs) {
+        if (inputs.hasCoralTarget)
+            inputs.visibleCoralYaws = getTargetVisibleObjectYaws(visibleCoral, 0);
+        if (inputs.hasAlgaeTarget)
+            inputs.visibleAlgaeYaws = getTargetVisibleObjectYaws(visibleAlgae, 1);
+    }
+
+    private Rotation2d[] getTargetVisibleObjectYaws(List<PhotonTrackedTarget> visibleObjects, int targetId) {
+        final Rotation2d[] visibleObjectYaws = new Rotation2d[visibleObjects.size()];
+        visibleObjectYaws[0] = getBestTargetYaw(visibleObjects, targetId);
 
         boolean hasSeenBestTarget = false;
         for (int i = 0; i < visibleObjectYaws.length; i++) {
-            final Rotation2d targetYaw = Rotation2d.fromDegrees(-targets.get(i).getYaw());
+            final Rotation2d targetYaw = Rotation2d.fromDegrees(-visibleObjects.get(i).getYaw());
             if (targetYaw.equals(visibleObjectYaws[0])) {
                 hasSeenBestTarget = true;
                 continue;
@@ -79,12 +83,13 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         return visibleObjectYaws;
     }
 
-    private Rotation2d getBestTargetYaw(PhotonPipelineResult result, int targetId) {
+    private Rotation2d getBestTargetYaw(List<PhotonTrackedTarget> visibleObjects, int targetId) {
         double closestTargetDistance = Double.POSITIVE_INFINITY;
         Rotation2d bestTarget = null;
-        for (PhotonTrackedTarget target : result.getTargets()) {
+        for (PhotonTrackedTarget target : visibleObjects) {
             final double currentTargetDistance = Math.abs(target.getYaw()) + Math.abs(target.getPitch());
-            if (closestTargetDistance > currentTargetDistance) {
+            if (closestTargetDistance > currentTargetDistance
+                    && target.objDetectId == targetId) {
                 closestTargetDistance = currentTargetDistance;
                 bestTarget = Rotation2d.fromDegrees(-target.getYaw());
             }
