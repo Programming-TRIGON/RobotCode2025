@@ -22,13 +22,6 @@ public class CollectionCommands {
         );
     }
 
-    public static Command getCollectCoralFromFeederCommand() {
-        return new ParallelCommandGroup(
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FEEDER),
-                LEDCommands.getBlinkingCommand(Color.kAqua, CoralIntakeConstants.BLINKING_SPEED)
-        ).unless(RobotContainer.CORAL_INTAKE::hasGamePiece).alongWith(CommandConstants.RUMBLE_COMMAND);
-    }
-
     public static Command getCollectCoralFromGroundCommand() {
         return new ParallelCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT),
