@@ -29,6 +29,7 @@ public class CommandConstants {
             MINIMUM_TRANSLATION_SHIFT_POWER = 0.18,
             MINIMUM_ROTATION_SHIFT_POWER = 0.3;
     private static final double JOYSTICK_ORIENTED_ROTATION_DEADBAND = 0.4;
+    public static boolean SHOULD_ALIGN_TO_CORAL = true;
 
     public static final Command
             FIELD_RELATIVE_DRIVE_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
@@ -60,7 +61,8 @@ public class CommandConstants {
                     RobotContainer.SWERVE::runWheelRadiusCharacterization,
                     RobotContainer.SWERVE
             ),
-            COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(AlgaeIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, AlgaeIntakeConstants.COLLECTION_RUMBLE_POWER));
+            COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(AlgaeIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, AlgaeIntakeConstants.COLLECTION_RUMBLE_POWER)),
+            TOGGLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> SHOULD_ALIGN_TO_CORAL = !SHOULD_ALIGN_TO_CORAL);
 
     /**
      * Calculates the target drive power from an axis value by dividing it by the shift mode value.
