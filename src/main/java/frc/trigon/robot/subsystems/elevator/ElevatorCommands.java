@@ -10,7 +10,7 @@ public class ElevatorCommands {
         return new NetworkTablesCommand(
                 ElevatorCommands::getSetTargetPositionCommand,
                 false,
-                ""
+                "Debugging/TargetElevatorPositionMeters"
         );
     }
 
