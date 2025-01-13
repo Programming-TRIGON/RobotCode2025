@@ -85,7 +85,7 @@ public class Elevator extends MotorSubsystem {
         final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
         final Transform3d elevatorTransform = new Transform3d(
-                new Translation3d(0, 0, getPositionMeters() / 2),
+                new Translation3d(0, 0, getPositionMeters()),
                 new Rotation3d()
         );
         return originPoint.transformBy(elevatorTransform);
