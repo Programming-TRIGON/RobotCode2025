@@ -81,19 +81,14 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     public boolean atState(CoralIntakeConstants.CoralIntakeState targetState) {
-        return targetState == this.targetState && atTargetState();
+        return targetState == this.targetState && atTargetAngle();
     }
 
-    public boolean atTargetState() {
+    public boolean atTargetAngle() {
         final double
                 elevatorDifferenceFromTargetStateRotations = Math.abs(getCurrentElevatorPositionRotations() - targetState.targetPositionRotations),
-                intakeDifferenceFromTargetStateVoltage = Math.abs(intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE) - targetState.targetIntakeVoltage),
-                funnelDifferenceFromTargetStateVoltage = Math.abs(funnelMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE) - targetState.targetFunnelVoltage),
                 positionToleranceRotations = metersToRotations(CoralIntakeConstants.POSITION_TOLERANCE_METERS);
-        return
-                elevatorDifferenceFromTargetStateRotations < positionToleranceRotations &&
-                        intakeDifferenceFromTargetStateVoltage < CoralIntakeConstants.INTAKE_VOLTAGE_TOLERANCE_METERS &&
-                        funnelDifferenceFromTargetStateVoltage < CoralIntakeConstants.FUNNEL_VOLTAGE_TOLERANCE_METERS;
+        return elevatorDifferenceFromTargetStateRotations < positionToleranceRotations;
     }
 
     public boolean hasGamePiece() {
