@@ -75,7 +75,6 @@ public class RobotContainer {
         OperatorConstants.TOGGLE_ROTATION_MODE_TRIGGER.onTrue(GeneralCommands.getToggleRotationModeCommand());
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
 
-        OperatorConstants.COLLECT_CORAL_FROM_FEEDER_TRIGGER.whileTrue(CollectionCommands.getCollectCoralFromFeederCommand());
         OperatorConstants.COLLECT_CORAL_FROM_GROUND_TRIGGER.whileTrue(CollectionCommands.getCollectCoralFromGroundCommand());
         OperatorConstants.COLLECT_ALGAE_TRIGGER.whileTrue(CollectionCommands.getCollectAlgaeCommand());
     }
