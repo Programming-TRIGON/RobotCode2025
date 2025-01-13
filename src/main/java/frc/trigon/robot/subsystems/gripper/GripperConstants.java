@@ -116,8 +116,7 @@ public class GripperConstants {
             "GripperMechanism",
             MAXIMUM_DISPLAYABLE_VELOCITY
     );
-
-    static final SingleJointedArmMechanism2d ARM_MECHANISM = new SingleJointedArmMechanism2d(
+    static final SingleJointedArmMechanism2d GRIPPER_ANGLE_MECHANISM = new SingleJointedArmMechanism2d(
             "GripperAngleMechanism",
             ARM_LENGTH_METERS,
             Color.kRed
@@ -175,6 +174,7 @@ public class GripperConstants {
         ANGLE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.POSITION, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
     }
 
     private static void configureEncoder() {
@@ -202,16 +202,20 @@ public class GripperConstants {
     }
 
     public enum GripperState {
-        STOP(0, Rotation2d.fromDegrees(0)),
-        RELEASE(-4, Rotation2d.fromDegrees(90)),
-        GRAB(4, Rotation2d.fromDegrees(180));
+        REST(Rotation2d.fromDegrees(-56), 0),
+        EJECT(Rotation2d.fromDegrees(45), -3),
+        SCORE_L4(Rotation2d.fromDegrees(45), 3),
+        SCORE_L3_OR_L2(Rotation2d.fromDegrees(45), 3),
+        SCORE_L1(Rotation2d.fromDegrees(45), 3),
+        LOAD_CORAL(Rotation2d.fromDegrees(-56), -3),
+        COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3);
 
-        final double targetGripperVoltage;
         final Rotation2d targetAngle;
+        final double targetGripperVoltage;
 
-        GripperState(double targetVoltage, Rotation2d targetAngle) {
-            this.targetGripperVoltage = targetVoltage;
+        GripperState(Rotation2d targetAngle, double targetVoltage) {
             this.targetAngle = targetAngle;
+            this.targetGripperVoltage = targetVoltage;
         }
     }
 }

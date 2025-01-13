@@ -59,8 +59,12 @@ public class Gripper extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
-        GripperConstants.GRIPPER_MECHANISM.update(gripperMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE), targetState.targetGripperVoltage);
-        GripperConstants.ARM_MECHANISM.update(getCurrentEncoderAngle(), targetState.targetAngle);
+        GripperConstants.GRIPPER_MECHANISM.update(gripperMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
+        GripperConstants.GRIPPER_ANGLE_MECHANISM.update(getCurrentEncoderAngle(),Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE));
+    }
+
+    public boolean hasGamePiece() {
+        return laserCAN.hasResult() && laserCAN.getDistanceMillimeters() < GripperConstants.GAME_PEICE_DETECTION_THRESHOLD;
     }
 
     void stopMotors() {
@@ -68,25 +72,22 @@ public class Gripper extends MotorSubsystem {
         angleMotor.stopMotor();
     }
 
-    public boolean hasGamePiece() {
-        return laserCAN.getDistanceMillimeters() < GripperConstants.GAME_PEICE_DETECTION_THRESHOLD;
-    }
-
     void setTargetState(GripperConstants.GripperState targetState) {
         this.targetState = targetState;
 
         setTargetState(
-                targetState.targetGripperVoltage,
-                targetState.targetAngle
+                targetState.targetAngle,
+                targetState.targetGripperVoltage
         );
     }
 
-    void setTargetState(double targetVoltage, Rotation2d targetAngle) {
-        setTargetVoltage(targetVoltage);
+    void setTargetState(Rotation2d targetAngle, double targetVoltage) {
         setTargetAngle(targetAngle);
+        setTargetVoltage(targetVoltage);
     }
 
     void setTargetVoltage(double targetVoltage) {
+        GripperConstants.GRIPPER_MECHANISM.setTargetVelocity(targetVoltage);
         gripperMotor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 

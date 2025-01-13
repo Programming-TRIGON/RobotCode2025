@@ -6,14 +6,25 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
 import org.trigon.commands.ExecuteEndCommand;
 import org.trigon.commands.GearRatioCalculationCommand;
+import org.trigon.commands.NetworkTablesCommand;
+
+
 
 public class GripperCommands {
+    public static Command setDebuggingCommand() {
+        return new NetworkTablesCommand() {
+            GripperCommands
+
+        }
+    }
+
     public static Command getGearRatioCalulationCommand() {
         return new GearRatioCalculationCommand(
                 GripperConstants.ANGLE_MOTOR,
                 GripperConstants.ANGLE_ENCODER,
                 RobotContainer.GRIPPER);
     }
+
     public static Command getSetTargetStateCommand(GripperConstants.GripperState targetState) {
         return new StartEndCommand(
                 () -> RobotContainer.GRIPPER.setTargetState(targetState),
