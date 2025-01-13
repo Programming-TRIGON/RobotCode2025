@@ -159,6 +159,7 @@ public class ElevatorConstants {
 
     public enum ElevatorState {
         REST(0),
+        COLLECT_FROM_FEEDER(0),
         SCORE_L1(0.45),
         SCORE_L2(0.80),
         SCORE_L3(1.20),
