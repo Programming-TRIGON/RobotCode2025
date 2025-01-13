@@ -10,7 +10,9 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
+import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import org.trigon.hardware.grapple.lasercan.LaserCAN;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
@@ -27,28 +29,37 @@ import java.util.function.DoubleSupplier;
 public class GripperConstants {
     private static final int
             GRIPPER_MOTOR_ID = 15,
-            ANGLE_MOTOR_ID = 16,
-            ANGLE_ENCODER_ID = 16,
+            GRIPPER_ANGLE_MOTOR_ID = 16,
+            GRIPPER_ANGLE_ENCODER_ID = 16,
             LASER_CAN_ID = 0;
     private static final String
             GRIPPER_MOTOR_NAME = "GripperMotor",
             ANGLE_MOTOR_NAME = "AngleMotor",
-            ENCODER_NAME = "Encoder",
+            ANGLE_ENCODER_NAME = "AngleEncoder",
             LASER_CAN_NAME = "GripperLaserCAN";
     static final TalonFXMotor GRIPPER_MOTOR = new TalonFXMotor(GRIPPER_MOTOR_ID, GRIPPER_MOTOR_NAME);
-    static final TalonFXMotor ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
-    static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ENCODER_NAME);
+    static final TalonFXMotor ANGLE_MOTOR = new TalonFXMotor(GRIPPER_ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
+    static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(GRIPPER_ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
     static final LaserCAN LASER_CAN = new LaserCAN(LASER_CAN_ID, LASER_CAN_NAME);
 
-    private static final double
-            GRIPPER_MOTOR_GEAR_RATIO = 1,
-            ANGLE_MOTOR_GEAR_RATIO = 1;
     private static final InvertedValue
             GRIPPER_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive,
             ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
     private static final NeutralModeValue
             GRIPPER_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Coast,
             ANGLE_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
+    private static final double
+            GRIPPER_MOTOR_GEAR_RATIO = 1,
+            ANGLE_MOTOR_GEAR_RATIO = 100;
+    private static final double
+            ANGLE_P = 0,
+            ANGLE_I = 0,
+            ANGLE_D = 0,
+            ANGLE_KS = 0,
+            ANGLE_KV = 0,
+            ANGLE_KA = 0,
+            ANGLE_KG = 0;
+
     private static final FeedbackSensorSourceValue ANGLE_ENCODER_TYPE = FeedbackSensorSourceValue.FusedCANcoder;
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final double
@@ -62,11 +73,9 @@ public class GripperConstants {
     private static final LaserCan.RangingMode LASER_CAN_RANGING_MODE = LaserCan.RangingMode.SHORT;
     private static final LaserCan.TimingBudget LASER_CAN_LOOP_TIME = LaserCan.TimingBudget.TIMING_BUDGET_33MS;
     private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> 1;
-    static final double LASER_CAN_THRESHOLD = 10;
+    static final double GAME_PEICE_DETECTION_THRESHOLD = 10;
     static final boolean FOC_ENABLED = true;
 
-    private static final double MOMENT_OF_INERTIA = 0.003;
-    private static final double MAXIMUM_DISPLAYABLE_VELOCITY = 12;
     private static final int
             NUMBER_OF_GRIPPER_MOTORS = 1,
             NUMBER_OF_ARM_MOTORS = 1;
@@ -79,7 +88,8 @@ public class GripperConstants {
     private static final Rotation2d
             ARM_MINIMUM_ANGLE = Rotation2d.fromDegrees(0),
             ARM_MAXIMUM_ANGLE = Rotation2d.fromDegrees(180);
-    private static final boolean SIMULATE_GRAVITY = true;
+    private static final double MOMENT_OF_INERTIA = 0.003;
+    private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final SimpleMotorSimulation GRIPPER_SIMULATION = new SimpleMotorSimulation(
             GRIPPER_GEARBOX,
             GRIPPER_MOTOR_GEAR_RATIO,
@@ -92,9 +102,16 @@ public class GripperConstants {
             ARM_MASS_KILOGRAMS,
             ARM_MINIMUM_ANGLE,
             ARM_MAXIMUM_ANGLE,
-            SIMULATE_GRAVITY
+            SHOULD_SIMULATE_GRAVITY
     );
 
+    static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
+            Units.Volts.of(1.5).per(Units.Seconds),
+            Units.Volts.of(2),
+            Units.Second.of(1000)
+    );
+
+    private static final double MAXIMUM_DISPLAYABLE_VELOCITY = 12;
     static final SpeedMechanism2d GRIPPER_MECHANISM = new SpeedMechanism2d(
             "GripperMechanism",
             MAXIMUM_DISPLAYABLE_VELOCITY
@@ -140,11 +157,24 @@ public class GripperConstants {
         config.MotorOutput.NeutralMode = ANGLE_MOTOR_NEUTRAL_MODE_VALUE;
         config.Feedback.RotorToSensorRatio = ANGLE_MOTOR_GEAR_RATIO;
 
-        config.Feedback.FeedbackRemoteSensorID = ANGLE_ENCODER_ID;
+        config.Slot0.kP = ANGLE_P;
+        config.Slot0.kI = ANGLE_I;
+        config.Slot0.kD = ANGLE_D;
+        config.Slot0.kS = ANGLE_KS;
+        config.Slot0.kA = ANGLE_KA;
+        config.Slot0.kV = ANGLE_KV;
+        config.Slot0.kG = ANGLE_KG;
+
+        config.Feedback.FeedbackRemoteSensorID = GRIPPER_ANGLE_ENCODER_ID;
         config.Feedback.FeedbackSensorSource = ANGLE_ENCODER_TYPE;
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ARM_SIMULATION);
+
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.ROTOR_POSITION, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.POSITION, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
     }
 
     private static void configureEncoder() {
@@ -158,7 +188,6 @@ public class GripperConstants {
         ANGLE_ENCODER.setSimulationInputsFromTalonFX(ANGLE_MOTOR);
 
         ANGLE_ENCODER.registerSignal(CANcoderSignal.POSITION, 100);
-        ANGLE_ENCODER.registerSignal(CANcoderSignal.VELOCITY, 100);
     }
 
     private static void configureLaserCAN() {
