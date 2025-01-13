@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.commands.commandfactories.CollectionCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
@@ -30,7 +31,6 @@ public class CommandConstants {
             MINIMUM_TRANSLATION_SHIFT_POWER = 0.18,
             MINIMUM_ROTATION_SHIFT_POWER = 0.3;
     private static final double JOYSTICK_ORIENTED_ROTATION_DEADBAND = 0.4;
-    public static boolean SHOULD_ALIGN_TO_CORAL = true;
 
     public static final Command
             FIELD_RELATIVE_DRIVE_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
@@ -63,8 +63,8 @@ public class CommandConstants {
                     RobotContainer.SWERVE
             ),
             COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(AlgaeIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, AlgaeIntakeConstants.COLLECTION_RUMBLE_POWER)),
-            ENABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> SHOULD_ALIGN_TO_CORAL = true),
-            DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> SHOULD_ALIGN_TO_CORAL = false),
+            ENABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = true),
+            DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = false),
             ALGAE_EJECTION_COMMAND = AlgaeIntakeCommands.getSetTargetStateCommand(AlgaeIntakeConstants.AlgaeIntakeState.EJECT);
 
     /**
@@ -73,7 +73,6 @@ public class CommandConstants {
      * @param axisValue the stick's value
      * @return the drive power
      */
-
     public static double calculateDriveStickAxisValue(double axisValue) {
         return axisValue / OperatorConstants.STICKS_SPEED_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER);
     }
