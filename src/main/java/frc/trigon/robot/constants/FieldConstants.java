@@ -1,5 +1,6 @@
 package frc.trigon.robot.constants;
 
+import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -13,8 +14,8 @@ import java.util.HashMap;
 
 public class FieldConstants {
     public static final double
-            FIELD_WIDTH_METERS = 8.05,
-            FIELD_LENGTH_METERS = 17.55;
+            FIELD_WIDTH_METERS = FlippingUtil.fieldSizeY,
+            FIELD_LENGTH_METERS = FlippingUtil.fieldSizeX;
 
     private static final boolean SHOULD_USE_HOME_TAG_LAYOUT = true;
     public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = createAprilTagFieldLayout();
