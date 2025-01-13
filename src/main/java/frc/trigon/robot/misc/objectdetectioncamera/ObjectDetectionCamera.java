@@ -2,6 +2,7 @@ package frc.trigon.robot.misc.objectdetectioncamera;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.RobotHardwareStats;
 
@@ -35,11 +36,11 @@ public class ObjectDetectionCamera extends SubsystemBase {
      * Starts tracking the best visible target of the target ID and remains tracking that target until it is no longer visible.
      * Tracking an object is locking on to one target and allows for you to remain locked on to one target even when there are more objects visible.
      * This should be called periodically.
-     * This is used when there is more than one visible object and the best target might change as the robot moves.
-     * When no objects are visible, the tracking resets to the best target the next time an object is visible.
+     * This is used when there is more than one visible object of the target ID and the best target might change as the robot moves.
+     * When no objects are visible, the tracking resets to the best target the next time an object of the target ID is visible.
      */
-    public void trackObject(int targetId) {
-        this.currentTrackedObjectId = targetId;
+    public void trackObject(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
+        this.currentTrackedObjectId = targetGamePiece.id;
         final boolean hasTargets = hasTargets();
         if (hasTargets && !trackedTargetWasVisible) {
             trackedTargetWasVisible = true;
@@ -94,9 +95,9 @@ public class ObjectDetectionCamera extends SubsystemBase {
     }
 
     private Rotation2d[] getTargetObjectYaws() {
-        return currentTrackedObjectId == 0 ?
-                objectDetectionCameraInputs.visibleCoralYaws :
-                objectDetectionCameraInputs.visibleAlgaeYaws;
+        if (currentTrackedObjectId >= objectDetectionCameraInputs.visibleObjectYaws.length)
+            return new Rotation2d[0];
+        return objectDetectionCameraInputs.visibleObjectYaws[currentTrackedObjectId];
     }
 
     private ObjectDetectionCameraIO generateIO(String hostname, Rotation2d cameraMountYaw) {

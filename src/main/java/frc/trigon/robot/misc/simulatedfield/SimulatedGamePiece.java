@@ -7,17 +7,9 @@ public class SimulatedGamePiece {
     private final double originPointHeightOffGroundMeters;
     private Pose3d fieldRelativePose;
 
-    public static SimulatedGamePiece generateCoral(Pose3d startingPose) {
-        return new SimulatedGamePiece(startingPose, SimulatedGamePieceConstants.CORAL_ORIGIN_POINT_HEIGHT_OFF_GROUND_METERS);
-    }
-
-    public static SimulatedGamePiece generateAlgae(Pose3d startingPose) {
-        return new SimulatedGamePiece(startingPose, SimulatedGamePieceConstants.ALGAE_ORIGIN_POINT_HEIGHT_OFF_GROUND_METERS);
-    }
-
-    public SimulatedGamePiece(Pose3d startingPose, double originPointHeightOffGroundMeters) {
+    public SimulatedGamePiece(Pose3d startingPose, SimulatedGamePieceConstants.GamePieceType gamePieceType) {
         fieldRelativePose = startingPose;
-        this.originPointHeightOffGroundMeters = originPointHeightOffGroundMeters;
+        originPointHeightOffGroundMeters = gamePieceType.originPointHeightOffGroundMeters;
     }
 
     public void updatePose(Pose3d fieldRelativePose) {
@@ -28,7 +20,7 @@ public class SimulatedGamePiece {
         return fieldRelativePose;
     }
 
-    public boolean isGrounded() {
+    public boolean isTouchingGround() {
         return fieldRelativePose.getTranslation().getZ() <= originPointHeightOffGroundMeters;
     }
 

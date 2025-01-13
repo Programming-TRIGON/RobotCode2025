@@ -1,6 +1,7 @@
 package frc.trigon.robot.misc.objectdetectioncamera;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -58,15 +59,14 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     }
 
     private void updateNoNewResultInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
-        inputs.visibleCoralYaws = new Rotation2d[0];
-        inputs.visibleAlgaeYaws = new Rotation2d[0];
+        inputs.visibleObjectYaws = new Rotation2d[2][0];
     }
 
     private void updateHasNewResultInputs(List<PhotonTrackedTarget> visibleCoral, List<PhotonTrackedTarget> visibleAlgae, ObjectDetectionCameraInputsAutoLogged inputs) {
         if (inputs.hasCoralTarget)
-            inputs.visibleCoralYaws = getTargetVisibleObjectYaws(visibleCoral, 0);
+            inputs.visibleObjectYaws[SimulatedGamePieceConstants.GamePieceType.CORAL.id] = getTargetVisibleObjectYaws(visibleCoral, 0);
         if (inputs.hasAlgaeTarget)
-            inputs.visibleAlgaeYaws = getTargetVisibleObjectYaws(visibleAlgae, 1);
+            inputs.visibleObjectYaws[SimulatedGamePieceConstants.GamePieceType.ALGAE.id] = getTargetVisibleObjectYaws(visibleAlgae, 1);
     }
 
     private Rotation2d[] getTargetVisibleObjectYaws(List<PhotonTrackedTarget> visibleObjects, int targetId) {

@@ -5,6 +5,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePiece;
 import frc.trigon.robot.misc.simulatedfield.SimulationFieldHandler;
 import org.littletonrobotics.junction.Logger;
@@ -68,18 +69,17 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     }
 
     private void updateNoNewResultInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
-        inputs.visibleCoralYaws = new Rotation2d[0];
-        inputs.visibleAlgaeYaws = new Rotation2d[0];
+        inputs.visibleObjectYaws = new Rotation2d[2][0];
     }
 
     private void updateHasNewResultInputs(ArrayList<SimulatedGamePiece> visibleCoral, ArrayList<SimulatedGamePiece> visibleAlgae, Pose2d robotPose, ObjectDetectionCameraInputsAutoLogged inputs) {
         if (inputs.hasCoralTarget) {
             final SimulatedGamePiece closestCoral = calculateClosestVisibleObject(robotPose, visibleCoral);
-            inputs.visibleCoralYaws[0] = calculateCameraYawToObject(closestCoral, robotPose).plus(cameraMountYaw);
+            inputs.visibleObjectYaws[SimulatedGamePieceConstants.GamePieceType.CORAL.id][0] = calculateCameraYawToObject(closestCoral, robotPose).plus(cameraMountYaw);
         }
         if (inputs.hasAlgaeTarget) {
             final SimulatedGamePiece closestAlgae = calculateClosestVisibleObject(robotPose, visibleAlgae);
-            inputs.visibleAlgaeYaws[0] = calculateCameraYawToObject(closestAlgae, robotPose).plus(cameraMountYaw);
+            inputs.visibleObjectYaws[SimulatedGamePieceConstants.GamePieceType.ALGAE.id][0] = calculateCameraYawToObject(closestAlgae, robotPose).plus(cameraMountYaw);
         }
 
         logVisibleGamePieces(visibleCoral, visibleAlgae);

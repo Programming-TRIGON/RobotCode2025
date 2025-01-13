@@ -66,7 +66,7 @@ public class SimulationFieldHandler {
      * Logs the position of all the game pieces.
      */
     private static void logGamePieces() {
-        Logger.recordOutput("Poses/GamePieces/Coral", mapSimulatedGamePieceListToPoseArray(CORAL_ON_FIELD));
+        Logger.recordOutput("Poses/GamePieces/Corals", mapSimulatedGamePieceListToPoseArray(CORAL_ON_FIELD));
         Logger.recordOutput("Poses/GamePieces/Algae", mapSimulatedGamePieceListToPoseArray(ALGAE_ON_FIELD));
     }
 
@@ -74,17 +74,22 @@ public class SimulationFieldHandler {
         final Pose3d robotPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
 
         if (isCollectingCoral() && HELD_CORAL_INDEX == null)
-            HELD_CORAL_INDEX = getHeldGamePieceIndex(robotPose, CORAL_ON_FIELD);
+            HELD_CORAL_INDEX = getIndexOfCollectedGamePiece(robotPose, CORAL_ON_FIELD);
         if (isCollectingAlgae() && HELD_ALGAE_INDEX == null)
-            HELD_ALGAE_INDEX = getHeldGamePieceIndex(robotPose, ALGAE_ON_FIELD);
+            HELD_ALGAE_INDEX = getIndexOfCollectedGamePiece(robotPose, ALGAE_ON_FIELD);
     }
 
-    private static Integer getHeldGamePieceIndex(Pose3d collectionPose, ArrayList<SimulatedGamePiece> gamePieceList) {
-        for (SimulatedGamePiece gamePiece : gamePieceList) {
-            if (gamePiece.getDistanceMeters(collectionPose) <= PICKUP_TOLERANCE_METERS && gamePiece.isGrounded()) {
+    /**
+     * Gets the index of the game piece that is being collected.
+     *
+     * @param collectionPose the pose of the collection mechanism
+     * @param gamePieceList  the list of game pieces
+     * @return the index of the game piece that is being collected
+     */
+    private static Integer getIndexOfCollectedGamePiece(Pose3d collectionPose, ArrayList<SimulatedGamePiece> gamePieceList) {
+        for (SimulatedGamePiece gamePiece : gamePieceList)
+            if (gamePiece.getDistanceMeters(collectionPose) <= PICKUP_TOLERANCE_METERS && gamePiece.isTouchingGround())
                 return gamePieceList.indexOf(gamePiece);
-            }
-        }
         return null;
     }
 
@@ -126,16 +131,16 @@ public class SimulationFieldHandler {
         if (heldGamePieceIndex == null)
             return;
 
-        gamePieceList.get(heldGamePieceIndex).updatePose(calculateHeldGamePiecePose(robotRelativeHeldGamePiecePose));
+        gamePieceList.get(heldGamePieceIndex).updatePose(calculateHeldGamePieceFieldRelativePose(robotRelativeHeldGamePiecePose));
     }
 
     /**
-     * Calculate the position of the held coral relative to the field.
+     * Calculate the position of the held game piece relative to the field.
      *
      * @param robotRelativeHeldGamePiecePosition the position of the held game piece relative to the robot
-     * @return the position of the coral relative to the field
+     * @return the position of the held game piece relative to the field
      */
-    private static Pose3d calculateHeldGamePiecePose(Pose3d robotRelativeHeldGamePiecePosition) {
+    private static Pose3d calculateHeldGamePieceFieldRelativePose(Pose3d robotRelativeHeldGamePiecePosition) {
         final Pose3d robotPose3d = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
         return robotPose3d.plus(toTransform(robotRelativeHeldGamePiecePosition));
     }
@@ -152,9 +157,8 @@ public class SimulationFieldHandler {
 
     private static Pose3d[] mapSimulatedGamePieceListToPoseArray(ArrayList<SimulatedGamePiece> gamePieces) {
         final Pose3d[] poses = new Pose3d[gamePieces.size()];
-        for (int i = 0; i < poses.length; i++) {
+        for (int i = 0; i < poses.length; i++)
             poses[i] = gamePieces.get(i).getPose();
-        }
         return poses;
     }
 }

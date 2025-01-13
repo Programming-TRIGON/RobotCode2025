@@ -14,7 +14,6 @@ public class ObjectDetectionCameraIO {
     public static class ObjectDetectionCameraInputs {
         public boolean hasCoralTarget = false;
         public boolean hasAlgaeTarget = false;
-        public Rotation2d[] visibleCoralYaws = new Rotation2d[0];
-        public Rotation2d[] visibleAlgaeYaws = new Rotation2d[0];
+        public Rotation2d[][] visibleObjectYaws = new Rotation2d[0][0];
     }
 }
