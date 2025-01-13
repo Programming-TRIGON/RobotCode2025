@@ -61,9 +61,8 @@ public class ElevatorConstants {
     private static final double
             ELEVATOR_MASS_KILOGRAMS = 7,
             DRUM_RADIUS_METERS = 0.02,
-            RETRACTED_ELEVATOR_HEIGHT_METERS = 0.2,
-            MAXIMUM_ELEVATOR_HEIGHT_METERS = 1.9,
-            ELEVATOR_MECHANISM_VISIBILITY_OFFSET = 0.05;
+            RETRACTED_ELEVATOR_HEIGHT_METERS = 0.5,
+            MAXIMUM_ELEVATOR_HEIGHT_METERS = 1.9;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
             GEARBOX,
             GEAR_RATIO,
@@ -80,6 +79,7 @@ public class ElevatorConstants {
             Units.Second.of(1000)
     );
 
+    private static final double ELEVATOR_MECHANISM_VISIBILITY_OFFSET = 0.05;
     static final Pose3d ELEVATOR_VISUALIZATION_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(0), 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
