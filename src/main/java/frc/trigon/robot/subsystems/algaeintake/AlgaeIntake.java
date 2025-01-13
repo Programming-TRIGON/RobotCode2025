@@ -77,8 +77,8 @@ public class AlgaeIntake extends MotorSubsystem {
     }
 
     public boolean atTargetAngle() {
-        double error = Math.abs(getAngleEncoderPosition().getDegrees() - edu.wpi.first.math.util.Units.rotationsToDegrees(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
-        return error < AlgaeIntakeConstants.ANGLE_TOLERANCE.getDegrees();
+        double errorDegrees = Math.abs(getAngleEncoderPosition().getDegrees() - edu.wpi.first.math.util.Units.rotationsToDegrees(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
+        return errorDegrees < AlgaeIntakeConstants.ANGLE_TOLERANCE.getDegrees();
     }
 
     void setTargetState(AlgaeIntakeConstants.AlgaeIntakeState targetState) {
