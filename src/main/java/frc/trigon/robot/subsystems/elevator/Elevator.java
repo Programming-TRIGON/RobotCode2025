@@ -78,8 +78,8 @@ public class Elevator extends MotorSubsystem {
         setTargetPositionRotations(metersToRotations(targetState.targetPositionMeters));
     }
 
-    void setTargetPositionRotations(double targetPositionMeters) {
-        motor.setControl(positionRequest.withPosition(targetPositionMeters));
+    void setTargetPositionRotations(double targetPositionRotations) {
+        motor.setControl(positionRequest.withPosition(targetPositionRotations));
     }
 
     private Pose3d getElevatorFirstComponentPose() {
@@ -96,7 +96,7 @@ public class Elevator extends MotorSubsystem {
         final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
         final Transform3d elevatorTransform = new Transform3d(
-                new Translation3d(0, 0, getPositionMeters() / 2),
+                new Translation3d(0, 0, (getPositionMeters() / 3) * 2),
                 new Rotation3d()
         );
         return originPoint.transformBy(elevatorTransform);
