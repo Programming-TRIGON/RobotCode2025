@@ -85,21 +85,32 @@ public class Elevator extends MotorSubsystem {
     private Pose3d getElevatorFirstComponentPose() {
         final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
-        final Transform3d elevatorTransform = new Transform3d(
-                new Translation3d(0, 0, getPositionMeters()),
-                new Rotation3d()
+        if (getPositionMeters() < ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH) {
+            final Transform3d elevatorTransform = new Transform3d(
+                    new Translation3d(0, 0, getPositionMeters()),
+                    new Rotation3d()
+            );
+            return originPoint.transformBy(elevatorTransform);
+        }
+        return originPoint.transformBy(
+                new Transform3d(
+                        new Translation3d(0, 0, ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH),
+                        new Rotation3d()
+                )
         );
-        return originPoint.transformBy(elevatorTransform);
     }
 
     private Pose3d getElevatorSecondComponentPose() {
         final Pose3d originPoint = ElevatorConstants.SECOND_ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
-        final Transform3d elevatorTransform = new Transform3d(
-                new Translation3d(0, 0, getPositionMeters()),
-                new Rotation3d()
-        );
-        return originPoint.transformBy(elevatorTransform);
+        if (getPositionMeters() > ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH) {
+            final Transform3d elevatorTransform = new Transform3d(
+                    new Translation3d(0, 0, getPositionMeters() - getPositionMeters() / 2),
+                    new Rotation3d()
+            );
+            return originPoint.transformBy(elevatorTransform);
+        }
+        return null;
     }
 
     private double getPositionRotations() {
