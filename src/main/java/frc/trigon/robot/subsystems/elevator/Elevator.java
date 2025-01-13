@@ -87,29 +87,28 @@ public class Elevator extends MotorSubsystem {
         final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
         if (elevatorDidNotExtendFirstComponentLength())
-            return originPoint.transformBy(getCurrentElevatorTransform(ElevatorConstants.FIRST_ELEVATOR_COMPONENT_HEIGHT_DIFFERANCE_FROM_ROBOT));
-        return originPoint.transformBy(
-                createNewTransform(ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH)
-        );
+            return getCurrentElevatorPose(ElevatorConstants.FIRST_ELEVATOR_COMPONENT_HEIGHT_DIFFERANCE_FROM_ROBOT, originPoint);
+        return createNewElevatorPose(ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH, originPoint);
     }
 
     private Pose3d getElevatorSecondComponentPose() {
         final Pose3d originPoint = ElevatorConstants.SECOND_ELEVATOR_VISUALIZATION_ORIGIN_POINT;
-        return originPoint.transformBy(getCurrentElevatorTransform(ElevatorConstants.SECOND_ELEVATOR_COMPONENT_HEIGHT_DIFFERANCE_FROM_FIRST_COMPONENT));
+        return getCurrentElevatorPose(ElevatorConstants.SECOND_ELEVATOR_COMPONENT_HEIGHT_DIFFERANCE_FROM_FIRST_COMPONENT, originPoint);
     }
 
     private boolean elevatorDidNotExtendFirstComponentLength() {
         return getPositionMeters() < ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH;
     }
 
-    private Transform3d getCurrentElevatorTransform(double heightAboveLowerComponent) {
-        return createNewTransform(getPositionMeters() + heightAboveLowerComponent);
+    private Pose3d getCurrentElevatorPose(double heightAboveLowerComponent, Pose3d originPoint) {
+        return createNewElevatorPose(getPositionMeters() + heightAboveLowerComponent, originPoint);
     }
 
-    private Transform3d createNewTransform(double transformHeight) {
-        return new Transform3d(
-                new Translation3d(0, 0, transformHeight),
-                new Rotation3d()
+    private Pose3d createNewElevatorPose(double poseHeight, Pose3d originPoint) {
+        return originPoint.transformBy(new Transform3d(
+                        new Translation3d(0, 0, poseHeight),
+                        new Rotation3d()
+                )
         );
     }
 
