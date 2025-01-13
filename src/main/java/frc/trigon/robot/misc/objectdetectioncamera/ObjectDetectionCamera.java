@@ -16,9 +16,9 @@ public class ObjectDetectionCamera extends SubsystemBase {
     private boolean trackedTargetWasVisible = false;
     private int currentTrackedObjectId;
 
-    public ObjectDetectionCamera(String hostname) {
+    public ObjectDetectionCamera(String hostname, Rotation2d cameraMountYaw) {
         this.hostname = hostname;
-        objectDetectionCameraIO = generateIO(hostname);
+        objectDetectionCameraIO = generateIO(hostname, cameraMountYaw);
     }
 
     @Override
@@ -99,11 +99,11 @@ public class ObjectDetectionCamera extends SubsystemBase {
                 objectDetectionCameraInputs.visibleAlgaeYaws;
     }
 
-    private ObjectDetectionCameraIO generateIO(String hostname) {
+    private ObjectDetectionCameraIO generateIO(String hostname, Rotation2d cameraMountYaw) {
         if (RobotHardwareStats.isReplay())
             return new ObjectDetectionCameraIO();
         if (RobotHardwareStats.isSimulation())
-            return new SimulationObjectDetectionCameraIO();
-        return new PhotonObjectDetectionCameraIO(hostname);
+            return new SimulationObjectDetectionCameraIO(hostname, cameraMountYaw);
+        return new PhotonObjectDetectionCameraIO(hostname, cameraMountYaw);
     }
 }

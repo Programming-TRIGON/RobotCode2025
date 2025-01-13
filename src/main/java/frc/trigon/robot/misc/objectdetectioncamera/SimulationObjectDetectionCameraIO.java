@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Transform2d;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePiece;
 import frc.trigon.robot.misc.simulatedfield.SimulationFieldHandler;
+import org.littletonrobotics.junction.Logger;
 
 import java.util.ArrayList;
 
@@ -18,6 +19,14 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private static final double
             MAXIMUM_VISIBLE_DISTANCE_METERS = 5,
             MINIMUM_VISIBLE_DISTANCE_METERS = 0.05;
+
+    private final String hostname;
+    private final Rotation2d cameraMountYaw;
+
+    protected SimulationObjectDetectionCameraIO(String hostname, Rotation2d cameraMountYaw) {
+        this.hostname = hostname;
+        this.cameraMountYaw = cameraMountYaw;
+    }
 
     @Override
     protected void updateInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
@@ -66,12 +75,14 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private void updateHasNewResultInputs(ArrayList<SimulatedGamePiece> visibleCoral, ArrayList<SimulatedGamePiece> visibleAlgae, Pose2d robotPose, ObjectDetectionCameraInputsAutoLogged inputs) {
         if (inputs.hasCoralTarget) {
             final SimulatedGamePiece closestCoral = calculateClosestVisibleObject(robotPose, visibleCoral);
-            inputs.visibleCoralYaws[0] = calculateCameraYawToObject(closestCoral, robotPose);
+            inputs.visibleCoralYaws[0] = calculateCameraYawToObject(closestCoral, robotPose).plus(cameraMountYaw);
         }
         if (inputs.hasAlgaeTarget) {
             final SimulatedGamePiece closestAlgae = calculateClosestVisibleObject(robotPose, visibleAlgae);
-            inputs.visibleAlgaeYaws[0] = calculateCameraYawToObject(closestAlgae, robotPose);
+            inputs.visibleAlgaeYaws[0] = calculateCameraYawToObject(closestAlgae, robotPose).plus(cameraMountYaw);
         }
+
+        logVisibleGamePieces(visibleCoral, visibleAlgae);
     }
 
     /**
@@ -129,5 +140,18 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private boolean isWithinDistance(SimulatedGamePiece objectPlacement, Pose2d robotPose) {
         final double robotToObjectDistanceMeters = objectPlacement.getDistanceMeters(new Pose3d(robotPose));
         return robotToObjectDistanceMeters <= MAXIMUM_VISIBLE_DISTANCE_METERS && robotToObjectDistanceMeters >= MINIMUM_VISIBLE_DISTANCE_METERS;
+    }
+
+    private void logVisibleGamePieces(ArrayList<SimulatedGamePiece> visibleCoral, ArrayList<SimulatedGamePiece> visibleAlgae) {
+        Logger.recordOutput(hostname + "/VisibleCoral", mapSimulatedGamePieceListToPoseArray(visibleCoral));
+        Logger.recordOutput(hostname + "/VisibleAlgae", mapSimulatedGamePieceListToPoseArray(visibleAlgae));
+    }
+
+    private Pose3d[] mapSimulatedGamePieceListToPoseArray(ArrayList<SimulatedGamePiece> gamePieces) {
+        final Pose3d[] poses = new Pose3d[gamePieces.size()];
+        for (int i = 0; i < poses.length; i++) {
+            poses[i] = gamePieces.get(i).getPose();
+        }
+        return poses;
     }
 }

@@ -1,18 +1,23 @@
 package frc.trigon.robot.misc.simulatedfield;
 
 import edu.wpi.first.math.geometry.Pose3d;
+import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 
 public class SimulatedGamePiece {
-    private final GamePieceType gamePieceType;
+    private final double originPointHeightOffGroundMeters;
     private Pose3d fieldRelativePose;
 
-    public SimulatedGamePiece(Pose3d startingPose, GamePieceType gamePieceType) {
-        fieldRelativePose = startingPose;
-        this.gamePieceType = gamePieceType;
+    public static SimulatedGamePiece generateCoral(Pose3d startingPose) {
+        return new SimulatedGamePiece(startingPose, SimulatedGamePieceConstants.CORAL_ORIGIN_POINT_HEIGHT_OFF_GROUND_METERS);
     }
 
-    public GamePieceType getGamePieceType() {
-        return gamePieceType;
+    public static SimulatedGamePiece generateAlgae(Pose3d startingPose) {
+        return new SimulatedGamePiece(startingPose, SimulatedGamePieceConstants.ALGAE_ORIGIN_POINT_HEIGHT_OFF_GROUND_METERS);
+    }
+
+    public SimulatedGamePiece(Pose3d startingPose, double originPointHeightOffGroundMeters) {
+        fieldRelativePose = startingPose;
+        this.originPointHeightOffGroundMeters = originPointHeightOffGroundMeters;
     }
 
     public void updatePose(Pose3d fieldRelativePose) {
@@ -24,21 +29,10 @@ public class SimulatedGamePiece {
     }
 
     public boolean isGrounded() {
-        return fieldRelativePose.getTranslation().getZ() <= gamePieceType.originPointHeightOffGroundMeters;
+        return fieldRelativePose.getTranslation().getZ() <= originPointHeightOffGroundMeters;
     }
 
     public double getDistanceMeters(Pose3d pose) {
         return fieldRelativePose.minus(pose).getTranslation().getNorm();
-    }
-
-    public enum GamePieceType {
-        CORAL(0.4),
-        ALGAE(0.15);
-
-        private final double originPointHeightOffGroundMeters;
-
-        GamePieceType(double originPointHeightOffGroundMeters) {
-            this.originPointHeightOffGroundMeters = originPointHeightOffGroundMeters;
-        }
     }
 }
