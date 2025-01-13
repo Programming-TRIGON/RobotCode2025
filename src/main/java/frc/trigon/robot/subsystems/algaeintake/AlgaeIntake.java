@@ -46,10 +46,7 @@ public class AlgaeIntake extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
-        AlgaeIntakeConstants.INTAKE_MECHANISM.update(
-                intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE),
-                targetState.targetVoltage
-        );
+        AlgaeIntakeConstants.INTAKE_MECHANISM.update(intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
         AlgaeIntakeConstants.ANGLE_MECHANISM.update(
                 getAngleEncoderPosition(),
                 Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
@@ -80,7 +77,8 @@ public class AlgaeIntake extends MotorSubsystem {
     }
 
     public boolean atTargetAngle() {
-        return Math.abs(getAngleEncoderPosition().minus(targetState.targetAngle).getDegrees()) < AlgaeIntakeConstants.ANGLE_TOLERANCE.getDegrees();
+        double error = Math.abs(getAngleEncoderPosition().getDegrees() - edu.wpi.first.math.util.Units.rotationsToDegrees(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
+        return error < AlgaeIntakeConstants.ANGLE_TOLERANCE.getDegrees();
     }
 
     void setTargetState(AlgaeIntakeConstants.AlgaeIntakeState targetState) {
@@ -94,6 +92,7 @@ public class AlgaeIntake extends MotorSubsystem {
     }
 
     private void setTargetVoltage(double targetVoltage) {
+        AlgaeIntakeConstants.INTAKE_MECHANISM.setTargetVelocity(targetVoltage);
         intakeMotor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
