@@ -87,20 +87,20 @@ public class Elevator extends MotorSubsystem {
         final Pose3d originPoint = ElevatorConstants.ELEVATOR_VISUALIZATION_ORIGIN_POINT;
 
         if (elevatorDidNotExtendFirstComponentLength())
-            return getCurrentElevatorPose(originPoint);
+            return calculateCurrentElevatorPoseFromOrigin(originPoint);
         return createNewElevatorPose(ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH, originPoint);
     }
 
     private Pose3d getElevatorSecondComponentPose() {
         final Pose3d originPoint = ElevatorConstants.SECOND_ELEVATOR_VISUALIZATION_ORIGIN_POINT;
-        return getCurrentElevatorPose(originPoint);
+        return calculateCurrentElevatorPoseFromOrigin(originPoint);
     }
 
     private boolean elevatorDidNotExtendFirstComponentLength() {
         return getPositionMeters() < ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH;
     }
 
-    private Pose3d getCurrentElevatorPose(Pose3d originPoint) {
+    private Pose3d calculateCurrentElevatorPoseFromOrigin(Pose3d originPoint) {
         return createNewElevatorPose(getPositionMeters(), originPoint);
     }
 
