@@ -19,7 +19,7 @@ public class CoralIntakeCommands {
                 Set.of(RobotContainer.CORAL_INTAKE),
                 "Debugging/TargetCoralIntakeVoltage",
                 "Debugging/TargetCoralIntakeFunnelVoltage",
-                "Debugging/TargetCoralIntakeElevatorPositionMeters"
+                "Debugging/TargetCoralIntakeElevatorPositionRotations"
         );
     }
 
@@ -31,9 +31,9 @@ public class CoralIntakeCommands {
         );
     }
 
-    public static Command getSetTargetStateCommand(double targetIntakeVoltage, double targetFunnelVoltage, double targetPositionMeters) {
+    public static Command getSetTargetStateCommand(double targetIntakeVoltage, double targetFunnelVoltage, double targetPositionRotations) {
         return new StartEndCommand(
-                () -> RobotContainer.CORAL_INTAKE.setTargetState(targetIntakeVoltage, targetFunnelVoltage, targetPositionMeters),
+                () -> RobotContainer.CORAL_INTAKE.setTargetState(targetIntakeVoltage, targetFunnelVoltage, targetPositionRotations),
                 RobotContainer.CORAL_INTAKE::stop,
                 RobotContainer.CORAL_INTAKE
         );

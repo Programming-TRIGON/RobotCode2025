@@ -126,6 +126,16 @@ public class CoralIntake extends MotorSubsystem {
         elevatorMotor.setControl(positionRequest.withPosition(targetPositionRotations));
     }
 
+    private Pose3d calculateVisualizationPose() {
+        final Pose3d originPoint = CoralIntakeConstants.INTAKE_VISUALIZATION_ORIGIN_POINT;
+        final Transform3d intakeTransform = new Transform3d(
+                new Translation3d(0, 0, getCurrentElevatorPositionMeters()),
+                new Rotation3d()
+        );
+
+        return originPoint.transformBy(intakeTransform);
+    }
+
     private double getCurrentElevatorPositionMeters() {
         return rotationsToMeters(getCurrentElevatorPositionRotations());
     }
@@ -140,15 +150,5 @@ public class CoralIntake extends MotorSubsystem {
 
     private double metersToRotations(double positionMeters) {
         return Conversions.distanceToRotations(positionMeters, CoralIntakeConstants.ELEVATOR_DRUM_DIAMETER_METERS);
-    }
-
-    private Pose3d calculateVisualizationPose() {
-        final Pose3d originPoint = CoralIntakeConstants.INTAKE_VISUALIZATION_ORIGIN_POINT;
-        final Transform3d intakeTransform = new Transform3d(
-                new Translation3d(0, 0, getCurrentElevatorPositionMeters()),
-                new Rotation3d()
-        );
-
-        return originPoint.transformBy(intakeTransform);
     }
 }

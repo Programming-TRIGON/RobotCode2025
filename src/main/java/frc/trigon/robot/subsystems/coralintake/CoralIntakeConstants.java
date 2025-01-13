@@ -73,9 +73,7 @@ public class CoralIntakeConstants {
     private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
-    private static final double
-            ELEVATOR_FORWARD_LIMIT_POSITION_ROTATIONS = 0.1,
-            ELEVATOR_REVERSE_LIMIT_POSITION_ROTATIONS = 0;
+    private static final double ELEVATOR_REVERSE_LIMIT_POSITION_ROTATIONS = 0;
     static final boolean FOC_ENABLED = true;
 
     private static final int
@@ -92,7 +90,7 @@ public class CoralIntakeConstants {
             MINIMUM_OPENING_DISTANCE_METERS = 0,
             MAXIMUM_OPENING_DISTANCE_METERS = 0.35;
     private static final double ELEVATOR_DRUM_RADIUS_METERS = 0.02;
-    private static final boolean SHOULD_SIMULATE_GRAVITY = true;
+    private static final boolean SHOULD_SIMULATE_GRAVITY = false;
     private static final SimpleMotorSimulation
             INTAKE_SIMULATION = new SimpleMotorSimulation(
             INTAKE_GEARBOX,
@@ -213,8 +211,6 @@ public class CoralIntakeConstants {
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = ELEVATOR_FORWARD_LIMIT_POSITION_ROTATIONS;
 
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
