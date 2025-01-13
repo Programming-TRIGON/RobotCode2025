@@ -11,6 +11,9 @@ import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import org.trigon.hardware.misc.leds.LEDCommands;
 
+/**
+ * A class that commands for collecting game pieces.
+ */
 public class CollectionCommands {
     public static Command getCollectAlgaeCommand() {
         return new ParallelCommandGroup(
