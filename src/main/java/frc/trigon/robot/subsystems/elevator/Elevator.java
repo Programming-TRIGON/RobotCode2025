@@ -106,7 +106,7 @@ public class Elevator extends MotorSubsystem {
     }
 
     private double getPositionMeters() {
-        return rotationsToMeters(motor.getSignal(TalonFXSignal.POSITION));
+        return rotationsToMeters(getPositionRotations());
     }
 
     private double rotationsToMeters(double positionRotations) {
