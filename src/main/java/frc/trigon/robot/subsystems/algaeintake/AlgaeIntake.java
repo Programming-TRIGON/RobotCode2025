@@ -12,6 +12,7 @@ import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
+import org.trigon.utilities.Conversions;
 
 public class AlgaeIntake extends MotorSubsystem {
     private final TalonFXMotor
@@ -77,7 +78,7 @@ public class AlgaeIntake extends MotorSubsystem {
     }
 
     public boolean atTargetAngle() {
-        double errorDegrees = Math.abs(getAngleEncoderPosition().getDegrees() - edu.wpi.first.math.util.Units.rotationsToDegrees(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
+        final double errorDegrees = Math.abs(getAngleEncoderPosition().getDegrees() - Conversions.rotationsToDegrees(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
         return errorDegrees < AlgaeIntakeConstants.ANGLE_TOLERANCE.getDegrees();
     }
 

@@ -60,7 +60,7 @@ public class CommandConstants {
                     RobotContainer.SWERVE::runWheelRadiusCharacterization,
                     RobotContainer.SWERVE
             ),
-            RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(AlgaeIntakeConstants.RUMBLE_DURATION_SECONDS, AlgaeIntakeConstants.RUMBLE_POWER));
+            COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(AlgaeIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, AlgaeIntakeConstants.COLLECTION_RUMBLE_POWER));
 
     /**
      * Calculates the target drive power from an axis value by dividing it by the shift mode value.

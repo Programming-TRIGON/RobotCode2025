@@ -12,20 +12,20 @@ import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import org.trigon.hardware.misc.leds.LEDCommands;
 
 /**
- * A class that commands for collecting game pieces.
+ * A class that contains commands for collecting game pieces.
  */
 public class CollectionCommands {
     public static Command getCollectAlgaeCommand() {
         return new ParallelCommandGroup(
                 AlgaeIntakeCommands.getSetTargetStateCommand(AlgaeIntakeConstants.AlgaeIntakeState.COLLECT),
-                LEDCommands.getBlinkingCommand(Color.kAqua, AlgaeIntakeConstants.BLINKING_SPEED)
+                LEDCommands.getBlinkingCommand(Color.kAqua, AlgaeIntakeConstants.COLLECTION_LEDS_BLINKING_SPEED)
         );
     }
 
     public static Command getCollectCoralFromGroundCommand() {
         return new ParallelCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT),
-                LEDCommands.getBlinkingCommand(Color.kAqua, CoralIntakeConstants.BLINKING_SPEED)
-        ).unless(RobotContainer.CORAL_INTAKE::hasGamePiece).alongWith(CommandConstants.RUMBLE_COMMAND);
+                LEDCommands.getBlinkingCommand(Color.kAqua, CoralIntakeConstants.COLLECTION_LEDS_BLINKING_SPEED)
+        ).unless(RobotContainer.CORAL_INTAKE::hasGamePiece).alongWith(CommandConstants.COLLECTION_RUMBLE_COMMAND).onlyIf(RobotContainer.CORAL_INTAKE::hasGamePiece);
     }
 }
