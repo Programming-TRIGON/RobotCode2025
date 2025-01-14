@@ -105,7 +105,6 @@ public class ElevatorConstants {
 
         config.MotorOutput.NeutralMode = NEUTRAL_MODE_VALUE;
         config.MotorOutput.Inverted = MASTER_MOTOR_INVERTED_VALUE;
-
         config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
         config.Slot0.kP = P;
