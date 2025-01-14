@@ -10,14 +10,15 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.subsystems.MotorSubsystem;
+import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.utilities.Conversions;
 
 public class Elevator extends MotorSubsystem {
     private final TalonFXMotor motor = ElevatorConstants.MASTER_MOTOR;
-    private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(ElevatorConstants.FOC_ENABLED);
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(ElevatorConstants.FOC_ENABLED);
+    private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(ElevatorConstants.FOC_ENABLED);
     private ElevatorConstants.ElevatorState targetState = ElevatorConstants.ElevatorState.REST;
 
     public Elevator() {
@@ -42,14 +43,20 @@ public class Elevator extends MotorSubsystem {
     @Override
     public void updateLog(SysIdRoutineLog log) {
         log.motor("Elevator")
-                .linearPosition(Units.Meters.of(getPositionMeters()))
-                .linearVelocity(Units.MetersPerSecond.of(rotationsToMeters(motor.getSignal(TalonFXSignal.VELOCITY))));
+                .linearPosition(Units.Meters.of(getPositionRotations()))
+                .linearVelocity(Units.MetersPerSecond.of(motor.getSignal(TalonFXSignal.VELOCITY)))
+                .voltage(Units.Volts.of(motor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
     @Override
     public void updateMechanism() {
-        ElevatorConstants.MECHANISM.update(motor.getSignal(TalonFXSignal.POSITION), motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE));
-        setReefLevelToMechanism();
+        Logger.recordOutput("Poses/Components/ElevatorFirstPose", getFirstComponentPose());
+        Logger.recordOutput("Poses/Components/ElevatorSecondPose", getSecondComponentPose());
+
+        ElevatorConstants.MECHANISM.update(
+                rotationsToMeters(getPositionRotations()),
+                rotationsToMeters(motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
+        );
     }
 
     @Override
@@ -62,59 +69,62 @@ public class Elevator extends MotorSubsystem {
         motor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
-    public final boolean atTargetState() {
-        double difference = Math.abs(targetState.targetPositionRotations - motor.getSignal(TalonFXSignal.POSITION));
-        return difference < ElevatorConstants.TARGET_STATE_TOLERANCE_ROTATIONS;
+    public boolean atTargetState() {
+        final double currentToTargetStateDifference = Math.abs(targetState.targetPositionMeters - getPositionMeters());
+        return currentToTargetStateDifference < ElevatorConstants.TOLERANCE_METERS;
     }
 
     void setTargetState(ElevatorConstants.ElevatorState targetState) {
         this.targetState = targetState;
-        setTargetPosition(targetState.targetPositionRotations);
+        setTargetPositionRotations(metersToRotations(targetState.targetPositionMeters));
     }
 
-    void setTargetPosition(double targetPositionRotations) {
+    void setTargetPositionRotations(double targetPositionRotations) {
         motor.setControl(positionRequest.withPosition(targetPositionRotations));
     }
 
-    private void setReefLevelToMechanism() {
-        if (this.targetState == ElevatorConstants.ElevatorState.REEF_L1_POSITION && atTargetState()) {
-            ElevatorConstants.FIRST_POSE = new Pose3d(0, 0.1, 0, new Rotation3d());
-            ElevatorConstants.SECOND_POSE = new Pose3d(0, 0.1, 0, new Rotation3d());
-            ElevatorConstants.THIRD_POSE = new Pose3d(0, 0.1, 0, new Rotation3d());
-        }
-        if (this.targetState == ElevatorConstants.ElevatorState.REEF_L2_POSITION && atTargetState()) {
-            ElevatorConstants.FIRST_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
-            ElevatorConstants.SECOND_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
-            ElevatorConstants.THIRD_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
-        }
-        if (this.targetState == ElevatorConstants.ElevatorState.REEF_L3_POSITION && atTargetState()) {
-            ElevatorConstants.FIRST_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
-            ElevatorConstants.SECOND_POSE = new Pose3d(0, 0.3, 0, new Rotation3d());
-            ElevatorConstants.THIRD_POSE = new Pose3d(0, 0.3, 0, new Rotation3d());
-        }
-        if (this.targetState == ElevatorConstants.ElevatorState.REEF_L4_POSITION && atTargetState()) {
-            ElevatorConstants.FIRST_POSE = new Pose3d(0, 0.2, 0, new Rotation3d());
-            ElevatorConstants.SECOND_POSE = new Pose3d(0, 0.3, 0, new Rotation3d());
-            ElevatorConstants.THIRD_POSE = new Pose3d(0, 0.4, 0, new Rotation3d());
-        }
+    private Pose3d getFirstComponentPose() {
+        final Pose3d originPoint = ElevatorConstants.FIRST_STAGE_VISUALIZATION_ORIGIN_POINT;
+
+        if (!elevatorExtendedFirstComponentLimit())
+            return calculateCurrentElevatorPoseFromOrigin(originPoint);
+        return setComponentPose(ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH, originPoint);
     }
 
-    private Pose3d getElevatorComponentPose() {
-        final Pose3d
-                originPoint = ElevatorConstants.ELEVATOR_ORIGIN_POINT;
+    private Pose3d getSecondComponentPose() {
+        final Pose3d originPoint = ElevatorConstants.SECOND_STAGE_VISUALIZATION_ORIGIN_POINT;
+        return calculateCurrentElevatorPoseFromOrigin(originPoint);
+    }
 
-        final Transform3d elevatorTransform = new Transform3d(
-                new Translation3d(0, 0, getPositionMeters()),
-                new Rotation3d()
+    private boolean elevatorExtendedFirstComponentLimit() {
+        return getPositionMeters() > ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH;
+    }
+
+    private Pose3d calculateCurrentElevatorPoseFromOrigin(Pose3d originPoint) {
+        return setComponentPose(getPositionMeters(), originPoint);
+    }
+
+    private Pose3d setComponentPose(double poseHeight, Pose3d originPoint) {
+        return originPoint.transformBy(new Transform3d(
+                        new Translation3d(0, 0, poseHeight),
+                        new Rotation3d()
+                )
         );
-        return originPoint.transformBy(elevatorTransform);
+    }
+
+    private double getPositionRotations() {
+        return motor.getSignal(TalonFXSignal.POSITION);
     }
 
     private double getPositionMeters() {
-        return rotationsToMeters(motor.getSignal(TalonFXSignal.POSITION));
+        return rotationsToMeters(getPositionRotations());
     }
 
     private double rotationsToMeters(double positionRotations) {
         return Conversions.rotationsToDistance(positionRotations, ElevatorConstants.DRUM_DIAMETER_METERS);
+    }
+
+    private double metersToRotations(double positionMeters) {
+        return Conversions.distanceToRotations(positionMeters, ElevatorConstants.DRUM_DIAMETER_METERS);
     }
 }

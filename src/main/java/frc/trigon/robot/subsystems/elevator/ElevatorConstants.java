@@ -4,7 +4,6 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
@@ -31,6 +30,7 @@ public class ElevatorConstants {
     private static final InvertedValue
             MASTER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             FOLLOWER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
+    private static final double GEAR_RATIO = 20;
     private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = false;
     private static final double
             P = RobotHardwareStats.isSimulation() ? 110 : 50,
@@ -42,10 +42,12 @@ public class ElevatorConstants {
             KA = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final Rotation2d FORWARD_HARD_LIMIT_ROTATION2D = Rotation2d.fromRotations(4);
-    private static final Rotation2d REVERSE_HARD_LIMIT_ROTATION2D = Rotation2d.fromRotations(0);
-    private static final double GEAR_RATIO = 5;
-    static final double
+    private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
+    private static final ForwardLimitSourceValue FORWARD_LIMIT_SOURCE_VALUE = ForwardLimitSourceValue.LimitSwitchPin;
+    private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
+    private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
+    private static final double REVERSE_LIMIT_SWITCH_RESET_POSITION = 0;
+    private static final double
             MOTION_MAGIC_CRUISE_VELOCITY = 25,
             MOTION_MAGIC_ACCELERATION = 25,
             MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
@@ -54,20 +56,18 @@ public class ElevatorConstants {
     private static final int MOTOR_AMOUNT = 2;
     private static final DCMotor GEARBOX = DCMotor.getKrakenX60Foc(MOTOR_AMOUNT);
     private static final double
-            MASS_KILOGRAMS = 9,
+            ELEVATOR_MASS_KILOGRAMS = 7,
             DRUM_RADIUS_METERS = 0.02,
-            RETRACTED_ELEVATOR_LENGTH_METERS = 0.2,
-            MAXIMUM_HEIGHT_METERS = 1.9,
-            METERS_BEFORE_LIMIT = 0.05,
-            MAXIMUM_LENGTH_METERS = MAXIMUM_HEIGHT_METERS - METERS_BEFORE_LIMIT;
+            RETRACTED_ELEVATOR_HEIGHT_METERS = 0.5,
+            MAXIMUM_ELEVATOR_HEIGHT_METERS = 1.9;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
             GEARBOX,
             GEAR_RATIO,
-            MASS_KILOGRAMS,
+            ELEVATOR_MASS_KILOGRAMS,
             DRUM_RADIUS_METERS,
-            RETRACTED_ELEVATOR_LENGTH_METERS,
-            MAXIMUM_HEIGHT_METERS,
+            RETRACTED_ELEVATOR_HEIGHT_METERS,
+            MAXIMUM_ELEVATOR_HEIGHT_METERS,
             SHOULD_SIMULATE_GRAVITY
     );
 
@@ -77,20 +77,20 @@ public class ElevatorConstants {
             Units.Second.of(1000)
     );
 
-    static final Pose3d ELEVATOR_ORIGIN_POINT = new Pose3d(1, 0, 1, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(10), 0, 0));
+    static final double
+            FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH = 0.9,
+            SECOND_ELEVATOR_COMPONENT_EXTENDED_LENGTH = 0.9;
+    static final Pose3d FIRST_STAGE_VISUALIZATION_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(0), 0, 0));
+    static final Pose3d SECOND_STAGE_VISUALIZATION_ORIGIN_POINT = new Pose3d(0, 0, 0.05, new Rotation3d(edu.wpi.first.math.util.Units.degreesToRadians(0), 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
-            MAXIMUM_LENGTH_METERS,
-            RETRACTED_ELEVATOR_LENGTH_METERS,
+            MAXIMUM_ELEVATOR_HEIGHT_METERS,
+            RETRACTED_ELEVATOR_HEIGHT_METERS,
             Color.kYellow
     );
-    static Pose3d
-            FIRST_POSE = new Pose3d(),
-            SECOND_POSE = new Pose3d(),
-            THIRD_POSE = new Pose3d();
 
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
-    static final double TARGET_STATE_TOLERANCE_ROTATIONS = 0.1;
+    static final double TOLERANCE_METERS = 0.1;
 
     static {
         configureMasterMotor();
@@ -119,15 +119,14 @@ public class ElevatorConstants {
         config.Slot0.StaticFeedforwardSign = STATIC_FEEDFORWARD_SIGN_VALUE;
 
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
-        config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
-        config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
-        config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
+        config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
+        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_HARD_LIMIT_ROTATION2D.getRotations();
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = FORWARD_HARD_LIMIT_ROTATION2D.getRotations();
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_LIMIT_SWITCH_RESET_POSITION;
+        config.HardwareLimitSwitch.ForwardLimitEnable = true;
+        config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
+        config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
@@ -153,21 +152,23 @@ public class ElevatorConstants {
         config.MotorOutput.Inverted = FOLLOWER_MOTOR_INVERTED_VALUE;
 
         FOLLOWER_MOTOR.applyConfiguration(config);
+
         final Follower followMasterMotor = new Follower(MASTER_MOTOR_ID, FOLLOWER_MOTOR_OPPOSES_MASTER);
         FOLLOWER_MOTOR.setControl(followMasterMotor);
     }
 
     public enum ElevatorState {
         REST(0),
-        REEF_L1_POSITION(0.1),
-        REEF_L2_POSITION(0.2),
-        REEF_L3_POSITION(0.3),
-        REEF_L4_POSITION(0.4);
+        COLLECT_FROM_FEEDER(0),
+        SCORE_L1(0.45),
+        SCORE_L2(0.80),
+        SCORE_L3(1.20),
+        SCORE_L4(1.80);
 
-        final double targetPositionRotations;
+        public final double targetPositionMeters;
 
-        ElevatorState(double targetPositionRotations) {
-            this.targetPositionRotations = targetPositionRotations;
+        ElevatorState(double targetPositionMeters) {
+            this.targetPositionMeters = targetPositionMeters;
         }
     }
 }
