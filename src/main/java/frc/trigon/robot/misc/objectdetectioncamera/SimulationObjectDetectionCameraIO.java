@@ -12,9 +12,6 @@ import org.littletonrobotics.junction.Logger;
 
 import java.util.ArrayList;
 
-/**
- * A simulation object detection camera simulates an object detection camera as well as game pieces on the field and allows for interaction with the game pieces.
- */
 public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private static final int NUMBER_OF_GAME_PIECE_TYPES = SimulatedGamePieceConstants.GamePieceType.values().length;
     private static final Rotation2d CAMERA_HORIZONTAL_FOV = Rotation2d.fromDegrees(75);
