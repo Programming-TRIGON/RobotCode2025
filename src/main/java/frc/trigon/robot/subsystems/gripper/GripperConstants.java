@@ -4,15 +4,13 @@ import au.grapplerobotics.ConfigurationFailedException;
 import au.grapplerobotics.LaserCan;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.SensorDirectionValue;
+import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.grapple.lasercan.LaserCAN;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
@@ -28,28 +26,28 @@ import java.util.function.DoubleSupplier;
 
 public class GripperConstants {
     private static final int
-            GRIPPER_MOTOR_ID = 15,
-            GRIPPER_ANGLE_MOTOR_ID = 16,
-            GRIPPER_ANGLE_ENCODER_ID = 16,
+            GRIPPING_MOTOR_ID = 15,
+            ANGLE_MOTOR_ID = 16,
+            ANGLE_ENCODER_ID = 16,
             LASER_CAN_ID = 0;
     private static final String
-            GRIPPER_MOTOR_NAME = "GripperMotor",
+            GRIPPING_MOTOR_NAME = "GrippingMotor",
             ANGLE_MOTOR_NAME = "AngleMotor",
             ANGLE_ENCODER_NAME = "AngleEncoder",
             LASER_CAN_NAME = "GripperLaserCAN";
-    static final TalonFXMotor GRIPPER_MOTOR = new TalonFXMotor(GRIPPER_MOTOR_ID, GRIPPER_MOTOR_NAME);
-    static final TalonFXMotor ANGLE_MOTOR = new TalonFXMotor(GRIPPER_ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
-    static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(GRIPPER_ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
+    static final TalonFXMotor GRIPPING_MOTOR = new TalonFXMotor(GRIPPING_MOTOR_ID, GRIPPING_MOTOR_NAME);
+    static final TalonFXMotor ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
+    static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
     static final LaserCAN LASER_CAN = new LaserCAN(LASER_CAN_ID, LASER_CAN_NAME);
 
     private static final InvertedValue
-            GRIPPER_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive,
+            GRIPPING_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive,
             ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
     private static final NeutralModeValue
             GRIPPER_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Coast,
             ANGLE_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
     private static final double
-            GRIPPER_MOTOR_GEAR_RATIO = 1,
+            GRIPPING_MOTOR_GEAR_RATIO = 1,
             ANGLE_MOTOR_GEAR_RATIO = 100;
     private static final double
             ANGLE_P = 0,
@@ -59,6 +57,16 @@ public class GripperConstants {
             ANGLE_KV = 0,
             ANGLE_KA = 0,
             ANGLE_KG = 0;
+    private static final double
+            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 5 : 0,
+            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 5 : 0,
+            ANGLE_MOTION_MAGIC_JERK = ANGLE_MOTION_MAGIC_ACCELERATION * 10;
+    private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseVelocitySign;
+    private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
+    private static final ForwardLimitSourceValue FORWARD_LIMIT_SOURCE_VALUE = ForwardLimitSourceValue.LimitSwitchPin;
+    private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
+    private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
+    private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
 
     private static final FeedbackSensorSourceValue ANGLE_ENCODER_TYPE = FeedbackSensorSourceValue.FusedCANcoder;
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
@@ -77,10 +85,10 @@ public class GripperConstants {
     static final boolean FOC_ENABLED = true;
 
     private static final int
-            NUMBER_OF_GRIPPER_MOTORS = 1,
+            NUMBER_OF_GRIPPING_MOTORS = 1,
             NUMBER_OF_ARM_MOTORS = 1;
     private static final DCMotor
-            GRIPPER_GEARBOX = DCMotor.getKrakenX60(NUMBER_OF_GRIPPER_MOTORS),
+            GRIPPING_GEARBOX = DCMotor.getKrakenX60(NUMBER_OF_GRIPPING_MOTORS),
             ARM_GEARBOX = DCMotor.getKrakenX60(NUMBER_OF_ARM_MOTORS);
     private static final double
             ARM_LENGTH_METERS = 1,
@@ -90,9 +98,9 @@ public class GripperConstants {
             ARM_MAXIMUM_ANGLE = Rotation2d.fromDegrees(180);
     private static final double MOMENT_OF_INERTIA = 0.003;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
-    private static final SimpleMotorSimulation GRIPPER_SIMULATION = new SimpleMotorSimulation(
-            GRIPPER_GEARBOX,
-            GRIPPER_MOTOR_GEAR_RATIO,
+    private static final SimpleMotorSimulation GRIPPING_SIMULATION = new SimpleMotorSimulation(
+            GRIPPING_GEARBOX,
+            GRIPPING_MOTOR_GEAR_RATIO,
             MOMENT_OF_INERTIA
     );
     private static final SingleJointedArmSimulation ARM_SIMULATION = new SingleJointedArmSimulation(
@@ -112,38 +120,38 @@ public class GripperConstants {
     );
 
     private static final double MAXIMUM_DISPLAYABLE_VELOCITY = 12;
-    static final SpeedMechanism2d GRIPPER_MECHANISM = new SpeedMechanism2d(
+    static final SpeedMechanism2d GRIPPING_MECHANISM = new SpeedMechanism2d(
             "GripperMechanism",
             MAXIMUM_DISPLAYABLE_VELOCITY
     );
-    static final SingleJointedArmMechanism2d GRIPPER_ANGLE_MECHANISM = new SingleJointedArmMechanism2d(
+    static final SingleJointedArmMechanism2d ANGLE_MECHANISM = new SingleJointedArmMechanism2d(
             "GripperAngleMechanism",
             ARM_LENGTH_METERS,
             Color.kRed
     );
 
     static {
-        configureGripperMotor();
+        configureGrippingMotor();
         configureAngleMotor();
         configureEncoder();
         configureLaserCAN();
     }
 
-    private static void configureGripperMotor() {
+    private static void configureGrippingMotor() {
         final TalonFXConfiguration config = new TalonFXConfiguration();
 
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
 
-        config.MotorOutput.Inverted = GRIPPER_MOTOR_INVERTED_VALUE;
+        config.MotorOutput.Inverted = GRIPPING_MOTOR_INVERTED_VALUE;
         config.MotorOutput.NeutralMode = GRIPPER_MOTOR_NEUTRAL_MODE_VALUE;
-        config.Feedback.RotorToSensorRatio = GRIPPER_MOTOR_GEAR_RATIO;
+        config.Feedback.RotorToSensorRatio = GRIPPING_MOTOR_GEAR_RATIO;
 
-        GRIPPER_MOTOR.applyConfiguration(config);
-        GRIPPER_MOTOR.setPhysicsSimulation(GRIPPER_SIMULATION);
+        GRIPPING_MOTOR.applyConfiguration(config);
+        GRIPPING_MOTOR.setPhysicsSimulation(GRIPPING_SIMULATION);
 
-        GRIPPER_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
-        GRIPPER_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
+        GRIPPING_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
+        GRIPPING_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
     }
 
     private static void configureAngleMotor() {
@@ -156,6 +164,9 @@ public class GripperConstants {
         config.MotorOutput.NeutralMode = ANGLE_MOTOR_NEUTRAL_MODE_VALUE;
         config.Feedback.RotorToSensorRatio = ANGLE_MOTOR_GEAR_RATIO;
 
+        config.Feedback.FeedbackRemoteSensorID = ANGLE_ENCODER_ID;
+        config.Feedback.FeedbackSensorSource = ANGLE_ENCODER_TYPE;
+
         config.Slot0.kP = ANGLE_P;
         config.Slot0.kI = ANGLE_I;
         config.Slot0.kD = ANGLE_D;
@@ -163,9 +174,21 @@ public class GripperConstants {
         config.Slot0.kA = ANGLE_KA;
         config.Slot0.kV = ANGLE_KV;
         config.Slot0.kG = ANGLE_KG;
+        config.Slot0.GravityType = GRAVITY_TYPE_VALUE;
+        config.Slot0.StaticFeedforwardSign = STATIC_FEEDFORWARD_SIGN_VALUE;
 
-        config.Feedback.FeedbackRemoteSensorID = GRIPPER_ANGLE_ENCODER_ID;
-        config.Feedback.FeedbackSensorSource = ANGLE_ENCODER_TYPE;
+        config.MotionMagic.MotionMagicCruiseVelocity = ANGLE_MOTION_MAGIC_CRUISE_VELOCITY;
+        config.MotionMagic.MotionMagicAcceleration = ANGLE_MOTION_MAGIC_ACCELERATION;
+        config.MotionMagic.MotionMagicJerk = ANGLE_MOTION_MAGIC_JERK;
+
+        config.HardwareLimitSwitch.ForwardLimitEnable = true;
+        config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
+        config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
+
+        config.HardwareLimitSwitch.ReverseLimitEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
+        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
+
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ARM_SIMULATION);
