@@ -122,10 +122,11 @@ public class ElevatorConstants {
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_LIMIT_SWITCH_RESET_POSITION;
+
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = false;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
@@ -152,8 +153,8 @@ public class ElevatorConstants {
 
         FOLLOWER_MOTOR.applyConfiguration(config);
 
-        final Follower followMasterMotor = new Follower(MASTER_MOTOR_ID, FOLLOWER_MOTOR_OPPOSES_MASTER);
-        FOLLOWER_MOTOR.setControl(followMasterMotor);
+        final Follower followerRequest = new Follower(MASTER_MOTOR_ID, FOLLOWER_MOTOR_OPPOSES_MASTER);
+        FOLLOWER_MOTOR.setControl(followerRequest);
     }
 
     public enum ElevatorState {
