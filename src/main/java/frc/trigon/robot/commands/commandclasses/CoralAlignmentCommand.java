@@ -26,7 +26,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
 
     public CoralAlignmentCommand() {
         addCommands(
-                getSetLEDColorsCommand(),
+                getSetLEDColorsCommand().asProxy(),
                 getDriveWhileAligningToCoralCommand(),
                 getTrackCoralCommand()
         );
