@@ -4,6 +4,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
@@ -120,7 +121,8 @@ public class CoralIntakeConstants {
             Units.Second.of(1000)
     );
 
-    static final Pose3d INTAKE_VISUALIZATION_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
+    static final Rotation2d INTAKE_ANGLE_FROM_GROUND = Rotation2d.fromDegrees(31.21);
+    static final Pose3d INTAKE_VISUALIZATION_ORIGIN_POINT = new Pose3d(-0.1665, 0, 0.5651, new Rotation3d(0, INTAKE_ANGLE_FROM_GROUND.getRadians(), 0));
     private static final double MAXIMUM_DISPLAYABLE_VELOCITY = 12;
     static final SpeedMechanism2d
             INTAKE_MECHANISM = new SpeedMechanism2d(
