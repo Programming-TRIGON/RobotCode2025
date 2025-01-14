@@ -45,7 +45,6 @@ public class SimulatedGamePieceConstants {
                     new SimulatedGamePiece(new Pose3d(FIELD_LENGTH_METERS - 1.22, FIELD_WIDTH_METERS / 2 + 1.83, 0.5, new Rotation3d()), GamePieceType.ALGAE)
             ));
 
-    public static final int NUMBER_OF_CORAL_BRANCHES = 12;
     private static final double
             L2_SCORE_HEIGHT_METERS = 0.70,
             L3_SCORE_HEIGHT_METERS = 1.1,

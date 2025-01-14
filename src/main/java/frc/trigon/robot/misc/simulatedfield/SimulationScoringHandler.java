@@ -14,7 +14,7 @@ public class SimulationScoringHandler {
     public static void checkGamePieceScored(SimulatedGamePiece gamePiece) {
         if (gamePiece.gamePieceType.equals(SimulatedGamePieceConstants.GamePieceType.CORAL))
             checkCoralScored(gamePiece);
-        else if (gamePiece.gamePieceType.equals(SimulatedGamePieceConstants.GamePieceType.ALGAE))
+        if (gamePiece.gamePieceType.equals(SimulatedGamePieceConstants.GamePieceType.ALGAE))
             checkAlgaeScored(gamePiece);
     }
 

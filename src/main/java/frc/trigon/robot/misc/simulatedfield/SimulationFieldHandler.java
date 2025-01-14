@@ -57,10 +57,10 @@ public class SimulationFieldHandler {
      * Updates the state of all game pieces.
      */
     private static void updateGamePieces() {
+        updateGamePiecesPeriodically();
         updateCollection();
         updateEjection();
         updateHeldGamePiecePoses();
-        CORAL_ON_FIELD.forEach(SimulatedGamePiece::update);
     }
 
     /**
@@ -69,6 +69,13 @@ public class SimulationFieldHandler {
     private static void logGamePieces() {
         Logger.recordOutput("Poses/GamePieces/Corals", mapSimulatedGamePieceListToPoseArray(CORAL_ON_FIELD));
         Logger.recordOutput("Poses/GamePieces/Algae", mapSimulatedGamePieceListToPoseArray(ALGAE_ON_FIELD));
+    }
+
+    private static void updateGamePiecesPeriodically() {
+        for (SimulatedGamePiece coral : CORAL_ON_FIELD)
+            coral.updatePeriodically();
+        for (SimulatedGamePiece algae : ALGAE_ON_FIELD)
+            algae.updatePeriodically();
     }
 
     private static void updateCollection() {
@@ -92,7 +99,7 @@ public class SimulationFieldHandler {
      */
     private static Integer getIndexOfCollectedGamePiece(Pose3d collectionPose, ArrayList<SimulatedGamePiece> gamePieceList, double intakeTolerance) {
         for (SimulatedGamePiece gamePiece : gamePieceList)
-            if (gamePiece.getDistanceMeters(collectionPose) <= intakeTolerance && gamePiece.isTouchingGround())
+            if (gamePiece.getDistanceMeters(collectionPose) <= intakeTolerance)
                 return gamePieceList.indexOf(gamePiece);
         return null;
     }

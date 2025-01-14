@@ -71,8 +71,9 @@ public class CoralIntake extends MotorSubsystem {
         if (RobotHardwareStats.isSimulation()) {
             if (hasGamePiece() && atTargetAngle()) {
                 SimulationFieldHandler.setCanEjectCoral(true);
+                return;
             }
-//            SimulationFieldHandler.setCanEjectCoral(false);
+            SimulationFieldHandler.setCanEjectCoral(false);
         }
     }
 
@@ -99,6 +100,24 @@ public class CoralIntake extends MotorSubsystem {
 
     public boolean hasGamePiece() {
         return beamBreak.getBinaryValue();
+    }
+
+    /**
+     * Calculates the pose where the coral should actually be collected from relative to the robot.
+     *
+     * @return the pose
+     */
+    public Pose3d calculateCoralCollectionPose() {
+        return calculateVisualizationPose().transformBy(CoralIntakeConstants.CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_COLLECTION_TRANSFORM);
+    }
+
+    /**
+     * Calculates the pose where the coral should rest inside the robot after intaking.
+     *
+     * @return the pose
+     */
+    public Pose3d calculateCollectedCoralPose() {
+        return calculateVisualizationPose().transformBy(CoralIntakeConstants.CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_VISUALIZATION_TRANSFORM);
     }
 
     void setTargetState(CoralIntakeConstants.CoralIntakeState targetState) {
@@ -143,14 +162,6 @@ public class CoralIntake extends MotorSubsystem {
         );
 
         return originPoint.transformBy(intakeTransform);
-    }
-
-    public Pose3d calculateCoralCollectionPose() {
-        return calculateVisualizationPose().transformBy(CoralIntakeConstants.CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_COLLECTION_TRANSFORM);
-    }
-
-    public Pose3d calculateCollectedCoralPose() {
-        return calculateVisualizationPose().transformBy(CoralIntakeConstants.CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_VISUALIZATION_TRANSFORM);
     }
 
     private double getCurrentElevatorPositionMeters() {
