@@ -6,15 +6,15 @@ import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 public class SimulatedGamePiece {
     private Pose3d fieldRelativePose;
     final SimulatedGamePieceConstants.GamePieceType gamePieceType;
-    boolean isScored = false, isHeld = false;
+    boolean isScored = false;
 
     public SimulatedGamePiece(Pose3d startingPose, SimulatedGamePieceConstants.GamePieceType gamePieceType) {
         fieldRelativePose = startingPose;
         this.gamePieceType = gamePieceType;
     }
 
-    public void update() {
-        if (!isScored && !isHeld)
+    public void checkScored() {
+        if (!isScored)
             SimulationScoringHandler.checkGamePieceScored(this);
     }
 
