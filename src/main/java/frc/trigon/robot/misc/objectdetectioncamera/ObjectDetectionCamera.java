@@ -38,6 +38,8 @@ public class ObjectDetectionCamera extends SubsystemBase {
      * This should be called periodically.
      * This is used when there is more than one visible object of the target ID and the best target might change as the robot moves.
      * When no objects are visible, the tracking resets to the best target the next time an object of the target ID is visible.
+     *
+     * @param targetGamePiece the type of game piece to track
      */
     public void trackObject(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
         this.currentTrackedObjectId = targetGamePiece.id;

@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimulatedGamePieceConstants {
-
     private static final double
             FIELD_WIDTH_METERS = FieldConstants.FIELD_WIDTH_METERS,
             FIELD_LENGTH_METERS = FieldConstants.FIELD_LENGTH_METERS;
@@ -42,6 +41,13 @@ public class SimulatedGamePieceConstants {
         GamePieceType(double originPointHeightOffGroundMeters, int id) {
             this.originPointHeightOffGroundMeters = originPointHeightOffGroundMeters;
             this.id = id;
+        }
+
+        public static String getNameByID(int id) {
+            for (int i = 0; i < values().length; i++)
+                if (values()[i].id == id)
+                    return values()[i].toString();
+            return "";
         }
     }
 }

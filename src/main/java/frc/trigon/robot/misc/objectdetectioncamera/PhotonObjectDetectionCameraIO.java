@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
+    private static final int NUMBER_OF_GAME_PIECE_TYPES = SimulatedGamePieceConstants.GamePieceType.values().length;
     private final PhotonCamera photonCamera;
     private final Rotation2d cameraMountYaw;
 
@@ -29,23 +30,37 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
             return;
         }
 
-        final List<PhotonTrackedTarget> visibleCoral = calculateVisibleTargetObjects(result, 0);
-        final List<PhotonTrackedTarget> visibleAlgae = calculateVisibleTargetObjects(result, 1);
+        final List<PhotonTrackedTarget>[] visibleGamePieces = calculateVisibleGamePieces(result);
 
-        inputs.hasCoralTarget = !visibleCoral.isEmpty();
-        inputs.hasAlgaeTarget = !visibleAlgae.isEmpty();
-
-        if (!inputs.hasCoralTarget && !inputs.hasAlgaeTarget) {
-            updateNoNewResultInputs(inputs);
-            return;
+        boolean hasAnyTarget = false;
+        for (int i = 0; i < NUMBER_OF_GAME_PIECE_TYPES; i++) {
+            inputs.hasTarget[i] = !visibleGamePieces[i].isEmpty();
+            if (inputs.hasTarget[i])
+                hasAnyTarget = true;
         }
 
-        updateHasNewResultInputs(visibleCoral, visibleAlgae, inputs);
+        if (hasAnyTarget) {
+            updateHasNewResultInputs(visibleGamePieces, inputs);
+            return;
+        }
+        updateNoNewResultInputs(inputs);
     }
 
     private PhotonPipelineResult getLatestPipelineResult() {
         final List<PhotonPipelineResult> unreadResults = photonCamera.getAllUnreadResults();
         return unreadResults.isEmpty() ? null : unreadResults.get(unreadResults.size() - 1);
+    }
+
+    private void updateNoNewResultInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
+        inputs.hasTarget = new boolean[NUMBER_OF_GAME_PIECE_TYPES];
+        inputs.visibleObjectYaws = new Rotation2d[NUMBER_OF_GAME_PIECE_TYPES][0];
+    }
+
+    private List<PhotonTrackedTarget>[] calculateVisibleGamePieces(PhotonPipelineResult result) {
+        final List<PhotonTrackedTarget>[] visibleGamePieces = new List[SimulatedGamePieceConstants.GamePieceType.values().length];
+        for (int i = 0; i < SimulatedGamePieceConstants.GamePieceType.values().length; i++)
+            visibleGamePieces[i] = calculateVisibleTargetObjects(result, i);
+        return visibleGamePieces;
     }
 
     private List<PhotonTrackedTarget> calculateVisibleTargetObjects(PhotonPipelineResult result, int targetId) {
@@ -58,15 +73,10 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         return visibleTargetObjects;
     }
 
-    private void updateNoNewResultInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
-        inputs.visibleObjectYaws = new Rotation2d[2][0];
-    }
-
-    private void updateHasNewResultInputs(List<PhotonTrackedTarget> visibleCoral, List<PhotonTrackedTarget> visibleAlgae, ObjectDetectionCameraInputsAutoLogged inputs) {
-        if (inputs.hasCoralTarget)
-            inputs.visibleObjectYaws[SimulatedGamePieceConstants.GamePieceType.CORAL.id] = getTargetVisibleObjectYaws(visibleCoral, 0);
-        if (inputs.hasAlgaeTarget)
-            inputs.visibleObjectYaws[SimulatedGamePieceConstants.GamePieceType.ALGAE.id] = getTargetVisibleObjectYaws(visibleAlgae, 1);
+    private void updateHasNewResultInputs(List<PhotonTrackedTarget>[] visibleGamePieces, ObjectDetectionCameraInputsAutoLogged inputs) {
+        for (int i = 0; i < visibleGamePieces.length; i++)
+            if (inputs.hasTarget[i])
+                inputs.visibleObjectYaws[i] = getTargetVisibleObjectYaws(visibleGamePieces[i], i);
     }
 
     private Rotation2d[] getTargetVisibleObjectYaws(List<PhotonTrackedTarget> visibleObjects, int targetId) {
