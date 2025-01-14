@@ -14,6 +14,7 @@ import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
+import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import frc.trigon.robot.poseestimation.poseestimator.PoseEstimator;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import frc.trigon.robot.subsystems.algaeintake.AlgaeIntake;
@@ -23,6 +24,7 @@ import frc.trigon.robot.subsystems.coralintake.CoralIntake;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.Swerve;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
 
@@ -73,6 +75,11 @@ public class RobotContainer {
         OperatorConstants.DRIVE_FROM_DPAD_TRIGGER.whileTrue(CommandConstants.SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND);
         OperatorConstants.TOGGLE_ROTATION_MODE_TRIGGER.onTrue(GeneralCommands.getToggleRotationModeCommand());
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
+
+        Logger.recordOutput("L2s", SimulatedGamePieceConstants.L2_LOCATIONS);
+        Logger.recordOutput("L3s", SimulatedGamePieceConstants.L3_LOCATIONS);
+        Logger.recordOutput("L4s", SimulatedGamePieceConstants.L4_LOCATIONS);
+        Logger.recordOutput("Processor", SimulatedGamePieceConstants.PROCESSOR_LOCATION);
     }
 
     private void configureSysIdBindings(MotorSubsystem subsystem) {
