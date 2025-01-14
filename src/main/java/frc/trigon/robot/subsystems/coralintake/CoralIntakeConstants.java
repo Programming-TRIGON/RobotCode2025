@@ -9,7 +9,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.misc.objectdetectioncamera.SimulationObjectDetectionCameraIO;
 import org.trigon.hardware.RobotHardwareStats;
@@ -152,6 +154,18 @@ public class CoralIntakeConstants {
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
     public static final double COLLECTION_LEDS_BLINKING_SPEED = 0.5;
+    private static final double CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS = 0.1;
+    static final BooleanEvent CORAL_COLLECTION_BOOLEAN_EVENT = new BooleanEvent(
+            CommandScheduler.getInstance().getActiveButtonLoop(),
+            BEAM_BREAK::getBinaryValue
+    ).debounce(CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS);
+    private static final double
+            CORAL_DETECTION_CURRENT = 50,
+            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.1;
+    static final BooleanEvent EARLY_NOTE_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
+            CommandScheduler.getInstance().getActiveButtonLoop(),
+            () -> Math.abs(INTAKE_MOTOR.getSignal(TalonFXSignal.TORQUE_CURRENT)) > CORAL_DETECTION_CURRENT
+    ).debounce(CORAL_DETECTION_TIME_THRESHOLD_SECONDS);
 
     static {
         configureIntakeMotor();
@@ -177,6 +191,7 @@ public class CoralIntakeConstants {
 
         INTAKE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
         INTAKE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
+        INTAKE_MOTOR.registerSignal(TalonFXSignal.TORQUE_CURRENT, 100);
     }
 
     private static void configureFunnelMotor() {
@@ -279,7 +294,8 @@ public class CoralIntakeConstants {
         COLLECT(12, 12, Rotation2d.fromDegrees(180)),
         FEED(-12, -12, Rotation2d.fromDegrees(0)),
         COLLECT_FEEDER(12, 12, Rotation2d.fromDegrees(90)),
-        REST(0, 0, Rotation2d.fromDegrees(0));
+        REST(0, 0, Rotation2d.fromDegrees(0)),
+        RETRACT(-12, -6, Rotation2d.fromDegrees(0));
 
         public final double targetIntakeVoltage, targetFunnelVoltage;
         public final Rotation2d targetAngle;

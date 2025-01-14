@@ -89,7 +89,18 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     public boolean hasGamePiece() {
-        return beamBreak.getBinaryValue();
+        return CoralIntakeConstants.CORAL_COLLECTION_BOOLEAN_EVENT.getAsBoolean();
+    }
+
+    /**
+     * Checks if a coral has been collected early using the motor's current.
+     * This is quicker than {@linkplain CoralIntake#hasGamePiece()} since it updates from the change in current (which happens right when we hit the coral),
+     * instead of the distance sensor which is positioned later on the system.
+     *
+     * @return whether an early coral collection has been detected
+     */
+    public boolean isEarlyCoralCollectionDetected() {
+        return CoralIntakeConstants.EARLY_NOTE_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean();
     }
 
     void setTargetState(CoralIntakeConstants.CoralIntakeState targetState) {

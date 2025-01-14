@@ -48,4 +48,13 @@ public class CoralIntakeCommands {
                 RobotContainer.CORAL_INTAKE
         );
     }
+
+    public static Command getStopCommand() {
+        return new StartEndCommand(
+                RobotContainer.CORAL_INTAKE::stop,
+                () -> {
+                },
+                RobotContainer.CORAL_INTAKE
+        );
+    }
 }
