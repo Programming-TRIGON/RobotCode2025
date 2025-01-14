@@ -162,7 +162,7 @@ public class CoralIntakeConstants {
     private static final double
             CORAL_DETECTION_CURRENT = 50,
             CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.1;
-    static final BooleanEvent EARLY_NOTE_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
+    static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             () -> Math.abs(INTAKE_MOTOR.getSignal(TalonFXSignal.TORQUE_CURRENT)) > CORAL_DETECTION_CURRENT
     ).debounce(CORAL_DETECTION_TIME_THRESHOLD_SECONDS);
@@ -190,7 +190,6 @@ public class CoralIntakeConstants {
         INTAKE_MOTOR.setPhysicsSimulation(INTAKE_SIMULATION);
 
         INTAKE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
-        INTAKE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
         INTAKE_MOTOR.registerSignal(TalonFXSignal.TORQUE_CURRENT, 100);
     }
 

@@ -32,7 +32,7 @@ public class CollectionCommands {
                 getInitiateCollectionCommand(),
                 getRetractCoralIntakeCommand(),
                 getFeedCoralToGripperCommand()
-        ).unless(RobotContainer.CORAL_INTAKE::hasGamePiece).alongWith(CommandConstants.COLLECTION_RUMBLE_COMMAND).onlyIf(RobotContainer.CORAL_INTAKE::hasGamePiece);
+        ).unless(RobotContainer.CORAL_INTAKE::isEarlyCoralCollectionDetected).alongWith(CommandConstants.COLLECTION_RUMBLE_COMMAND).onlyIf(RobotContainer.CORAL_INTAKE::isEarlyCoralCollectionDetected);
     }
 
     private static Command getInitiateCollectionCommand() {
