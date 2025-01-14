@@ -54,7 +54,7 @@ public class Elevator extends MotorSubsystem {
         Logger.recordOutput("Poses/Components/ElevatorSecondPose", getSecondStageComponentPose());
 
         ElevatorConstants.MECHANISM.update(
-                rotationsToMeters(getPositionRotations()),
+                getPositionMeters(),
                 rotationsToMeters(motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
         );
     }
