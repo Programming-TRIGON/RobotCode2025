@@ -17,6 +17,7 @@ import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.hardware.simulation.ElevatorSimulation;
 import org.trigon.hardware.simulation.SimpleMotorSimulation;
+import org.trigon.utilities.Conversions;
 import org.trigon.utilities.mechanisms.ElevatorMechanism2d;
 import org.trigon.utilities.mechanisms.SpeedMechanism2d;
 
@@ -141,8 +142,10 @@ public class CoralIntakeConstants {
             Color.kRed
     );
 
-    static final double POSITION_TOLERANCE_METERS = 0.01;
     static final double ELEVATOR_DRUM_DIAMETER_METERS = ELEVATOR_DRUM_RADIUS_METERS * 2;
+    static final double
+            POSITION_TOLERANCE_METERS = 0.01,
+            POSITION_TOLERANCE_ROTATIONS = Conversions.distanceToRotations(POSITION_TOLERANCE_METERS, ELEVATOR_DRUM_DIAMETER_METERS);
 
     static {
         configureIntakeMotor();

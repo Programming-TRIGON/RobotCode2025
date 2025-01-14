@@ -24,7 +24,6 @@ public class CoralIntake extends MotorSubsystem {
     private final SimpleSensor beamBreak = CoralIntakeConstants.BEAM_BREAK;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
-    private final double positionToleranceRotations = metersToRotations(CoralIntakeConstants.POSITION_TOLERANCE_METERS);
     private CoralIntakeConstants.CoralIntakeState targetState = CoralIntakeConstants.CoralIntakeState.REST;
 
     public CoralIntake() {
@@ -54,8 +53,8 @@ public class CoralIntake extends MotorSubsystem {
         CoralIntakeConstants.INTAKE_MECHANISM.update(intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
         CoralIntakeConstants.FUNNEL_MECHANISM.update(funnelMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
         CoralIntakeConstants.ELEVATOR_MECHANISM.update(
-                getCurrentElevatorPositionRotations(),
-                elevatorMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)
+                getCurrentElevatorPositionMeters(),
+                rotationsToMeters(elevatorMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
         );
 
         Logger.recordOutput("Poses/Components/CoralIntakePose", calculateVisualizationPose());
@@ -87,7 +86,7 @@ public class CoralIntake extends MotorSubsystem {
 
     public boolean atTargetAngle() {
         final double elevatorDifferenceFromTargetStateRotations = Math.abs(getCurrentElevatorPositionRotations() - targetState.targetPositionRotations);
-        return elevatorDifferenceFromTargetStateRotations < positionToleranceRotations;
+        return elevatorDifferenceFromTargetStateRotations < CoralIntakeConstants.POSITION_TOLERANCE_ROTATIONS;
     }
 
     public boolean hasGamePiece() {
@@ -148,9 +147,5 @@ public class CoralIntake extends MotorSubsystem {
 
     private double rotationsToMeters(double positionRotations) {
         return Conversions.rotationsToDistance(positionRotations, CoralIntakeConstants.ELEVATOR_DRUM_DIAMETER_METERS);
-    }
-
-    private double metersToRotations(double positionMeters) {
-        return Conversions.distanceToRotations(positionMeters, CoralIntakeConstants.ELEVATOR_DRUM_DIAMETER_METERS);
     }
 }
