@@ -54,7 +54,7 @@ public class CollectionCommands {
     private static Command getFeedCoralToGripperCommand() {
         return new SequentialCommandGroup(
                 CoralIntakeCommands.getStopCommand().onlyIf(() -> RobotContainer.CORAL_INTAKE.hasGamePiece() && RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.RETRACT)),
-                GeneralCommands.runWhen(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.FEED), RobotContainer.CORAL_INTAKE::atTargetState),
+                GeneralCommands.runWhen(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.FEED), RobotContainer.CORAL_INTAKE::atTargetAngle),
                 GeneralCommands.runWhen(CoralIntakeCommands.getStopCommand(), () -> false) // GeneralCommands.runWhen(CoralIntakeCommands.getStopCommand(), () -> RobotContainer.GRIPPER.isGamePieceDetected())
         );
     }
