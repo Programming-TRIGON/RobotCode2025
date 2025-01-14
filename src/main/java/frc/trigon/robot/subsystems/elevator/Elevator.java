@@ -71,7 +71,7 @@ public class Elevator extends MotorSubsystem {
 
     public boolean atTargetState() {
         final double currentToTargetStateDifference = Math.abs(targetState.targetPositionMeters - getPositionMeters());
-        return currentToTargetStateDifference < ElevatorConstants.AT_STATE_TOLERANCE_METERS;
+        return currentToTargetStateDifference < ElevatorConstants.POSITION_TOLERANCE_METERS;
     }
 
     void setTargetState(ElevatorConstants.ElevatorState targetState) {
@@ -94,12 +94,12 @@ public class Elevator extends MotorSubsystem {
     }
 
     private double getSecondPoseHeight() {
-        if (firstComponentLimitExtended())
+        if (firstComponentLimitReached())
             return getPositionMeters() - ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH;
         return 0;
     }
 
-    private boolean firstComponentLimitExtended() {
+    private boolean firstComponentLimitReached() {
         return getPositionMeters() > ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH;
     }
 

@@ -90,7 +90,7 @@ public class ElevatorConstants {
     );
 
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
-    static final double AT_STATE_TOLERANCE_METERS = 0.1;
+    static final double POSITION_TOLERANCE_METERS = 0.1;
 
     static {
         configureMasterMotor();
