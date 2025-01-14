@@ -73,6 +73,9 @@ public class RobotContainer {
         OperatorConstants.DRIVE_FROM_DPAD_TRIGGER.whileTrue(CommandConstants.SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND);
         OperatorConstants.TOGGLE_ROTATION_MODE_TRIGGER.onTrue(GeneralCommands.getToggleRotationModeCommand());
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
+
+        OperatorConstants.DRIVER_CONTROLLER.leftBumper().whileTrue(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT));
+        OperatorConstants.DRIVER_CONTROLLER.x().whileTrue(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.EJECT));
     }
 
     private void configureSysIdBindings(MotorSubsystem subsystem) {

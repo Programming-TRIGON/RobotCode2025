@@ -9,8 +9,10 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.trigon.robot.misc.simulatedfield.SimulationFieldHandler;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.Logger;
+import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.misc.simplesensor.SimpleSensor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
@@ -66,6 +68,12 @@ public class CoralIntake extends MotorSubsystem {
         funnelMotor.update();
         elevatorMotor.update();
         beamBreak.updateSensor();
+        if (RobotHardwareStats.isSimulation()) {
+            if (hasGamePiece() && atTargetAngle()) {
+                SimulationFieldHandler.setCanEjectCoral(true);
+            }
+//            SimulationFieldHandler.setCanEjectCoral(false);
+        }
     }
 
     @Override
@@ -131,10 +139,18 @@ public class CoralIntake extends MotorSubsystem {
         final Pose3d originPoint = CoralIntakeConstants.INTAKE_VISUALIZATION_ORIGIN_POINT;
         final Transform3d intakeTransform = new Transform3d(
                 new Translation3d(getCurrentElevatorPositionMeters(), 0, 0),
-                new Rotation3d(0, CoralIntakeConstants.INTAKE_ANGLE_FROM_GROUND.getRadians(), 0)
+                new Rotation3d(0, -CoralIntakeConstants.INTAKE_ANGLE_FROM_GROUND.getRadians(), 0)
         );
 
         return originPoint.transformBy(intakeTransform);
+    }
+
+    public Pose3d calculateCoralCollectionPose() {
+        return calculateVisualizationPose().transformBy(CoralIntakeConstants.CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_COLLECTION_TRANSFORM);
+    }
+
+    public Pose3d calculateCollectedCoralPose() {
+        return calculateVisualizationPose().transformBy(CoralIntakeConstants.CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_VISUALIZATION_TRANSFORM);
     }
 
     private double getCurrentElevatorPositionMeters() {

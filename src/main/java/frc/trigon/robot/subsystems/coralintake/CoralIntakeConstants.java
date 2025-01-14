@@ -3,9 +3,7 @@ package frc.trigon.robot.subsystems.coralintake;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.*;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.util.Color;
@@ -54,7 +52,7 @@ public class CoralIntakeConstants {
             FOLLOWER_ELEVATOR_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
     private static final boolean ELEVATOR_FOLLOWER_OPPOSES_MASTER = false;
     private static final double
-            ELEVATOR_P = RobotHardwareStats.isSimulation() ? 300 : 0,
+            ELEVATOR_P = RobotHardwareStats.isSimulation() ? 13 : 0,
             ELEVATOR_I = RobotHardwareStats.isSimulation() ? 0 : 0,
             ELEVATOR_D = RobotHardwareStats.isSimulation() ? 0 : 0,
             ELEVATOR_KS = RobotHardwareStats.isSimulation() ? 0 : 0,
@@ -62,15 +60,15 @@ public class CoralIntakeConstants {
             ELEVATOR_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
             ELEVATOR_KG = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final double
-            ELEVATOR_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 3 : 0,
-            ELEVATOR_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 3 : 0,
+            ELEVATOR_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 50 : 0,
+            ELEVATOR_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 50 : 0,
             ELEVATOR_MOTION_MAGIC_JERK = ELEVATOR_MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseVelocitySign;
     private static final double
             INTAKE_MOTOR_GEAR_RATIO = 1,
             FUNNEL_MOTOR_GEAR_RATIO = 1,
-            ELEVATOR_MOTOR_GEAR_RATIO = 100;
+            ELEVATOR_MOTOR_GEAR_RATIO = 7;
     private static final ForwardLimitSourceValue FORWARD_LIMIT_SOURCE_VALUE = ForwardLimitSourceValue.LimitSwitchPin;
     private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
@@ -88,9 +86,9 @@ public class CoralIntakeConstants {
             ELEVATOR_GEARBOX = DCMotor.getKrakenX60Foc(ELEVATOR_MOTOR_AMOUNT);
     private static final double MOMENT_OF_INERTIA = 0.003;
     private static final double
-            INTAKE_MASS_KILOGRAMS = 5,
+            INTAKE_MASS_KILOGRAMS = 3,
             MINIMUM_OPENING_DISTANCE_METERS = 0,
-            MAXIMUM_OPENING_DISTANCE_METERS = 0.35;
+            MAXIMUM_OPENING_DISTANCE_METERS = 0.5;
     private static final double ELEVATOR_DRUM_RADIUS_METERS = 0.02;
     private static final boolean SHOULD_SIMULATE_GRAVITY = false;
     private static final SimpleMotorSimulation
@@ -146,6 +144,15 @@ public class CoralIntakeConstants {
     static final double
             POSITION_TOLERANCE_METERS = 0.01,
             POSITION_TOLERANCE_ROTATIONS = Conversions.distanceToRotations(POSITION_TOLERANCE_METERS, ELEVATOR_DRUM_DIAMETER_METERS);
+    static final Transform3d
+            CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_COLLECTION_TRANSFORM = new Transform3d(
+            new Translation3d(0.5, 0, -0.2),
+            new Rotation3d(0, 0, 0)
+    ),
+            CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_VISUALIZATION_TRANSFORM = new Transform3d(
+                    new Translation3d(0.33, 0, -0.11),
+                    new Rotation3d(0, INTAKE_ANGLE_FROM_GROUND.getRadians() + 0.1, 0)
+            );
 
     static {
         configureIntakeMotor();
@@ -253,9 +260,9 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        COLLECT(12, 12, 0.1),
+        COLLECT(12, 12, 3.5),
         FEED(-12, -12, 0),
-        EJECT(-12, -12, 0.1),
+        EJECT(-12, -12, 3.5),
         REST(0, 0, 0);
 
         public final double

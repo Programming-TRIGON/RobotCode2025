@@ -38,8 +38,8 @@ public class SimulationScoringHandler {
 
     private static boolean isCoralScoredOnLevel(SimulatedGamePiece coral, int level) {
         final Pose3d[] scoreLocations = getCoralScoreLocationsFromLevel(level);
-        for (int i = 0; i < SimulatedGamePieceConstants.NUMBER_OF_CORAL_BRANCHES; i++) {
-            if (isGamePieceScored(coral, scoreLocations[i], SimulatedGamePieceConstants.CORAL_SCORING_TOLERANCE_METERS)) {
+        for (Pose3d scoreLocation : scoreLocations) {
+            if (isGamePieceScored(coral, scoreLocation, SimulatedGamePieceConstants.CORAL_SCORING_TOLERANCE_METERS)) {
                 incrementScoreFromCoralLevel(level);
                 coral.isScored = true;
                 return true;

@@ -9,9 +9,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SimulatedGamePieceConstants {
+    public static final double G_FORCE = 9.806;
     public static final double
             CORAL_INTAKE_TOLERANCE_METERS = 0.3,
-            ALGAE_INTAKE_TOLERANCE_METERS = 0.3,
+            ALGAE_INTAKE_TOLERANCE_METERS = 0.4,
             CORAL_SCORING_TOLERANCE_METERS = 0.3,
             ALGAE_SCORING_TOLERANCE_METERS = 0.3;
     public static final int
@@ -104,7 +105,7 @@ public class SimulatedGamePieceConstants {
     public static final Pose3d PROCESSOR_LOCATION = new Pose3d(-2.786, -4.037, 0.431, new Rotation3d()).relativeTo(FIELD_CENTER);
 
     public enum GamePieceType {
-        CORAL(0.4, 0),
+        CORAL(0.06, 0),
         ALGAE(0.15, 1);
 
         public final double originPointHeightOffGroundMeters;

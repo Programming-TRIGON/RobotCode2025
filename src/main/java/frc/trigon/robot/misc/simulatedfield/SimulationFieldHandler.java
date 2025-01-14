@@ -19,7 +19,6 @@ public class SimulationFieldHandler {
     private static boolean
             CAN_EJECT_CORAL = false,
             CAN_EJECT_ALGAE = false;
-    private static final double PICKUP_TOLERANCE_METERS = 0.3;
     private static Integer
             HELD_CORAL_INDEX = null,
             HELD_ALGAE_INDEX = null;
@@ -61,6 +60,7 @@ public class SimulationFieldHandler {
         updateCollection();
         updateEjection();
         updateHeldGamePiecePoses();
+        CORAL_ON_FIELD.forEach(SimulatedGamePiece::update);
     }
 
     /**
@@ -73,11 +73,14 @@ public class SimulationFieldHandler {
 
     private static void updateCollection() {
         final Pose3d robotPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
+        final Pose3d
+                coralCollectionPose = robotPose.plus(toTransform(RobotContainer.CORAL_INTAKE.calculateCoralCollectionPose())),
+                algaeCollectionPose = robotPose.plus(toTransform(new Pose3d()));
 
         if (isCollectingCoral() && HELD_CORAL_INDEX == null)
-            HELD_CORAL_INDEX = getIndexOfCollectedGamePiece(robotPose, CORAL_ON_FIELD);
+            HELD_CORAL_INDEX = getIndexOfCollectedGamePiece(coralCollectionPose, CORAL_ON_FIELD, SimulatedGamePieceConstants.CORAL_INTAKE_TOLERANCE_METERS);
         if (isCollectingAlgae() && HELD_ALGAE_INDEX == null)
-            HELD_ALGAE_INDEX = getIndexOfCollectedGamePiece(robotPose, ALGAE_ON_FIELD);
+            HELD_ALGAE_INDEX = getIndexOfCollectedGamePiece(algaeCollectionPose, ALGAE_ON_FIELD, SimulatedGamePieceConstants.ALGAE_INTAKE_TOLERANCE_METERS);
     }
 
     /**
@@ -87,11 +90,10 @@ public class SimulationFieldHandler {
      * @param gamePieceList  the list of game pieces
      * @return the index of the game piece that is being collected
      */
-    private static Integer getIndexOfCollectedGamePiece(Pose3d collectionPose, ArrayList<SimulatedGamePiece> gamePieceList) {
+    private static Integer getIndexOfCollectedGamePiece(Pose3d collectionPose, ArrayList<SimulatedGamePiece> gamePieceList, double intakeTolerance) {
         for (SimulatedGamePiece gamePiece : gamePieceList)
-            if (gamePiece.getDistanceMeters(collectionPose) <= PICKUP_TOLERANCE_METERS && gamePiece.isTouchingGround()) {
+            if (gamePiece.getDistanceMeters(collectionPose) <= intakeTolerance && gamePiece.isTouchingGround())
                 return gamePieceList.indexOf(gamePiece);
-            }
         return null;
     }
 
@@ -106,20 +108,18 @@ public class SimulationFieldHandler {
     private static void updateEjection() {
         if (HELD_CORAL_INDEX != null && isEjectingCoral() && CAN_EJECT_CORAL) {
             final SimulatedGamePiece heldCoral = CORAL_ON_FIELD.get(HELD_CORAL_INDEX);
-            heldCoral.checkScored();
-
+            heldCoral.release();
             HELD_CORAL_INDEX = null;
         }
         if (HELD_ALGAE_INDEX != null && isEjectingAlgae() && CAN_EJECT_ALGAE) {
             final SimulatedGamePiece heldAlgae = ALGAE_ON_FIELD.get(HELD_ALGAE_INDEX);
-
-            heldAlgae.checkScored();
+            heldAlgae.release();
             HELD_ALGAE_INDEX = null;
         }
     }
 
     private static boolean isEjectingCoral() {
-        return false;//TODO: Implement for when a coral should exit the robot
+        return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.EJECT);//TODO: Implement for when a coral should exit the robot
     }
 
     private static boolean isEjectingAlgae() {
@@ -131,7 +131,7 @@ public class SimulationFieldHandler {
      */
     private static void updateHeldGamePiecePoses() {
         final Pose3d
-                robotRelativeHeldCoralPosition = new Pose3d(),
+                robotRelativeHeldCoralPosition = RobotContainer.CORAL_INTAKE.calculateCollectedCoralPose(),
                 robotRelativeHeldAlgaePosition = new Pose3d();
         updateHeldGamePiecePose(robotRelativeHeldCoralPosition, CORAL_ON_FIELD, HELD_CORAL_INDEX);
         updateHeldGamePiecePose(robotRelativeHeldAlgaePosition, ALGAE_ON_FIELD, HELD_ALGAE_INDEX);
@@ -141,7 +141,8 @@ public class SimulationFieldHandler {
         if (heldGamePieceIndex == null)
             return;
 
-        gamePieceList.get(heldGamePieceIndex).updatePose(calculateHeldGamePieceFieldRelativePose(robotRelativeHeldGamePiecePose));
+        final SimulatedGamePiece heldGamePiece = gamePieceList.get(heldGamePieceIndex);
+        heldGamePiece.updatePose(calculateHeldGamePieceFieldRelativePose(robotRelativeHeldGamePiecePose));
     }
 
     /**
