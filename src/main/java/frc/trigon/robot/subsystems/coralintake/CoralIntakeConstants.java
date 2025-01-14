@@ -230,7 +230,7 @@ public class CoralIntakeConstants {
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = ELEVATOR_REVERSE_LIMIT_POSITION_ROTATIONS;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = ELEVATOR_FORWARD_LIMIT_POSITION_ROTATIONS;
 
         MASTER_ELEVATOR_MOTOR.applyConfiguration(config);
         MASTER_ELEVATOR_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
