@@ -71,7 +71,7 @@ public class Elevator extends MotorSubsystem {
 
     public boolean atTargetState() {
         final double currentToTargetStateDifference = Math.abs(targetState.targetPositionMeters - getPositionMeters());
-        return currentToTargetStateDifference < ElevatorConstants.TOLERANCE_METERS;
+        return currentToTargetStateDifference < ElevatorConstants.AT_STATE_TOLERANCE_METERS;
     }
 
     void setTargetState(ElevatorConstants.ElevatorState targetState) {
