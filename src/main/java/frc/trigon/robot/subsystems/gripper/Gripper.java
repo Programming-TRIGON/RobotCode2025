@@ -20,16 +20,17 @@ public class Gripper extends MotorSubsystem {
     private final LaserCAN laserCAN = GripperConstants.LASER_CAN;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(GripperConstants.FOC_ENABLED);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(GripperConstants.FOC_ENABLED);
-    private GripperConstants.GripperState targetState = GripperConstants.GripperState.REST;
+    private GripperConstants.GripperState targetState;
 
     public Gripper() {
-        setName("Gripping");
+        setName("Gripper");
     }
 
     @Override
     public SysIdRoutine.Config getSysIdConfig() {
         return GripperConstants.SYSID_CONFIG;
     }
+
 
     @Override
     public void sysIdDrive(double targetDrivePower) {
@@ -52,16 +53,16 @@ public class Gripper extends MotorSubsystem {
 
     @Override
     public void updateLog(SysIdRoutineLog log) {
-        log.motor("AngleEncoder")
-                .linearPosition(Units.Meters.of(angleMotor.getSignal(TalonFXSignal.POSITION)))
-                .linearVelocity(Units.MetersPerSecond.of(angleMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)))
+        log.motor("AngleMotor")
+                .angularPosition(Units.Rotations.of(angleEncoder.getSignal(CANcoderSignal.POSITION)))
+                .angularVelocity(Units.RotationsPerSecond.of(angleEncoder.getSignal(CANcoderSignal.VELOCITY)))
                 .voltage(Units.Volts.of(angleMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
     @Override
     public void updateMechanism() {
         GripperConstants.GRIPPING_MECHANISM.update(grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
-        GripperConstants.ANGLE_MECHANISM.update(getCurrentEncoderAngle(),Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
+        GripperConstants.ANGLE_MECHANISM.update(getCurrentEncoderAngle(), Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
     }
 
     public boolean hasGamePiece() {
@@ -82,12 +83,12 @@ public class Gripper extends MotorSubsystem {
         setTargetVoltage(targetVoltage);
     }
 
-    void setTargetVoltage(double targetVoltage) {
+    private void setTargetVoltage(double targetVoltage) {
         GripperConstants.GRIPPING_MECHANISM.setTargetVelocity(targetVoltage);
         grippingMotor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
-    void setTargetAngle(Rotation2d targetAngle) {
+    private void setTargetAngle(Rotation2d targetAngle) {
         angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
     }
 

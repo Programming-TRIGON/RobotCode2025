@@ -10,6 +10,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.trigon.robot.RobotContainer;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.grapple.lasercan.LaserCAN;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
@@ -50,13 +51,13 @@ public class GripperConstants {
             GRIPPING_MOTOR_GEAR_RATIO = 1,
             ANGLE_MOTOR_GEAR_RATIO = 100;
     private static final double
-            ANGLE_P = 0,
-            ANGLE_I = 0,
-            ANGLE_D = 0,
-            ANGLE_KS = 0,
-            ANGLE_KV = 0,
-            ANGLE_KA = 0,
-            ANGLE_KG = 0;
+            ANGLE_P = RobotHardwareStats.isSimulation() ? 0 : 0,
+            ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
+            ANGLE_D = RobotHardwareStats.isSimulation() ? 0 : 0,
+            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0 : 0,
+            ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
+            ANGLE_KV = RobotHardwareStats.isSimulation() ? 0 : 0,
+            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final double
             ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 5 : 0,
             ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 5 : 0,
@@ -80,7 +81,7 @@ public class GripperConstants {
             LASER_CAN_DETECTION_REGION_END_Y_COORDINATE = 11;
     private static final LaserCan.RangingMode LASER_CAN_RANGING_MODE = LaserCan.RangingMode.SHORT;
     private static final LaserCan.TimingBudget LASER_CAN_LOOP_TIME = LaserCan.TimingBudget.TIMING_BUDGET_33MS;
-    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> 1;
+    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> RobotContainer.GRIPPER.hasGamePiece() ? 1 : 0;
     static final double GAME_PEICE_DETECTION_THRESHOLD = 10;
     static final boolean FOC_ENABLED = true;
 
@@ -189,7 +190,6 @@ public class GripperConstants {
         config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
 
-
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ARM_SIMULATION);
 
@@ -211,6 +211,7 @@ public class GripperConstants {
         ANGLE_ENCODER.setSimulationInputsFromTalonFX(ANGLE_MOTOR);
 
         ANGLE_ENCODER.registerSignal(CANcoderSignal.POSITION, 100);
+        ANGLE_ENCODER.registerSignal(CANcoderSignal.VELOCITY, 100);
     }
 
     private static void configureLaserCAN() {
@@ -225,7 +226,7 @@ public class GripperConstants {
     }
 
     public enum GripperState {
-        REST(Rotation2d.fromDegrees(-56), 0),
+        REST(Rotation2d.fromDegrees(0), 0),
         EJECT(Rotation2d.fromDegrees(45), -3),
         SCORE_L4(Rotation2d.fromDegrees(45), 3),
         SCORE_L3_OR_L2(Rotation2d.fromDegrees(45), 3),
