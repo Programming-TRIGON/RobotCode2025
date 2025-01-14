@@ -4,21 +4,18 @@ import edu.wpi.first.math.geometry.Pose3d;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 
 public class SimulatedGamePiece {
-    private final SimulatedGamePieceConstants.GamePieceType gamePieceType;
     private Pose3d fieldRelativePose;
-    private boolean isScored = false;
+    final SimulatedGamePieceConstants.GamePieceType gamePieceType;
+    boolean isScored = false, isHeld = false;
 
     public SimulatedGamePiece(Pose3d startingPose, SimulatedGamePieceConstants.GamePieceType gamePieceType) {
         fieldRelativePose = startingPose;
         this.gamePieceType = gamePieceType;
     }
 
-    public SimulatedGamePieceConstants.GamePieceType getGamePieceType() {
-        return gamePieceType;
-    }
-
     public void update() {
-        checkScoring();
+        if (!isScored && !isHeld)
+            SimulationScoringHandler.checkGamePieceScored(this);
     }
 
     public void updatePose(Pose3d fieldRelativePose) {
@@ -35,17 +32,5 @@ public class SimulatedGamePiece {
 
     public double getDistanceMeters(Pose3d pose) {
         return fieldRelativePose.minus(pose).getTranslation().getNorm();
-    }
-
-    public boolean isScored() {
-        return isScored;
-    }
-
-    public void setScored(boolean scored) {
-        isScored = scored;
-    }
-
-    private void checkScoring() {
-
     }
 }

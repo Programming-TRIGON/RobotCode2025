@@ -1,32 +1,76 @@
 package frc.trigon.robot.misc.simulatedfield;
 
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Pose3d;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
+import org.littletonrobotics.junction.Logger;
 
 public class SimulationScoringHandler {
-    private static int POINTS = 0;
+    private static int SCORE = 0;
 
-    private static void updateScoring(SimulatedGamePiece gamePiece) {
-        if (gamePiece.isScored())
+    public static void update() {
+        logScore();
+    }
+
+    public static void checkGamePieceScored(SimulatedGamePiece gamePiece) {
+        if (gamePiece.gamePieceType.equals(SimulatedGamePieceConstants.GamePieceType.CORAL))
+            checkCoralScored(gamePiece);
+        else if (gamePiece.gamePieceType.equals(SimulatedGamePieceConstants.GamePieceType.ALGAE))
+            checkAlgaeScored(gamePiece);
+    }
+
+    private static void logScore() {
+        Logger.recordOutput("SimulatedGameScore", SCORE);
+    }
+
+    private static void checkCoralScored(SimulatedGamePiece coral) {
+        for (int i = 1; i <= 4; i++)
+            if (isCoralScoredOnLevel(coral, i))
+                return;
+    }
+
+    private static void checkAlgaeScored(SimulatedGamePiece algae) {
+        if (!isGamePieceScored(algae, SimulatedGamePieceConstants.PROCESSOR_LOCATION, SimulatedGamePieceConstants.ALGAE_SCORING_TOLERANCE_METERS))
             return;
-        final SimulatedGamePieceConstants.GamePieceType gamePieceType = gamePiece.getGamePieceType();
 
-        if (gamePieceType.equals(SimulatedGamePieceConstants.GamePieceType.CORAL)) {
-            for (int i = 0; i < SimulatedGamePieceConstants.NUMBER_OF_CORAL_BRANCHES; i++) {
-                final Transform3d distanceFromScoreZone = SimulatedGamePieceConstants.L4_LOCATIONS[i].minus(gamePiece.getPose());
-                if (distanceFromScoreZone.getTranslation().getNorm() < SimulatedGamePieceConstants.CORAL_SCORING_TOLERANCE_METERS) {
-                    POINTS += SimulatedGamePieceConstants.L4_POINTS;
-                    gamePiece.setScored(true);
-                }
+        SCORE += SimulatedGamePieceConstants.PROCESSOR_POINTS;
+        algae.isScored = true;
+    }
+
+    private static boolean isCoralScoredOnLevel(SimulatedGamePiece coral, int level) {
+        final Pose3d[] scoreLocations = getCoralScoreLocationsFromLevel(level);
+        for (int i = 0; i < SimulatedGamePieceConstants.NUMBER_OF_CORAL_BRANCHES; i++) {
+            if (isGamePieceScored(coral, scoreLocations[i], SimulatedGamePieceConstants.CORAL_SCORING_TOLERANCE_METERS)) {
+                incrementScoreFromCoralLevel(level);
+                coral.isScored = true;
+                return true;
             }
         }
+        return false;
+    }
 
-        if (gamePieceType.equals(SimulatedGamePieceConstants.GamePieceType.ALGAE)) {
-            final Transform3d distanceFromScoreZone = SimulatedGamePieceConstants.PROCESSOR_LOCATION.minus(gamePiece.getPose());
-            if (distanceFromScoreZone.getTranslation().getNorm() < SimulatedGamePieceConstants.ALGAE_SCORING_TOLERANCE_METERS) {
-                POINTS += SimulatedGamePieceConstants.PROCESSOR_POINTS;
-                gamePiece.setScored(true);
-            }
-        }
+    private static boolean isGamePieceScored(SimulatedGamePiece gamePiece, Pose3d scoreLocation, double scoringToleranceMeters) {
+        final double distanceFromScoreZoneMeters = gamePiece.getDistanceMeters(scoreLocation);
+        return distanceFromScoreZoneMeters < scoringToleranceMeters;
+    }
+
+    private static Pose3d[] getCoralScoreLocationsFromLevel(int level) {
+        return switch (level) {
+//            case 1 -> SimulatedGamePieceConstants.L1_LOCATIONS;
+            case 2 -> SimulatedGamePieceConstants.L2_LOCATIONS;
+            case 3 -> SimulatedGamePieceConstants.L3_LOCATIONS;
+            case 4 -> SimulatedGamePieceConstants.L4_LOCATIONS;
+            default -> new Pose3d[0];
+        };
+    }
+
+    private static void incrementScoreFromCoralLevel(int level) {
+        if (level == 1)
+            SCORE += SimulatedGamePieceConstants.L1_POINTS;
+        if (level == 2)
+            SCORE += SimulatedGamePieceConstants.L2_POINTS;
+        if (level == 3)
+            SCORE += SimulatedGamePieceConstants.L3_POINTS;
+        if (level == 4)
+            SCORE += SimulatedGamePieceConstants.L4_POINTS;
     }
 }

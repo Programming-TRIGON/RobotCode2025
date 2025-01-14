@@ -88,8 +88,10 @@ public class SimulationFieldHandler {
      */
     private static Integer getIndexOfCollectedGamePiece(Pose3d collectionPose, ArrayList<SimulatedGamePiece> gamePieceList) {
         for (SimulatedGamePiece gamePiece : gamePieceList)
-            if (gamePiece.getDistanceMeters(collectionPose) <= PICKUP_TOLERANCE_METERS && gamePiece.isTouchingGround())
+            if (gamePiece.getDistanceMeters(collectionPose) <= PICKUP_TOLERANCE_METERS && gamePiece.isTouchingGround()) {
+                gamePiece.isHeld = true;
                 return gamePieceList.indexOf(gamePiece);
+            }
         return null;
     }
 
@@ -102,10 +104,14 @@ public class SimulationFieldHandler {
     }
 
     private static void updateEjection() {
-        if (HELD_CORAL_INDEX != null && isEjectingCoral() && CAN_EJECT_CORAL)
+        if (HELD_CORAL_INDEX != null && isEjectingCoral() && CAN_EJECT_CORAL) {
+            CORAL_ON_FIELD.get(HELD_CORAL_INDEX).isHeld = false;
             HELD_CORAL_INDEX = null;
-        if (HELD_ALGAE_INDEX != null && isEjectingAlgae() && CAN_EJECT_ALGAE)
+        }
+        if (HELD_ALGAE_INDEX != null && isEjectingAlgae() && CAN_EJECT_ALGAE) {
+            ALGAE_ON_FIELD.get(HELD_ALGAE_INDEX).isHeld = false;
             HELD_ALGAE_INDEX = null;
+        }
     }
 
     private static boolean isEjectingCoral() {
