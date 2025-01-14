@@ -50,8 +50,8 @@ public class Elevator extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
-        Logger.recordOutput("Poses/Components/ElevatorFirstPose", getFirstComponentPose());
-        Logger.recordOutput("Poses/Components/ElevatorSecondPose", getSecondComponentPose());
+        Logger.recordOutput("Poses/Components/ElevatorFirstPose", getFirstStageComponentPose());
+        Logger.recordOutput("Poses/Components/ElevatorSecondPose", getSecondStageComponentPose());
 
         ElevatorConstants.MECHANISM.update(
                 rotationsToMeters(getPositionRotations()),
@@ -83,15 +83,15 @@ public class Elevator extends MotorSubsystem {
         motor.setControl(positionRequest.withPosition(targetPositionRotations));
     }
 
-    private Pose3d getFirstComponentPose() {
+    private Pose3d getFirstStageComponentPose() {
         final Pose3d originPoint = ElevatorConstants.FIRST_STAGE_VISUALIZATION_ORIGIN_POINT;
 
         if (!elevatorExtendedFirstComponentLimit())
             return calculateCurrentElevatorPoseFromOrigin(originPoint);
-        return setComponentPose(ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH, originPoint);
+        return newElevatorComponentPose(ElevatorConstants.FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH, originPoint);
     }
 
-    private Pose3d getSecondComponentPose() {
+    private Pose3d getSecondStageComponentPose() {
         final Pose3d originPoint = ElevatorConstants.SECOND_STAGE_VISUALIZATION_ORIGIN_POINT;
         return calculateCurrentElevatorPoseFromOrigin(originPoint);
     }
@@ -101,15 +101,15 @@ public class Elevator extends MotorSubsystem {
     }
 
     private Pose3d calculateCurrentElevatorPoseFromOrigin(Pose3d originPoint) {
-        return setComponentPose(getPositionMeters(), originPoint);
+        return newElevatorComponentPose(getPositionMeters(), originPoint);
     }
 
-    private Pose3d setComponentPose(double poseHeight, Pose3d originPoint) {
-        return originPoint.transformBy(new Transform3d(
-                        new Translation3d(0, 0, poseHeight),
-                        new Rotation3d()
-                )
+    private Pose3d newElevatorComponentPose(double poseHeight, Pose3d originPoint) {
+        final Transform3d elevatorTransform = new Transform3d(
+                new Translation3d(0, 0, poseHeight),
+                new Rotation3d()
         );
+        return originPoint.transformBy(elevatorTransform);
     }
 
     private double getPositionRotations() {
