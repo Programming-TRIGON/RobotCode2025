@@ -66,8 +66,6 @@ public class Gripper extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
-        Logger.recordOutput("GripperPose", calculateVisualizationPose());
-
         GripperConstants.GRIPPING_MECHANISM.update(
                 grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)
         );
@@ -75,6 +73,7 @@ public class Gripper extends MotorSubsystem {
                 getCurrentEncoderAngle(),
                 Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
         );
+        Logger.recordOutput("Poses/Components/GripperPose", calculateVisualizationPose());
     }
 
     public boolean hasGamePiece() {
@@ -112,7 +111,7 @@ public class Gripper extends MotorSubsystem {
                 originPoint.relativeTo(elevatorPose).getTranslation(),
                 originPoint.relativeTo(elevatorPose).getRotation()
         );
-        return originPoint.transformBy(gripperToElevatorOrigin);
+        return elevatorPose.transformBy(gripperToElevatorOrigin);
     }
 
     private Rotation2d getCurrentEncoderAngle() {

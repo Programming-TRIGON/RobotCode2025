@@ -14,7 +14,7 @@ import java.util.function.BiConsumer;
 public class GripperCommands {
     public static Command getDebuggingCommand() {
         return new NetworkTablesCommand(
-                (Double targetAngle, Double targetVoltage) -> RobotContainer.GRIPPER.setTargetState(Rotation2d.fromDegrees(targetAngle),targetVoltage),
+                (targetAngle, targetVoltage) -> RobotContainer.GRIPPER.setTargetState(Rotation2d.fromDegrees(targetAngle), targetVoltage),
                 false,
                 Set.of(RobotContainer.GRIPPER),
                 "Debugging/GripperTargetAngleDegrees",
