@@ -76,7 +76,7 @@ public class ElevatorConstants {
             Units.Volts.of(2),
             Units.Second.of(1000)
     );
-    
+
     public static final Pose3d FIRST_STAGE_VISUALIZATION_ORIGIN_POINT = new Pose3d(-0.120, 0, 0.1312, new Rotation3d(0, 0, 0));
     static final double
             FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH = 0.9;
