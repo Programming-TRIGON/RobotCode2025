@@ -2,11 +2,15 @@ package frc.trigon.robot.subsystems.gripper;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.subsystems.MotorSubsystem;
+import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.grapple.lasercan.LaserCAN;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
@@ -66,9 +70,7 @@ public class Gripper extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
-        GripperConstants.GRIPPING_MECHANISM.update(
-                grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)
-        );
+        GripperConstants.GRIPPING_MECHANISM.update(grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
         GripperConstants.ANGLE_MECHANISM.update(
                 getCurrentEncoderAngle(),
                 Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
@@ -78,6 +80,15 @@ public class Gripper extends MotorSubsystem {
 
     public boolean hasGamePiece() {
         return laserCAN.hasResult() && laserCAN.getDistanceMillimeters() < GripperConstants.GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS;
+    }
+
+    public boolean atState(GripperConstants.GripperState targetState) {
+        return targetState == this.targetState && atTargetAngle();
+    }
+
+    public boolean atTargetAngle() {
+        final double currentToTargetStateDifference = Math.abs(getCurrentEncoderAngle().getDegrees() - targetState.targetAngle.getDegrees());
+        return currentToTargetStateDifference < GripperConstants.POSITION_TOLERANCE_DEGREES.getDegrees();
     }
 
     void setTargetState(GripperConstants.GripperState targetState) {
@@ -104,17 +115,23 @@ public class Gripper extends MotorSubsystem {
     }
 
     private Pose3d calculateVisualizationPose() {
-        final Pose3d originPoint = GripperConstants.GRIPPER_VISUALIZATION_ORIGIN_POINT;
-        final Pose3d elevatorPose = new Pose3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
-
-        final Transform3d gripperToElevatorOrigin = new Transform3d(
-                originPoint.relativeTo(elevatorPose).getTranslation(),
-                originPoint.relativeTo(elevatorPose).getRotation()
+        final Pose3d elevatorOriginPoint = ElevatorConstants.FIRST_STAGE_VISUALIZATION_ORIGIN_POINT;
+        final Transform3d elevatorToGripper = GripperConstants.ELEVATOR_TO_GRIPPER;
+        final Pose3d gripperOrigin = elevatorOriginPoint.transformBy(elevatorToGripper);
+        final Rotation3d gripperRotation = new Rotation3d(
+                0,
+                getCurrentEncoderAngle().getDegrees(),
+                0
         );
-        return elevatorPose.transformBy(gripperToElevatorOrigin);
+
+        return gripperOrigin.rotateBy(gripperRotation);
+    }
+
+    private double getCurrentEncoderPosition() {
+        return angleEncoder.getSignal(CANcoderSignal.POSITION);
     }
 
     private Rotation2d getCurrentEncoderAngle() {
-        return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
+        return Rotation2d.fromRotations(getCurrentEncoderPosition());
     }
 }
