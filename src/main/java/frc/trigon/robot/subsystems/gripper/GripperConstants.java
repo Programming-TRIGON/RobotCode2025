@@ -130,6 +130,7 @@ public class GripperConstants {
             ARM_LENGTH_METERS,
             Color.kRed
     );
+
     static final Pose3d GRIPPER_VISUALIZATION_ORIGIN_POINT = new Pose3d(
             new Translation3d(0, 0, 0),
             new Rotation3d(0, 0, 0)
@@ -138,7 +139,6 @@ public class GripperConstants {
             ElevatorConstants.FIRST_STAGE_VISUALIZATION_ORIGIN_POINT,
             GRIPPER_VISUALIZATION_ORIGIN_POINT
     );
-
     static final Rotation2d POSITION_TOLERANCE_DEGREES = Rotation2d.fromDegrees(2);
 
     static {
