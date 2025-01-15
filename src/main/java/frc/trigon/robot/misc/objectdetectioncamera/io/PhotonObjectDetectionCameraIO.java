@@ -16,7 +16,7 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private final PhotonCamera photonCamera;
     private final Rotation2d cameraMountYaw;
 
-    protected PhotonObjectDetectionCameraIO(String hostname, Rotation2d cameraMountYaw) {
+    public PhotonObjectDetectionCameraIO(String hostname, Rotation2d cameraMountYaw) {
         PhotonCamera.setVersionCheckEnabled(false);
         photonCamera = new PhotonCamera(hostname);
         this.cameraMountYaw = cameraMountYaw;

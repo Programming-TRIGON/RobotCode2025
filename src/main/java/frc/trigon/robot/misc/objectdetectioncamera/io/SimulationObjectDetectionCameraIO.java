@@ -24,7 +24,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private final String hostname;
     private final Rotation2d cameraMountYaw;
 
-    SimulationObjectDetectionCameraIO(String hostname, Rotation2d cameraMountYaw) {
+    public SimulationObjectDetectionCameraIO(String hostname, Rotation2d cameraMountYaw) {
         this.hostname = hostname;
         this.cameraMountYaw = cameraMountYaw;
     }
