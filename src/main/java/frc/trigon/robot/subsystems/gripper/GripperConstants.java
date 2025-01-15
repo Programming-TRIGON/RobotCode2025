@@ -32,9 +32,9 @@ public class GripperConstants {
             ANGLE_ENCODER_ID = 18,
             LASER_CAN_ID = 17;
     private static final String
-            GRIPPING_MOTOR_NAME = "GrippingMotor",
-            ANGLE_MOTOR_NAME = "AngleMotor",
-            ANGLE_ENCODER_NAME = "AngleEncoder",
+            GRIPPING_MOTOR_NAME = "GripperGrippingMotor",
+            ANGLE_MOTOR_NAME = "GripperAngleMotor",
+            ANGLE_ENCODER_NAME = "GripperAngleEncoder",
             LASER_CAN_NAME = "GripperLaserCAN";
     static final TalonFXMotor
             GRIPPING_MOTOR = new TalonFXMotor(GRIPPING_MOTOR_ID, GRIPPING_MOTOR_NAME),
