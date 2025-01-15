@@ -27,7 +27,7 @@ import java.util.function.DoubleSupplier;
 
 public class GripperConstants {
     private static final int
-            GRIPPING_MOTOR_ID = 15,
+            GRIPPING_MOTOR_ID = 17,
             ANGLE_MOTOR_ID = 18,
             ANGLE_ENCODER_ID = 18,
             LASER_CAN_ID = 0;
