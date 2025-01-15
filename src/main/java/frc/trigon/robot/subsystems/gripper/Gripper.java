@@ -11,8 +11,6 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.subsystems.MotorSubsystem;
-import frc.trigon.robot.subsystems.elevator.Elevator;
-import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.grapple.lasercan.LaserCAN;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
@@ -117,10 +115,10 @@ public class Gripper extends MotorSubsystem {
     }
 
     private Pose3d calculateVisualizationPose() {
-        final Pose3d elevatorCurrentPose = RobotContainer.ELEVATOR.getFirstStageComponentPose();
+        final Pose3d currentElevatorPose = RobotContainer.ELEVATOR.getFirstStageComponentPose();
         final Transform3d elevatorToGripper = GripperConstants.ELEVATOR_TO_GRIPPER;
 
-        final Pose3d gripperOrigin = elevatorCurrentPose.transformBy(elevatorToGripper);
+        final Pose3d gripperOrigin = currentElevatorPose.transformBy(elevatorToGripper);
 
         final Rotation3d gripperRotation = new Rotation3d(
                 0,
@@ -130,7 +128,7 @@ public class Gripper extends MotorSubsystem {
 
         return gripperOrigin.rotateBy(gripperRotation);
     }
-    
+
     private Rotation2d getCurrentEncoderAngle() {
         return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
     }
