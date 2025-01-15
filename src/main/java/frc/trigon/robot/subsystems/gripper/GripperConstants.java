@@ -28,8 +28,8 @@ import java.util.function.DoubleSupplier;
 public class GripperConstants {
     private static final int
             GRIPPING_MOTOR_ID = 15,
-            ANGLE_MOTOR_ID = 16,
-            ANGLE_ENCODER_ID = 16,
+            ANGLE_MOTOR_ID = 18,
+            ANGLE_ENCODER_ID = 18,
             LASER_CAN_ID = 0;
     private static final String
             GRIPPING_MOTOR_NAME = "GrippingMotor",
@@ -82,7 +82,7 @@ public class GripperConstants {
     private static final LaserCan.RangingMode LASER_CAN_RANGING_MODE = LaserCan.RangingMode.SHORT;
     private static final LaserCan.TimingBudget LASER_CAN_LOOP_TIME = LaserCan.TimingBudget.TIMING_BUDGET_33MS;
     private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> RobotContainer.GRIPPER.hasGamePiece() ? 1 : 0;
-    static final double GAME_PEICE_DETECTION_THRESHOLD = 10;
+    static final double GAME_PIECE_DETECTION_THRESHOLD = 10;
     static final boolean FOC_ENABLED = true;
 
     private static final int

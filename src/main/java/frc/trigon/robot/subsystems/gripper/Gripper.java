@@ -27,10 +27,14 @@ public class Gripper extends MotorSubsystem {
     }
 
     @Override
+    public void setBrake(boolean brake) {
+        angleMotor.setBrake(brake);
+    }
+
+    @Override
     public SysIdRoutine.Config getSysIdConfig() {
         return GripperConstants.SYSID_CONFIG;
     }
-
 
     @Override
     public void sysIdDrive(double targetDrivePower) {
@@ -53,9 +57,9 @@ public class Gripper extends MotorSubsystem {
 
     @Override
     public void updateLog(SysIdRoutineLog log) {
-        log.motor("AngleMotor")
+        log.motor("GripperAngleMotor")
                 .angularPosition(Units.Rotations.of(angleEncoder.getSignal(CANcoderSignal.POSITION)))
-                .angularVelocity(Units.RotationsPerSecond.of(angleEncoder.getSignal(CANcoderSignal.VELOCITY)))
+                .angularVelocity(Units.RotationsPerSecond.of(angleMotor.getSignal(TalonFXSignal.VELOCITY)))
                 .voltage(Units.Volts.of(angleMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
@@ -66,7 +70,7 @@ public class Gripper extends MotorSubsystem {
     }
 
     public boolean hasGamePiece() {
-        return laserCAN.hasResult() && laserCAN.getDistanceMillimeters() < GripperConstants.GAME_PEICE_DETECTION_THRESHOLD;
+        return laserCAN.hasResult() && laserCAN.getDistanceMillimeters() < GripperConstants.GAME_PIECE_DETECTION_THRESHOLD;
     }
 
     void setTargetState(GripperConstants.GripperState targetState) {
@@ -83,13 +87,13 @@ public class Gripper extends MotorSubsystem {
         setTargetVoltage(targetVoltage);
     }
 
+    private void setTargetAngle(Rotation2d targetAngle) {
+        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
+    }
+
     private void setTargetVoltage(double targetVoltage) {
         GripperConstants.GRIPPING_MECHANISM.setTargetVelocity(targetVoltage);
         grippingMotor.setControl(voltageRequest.withOutput(targetVoltage));
-    }
-
-    private void setTargetAngle(Rotation2d targetAngle) {
-        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
     }
 
     private Rotation2d getCurrentEncoderAngle() {

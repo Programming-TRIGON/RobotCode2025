@@ -11,7 +11,6 @@ import java.util.Set;
 
 
 public class GripperCommands {
-
     public static Command getDebuggingCommand() {
         return new NetworkTablesCommand(
                 (Double[] targetStates) -> RobotContainer.GRIPPER.setTargetState(
@@ -20,8 +19,8 @@ public class GripperCommands {
                 ),
                 false,
                 Set.of(RobotContainer.GRIPPER),
-                "Debugging/TargetAngle",
-                "Debugging/TargetGrippingVoltage"
+                "Debugging/GripperTargetAngleRotations",
+                "Debugging/GripperTargetGrippingVoltage"
         );
     }
 

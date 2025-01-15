@@ -60,7 +60,6 @@ public class RobotContainer {
         ALGAE_INTAKE.setDefaultCommand(AlgaeIntakeCommands.getSetTargetStateCommand(AlgaeIntakeConstants.AlgaeIntakeState.REST));
         CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         GRIPPER.setDefaultCommand(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST));
-
     }
 
     /**
