@@ -2,16 +2,18 @@ package frc.trigon.robot.misc.simulatedfield;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 
 public class SimulatedGamePiece {
+    protected SimulatedGamePieceConstants.GamePieceType gamePieceType;
+    protected boolean isScored = false;
     private Pose3d fieldRelativePose;
     private Pose3d poseAtRelease;
     private double timestampAtRelease = 0;
     private boolean isTouchingGround = true;
-    protected SimulatedGamePieceConstants.GamePieceType gamePieceType;
-    protected boolean isScored = false;
 
     public SimulatedGamePiece(Pose3d startingPose, SimulatedGamePieceConstants.GamePieceType gamePieceType) {
         fieldRelativePose = startingPose;
@@ -58,22 +60,24 @@ public class SimulatedGamePiece {
 
     private void checkScored() {
         if (!isScored)
-            SimulationScoringHandler.checkGamePieceScored(this);
+            SimulationScoringHandler.checkGamePieceScored(this, DriverStation.isAutonomousEnabled());
     }
 
     private void updateIsTouchingGround() {
         if (fieldRelativePose.getZ() < gamePieceType.originPointHeightOffGroundMeters) {
             isTouchingGround = true;
-            fieldRelativePose = new Pose3d(
+
+            final Translation3d fieldRelativeTranslation = new Translation3d(
                     fieldRelativePose.getTranslation().getX(),
                     fieldRelativePose.getTranslation().getY(),
-                    gamePieceType.originPointHeightOffGroundMeters,
-                    new Rotation3d(
-                            fieldRelativePose.getRotation().getX(),
-                            0,
-                            fieldRelativePose.getRotation().getZ()
-                    )
+                    gamePieceType.originPointHeightOffGroundMeters
             );
+            final Rotation3d fieldRelativeRotation = new Rotation3d(
+                    fieldRelativePose.getRotation().getX(),
+                    0,
+                    fieldRelativePose.getRotation().getZ()
+            );
+            fieldRelativePose = new Pose3d(fieldRelativeTranslation, fieldRelativeRotation);
             return;
         }
         isTouchingGround = false;

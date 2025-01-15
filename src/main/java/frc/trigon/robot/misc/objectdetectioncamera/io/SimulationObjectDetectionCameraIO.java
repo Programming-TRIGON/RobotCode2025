@@ -1,4 +1,4 @@
-package frc.trigon.robot.misc.objectdetectioncamera;
+package frc.trigon.robot.misc.objectdetectioncamera.io;
 
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
@@ -6,6 +6,8 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
+import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraIO;
+import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraInputsAutoLogged;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePiece;
 import frc.trigon.robot.misc.simulatedfield.SimulationFieldHandler;
 import org.littletonrobotics.junction.Logger;
@@ -22,7 +24,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private final String hostname;
     private final Rotation2d cameraMountYaw;
 
-    protected SimulationObjectDetectionCameraIO(String hostname, Rotation2d cameraMountYaw) {
+    SimulationObjectDetectionCameraIO(String hostname, Rotation2d cameraMountYaw) {
         this.hostname = hostname;
         this.cameraMountYaw = cameraMountYaw;
     }
@@ -66,7 +68,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         int currentIndex = 0;
 
         for (SimulatedGamePiece currentObject : gamePiecesOnField) {
-            final Rotation2d cameraYawToObject = calculateCameraYawToObject(currentObject, robotPose);
+            final Rotation2d cameraYawToObject = calculateCameraYawToObject(currentObject.getPose(), robotPose);
             if (!isWithinHorizontalFOV(cameraYawToObject, robotPose) || !isWithinDistance(currentObject, robotPose))
                 continue;
             visibleTargetObjects.add(currentIndex, currentObject);
@@ -84,7 +86,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         for (int i = 0; i < NUMBER_OF_GAME_PIECE_TYPES; i++)
             if (inputs.hasTarget[i]) {
                 final SimulatedGamePiece closestGamePiece = calculateClosestVisibleObject(robotPose, visibleGamePieces[i]);
-                inputs.visibleObjectYaws[i][0] = calculateCameraYawToObject(closestGamePiece, robotPose).plus(cameraMountYaw);
+                inputs.visibleObjectYaws[i][0] = calculateCameraYawToObject(closestGamePiece.getPose(), robotPose).plus(cameraMountYaw);
             }
 
         logVisibleGamePieces(visibleGamePieces);
@@ -118,8 +120,8 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * @param robotPose       the position of the robot on the field
      * @return the yaw of the object relative to the camera
      */
-    private Rotation2d calculateCameraYawToObject(SimulatedGamePiece objectPlacement, Pose2d robotPose) {
-        final Transform2d robotToObject = objectPlacement.getPose().toPose2d().minus(robotPose);
+    private Rotation2d calculateCameraYawToObject(Pose3d objectPlacement, Pose2d robotPose) {
+        final Transform2d robotToObject = objectPlacement.toPose2d().minus(robotPose);
         return robotToObject.getRotation();
     }
 

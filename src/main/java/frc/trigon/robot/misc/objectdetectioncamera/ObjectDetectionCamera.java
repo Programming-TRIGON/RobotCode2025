@@ -3,6 +3,8 @@ package frc.trigon.robot.misc.objectdetectioncamera;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
+import frc.trigon.robot.misc.objectdetectioncamera.io.PhotonObjectDetectionCameraIO;
+import frc.trigon.robot.misc.objectdetectioncamera.io.SimulationObjectDetectionCameraIO;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.RobotHardwareStats;
 

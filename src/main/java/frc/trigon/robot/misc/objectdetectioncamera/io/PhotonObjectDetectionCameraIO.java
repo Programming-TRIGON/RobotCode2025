@@ -1,7 +1,9 @@
-package frc.trigon.robot.misc.objectdetectioncamera;
+package frc.trigon.robot.misc.objectdetectioncamera.io;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
+import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraIO;
+import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraInputsAutoLogged;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;

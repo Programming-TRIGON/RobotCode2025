@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
+import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import org.littletonrobotics.junction.Logger;
 
@@ -109,7 +110,7 @@ public class SimulationFieldHandler {
     }
 
     private static boolean isCollectingAlgae() {
-        return false; //TODO: Implement for when an algae should enter the robot
+        return RobotContainer.ALGAE_INTAKE.atState(AlgaeIntakeConstants.AlgaeIntakeState.COLLECT);
     }
 
     private static void updateEjection() {
@@ -126,11 +127,13 @@ public class SimulationFieldHandler {
     }
 
     private static boolean isEjectingCoral() {
-        return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.EJECT);//TODO: Implement for when a coral should exit the robot
+        return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.EJECT) ||
+                RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.FEED);
     }
 
     private static boolean isEjectingAlgae() {
-        return false;//TODO: Implement for when an algae should exit the robot
+        return RobotContainer.ALGAE_INTAKE.atState(AlgaeIntakeConstants.AlgaeIntakeState.EJECT) ||
+                RobotContainer.ALGAE_INTAKE.atState(AlgaeIntakeConstants.AlgaeIntakeState.FEED_PROCESSOR);
     }
 
     /**
@@ -164,7 +167,7 @@ public class SimulationFieldHandler {
     }
 
     /**
-     * Changes a Pose3d into a Transform3d.
+     * Converts a Pose3d into a Transform3d.
      *
      * @param pose the target Pose3d
      * @return the Transform3d

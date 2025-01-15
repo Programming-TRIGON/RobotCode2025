@@ -17,9 +17,9 @@ public class ObjectDetectionCameraIO {
          */
         public boolean[] hasTarget = new boolean[0];
         /**
-         * The yaws of all visible objects.
-         * The first index is the game piece index (type).
-         * The second index is the yaw index, with the first yaw placed first (index 0).
+         * Stores the yaws of all visible objects.
+         * The first index is the game piece ID (type).
+         * The second index is the index of the game piece's yaws, with the best yaw placed first (index 0).
          */
         public Rotation2d[][] visibleObjectYaws = new Rotation2d[0][0];
     }

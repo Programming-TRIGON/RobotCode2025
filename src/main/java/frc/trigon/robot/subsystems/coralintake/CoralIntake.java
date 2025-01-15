@@ -68,13 +68,8 @@ public class CoralIntake extends MotorSubsystem {
         funnelMotor.update();
         elevatorMotor.update();
         beamBreak.updateSensor();
-        if (RobotHardwareStats.isSimulation()) {
-            if (hasGamePiece() && atTargetAngle()) {
-                SimulationFieldHandler.setCanEjectCoral(true);
-                return;
-            }
-            SimulationFieldHandler.setCanEjectCoral(false);
-        }
+        if (RobotHardwareStats.isSimulation())
+            updateHeldGamePieceState();
     }
 
     @Override
@@ -174,5 +169,13 @@ public class CoralIntake extends MotorSubsystem {
 
     private double rotationsToMeters(double positionRotations) {
         return Conversions.rotationsToDistance(positionRotations, CoralIntakeConstants.ELEVATOR_DRUM_DIAMETER_METERS);
+    }
+
+    private void updateHeldGamePieceState() {
+        if (hasGamePiece() && atTargetAngle()) {
+            SimulationFieldHandler.setCanEjectCoral(true);
+            return;
+        }
+        SimulationFieldHandler.setCanEjectCoral(false);
     }
 }

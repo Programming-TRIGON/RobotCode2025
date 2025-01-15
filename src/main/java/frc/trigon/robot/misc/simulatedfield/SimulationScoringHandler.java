@@ -11,9 +11,9 @@ public class SimulationScoringHandler {
         logScore();
     }
 
-    public static void checkGamePieceScored(SimulatedGamePiece gamePiece) {
+    public static void checkGamePieceScored(SimulatedGamePiece gamePiece, boolean isAutonomous) {
         if (gamePiece.gamePieceType.equals(SimulatedGamePieceConstants.GamePieceType.CORAL))
-            checkCoralScored(gamePiece);
+            checkCoralScored(gamePiece, isAutonomous);
         if (gamePiece.gamePieceType.equals(SimulatedGamePieceConstants.GamePieceType.ALGAE))
             checkAlgaeScored(gamePiece);
     }
@@ -22,9 +22,9 @@ public class SimulationScoringHandler {
         Logger.recordOutput("SimulatedGameScore", SCORE);
     }
 
-    private static void checkCoralScored(SimulatedGamePiece coral) {
+    private static void checkCoralScored(SimulatedGamePiece coral, boolean isAutonomous) {
         for (int i = 1; i <= 4; i++)
-            if (isCoralScoredOnLevel(coral, i))
+            if (isCoralScoredOnLevel(coral, i, isAutonomous))
                 return;
     }
 
@@ -36,11 +36,11 @@ public class SimulationScoringHandler {
         algae.isScored = true;
     }
 
-    private static boolean isCoralScoredOnLevel(SimulatedGamePiece coral, int level) {
+    private static boolean isCoralScoredOnLevel(SimulatedGamePiece coral, int level, boolean isAutonomous) {
         final Pose3d[] scoreLocations = getCoralScoreLocationsFromLevel(level);
         for (Pose3d scoreLocation : scoreLocations) {
             if (isGamePieceScored(coral, scoreLocation, SimulatedGamePieceConstants.CORAL_SCORING_TOLERANCE_METERS)) {
-                incrementScoreFromCoralLevel(level);
+                incrementScoreFromCoralLevel(level, isAutonomous);
                 coral.isScored = true;
                 return true;
             }
@@ -63,14 +63,25 @@ public class SimulationScoringHandler {
         };
     }
 
-    private static void incrementScoreFromCoralLevel(int level) {
-        if (level == 1)
-            SCORE += SimulatedGamePieceConstants.L1_POINTS;
-        if (level == 2)
-            SCORE += SimulatedGamePieceConstants.L2_POINTS;
-        if (level == 3)
-            SCORE += SimulatedGamePieceConstants.L3_POINTS;
-        if (level == 4)
-            SCORE += SimulatedGamePieceConstants.L4_POINTS;
+    private static void incrementScoreFromCoralLevel(int level, boolean isAutonomous) {
+        if (isAutonomous) {
+            if (level == 1)
+                SCORE += SimulatedGamePieceConstants.L1_TELEOP_POINTS;
+            else if (level == 2)
+                SCORE += SimulatedGamePieceConstants.L2_TELEOP_POINTS;
+            else if (level == 3)
+                SCORE += SimulatedGamePieceConstants.L3_TELEOP_POINTS;
+            else if (level == 4)
+                SCORE += SimulatedGamePieceConstants.L4_TELEOP_POINTS;
+        } else {
+            if (level == 1)
+                SCORE += SimulatedGamePieceConstants.L1_AUTONOMOUS_POINTS;
+            else if (level == 2)
+                SCORE += SimulatedGamePieceConstants.L2_AUTONOMOUS_POINTS;
+            else if (level == 3)
+                SCORE += SimulatedGamePieceConstants.L3_AUTONOMOUS_POINTS;
+            else if (level == 4)
+                SCORE += SimulatedGamePieceConstants.L4_AUTONOMOUS_POINTS;
+        }
     }
 }
