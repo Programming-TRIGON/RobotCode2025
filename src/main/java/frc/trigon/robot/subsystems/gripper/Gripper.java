@@ -20,7 +20,7 @@ public class Gripper extends MotorSubsystem {
     private final LaserCAN laserCAN = GripperConstants.LASER_CAN;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(GripperConstants.FOC_ENABLED);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(GripperConstants.FOC_ENABLED);
-    private GripperConstants.GripperState targetState;
+    private GripperConstants.GripperState targetState = GripperConstants.GripperState.REST;
 
     public Gripper() {
         setName("Gripper");
@@ -70,7 +70,7 @@ public class Gripper extends MotorSubsystem {
     }
 
     public boolean hasGamePiece() {
-        return laserCAN.hasResult() && laserCAN.getDistanceMillimeters() < GripperConstants.GAME_PIECE_DETECTION_THRESHOLD;
+        return laserCAN.hasResult() && laserCAN.getDistanceMillimeters() < GripperConstants.GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS;
     }
 
     void setTargetState(GripperConstants.GripperState targetState) {
@@ -82,18 +82,18 @@ public class Gripper extends MotorSubsystem {
         );
     }
 
-    void setTargetState(Rotation2d targetAngle, double targetVoltage) {
+    void setTargetState(Rotation2d targetAngle, double targetGripperVoltage) {
         setTargetAngle(targetAngle);
-        setTargetVoltage(targetVoltage);
+        setTargetVoltage(targetGripperVoltage);
     }
 
     private void setTargetAngle(Rotation2d targetAngle) {
         angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
     }
 
-    private void setTargetVoltage(double targetVoltage) {
-        GripperConstants.GRIPPING_MECHANISM.setTargetVelocity(targetVoltage);
-        grippingMotor.setControl(voltageRequest.withOutput(targetVoltage));
+    private void setTargetVoltage(double targetGripperVoltage) {
+        GripperConstants.GRIPPING_MECHANISM.setTargetVelocity(targetGripperVoltage);
+        grippingMotor.setControl(voltageRequest.withOutput(targetGripperVoltage));
     }
 
     private Pose3d calculateVisualizationPose() {

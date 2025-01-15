@@ -8,6 +8,7 @@ import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.util.Color;
@@ -38,8 +39,9 @@ public class GripperConstants {
             ANGLE_MOTOR_NAME = "AngleMotor",
             ANGLE_ENCODER_NAME = "AngleEncoder",
             LASER_CAN_NAME = "GripperLaserCAN";
-    static final TalonFXMotor GRIPPING_MOTOR = new TalonFXMotor(GRIPPING_MOTOR_ID, GRIPPING_MOTOR_NAME);
-    static final TalonFXMotor ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
+    static final TalonFXMotor
+            GRIPPING_MOTOR = new TalonFXMotor(GRIPPING_MOTOR_ID, GRIPPING_MOTOR_NAME),
+            ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
     static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
     static final LaserCAN LASER_CAN = new LaserCAN(LASER_CAN_ID, LASER_CAN_NAME);
 
@@ -84,7 +86,7 @@ public class GripperConstants {
     private static final LaserCan.RangingMode LASER_CAN_RANGING_MODE = LaserCan.RangingMode.SHORT;
     private static final LaserCan.TimingBudget LASER_CAN_LOOP_TIME = LaserCan.TimingBudget.TIMING_BUDGET_33MS;
     private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> RobotContainer.GRIPPER.hasGamePiece() ? 1 : 0;
-    static final double GAME_PIECE_DETECTION_THRESHOLD = 10;
+    static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
     static final boolean FOC_ENABLED = true;
 
     private static final int
@@ -133,7 +135,10 @@ public class GripperConstants {
             Color.kRed
     );
 
-    static final Pose3d GRIPPER_VISUALIZATION_ORIGIN_POINT = new Pose3d(0, 0, 0, new Rotation3d(0, 0, 0));
+    static final Pose3d GRIPPER_VISUALIZATION_ORIGIN_POINT = new Pose3d(
+            new Translation3d(),
+            new Rotation3d(0, 0, 0)
+    );
 
     static {
         configureGrippingMotor();

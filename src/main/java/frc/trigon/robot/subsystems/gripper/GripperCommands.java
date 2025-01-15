@@ -19,7 +19,7 @@ public class GripperCommands {
                 ),
                 false,
                 Set.of(RobotContainer.GRIPPER),
-                "Debugging/GripperTargetAngleRotations",
+                "Debugging/GripperTargetAngleDegrees",
                 "Debugging/GripperTargetGrippingVoltage"
         );
     }
@@ -40,9 +40,9 @@ public class GripperCommands {
         );
     }
 
-    public static Command getSetTargetStateCommand(Rotation2d targetAngle, double targetVoltage) {
+    public static Command getSetTargetStateCommand(Rotation2d targetAngle, double targetGrippingVoltage) {
         return new StartEndCommand(
-                () -> RobotContainer.GRIPPER.setTargetState(targetAngle, targetVoltage),
+                () -> RobotContainer.GRIPPER.setTargetState(targetAngle, targetGrippingVoltage),
                 RobotContainer.GRIPPER::stop,
                 RobotContainer.GRIPPER
         );
