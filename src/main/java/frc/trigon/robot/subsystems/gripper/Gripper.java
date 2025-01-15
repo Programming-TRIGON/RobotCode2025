@@ -7,6 +7,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.subsystems.MotorSubsystem;
+import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.grapple.lasercan.LaserCAN;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
@@ -65,6 +66,8 @@ public class Gripper extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
+        Logger.recordOutput("GripperPose", calculateVisualizationPose());
+
         GripperConstants.GRIPPING_MECHANISM.update(
                 grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)
         );
@@ -87,18 +90,18 @@ public class Gripper extends MotorSubsystem {
         );
     }
 
-    void setTargetState(Rotation2d targetAngle, double targetGripperVoltage) {
+    void setTargetState(Rotation2d targetAngle, double targetGrippingVoltage) {
         setTargetAngle(targetAngle);
-        setTargetVoltage(targetGripperVoltage);
+        setTargetVoltage(targetGrippingVoltage);
     }
 
     private void setTargetAngle(Rotation2d targetAngle) {
         angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
     }
 
-    private void setTargetVoltage(double targetGripperVoltage) {
-        GripperConstants.GRIPPING_MECHANISM.setTargetVelocity(targetGripperVoltage);
-        grippingMotor.setControl(voltageRequest.withOutput(targetGripperVoltage));
+    private void setTargetVoltage(double targetGrippingVoltage) {
+        GripperConstants.GRIPPING_MECHANISM.setTargetVelocity(targetGrippingVoltage);
+        grippingMotor.setControl(voltageRequest.withOutput(targetGrippingVoltage));
     }
 
     private Pose3d calculateVisualizationPose() {
@@ -109,7 +112,7 @@ public class Gripper extends MotorSubsystem {
                 originPoint.relativeTo(elevatorPose).getTranslation(),
                 originPoint.relativeTo(elevatorPose).getRotation()
         );
-        return elevatorPose.transformBy(gripperToElevatorOrigin);
+        return originPoint.transformBy(gripperToElevatorOrigin);
     }
 
     private Rotation2d getCurrentEncoderAngle() {

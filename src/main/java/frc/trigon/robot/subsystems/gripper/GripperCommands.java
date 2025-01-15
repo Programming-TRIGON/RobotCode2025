@@ -8,15 +8,13 @@ import org.trigon.commands.GearRatioCalculationCommand;
 import org.trigon.commands.NetworkTablesCommand;
 
 import java.util.Set;
+import java.util.function.BiConsumer;
 
 
 public class GripperCommands {
     public static Command getDebuggingCommand() {
         return new NetworkTablesCommand(
-                (Double[] targetStates) -> RobotContainer.GRIPPER.setTargetState(
-                        Rotation2d.fromDegrees(targetStates[0]),
-                        targetStates[1]
-                ),
+                (Double targetAngle, Double targetVoltage) -> RobotContainer.GRIPPER.setTargetState(Rotation2d.fromDegrees(targetAngle),targetVoltage),
                 false,
                 Set.of(RobotContainer.GRIPPER),
                 "Debugging/GripperTargetAngleDegrees",
