@@ -125,7 +125,6 @@ public class Gripper extends MotorSubsystem {
                 getCurrentEncoderAngle().getDegrees(),
                 0
         );
-
         return gripperOrigin.rotateBy(gripperRotation);
     }
 
