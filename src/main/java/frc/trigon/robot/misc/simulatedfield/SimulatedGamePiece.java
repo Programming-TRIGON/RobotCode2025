@@ -3,7 +3,6 @@ package frc.trigon.robot.misc.simulatedfield;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 
@@ -23,6 +22,11 @@ public class SimulatedGamePiece {
     public void updatePeriodically() {
         if (!isScored && !isTouchingGround)
             applyGravity();
+    }
+
+    public void release(Pose3d releasePose) {
+        fieldRelativePose = releasePose;
+        release();
     }
 
     public void release() {
@@ -60,7 +64,7 @@ public class SimulatedGamePiece {
 
     private void checkScored() {
         if (!isScored)
-            SimulationScoringHandler.checkGamePieceScored(this, DriverStation.isAutonomousEnabled());
+            SimulationScoringHandler.checkGamePieceScored(this);
     }
 
     private void updateIsTouchingGround() {

@@ -6,6 +6,7 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
+import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.ArrayList;
@@ -50,7 +51,6 @@ public class SimulationFieldHandler {
 
     public static void update() {
         updateGamePieces();
-        SimulationScoringHandler.update();
         logGamePieces();
     }
 
@@ -114,10 +114,18 @@ public class SimulationFieldHandler {
     }
 
     private static void updateEjection() {
-        if (HELD_CORAL_INDEX != null && isEjectingCoral() && CAN_EJECT_CORAL) {
+        if (HELD_CORAL_INDEX != null && CAN_EJECT_CORAL) {
             final SimulatedGamePiece heldCoral = CORAL_ON_FIELD.get(HELD_CORAL_INDEX);
-            heldCoral.release();
-            HELD_CORAL_INDEX = null;
+            if (isIntakeEjectingCoral()) {
+                heldCoral.release();
+                HELD_CORAL_INDEX = null;
+            }
+            if (isEjectingCoral()) {
+                final Pose3d robotPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
+                final Pose3d robotRelativeGripperReleasePose = new Pose3d();//TODO: Implement
+                heldCoral.release(robotPose.plus(toTransform(robotRelativeGripperReleasePose)));
+                HELD_CORAL_INDEX = null;
+            }
         }
         if (HELD_ALGAE_INDEX != null && isEjectingAlgae() && CAN_EJECT_ALGAE) {
             final SimulatedGamePiece heldAlgae = ALGAE_ON_FIELD.get(HELD_ALGAE_INDEX);
@@ -127,8 +135,14 @@ public class SimulationFieldHandler {
     }
 
     private static boolean isEjectingCoral() {
-        return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.EJECT) ||
-                RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.FEED);
+        return RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L1) ||
+                RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L2) ||
+                RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L3) ||
+                RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L4);
+    }
+
+    private static boolean isIntakeEjectingCoral() {
+        return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.EJECT);
     }
 
     private static boolean isEjectingAlgae() {

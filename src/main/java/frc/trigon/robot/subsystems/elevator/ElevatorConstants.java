@@ -30,10 +30,10 @@ public class ElevatorConstants {
     private static final InvertedValue
             MASTER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             FOLLOWER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
-    private static final double GEAR_RATIO = 20;
+    private static final double GEAR_RATIO = 5;
     private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = false;
     private static final double
-            P = RobotHardwareStats.isSimulation() ? 110 : 50,
+            P = RobotHardwareStats.isSimulation() ? 60 : 50,
             I = RobotHardwareStats.isSimulation() ? 0 : 0,
             D = RobotHardwareStats.isSimulation() ? 0 : 0,
             KS = RobotHardwareStats.isSimulation() ? 0 : 0,
@@ -48,8 +48,8 @@ public class ElevatorConstants {
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final double REVERSE_LIMIT_SWITCH_RESET_POSITION = 0;
     private static final double
-            MOTION_MAGIC_CRUISE_VELOCITY = 25,
-            MOTION_MAGIC_ACCELERATION = 25,
+            MOTION_MAGIC_CRUISE_VELOCITY = 100,
+            MOTION_MAGIC_ACCELERATION = 60,
             MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
     static final boolean FOC_ENABLED = true;
 
@@ -77,7 +77,7 @@ public class ElevatorConstants {
             Units.Second.of(1000)
     );
     static final double
-            FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH = 0.9;
+            FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH_METERS = 0.6;
     static final Pose3d FIRST_STAGE_VISUALIZATION_ORIGIN_POINT = new Pose3d(-0.120, 0, 0.1312, new Rotation3d(0, 0, 0));
     static final Pose3d SECOND_STAGE_VISUALIZATION_ORIGIN_POINT = new Pose3d(-0.120, 0, 0.1111, new Rotation3d(0, 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
@@ -88,7 +88,7 @@ public class ElevatorConstants {
     );
 
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
-    static final double POSITION_TOLERANCE_METERS = 0.1;
+    static final double POSITION_TOLERANCE_METERS = 0.01;
 
     static {
         configureMasterMotor();
@@ -158,10 +158,10 @@ public class ElevatorConstants {
     public enum ElevatorState {
         REST(0),
         COLLECT_FROM_FEEDER(0),
-        SCORE_L1(0.45),
-        SCORE_L2(0.80),
-        SCORE_L3(1.20),
-        SCORE_L4(1.80);
+        SCORE_L1(0),
+        SCORE_L2(0.3),
+        SCORE_L3(0.6),
+        SCORE_L4(1.2);
 
         public final double targetPositionMeters;
 
