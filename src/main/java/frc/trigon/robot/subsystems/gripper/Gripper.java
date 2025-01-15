@@ -98,11 +98,18 @@ public class Gripper extends MotorSubsystem {
 
     private Pose3d calculateVisualizationPose() {
         final Pose3d originPoint = GripperConstants.GRIPPER_VISUALIZATION_ORIGIN_POINT;
-        final Transform3d transform = new Transform3d(
+        final Pose3d elevatorPose = new Pose3d(new Translation3d(), new Rotation3d(0, 0, 0));
+
+
+        final Transform3d rotationTransform = new Transform3d(
                 new Translation3d(),
                 new Rotation3d(0, getCurrentEncoderAngle().getRadians(), 0)
         );
-        return originPoint.transformBy(transform);
+        final Transform3d offSetTransform = new Transform3d(
+                originPoint.getTranslation(),
+                originPoint.getRotation()
+        );
+        return elevatorPose.transformBy(rotationTransform).transformBy(offSetTransform);
     }
 
     private Rotation2d getCurrentEncoderAngle() {

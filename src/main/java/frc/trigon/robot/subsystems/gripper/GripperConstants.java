@@ -85,7 +85,7 @@ public class GripperConstants {
             LASER_CAN_DETECTION_REGION_END_Y_COORDINATE = 11;
     private static final LaserCan.RangingMode LASER_CAN_RANGING_MODE = LaserCan.RangingMode.SHORT;
     private static final LaserCan.TimingBudget LASER_CAN_LOOP_TIME = LaserCan.TimingBudget.TIMING_BUDGET_33MS;
-    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> RobotContainer.GRIPPER.hasGamePiece() ? 1 : 0;
+    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> 1;
     static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
     static final boolean FOC_ENABLED = true;
 
