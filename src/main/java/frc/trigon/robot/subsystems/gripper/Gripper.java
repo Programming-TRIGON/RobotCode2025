@@ -2,7 +2,7 @@ package frc.trigon.robot.subsystems.gripper;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -94,6 +94,15 @@ public class Gripper extends MotorSubsystem {
     private void setTargetVoltage(double targetVoltage) {
         GripperConstants.GRIPPING_MECHANISM.setTargetVelocity(targetVoltage);
         grippingMotor.setControl(voltageRequest.withOutput(targetVoltage));
+    }
+
+    private Pose3d calculateVisualizationPose() {
+        final Pose3d originPoint = GripperConstants.GRIPPER_VISUALIZATION_ORIGIN_POINT;
+        final Transform3d transform = new Transform3d(
+                new Translation3d(),
+                new Rotation3d(0, getCurrentEncoderAngle().getRadians(), 0)
+        );
+        return originPoint.transformBy(transform);
     }
 
     private Rotation2d getCurrentEncoderAngle() {
