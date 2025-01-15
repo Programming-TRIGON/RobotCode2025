@@ -121,7 +121,7 @@ public class Gripper extends MotorSubsystem {
 
         final Rotation3d gripperRotation = new Rotation3d(
                 0,
-                getCurrentEncoderAngle().getRotations(),
+                getCurrentEncoderAngle().getRadians(),
                 0
         );
         return gripperOrigin.rotateBy(gripperRotation);
