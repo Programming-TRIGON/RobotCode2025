@@ -117,7 +117,6 @@ public class Gripper extends MotorSubsystem {
     private Pose3d calculateVisualizationPose() {
         final Pose3d currentElevatorPose = RobotContainer.ELEVATOR.getFirstStageComponentPose();
         final Transform3d elevatorToGripper = GripperConstants.ELEVATOR_TO_GRIPPER;
-
         final Pose3d gripperOrigin = currentElevatorPose.transformBy(elevatorToGripper);
 
         final Rotation3d gripperRotation = new Rotation3d(
