@@ -13,7 +13,6 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.trigon.robot.RobotContainer;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.grapple.lasercan.LaserCAN;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
@@ -33,7 +32,7 @@ public class GripperConstants {
             GRIPPING_MOTOR_ID = 17,
             ANGLE_MOTOR_ID = 18,
             ANGLE_ENCODER_ID = 18,
-            LASER_CAN_ID = 0;
+            LASER_CAN_ID = 17;
     private static final String
             GRIPPING_MOTOR_NAME = "GrippingMotor",
             ANGLE_MOTOR_NAME = "AngleMotor",
@@ -85,8 +84,6 @@ public class GripperConstants {
             LASER_CAN_DETECTION_REGION_END_Y_COORDINATE = 11;
     private static final LaserCan.RangingMode LASER_CAN_RANGING_MODE = LaserCan.RangingMode.SHORT;
     private static final LaserCan.TimingBudget LASER_CAN_LOOP_TIME = LaserCan.TimingBudget.TIMING_BUDGET_33MS;
-    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> 1;
-    static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
     static final boolean FOC_ENABLED = true;
 
     private static final int
@@ -103,6 +100,7 @@ public class GripperConstants {
             ARM_MAXIMUM_ANGLE = Rotation2d.fromDegrees(180);
     private static final double MOMENT_OF_INERTIA = 0.003;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
+    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> 1;
     private static final SimpleMotorSimulation GRIPPING_SIMULATION = new SimpleMotorSimulation(
             GRIPPING_GEARBOX,
             GRIPPING_MOTOR_GEAR_RATIO,
@@ -126,7 +124,7 @@ public class GripperConstants {
 
     private static final double MAXIMUM_DISPLAYABLE_VELOCITY = 12;
     static final SpeedMechanism2d GRIPPING_MECHANISM = new SpeedMechanism2d(
-            "GripperMechanism",
+            "GripperGrippingMechanism",
             MAXIMUM_DISPLAYABLE_VELOCITY
     );
     static final SingleJointedArmMechanism2d ANGLE_MECHANISM = new SingleJointedArmMechanism2d(
@@ -136,9 +134,10 @@ public class GripperConstants {
     );
 
     static final Pose3d GRIPPER_VISUALIZATION_ORIGIN_POINT = new Pose3d(
-            new Translation3d(),
+            new Translation3d(0, 0, 0),
             new Rotation3d(0, 0, 0)
     );
+
 
     static {
         configureGrippingMotor();
@@ -234,6 +233,8 @@ public class GripperConstants {
         }
     }
 
+    static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
+
     public enum GripperState {
         REST(Rotation2d.fromDegrees(0), 0),
         EJECT(Rotation2d.fromDegrees(45), -3),
@@ -242,6 +243,7 @@ public class GripperConstants {
         SCORE_L1(Rotation2d.fromDegrees(45), 3),
         LOAD_CORAL(Rotation2d.fromDegrees(-56), -3),
         COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3);
+
 
         final Rotation2d targetAngle;
         final double targetGripperVoltage;

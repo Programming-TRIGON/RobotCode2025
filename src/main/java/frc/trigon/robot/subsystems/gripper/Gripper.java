@@ -65,8 +65,13 @@ public class Gripper extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
-        GripperConstants.GRIPPING_MECHANISM.update(grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
-        GripperConstants.ANGLE_MECHANISM.update(getCurrentEncoderAngle(), Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
+        GripperConstants.GRIPPING_MECHANISM.update(
+                grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)
+        );
+        GripperConstants.ANGLE_MECHANISM.update(
+                getCurrentEncoderAngle(),
+                Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
+        );
     }
 
     public boolean hasGamePiece() {
@@ -98,18 +103,13 @@ public class Gripper extends MotorSubsystem {
 
     private Pose3d calculateVisualizationPose() {
         final Pose3d originPoint = GripperConstants.GRIPPER_VISUALIZATION_ORIGIN_POINT;
-        final Pose3d elevatorPose = new Pose3d(new Translation3d(), new Rotation3d(0, 0, 0));
+        final Pose3d elevatorPose = new Pose3d(new Translation3d(0, 0, 0), new Rotation3d(0, 0, 0));
 
-
-        final Transform3d rotationTransform = new Transform3d(
-                new Translation3d(),
-                new Rotation3d(0, getCurrentEncoderAngle().getRadians(), 0)
+        final Transform3d gripperToElevatorOrigin = new Transform3d(
+                originPoint.relativeTo(elevatorPose).getTranslation(),
+                originPoint.relativeTo(elevatorPose).getRotation()
         );
-        final Transform3d offSetTransform = new Transform3d(
-                originPoint.getTranslation(),
-                originPoint.getRotation()
-        );
-        return elevatorPose.transformBy(rotationTransform).transformBy(offSetTransform);
+        return elevatorPose.transformBy(gripperToElevatorOrigin);
     }
 
     private Rotation2d getCurrentEncoderAngle() {
