@@ -76,9 +76,8 @@ public class ElevatorConstants {
             Units.Volts.of(2),
             Units.Second.of(1000)
     );
-    static final double
-            FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH_METERS = 0.6;
-    static final Pose3d FIRST_STAGE_VISUALIZATION_ORIGIN_POINT = new Pose3d(-0.120, 0, 0.1312, new Rotation3d(0, 0, 0));
+
+    public static final Pose3d FIRST_STAGE_VISUALIZATION_ORIGIN_POINT = new Pose3d(-0.120, 0, 0.1312, new Rotation3d(0, 0, 0));
     static final Pose3d SECOND_STAGE_VISUALIZATION_ORIGIN_POINT = new Pose3d(-0.120, 0, 0.1111, new Rotation3d(0, 0, 0));
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
@@ -87,6 +86,7 @@ public class ElevatorConstants {
             Color.kYellow
     );
 
+    static final double FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH_METERS = 0.6;
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
     static final double POSITION_TOLERANCE_METERS = 0.01;
 
