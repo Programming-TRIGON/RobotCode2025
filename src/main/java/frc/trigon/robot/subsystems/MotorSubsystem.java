@@ -25,7 +25,7 @@ public abstract class MotorSubsystem extends edu.wpi.first.wpilibj2.command.Subs
     public static boolean IS_BRAKING = true;
     private static final List<MotorSubsystem> REGISTERED_SUBSYSTEMS = new ArrayList<>();
     private static final Trigger DISABLED_TRIGGER = new Trigger(DriverStation::isDisabled);
-    private static final LoggedNetworkBoolean ENABLE_EXTENSIVE_LOGGING = new LoggedNetworkBoolean("/SmartDashboard/EnableExtensiveLogging", true);
+    private static final LoggedNetworkBoolean ENABLE_EXTENSIVE_LOGGING = new LoggedNetworkBoolean("EnableExtensiveLogging", true);
 
     static {
         DISABLED_TRIGGER.onTrue(new InstantCommand(() -> forEach(MotorSubsystem::stop)).ignoringDisable(true));
@@ -104,6 +104,15 @@ public abstract class MotorSubsystem extends edu.wpi.first.wpilibj2.command.Subs
     }
 
     /**
+     * Sets whether the subsystem's motors should brake or coast.
+     * If a subsystem doesn't need to ever brake (i.e. shooter, flywheel, etc.), don't implement this method.
+     *
+     * @param brake whether the motors should brake or coast
+     */
+    public void setBrake(boolean brake) {
+    }
+
+    /**
      * Drives the motor with the given voltage for characterizing.
      *
      * @param targetDrivePower the target drive power, unitless. This can be amps, volts, etc. Depending on the characterization type
@@ -119,17 +128,11 @@ public abstract class MotorSubsystem extends edu.wpi.first.wpilibj2.command.Subs
     public void updateLog(SysIdRoutineLog log) {
     }
 
-    public SysIdRoutine.Config getSysIdConfig() {
-        return null;
-    }
-
     /**
-     * Sets whether the subsystem's motors should brake or coast.
-     * If a subsystem doesn't need to ever brake (i.e. shooter, flywheel, etc.), don't implement this method.
-     *
-     * @param brake whether the motors should brake or coast
+     * Updates the mechanism of the subsystem periodically if the robot is in replay mode, or if {@linkplain MotorSubsystem#ENABLE_EXTENSIVE_LOGGING) is true.
+     * This doesn't always run in order to save resources.
      */
-    public void setBrake(boolean brake) {
+    public void updateMechanism() {
     }
 
     /**
@@ -138,11 +141,8 @@ public abstract class MotorSubsystem extends edu.wpi.first.wpilibj2.command.Subs
     public void updatePeriodically() {
     }
 
-    /**
-     * Updates the mechanism of the subsystem periodically if the robot is in replay mode, or if {@linkplain MotorSubsystem#ENABLE_EXTENSIVE_LOGGING) is true.
-     * This doesn't always run in order to save resources.
-     */
-    public void updateMechanism() {
+    public SysIdRoutine.Config getSysIdConfig() {
+        return null;
     }
 
     public void changeDefaultCommand(Command newDefaultCommand) {
