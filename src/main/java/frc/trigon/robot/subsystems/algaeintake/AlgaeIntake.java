@@ -12,6 +12,7 @@ import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
+import org.trigon.utilities.Conversions;
 
 public class AlgaeIntake extends MotorSubsystem {
     private final TalonFXMotor
@@ -46,10 +47,7 @@ public class AlgaeIntake extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
-        AlgaeIntakeConstants.INTAKE_MECHANISM.update(
-                intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE),
-                targetState.targetVoltage
-        );
+        AlgaeIntakeConstants.INTAKE_MECHANISM.update(intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
         AlgaeIntakeConstants.ANGLE_MECHANISM.update(
                 getAngleEncoderPosition(),
                 Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
@@ -80,7 +78,8 @@ public class AlgaeIntake extends MotorSubsystem {
     }
 
     public boolean atTargetAngle() {
-        return Math.abs(getAngleEncoderPosition().minus(targetState.targetAngle).getDegrees()) < AlgaeIntakeConstants.ANGLE_TOLERANCE.getDegrees();
+        final double errorDegrees = Math.abs(getAngleEncoderPosition().getDegrees() - Conversions.rotationsToDegrees(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)));
+        return errorDegrees < AlgaeIntakeConstants.ANGLE_TOLERANCE.getDegrees();
     }
 
     void setTargetState(AlgaeIntakeConstants.AlgaeIntakeState targetState) {
@@ -94,6 +93,7 @@ public class AlgaeIntake extends MotorSubsystem {
     }
 
     private void setTargetVoltage(double targetVoltage) {
+        AlgaeIntakeConstants.INTAKE_MECHANISM.setTargetVelocity(targetVoltage);
         intakeMotor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
