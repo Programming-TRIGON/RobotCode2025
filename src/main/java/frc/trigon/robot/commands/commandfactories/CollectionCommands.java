@@ -2,7 +2,6 @@ package frc.trigon.robot.commands.commandfactories;
 
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.trigon.robot.RobotContainer;
@@ -21,7 +20,6 @@ import org.trigon.hardware.misc.leds.LEDCommands;
  */
 public class CollectionCommands {
     public static boolean SHOULD_ALIGN_TO_CORAL = true;
-    public static boolean HAS_INITIATED_COLLECTION = false;
 
     public static Command getAlgaeCollectionCommand() {
         return new ParallelCommandGroup(
@@ -31,27 +29,19 @@ public class CollectionCommands {
     }
 
     public static Command getCoralCollectionCommand() {
-        return new SequentialCommandGroup(
-                getInitiateCollectionCommand(),
-                new InstantCommand(() -> HAS_INITIATED_COLLECTION = true),
-                GeneralCommands.duplicate(CommandConstants.COLLECTION_RUMBLE_COMMAND)
-        ).unless(RobotContainer.CORAL_INTAKE::hasGamePiece).alongWith(CommandConstants.COLLECTION_RUMBLE_COMMAND).onlyIf(RobotContainer.CORAL_INTAKE::hasGamePiece);
-    }
-
-    public static Command getCoralCollectionOnFalseCommand() {
-        if (!HAS_INITIATED_COLLECTION)
-            return RobotContainer.CORAL_INTAKE.getDefaultCommand();
-        return RobotContainer.CORAL_INTAKE.getCurrentCommand();
+        return getInitiateCollectionCommand()
+                .unless(RobotContainer.CORAL_INTAKE::hasGamePiece)
+                .alongWith(CommandConstants.COLLECTION_RUMBLE_COMMAND)
+                .onlyIf(RobotContainer.CORAL_INTAKE::hasGamePiece);
     }
 
     private static Command getInitiateCollectionCommand() {
         return new ParallelCommandGroup(
-                new InstantCommand(() -> HAS_INITIATED_COLLECTION = false),
                 new CoralAlignmentCommand().onlyIf(() -> SHOULD_ALIGN_TO_CORAL),
                 LEDCommands.getBlinkingCommand(Color.kAqua, CoralIntakeConstants.COLLECTION_LEDS_BLINKING_SPEED).unless(() -> SHOULD_ALIGN_TO_CORAL),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT),
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.LOAD_CORAL)
-        ).until(RobotContainer.CORAL_INTAKE::isEarlyCoralCollectionDetected);
+        ).until(RobotContainer.CORAL_INTAKE::isEarlyCoralCollectionDetected).finallyDo(() -> getRetractCoralIntakeAndFeedToGripperCommand().schedule());
     }
 
     private static Command getRetractCoralIntakeAndFeedToGripperCommand() {
