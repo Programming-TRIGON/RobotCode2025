@@ -135,10 +135,15 @@ public class GripperConstants {
             new Translation3d(-0.22, 0, 0.858),
             new Rotation3d(0, 0, 0)
     );
-    static final Transform3d ELEVATOR_TO_GRIPPER = new Transform3d(
+    static final Transform3d
+            ELEVATOR_TO_GRIPPER = new Transform3d(
             ElevatorConstants.FIRST_STAGE_VISUALIZATION_ORIGIN_POINT,
             GRIPPER_VISUALIZATION_ORIGIN_POINT
-    );
+    ),
+            GRIPPER_TO_CORAL_RELEASE = new Transform3d(
+                    new Translation3d(0.117, 0, -0.185),
+                    new Rotation3d(0, 0, 0)
+            );
     static final Rotation2d POSITION_TOLERANCE_DEGREES = Rotation2d.fromDegrees(2);
 
     static {
@@ -241,7 +246,7 @@ public class GripperConstants {
         REST(Rotation2d.fromDegrees(0), 0),
         EJECT(Rotation2d.fromDegrees(45), -3),
         SCORE_L4(Rotation2d.fromDegrees(110), 3),
-        SCORE_L3_OR_L2(Rotation2d.fromDegrees(45), 3),
+        SCORE_L3_OR_L2(Rotation2d.fromDegrees(120), 3),
         SCORE_L1(Rotation2d.fromDegrees(45), 3),
         LOAD_CORAL(Rotation2d.fromDegrees(-56), -3),
         COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3);

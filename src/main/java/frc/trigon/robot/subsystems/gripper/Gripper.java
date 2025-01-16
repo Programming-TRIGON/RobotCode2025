@@ -88,6 +88,10 @@ public class Gripper extends MotorSubsystem {
         return currentToTargetStateDifference < GripperConstants.POSITION_TOLERANCE_DEGREES.getDegrees();
     }
 
+    public Pose3d calculateCoralReleasePoint() {
+        return calculateVisualizationPose().transformBy(GripperConstants.GRIPPER_TO_CORAL_RELEASE);
+    }
+
     void setTargetState(GripperConstants.GripperState targetState) {
         this.targetState = targetState;
 

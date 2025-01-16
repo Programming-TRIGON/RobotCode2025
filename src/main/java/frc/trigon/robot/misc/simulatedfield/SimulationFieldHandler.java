@@ -7,6 +7,7 @@ import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
+import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import org.littletonrobotics.junction.Logger;
 
 import java.util.ArrayList;
@@ -122,7 +123,7 @@ public class SimulationFieldHandler {
             }
             if (isEjectingCoral()) {
                 final Pose3d robotPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
-                final Pose3d robotRelativeGripperReleasePose = new Pose3d();//TODO: Implement
+                final Pose3d robotRelativeGripperReleasePose = RobotContainer.GRIPPER.calculateCoralReleasePoint();
                 heldCoral.release(robotPose.plus(toTransform(robotRelativeGripperReleasePose)));
                 HELD_CORAL_INDEX = null;
             }
@@ -135,10 +136,13 @@ public class SimulationFieldHandler {
     }
 
     private static boolean isEjectingCoral() {
-        return RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L1) ||
-                RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L2) ||
-                RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L3) ||
-                RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L4);
+        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L1) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L1))
+            return true;
+        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L2) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L3_OR_L2))
+            return true;
+        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L3) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L3_OR_L2))
+            return true;
+        return RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L4) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L4);
     }
 
     private static boolean isIntakeEjectingCoral() {

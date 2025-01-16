@@ -159,9 +159,9 @@ public class ElevatorConstants {
         REST(0),
         COLLECT_FROM_FEEDER(0),
         SCORE_L1(0),
-        SCORE_L2(0.3),
-        SCORE_L3(0.6),
-        SCORE_L4(1.2);
+        SCORE_L2(0),
+        SCORE_L3(0.35),
+        SCORE_L4(1.1);
 
         public final double targetPositionMeters;
 
