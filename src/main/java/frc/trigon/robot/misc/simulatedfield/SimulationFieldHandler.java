@@ -1,9 +1,6 @@
 package frc.trigon.robot.misc.simulatedfield;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
@@ -91,6 +88,10 @@ public class SimulationFieldHandler {
 
         if (isCollectingCoral() && HELD_CORAL_INDEX == null)
             HELD_CORAL_INDEX = getIndexOfCollectedGamePiece(coralCollectionPose, CORAL_ON_FIELD, SimulatedGamePieceConstants.CORAL_INTAKE_TOLERANCE_METERS);
+        if (isCollectingCoralFromSource() && HELD_CORAL_INDEX == null && (new Transform2d(robotPose.toPose2d(), SimulatedGamePieceConstants.LEFT_FEEDER_POSITION).getTranslation().getNorm() < SimulatedGamePieceConstants.CORAL_FEEDER_INTAKE_TOLERANCE_METERS || new Transform2d(robotPose.toPose2d(), SimulatedGamePieceConstants.RIGHT_FEEDER_POSITION).getTranslation().getNorm() < SimulatedGamePieceConstants.CORAL_FEEDER_INTAKE_TOLERANCE_METERS)) {
+            CORAL_ON_FIELD.add(new SimulatedGamePiece(new Pose3d(), SimulatedGamePieceConstants.GamePieceType.CORAL));
+            HELD_CORAL_INDEX = CORAL_ON_FIELD.size() - 1;
+        }
         if (isCollectingAlgae() && HELD_ALGAE_INDEX == null)
             HELD_ALGAE_INDEX = getIndexOfCollectedGamePiece(algaeCollectionPose, ALGAE_ON_FIELD, SimulatedGamePieceConstants.ALGAE_INTAKE_TOLERANCE_METERS);
     }
@@ -111,6 +112,10 @@ public class SimulationFieldHandler {
 
     private static boolean isCollectingCoral() {
         return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT);
+    }
+
+    private static boolean isCollectingCoralFromSource() {
+        return RobotContainer.GRIPPER.atState(GripperConstants.GripperState.COLLECT_FROM_FEEDER) && RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.COLLECT_FROM_FEEDER);
     }
 
     private static boolean isCollectingAlgae() {

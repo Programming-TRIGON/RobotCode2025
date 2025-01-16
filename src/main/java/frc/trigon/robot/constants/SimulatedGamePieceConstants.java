@@ -1,6 +1,8 @@
 package frc.trigon.robot.constants;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.util.Units;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePiece;
@@ -12,6 +14,7 @@ public class SimulatedGamePieceConstants {
     public static final double G_FORCE = 9.806;
     public static final double
             CORAL_INTAKE_TOLERANCE_METERS = 0.3,
+            CORAL_FEEDER_INTAKE_TOLERANCE_METERS = 1,
             ALGAE_INTAKE_TOLERANCE_METERS = 0.4,
             CORAL_SCORING_TOLERANCE_METERS = 0.1,
             ALGAE_SCORING_TOLERANCE_METERS = 0.3;
@@ -93,6 +96,9 @@ public class SimulatedGamePieceConstants {
             new Pose3d(-3.504, 0.164, L4_SCORE_HEIGHT_METERS, CORAL_TO_VERTICAL_POSITION_ROTATION).relativeTo(FIELD_CENTER)
     ));
     public static final Pose3d PROCESSOR_LOCATION = new Pose3d(-2.786, -4.037, 0.431, new Rotation3d()).relativeTo(FIELD_CENTER);
+    public static final Pose2d
+            LEFT_FEEDER_POSITION = new Pose2d(FIELD_LENGTH_METERS, 0, new Rotation2d()),//TODO: AAAAAAAAA
+            RIGHT_FEEDER_POSITION = new Pose2d(FIELD_LENGTH_METERS, FIELD_WIDTH_METERS, new Rotation2d());
 
     public enum GamePieceType {
         CORAL(0.06, 0),
