@@ -1,6 +1,9 @@
 package frc.trigon.robot.misc.simulatedfield;
 
-import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.Timer;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 
@@ -9,7 +12,7 @@ public class SimulatedGamePiece {
     protected boolean isScored = false;
     private Pose3d fieldRelativePose;
     private Pose3d poseAtRelease;
-    private Translation2d velocityAtRelease = new Translation2d();
+    private Translation3d velocityAtRelease = new Translation3d();
     private double timestampAtRelease = 0;
     private boolean isTouchingGround = true;
 
@@ -24,7 +27,7 @@ public class SimulatedGamePiece {
             applyGravity();
     }
 
-    public void release(Pose3d releasePose, Translation2d fieldRelativeReleaseVelocity) {
+    public void release(Pose3d releasePose, Translation3d fieldRelativeReleaseVelocity) {
         fieldRelativePose = releasePose;
         velocityAtRelease = fieldRelativeReleaseVelocity;
         release();
@@ -63,7 +66,7 @@ public class SimulatedGamePiece {
         return new Transform3d(
                 velocityAtRelease.getX() * elapsedTime,
                 velocityAtRelease.getY() * elapsedTime,
-                -SimulatedGamePieceConstants.G_FORCE / 2 * elapsedTime * elapsedTime,
+                velocityAtRelease.getZ() * elapsedTime - SimulatedGamePieceConstants.G_FORCE / 2 * elapsedTime * elapsedTime,
                 poseAtRelease.getRotation()
         );
     }
@@ -76,7 +79,7 @@ public class SimulatedGamePiece {
     private void updateIsTouchingGround() {
         if (fieldRelativePose.getZ() < gamePieceType.originPointHeightOffGroundMeters) {
             isTouchingGround = true;
-            velocityAtRelease = new Translation2d();
+            velocityAtRelease = new Translation3d();
 
             final Translation3d fieldRelativeTranslation = new Translation3d(
                     fieldRelativePose.getTranslation().getX(),

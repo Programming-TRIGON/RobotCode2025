@@ -93,8 +93,8 @@ public class Gripper extends MotorSubsystem {
         return calculateVisualizationPose().transformBy(GripperConstants.GRIPPER_TO_CORAL_RELEASE);
     }
 
-    public Translation2d getRobotRelativeExitXYVelocity() {
-        return new Translation2d(getGrippingWheelVelocityMetersPerSecond(), 0).times(getCurrentEncoderAngle().getSin());
+    public Translation3d getRobotRelativeExitVelocity() {
+        return new Translation3d(getGrippingWheelVelocityMetersPerSecond(), GripperConstants.GRIPPER_TO_CORAL_RELEASE.getRotation().unaryMinus());
     }
 
     void setTargetState(GripperConstants.GripperState targetState) {

@@ -50,9 +50,9 @@ public class GripperConstants {
             ANGLE_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
     private static final double
             GRIPPING_MOTOR_GEAR_RATIO = 1,
-            ANGLE_MOTOR_GEAR_RATIO = 100;
+            ANGLE_MOTOR_GEAR_RATIO = 50;
     private static final double
-            ANGLE_P = RobotHardwareStats.isSimulation() ? 140 : 0,
+            ANGLE_P = RobotHardwareStats.isSimulation() ? 100 : 0,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_D = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_KS = RobotHardwareStats.isSimulation() ? 0 : 0,
@@ -141,10 +141,10 @@ public class GripperConstants {
             GRIPPER_VISUALIZATION_ORIGIN_POINT
     ),
             GRIPPER_TO_CORAL_RELEASE = new Transform3d(
-                    new Translation3d(0.117, 0, -0.185),
-                    new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(35), 0)
+                    new Translation3d(0.13, 0, -0.195),
+                    new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(30), 0)
             );
-    static final Rotation2d POSITION_TOLERANCE_DEGREES = Rotation2d.fromDegrees(2);
+    static final Rotation2d POSITION_TOLERANCE_DEGREES = Rotation2d.fromDegrees(1);
     static final double WHEEL_DIAMETER_METERS = edu.wpi.first.math.util.Units.inchesToMeters(2.25);
 
     static {
@@ -247,7 +247,7 @@ public class GripperConstants {
     public enum GripperState {
         REST(Rotation2d.fromDegrees(0), 0),
         EJECT(Rotation2d.fromDegrees(45), -3),
-        SCORE_L4(Rotation2d.fromDegrees(110), 3),
+        SCORE_L4(Rotation2d.fromDegrees(90), 3),
         SCORE_L3_OR_L2(Rotation2d.fromDegrees(120), 3),
         SCORE_L1(Rotation2d.fromDegrees(45), 3),
         LOAD_CORAL(Rotation2d.fromDegrees(-56), -3),
