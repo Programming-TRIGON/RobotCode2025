@@ -52,7 +52,7 @@ public class GripperConstants {
             GRIPPING_MOTOR_GEAR_RATIO = 1,
             ANGLE_MOTOR_GEAR_RATIO = 100;
     private static final double
-            ANGLE_P = RobotHardwareStats.isSimulation() ? 50 : 0,
+            ANGLE_P = RobotHardwareStats.isSimulation() ? 140 : 0,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_D = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_KS = RobotHardwareStats.isSimulation() ? 0 : 0,
@@ -240,7 +240,7 @@ public class GripperConstants {
     public enum GripperState {
         REST(Rotation2d.fromDegrees(0), 0),
         EJECT(Rotation2d.fromDegrees(45), -3),
-        SCORE_L4(Rotation2d.fromDegrees(180), 3),
+        SCORE_L4(Rotation2d.fromDegrees(110), 3),
         SCORE_L3_OR_L2(Rotation2d.fromDegrees(45), 3),
         SCORE_L1(Rotation2d.fromDegrees(45), 3),
         LOAD_CORAL(Rotation2d.fromDegrees(-56), -3),
