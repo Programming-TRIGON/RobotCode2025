@@ -41,26 +41,13 @@ public class CollectionCommands {
                 LEDCommands.getBlinkingCommand(Color.kAqua, CoralIntakeConstants.COLLECTION_LEDS_BLINKING_SPEED).unless(() -> SHOULD_ALIGN_TO_CORAL),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT),
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.LOAD_CORAL)
-        ).until(() -> RobotContainer.CORAL_INTAKE.hasGamePiece() && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.LOAD_CORAL));
+        ).until(RobotContainer.CORAL_INTAKE::isEarlyCoralCollectionDetected);
     }
 
     private static Command getRetractCoralIntakeAndFeedToGripperCommand() {
         return new SequentialCommandGroup(
-                getRetractCoralIntakeCommand(),
-                getFeedCoralToGripperCommand()
-        );
-    }
-
-    private static Command getRetractCoralIntakeCommand() {
-        return GeneralCommands.runWhen(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.RETRACT).until(() -> RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.RETRACT)),
-                RobotContainer.CORAL_INTAKE::isEarlyCoralCollectionDetected
-        );
-    }
-
-    private static Command getFeedCoralToGripperCommand() {
-        return new SequentialCommandGroup(
-                CoralIntakeCommands.getStopCommand().onlyIf(() -> RobotContainer.CORAL_INTAKE.hasGamePiece() && RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.RETRACT)),
+                CoralIntakeCommands.getStopCommand().onlyIf(RobotContainer.CORAL_INTAKE::hasGamePiece),
                 GeneralCommands.runWhen(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.FEED), RobotContainer.CORAL_INTAKE::atTargetAngle),
                 GeneralCommands.runWhen(CoralIntakeCommands.getStopCommand(), RobotContainer.GRIPPER::hasGamePiece)
         );

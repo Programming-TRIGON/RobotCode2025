@@ -1,7 +1,6 @@
 package frc.trigon.robot.subsystems.coralintake;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
 import org.trigon.commands.NetworkTablesCommand;
@@ -25,9 +24,6 @@ public class CoralIntakeCommands {
     }
 
     public static Command getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState targetState) {
-        if (targetState == CoralIntakeConstants.CoralIntakeState.COLLECT)
-            return getCollectionCommand();
-
         return new StartEndCommand(
                 () -> RobotContainer.CORAL_INTAKE.setTargetState(targetState),
                 RobotContainer.CORAL_INTAKE::stop,
@@ -48,17 +44,6 @@ public class CoralIntakeCommands {
                 RobotContainer.CORAL_INTAKE::stop,
                 () -> {
                 },
-                RobotContainer.CORAL_INTAKE
-        );
-    }
-
-    private static Command getCollectionCommand() {
-        return new FunctionalCommand(
-                () -> RobotContainer.CORAL_INTAKE.setTargetState(CoralIntakeConstants.CoralIntakeState.COLLECT),
-                () -> {
-                },
-                (interrupted) -> RobotContainer.CORAL_INTAKE.stop(),
-                RobotContainer.CORAL_INTAKE::hasGamePiece,
                 RobotContainer.CORAL_INTAKE
         );
     }
