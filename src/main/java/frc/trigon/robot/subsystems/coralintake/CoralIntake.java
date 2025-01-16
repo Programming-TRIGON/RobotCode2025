@@ -75,16 +75,15 @@ public class CoralIntake extends MotorSubsystem {
 
     @Override
     public void stop() {
-        intakeMotor.stopMotor();
-        funnelMotor.stopMotor();
+        stopCollectionMotors();
         elevatorMotor.stopMotor();
     }
 
     public boolean atState(CoralIntakeConstants.CoralIntakeState targetState) {
-        return targetState == this.targetState && atTargetAngle();
+        return targetState == this.targetState && atTargetPosition();
     }
 
-    public boolean atTargetAngle() {
+    public boolean atTargetPosition() {
         final double elevatorDifferenceFromTargetStateRotations = Math.abs(getCurrentElevatorPositionRotations() - targetState.targetPositionRotations);
         return elevatorDifferenceFromTargetStateRotations < CoralIntakeConstants.POSITION_TOLERANCE_ROTATIONS;
     }
@@ -102,6 +101,11 @@ public class CoralIntake extends MotorSubsystem {
      */
     public boolean isEarlyCoralCollectionDetected() {
         return CoralIntakeConstants.EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean();
+    }
+
+    void stopCollectionMotors() {
+        intakeMotor.stopMotor();
+        funnelMotor.stopMotor();
     }
 
     void setTargetState(CoralIntakeConstants.CoralIntakeState targetState) {

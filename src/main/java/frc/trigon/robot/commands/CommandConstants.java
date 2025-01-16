@@ -62,7 +62,7 @@ public class CommandConstants {
                     RobotContainer.SWERVE::runWheelRadiusCharacterization,
                     RobotContainer.SWERVE
             ),
-            COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(AlgaeIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, AlgaeIntakeConstants.COLLECTION_RUMBLE_POWER)),
+            COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(AlgaeIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, AlgaeIntakeConstants.COLLECTION_RUMBLE_POWER)).onlyIf(RobotContainer.CORAL_INTAKE::hasGamePiece),
             ENABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = true),
             DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = false),
             ALGAE_EJECTION_COMMAND = AlgaeIntakeCommands.getSetTargetStateCommand(AlgaeIntakeConstants.AlgaeIntakeState.EJECT);

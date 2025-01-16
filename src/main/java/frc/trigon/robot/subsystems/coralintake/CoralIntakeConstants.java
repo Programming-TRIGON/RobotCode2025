@@ -269,7 +269,7 @@ public class CoralIntakeConstants {
 
     public enum CoralIntakeState {
         COLLECT(12, 12, 0.1),
-        FEED(-12, -12, 0),
+        LOAD(-12, -12, 0),
         EJECT(-12, -12, 0.1),
         RETRACT(0, 0, 0),
         REST(0, 0, 0);
