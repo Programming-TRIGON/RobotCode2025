@@ -22,9 +22,9 @@ import org.trigon.utilities.mechanisms.SpeedMechanism2d;
 
 public class AlgaeIntakeConstants {
     private static final int
-            INTAKE_MOTOR_ID = 16,
-            ANGLE_MOTOR_ID = 17,
-            ANGLE_ENCODER_ID = 17;
+            INTAKE_MOTOR_ID = 15,
+            ANGLE_MOTOR_ID = 16,
+            ANGLE_ENCODER_ID = 16;
     private static final String
             INTAKE_MOTOR_NAME = "AlgaeIntakeMotor",
             ANGLE_MOTOR_NAME = "AlgaeIntakeAngleMotor",
@@ -156,10 +156,11 @@ public class AlgaeIntakeConstants {
         config.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
 
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_SWITCH_TYPE_VALUE;
-        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_SWITCH_TYPE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
+
+        config.HardwareLimitSwitch.ReverseLimitEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_SWITCH_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
 
         ANGLE_MOTOR.applyConfiguration(config);
