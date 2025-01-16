@@ -249,7 +249,7 @@ public class GripperConstants {
         EJECT(Rotation2d.fromDegrees(45), -3),
         SCORE_L4(Rotation2d.fromDegrees(100), 3),
         SCORE_L3_OR_L2(Rotation2d.fromDegrees(120), 3),
-        SCORE_L1(Rotation2d.fromDegrees(30), 3),
+        SCORE_L1(Rotation2d.fromDegrees(80), 3),
         LOAD_CORAL(Rotation2d.fromDegrees(-56), -3),
         COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3);
 
