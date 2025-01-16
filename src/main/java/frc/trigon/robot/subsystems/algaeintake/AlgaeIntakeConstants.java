@@ -22,9 +22,9 @@ import org.trigon.utilities.mechanisms.SpeedMechanism2d;
 
 public class AlgaeIntakeConstants {
     private static final int
-            INTAKE_MOTOR_ID = 16,
-            ANGLE_MOTOR_ID = 17,
-            ANGLE_ENCODER_ID = 17;
+            INTAKE_MOTOR_ID = 15,
+            ANGLE_MOTOR_ID = 16,
+            ANGLE_ENCODER_ID = 16;
     private static final String
             INTAKE_MOTOR_NAME = "AlgaeIntakeMotor",
             ANGLE_MOTOR_NAME = "AlgaeIntakeAngleMotor",
