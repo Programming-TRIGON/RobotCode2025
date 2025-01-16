@@ -44,7 +44,7 @@ public class SimulatedGamePieceConstants {
     private static final double
             L2_SCORE_HEIGHT_METERS = 0.70,
             L3_SCORE_HEIGHT_METERS = 1.1,
-            L4_SCORE_HEIGHT_METERS = 1.75;
+            L4_SCORE_HEIGHT_METERS = 1.78;
     private static final Rotation3d
             CORAL_2_OCLOCK_ROTATION = new Rotation3d(0, 0, Math.PI / 3 * 2),
             CORAL_4_OCLOCK_ROTATION = new Rotation3d(0, 0, Math.PI / 3),

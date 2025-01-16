@@ -127,7 +127,7 @@ public class SimulationFieldHandler {
             if (isEjectingCoral()) {
                 final Pose3d robotPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
                 final Pose3d robotRelativeGripperReleasePose = RobotContainer.GRIPPER.calculateCoralReleasePoint();
-                final Translation3d robotRelativeReleaseVelocity = RobotContainer.GRIPPER.getRobotRelativeExitVelocity().unaryMinus();
+                final Translation3d robotRelativeReleaseVelocity = RobotContainer.GRIPPER.getRobotRelativeExitVelocity();
                 final ChassisSpeeds robotSpeeds = RobotContainer.SWERVE.getSelfRelativeVelocity();
                 final Translation3d robotVelocity = new Translation3d(robotSpeeds.vxMetersPerSecond, robotSpeeds.vyMetersPerSecond, 0);
                 heldCoral.release(robotPose.plus(toTransform(robotRelativeGripperReleasePose)), robotVelocity.plus(robotRelativeReleaseVelocity).rotateBy(new Rotation3d(RobotContainer.SWERVE.getHeading())));
