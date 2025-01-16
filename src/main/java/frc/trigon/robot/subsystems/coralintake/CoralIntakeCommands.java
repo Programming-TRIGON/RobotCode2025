@@ -27,7 +27,7 @@ public class CoralIntakeCommands {
     public static Command getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState targetState) {
         if (targetState == CoralIntakeConstants.CoralIntakeState.COLLECT)
             return getCollectionCommand();
-        
+
         return new StartEndCommand(
                 () -> RobotContainer.CORAL_INTAKE.setTargetState(targetState),
                 RobotContainer.CORAL_INTAKE::stop,
