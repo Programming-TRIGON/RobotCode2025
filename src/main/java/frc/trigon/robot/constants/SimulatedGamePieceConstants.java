@@ -13,7 +13,7 @@ public class SimulatedGamePieceConstants {
     public static final double
             CORAL_INTAKE_TOLERANCE_METERS = 0.3,
             ALGAE_INTAKE_TOLERANCE_METERS = 0.4,
-            CORAL_SCORING_TOLERANCE_METERS = 0.15,
+            CORAL_SCORING_TOLERANCE_METERS = 0.1,
             ALGAE_SCORING_TOLERANCE_METERS = 0.3;
 
     private static final double

@@ -142,9 +142,10 @@ public class GripperConstants {
     ),
             GRIPPER_TO_CORAL_RELEASE = new Transform3d(
                     new Translation3d(0.117, 0, -0.185),
-                    new Rotation3d(0, 0, 0)
+                    new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(35), 0)
             );
     static final Rotation2d POSITION_TOLERANCE_DEGREES = Rotation2d.fromDegrees(2);
+    static final double WHEEL_DIAMETER_METERS = edu.wpi.first.math.util.Units.inchesToMeters(2.25);
 
     static {
         configureGrippingMotor();
@@ -168,6 +169,7 @@ public class GripperConstants {
 
         GRIPPING_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
         GRIPPING_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
+        GRIPPING_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
     }
 
     private static void configureAngleMotor() {

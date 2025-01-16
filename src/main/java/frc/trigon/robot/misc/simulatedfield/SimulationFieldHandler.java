@@ -2,6 +2,8 @@ package frc.trigon.robot.misc.simulatedfield;
 
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeConstants;
@@ -124,7 +126,10 @@ public class SimulationFieldHandler {
             if (isEjectingCoral()) {
                 final Pose3d robotPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
                 final Pose3d robotRelativeGripperReleasePose = RobotContainer.GRIPPER.calculateCoralReleasePoint();
-                heldCoral.release(robotPose.plus(toTransform(robotRelativeGripperReleasePose)));
+                final Translation2d robotRelativeReleaseXYVelocity = RobotContainer.GRIPPER.getRobotRelativeExitXYVelocity();
+                final ChassisSpeeds robotXYSpeeds = RobotContainer.SWERVE.getSelfRelativeVelocity();
+                final Translation2d robotXYVelocity = new Translation2d(robotXYSpeeds.vxMetersPerSecond, robotXYSpeeds.vyMetersPerSecond);
+                heldCoral.release(robotPose.plus(toTransform(robotRelativeGripperReleasePose)), robotXYVelocity.plus(robotRelativeReleaseXYVelocity).rotateBy(RobotContainer.SWERVE.getHeading()));
                 HELD_CORAL_INDEX = null;
             }
         }

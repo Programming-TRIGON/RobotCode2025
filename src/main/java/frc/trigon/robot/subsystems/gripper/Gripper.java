@@ -14,6 +14,7 @@ import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
+import org.trigon.utilities.Conversions;
 
 public class Gripper extends MotorSubsystem {
     private final TalonFXMotor grippingMotor = GripperConstants.GRIPPING_MOTOR;
@@ -92,6 +93,10 @@ public class Gripper extends MotorSubsystem {
         return calculateVisualizationPose().transformBy(GripperConstants.GRIPPER_TO_CORAL_RELEASE);
     }
 
+    public Translation2d getRobotRelativeExitXYVelocity() {
+        return new Translation2d(getGrippingWheelVelocityMetersPerSecond(), 0).times(getCurrentEncoderAngle().getCos());
+    }
+
     void setTargetState(GripperConstants.GripperState targetState) {
         this.targetState = targetState;
 
@@ -129,5 +134,9 @@ public class Gripper extends MotorSubsystem {
 
     private Rotation2d getCurrentEncoderAngle() {
         return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
+    }
+
+    private double getGrippingWheelVelocityMetersPerSecond() {
+        return Conversions.rotationsToDistance(grippingMotor.getSignal(TalonFXSignal.VELOCITY), GripperConstants.WHEEL_DIAMETER_METERS);
     }
 }
