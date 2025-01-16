@@ -23,12 +23,12 @@ import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntake;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
-import frc.trigon.robot.subsystems.gripper.Gripper;
-import frc.trigon.robot.subsystems.gripper.GripperCommands;
-import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.elevator.Elevator;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
+import frc.trigon.robot.subsystems.gripper.Gripper;
+import frc.trigon.robot.subsystems.gripper.GripperCommands;
+import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.Swerve;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
@@ -88,7 +88,9 @@ public class RobotContainer {
 
         OperatorConstants.ENABLE_CORAL_ALIGNMENT_COMMAND.onTrue(CommandConstants.ENABLE_CORAL_ALIGNMENT_COMMAND);
         OperatorConstants.DISABLE_CORAL_ALIGNMENT_COMMAND.onTrue(CommandConstants.DISABLE_CORAL_ALIGNMENT_COMMAND);
-        OperatorConstants.CORAL_COLLECTION_TRIGGER.whileTrue(CollectionCommands.getCoralCollectionCommand());
+        OperatorConstants.CORAL_COLLECTION_TRIGGER.onTrue(CollectionCommands.getCoralCollectionCommand());
+        OperatorConstants.CORAL_COLLECTION_TRIGGER.onFalse(CollectionCommands.getCoralCollectionOnFalseCommand());
+
         OperatorConstants.ALGAE_COLLECTION_TRIGGER.whileTrue(CollectionCommands.getAlgaeCollectionCommand());
         OperatorConstants.ALGAE_EJECTION_TRIGGER.whileTrue(CommandConstants.ALGAE_EJECTION_COMMAND);
     }
