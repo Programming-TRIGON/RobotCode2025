@@ -94,7 +94,7 @@ public class Gripper extends MotorSubsystem {
     }
 
     public Translation2d getRobotRelativeExitXYVelocity() {
-        return new Translation2d(getGrippingWheelVelocityMetersPerSecond(), 0).times(getCurrentEncoderAngle().getCos());
+        return new Translation2d(getGrippingWheelVelocityMetersPerSecond(), 0).times(getCurrentEncoderAngle().getSin());
     }
 
     void setTargetState(GripperConstants.GripperState targetState) {
