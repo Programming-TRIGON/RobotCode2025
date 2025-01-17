@@ -12,33 +12,49 @@ import frc.trigon.robot.subsystems.gripper.GripperConstants;
 public class PlacementCommands {
     private static boolean SHOULD_ALIGN_TO_REEF = true;
 
-    public static Command getCoralScoreL1(int reefSideInAnalogClock) {
+    public static Command placeCoral(ElevatorConstants.ElevatorState targetReefLevel, int reefSideInAnalogClock) {
         return new SequentialCommandGroup(
-                getTargetReefLevelPlacement(ElevatorConstants.ElevatorState.SCORE_L1, GripperConstants.GripperState.SCORE_L1, reefSideInAnalogClock)
+                ReefAlignmentCommand.alignToReef(reefSideInAnalogClock),
+                getCoralLevel(targetReefLevel)
         );
     }
 
-    public static Command getCoralScoreL2(int reefSideInAnalogClock) {
+    private static Command getCoralLevel(ElevatorConstants.ElevatorState targetReefLevel) {
+        return switch (targetReefLevel) {
+            case SCORE_L1 -> getCoralScoreL1();
+            case SCORE_L2 -> getCoralScoreL2();
+            case SCORE_L3 -> getCoralScoreL3();
+            case SCORE_L4 -> getCoralScoreL4();
+            default -> null;
+        };
+    }
+
+    private static Command getCoralScoreL1() {
         return new SequentialCommandGroup(
-                getTargetReefLevelPlacement(ElevatorConstants.ElevatorState.SCORE_L2, GripperConstants.GripperState.SCORE_L3_OR_L2, reefSideInAnalogClock)
+                getTargetReefLevelPlacement(ElevatorConstants.ElevatorState.SCORE_L1, GripperConstants.GripperState.SCORE_L1)
         );
     }
 
-    public static Command getCoralScoreL3(int reefSideInAnalogClock) {
+    private static Command getCoralScoreL2() {
         return new SequentialCommandGroup(
-                getTargetReefLevelPlacement(ElevatorConstants.ElevatorState.SCORE_L3, GripperConstants.GripperState.SCORE_L3_OR_L2, reefSideInAnalogClock)
+                getTargetReefLevelPlacement(ElevatorConstants.ElevatorState.SCORE_L2, GripperConstants.GripperState.SCORE_L3_OR_L2)
         );
     }
 
-    public static Command getCoralScoreL4(int reefSideInAnalogClock) {
+    private static Command getCoralScoreL3() {
         return new SequentialCommandGroup(
-                getTargetReefLevelPlacement(ElevatorConstants.ElevatorState.SCORE_L4, GripperConstants.GripperState.SCORE_L4, reefSideInAnalogClock)
+                getTargetReefLevelPlacement(ElevatorConstants.ElevatorState.SCORE_L3, GripperConstants.GripperState.SCORE_L3_OR_L2)
         );
     }
 
-    private static Command getTargetReefLevelPlacement(ElevatorConstants.ElevatorState targetCoralLevel, GripperConstants.GripperState targetCoralLevelGripperState, int reefSideInAnalogClock) {
+    private static Command getCoralScoreL4() {
         return new SequentialCommandGroup(
-                ReefAlignmentCommand.alignToReef(reefSideInAnalogClock).onlyIf(() -> SHOULD_ALIGN_TO_REEF),
+                getTargetReefLevelPlacement(ElevatorConstants.ElevatorState.SCORE_L4, GripperConstants.GripperState.SCORE_L4)
+        );
+    }
+
+    private static Command getTargetReefLevelPlacement(ElevatorConstants.ElevatorState targetCoralLevel, GripperConstants.GripperState targetCoralLevelGripperState) {
+        return new SequentialCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(targetCoralLevel).until(RobotContainer.ELEVATOR::atTargetState),
                 GripperCommands.getSetTargetStateCommand(targetCoralLevelGripperState).until(() -> RobotContainer.GRIPPER.atState(targetCoralLevelGripperState)),
                 GeneralCommands.runWhen(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST), () -> !RobotContainer.GRIPPER.hasGamePiece()),
