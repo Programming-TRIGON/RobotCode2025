@@ -28,20 +28,33 @@ public class FieldConstants {
         }
     }
 
-    private static final Transform2d REEF_SIDE_6_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(0)));
-    private static final Transform2d REEF_SIDE_8_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(60)));
-    private static final Transform2d REEF_SIDE_10_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(120)));
-    private static final Transform2d REEF_SIDE_12_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(180)));
-    private static final Transform2d REEF_SIDE_2_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(240)));
-    private static final Transform2d REEF_SIDE_4_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(360)));
+    private static final Transform2d REEF_RIGHT_SIDE_6_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(0 + 5)));
+    private static final Transform2d REEF_RIGHT_SIDE_8_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(60 + 5)));
+    private static final Transform2d REEF_RIGHT_SIDE_10_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(120 + 5)));
+    private static final Transform2d REEF_RIGHT_SIDE_12_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(180 + 5)));
+    private static final Transform2d REEF_RIGHT_SIDE_2_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(240 + 5)));
+    private static final Transform2d REEF_RIGHT_SIDE_4_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(360 + 5)));
+    private static final Transform2d REEF_LEFT_SIDE_6_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(0 - 5)));
+    private static final Transform2d REEF_LEFT_SIDE_8_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(60 - 5)));
+    private static final Transform2d REEF_LEFT_SIDE_10_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(120 - 5)));
+    private static final Transform2d REEF_LEFT_SIDE_12_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(180 - 5)));
+    private static final Transform2d REEF_LEFT_SIDE_2_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(240 - 5)));
+    private static final Transform2d REEF_LEFT_SIDE_4_OCLOCK = new Transform2d(new Translation2d(0.3556, new Rotation2d()), new Rotation2d(Units.degreesToRadians(360 - 5)));
+
 
     private static final FlippablePose2d REEF_POSE = new FlippablePose2d(new Pose2d(4.48945, FlippingUtil.fieldSizeY / 2, new Rotation2d()), true);
-    public static final FlippablePose2d REEF_6_OCLOCK_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_SIDE_6_OCLOCK), true);
-    public static final FlippablePose2d REEF_8_OCLOCK_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_SIDE_8_OCLOCK), true);
-    public static final FlippablePose2d REEF_10_OCLOCK_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_SIDE_10_OCLOCK), true);
-    public static final FlippablePose2d REEF_12_OCLOCK_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_SIDE_12_OCLOCK), true);
-    public static final FlippablePose2d REEF_2_OCLOCK_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_SIDE_2_OCLOCK), true);
-    public static final FlippablePose2d REEF_4_OCLOCK_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_SIDE_4_OCLOCK), true);
+    public static final FlippablePose2d REEF_6_OCLOCK_RIGHT_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_RIGHT_SIDE_6_OCLOCK), true);
+    public static final FlippablePose2d REEF_8_OCLOCK_RIGHT_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_RIGHT_SIDE_8_OCLOCK), true);
+    public static final FlippablePose2d REEF_10_OCLOCK_RIGHT_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_RIGHT_SIDE_10_OCLOCK), true);
+    public static final FlippablePose2d REEF_12_OCLOCK_RIGHT_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_RIGHT_SIDE_12_OCLOCK), true);
+    public static final FlippablePose2d REEF_2_OCLOCK_RIGHT_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_RIGHT_SIDE_2_OCLOCK), true);
+    public static final FlippablePose2d REEF_4_OCLOCK_RIGHT_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_RIGHT_SIDE_4_OCLOCK), true);
+    public static final FlippablePose2d REEF_6_OCLOCK_LEFT_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_LEFT_SIDE_6_OCLOCK), true);
+    public static final FlippablePose2d REEF_8_OCLOCK_LEFT_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_LEFT_SIDE_8_OCLOCK), true);
+    public static final FlippablePose2d REEF_10_OCLOCK_LEFT_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_LEFT_SIDE_10_OCLOCK), true);
+    public static final FlippablePose2d REEF_12_OCLOCK_LEFT_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_LEFT_SIDE_12_OCLOCK), true);
+    public static final FlippablePose2d REEF_2_OCLOCK_LEFT_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_LEFT_SIDE_2_OCLOCK), true);
+    public static final FlippablePose2d REEF_4_OCLOCK_LEFT_POSE = new FlippablePose2d(REEF_POSE.get().transformBy(REEF_LEFT_SIDE_4_OCLOCK), true);
 
 
     private static HashMap<Integer, Pose3d> fieldLayoutToTagIdToPoseMap() {
@@ -49,5 +62,16 @@ public class FieldConstants {
         for (AprilTag aprilTag : APRIL_TAG_FIELD_LAYOUT.getTags())
             tagIdToPose.put(aprilTag.ID, aprilTag.pose.transformBy(TAG_OFFSET));
         return tagIdToPose;
+    }
+
+    public enum ReefDirection {
+        RIGHT(true),
+        LEFT(false);
+
+        public final boolean leftOrRight;
+
+        ReefDirection(boolean leftOrRight) {
+            this.leftOrRight = leftOrRight;
+        }
     }
 }

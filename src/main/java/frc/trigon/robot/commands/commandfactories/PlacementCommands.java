@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.ReefAlignmentCommand;
+import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
@@ -12,9 +13,9 @@ import frc.trigon.robot.subsystems.gripper.GripperConstants;
 public class PlacementCommands {
     private static boolean SHOULD_ALIGN_TO_REEF = true;
 
-    public static Command placeCoral(ElevatorConstants.ElevatorState targetReefLevel, int reefSideInAnalogClock) {
+    public static Command placeCoral(ElevatorConstants.ElevatorState targetReefLevel, int reefSideInAnalogClock, FieldConstants.ReefDirection targetReefDirection) {
         return new SequentialCommandGroup(
-                ReefAlignmentCommand.alignToReef(reefSideInAnalogClock).onlyIf(() -> SHOULD_ALIGN_TO_REEF),
+                ReefAlignmentCommand.alignToReef(reefSideInAnalogClock, targetReefDirection).onlyIf(() -> SHOULD_ALIGN_TO_REEF),
                 getCoralLevel(targetReefLevel)
         );
     }
