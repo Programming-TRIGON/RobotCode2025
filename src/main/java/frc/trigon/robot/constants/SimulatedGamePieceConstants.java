@@ -1,9 +1,6 @@
 package frc.trigon.robot.constants;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePiece;
 
@@ -55,6 +52,75 @@ public class SimulatedGamePieceConstants {
             CORAL_10_OCLOCK_ROTATION = new Rotation3d(0, 0, -Math.PI / 3 * 2),
             CORAL_12_OCLOCK_ROTATION = new Rotation3d(0, 0, Math.PI);
     private static final Pose3d FIELD_CENTER = new Pose3d(-FIELD_LENGTH_METERS / 2, -FIELD_WIDTH_METERS / 2, 0, new Rotation3d()).rotateBy(new Rotation3d(0, 0, Math.PI));
+
+    private static final Translation3d
+            REEF_CENTER_TO_L1_VECTOR = new Translation3d(0.652, 0.1643, 0.46),
+            REEF_CENTER_TO_L2_VECTOR = new Translation3d(0.652, 0.1643, 0.6983),
+            REEF_CENTER_TO_L3_VECTOR = new Translation3d(0.652, 0.1643, 1.1101),
+            REEF_CENTER_TO_L4_VECTOR = new Translation3d(0.7796, 0.1643, 1.7345);
+    private static final Rotation3d
+            REEF_TO_2_OCLOCK_RIGHT_ROTATION = new Rotation3d(0, 0, 0),
+            REEF_TO_2_OCLOCK_LEFT_ROTATION = new Rotation3d(0, 0, Math.PI / 6),
+            REEF_TO_4_OCLOCK_RIGHT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 2),
+            REEF_TO_4_OCLOCK_LEFT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 3),
+            REEF_TO_6_OCLOCK_RIGHT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 4),
+            REEF_TO_6_OCLOCK_LEFT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 5),
+            REEF_TO_8_OCLOCK_RIGHT_ROTATION = new Rotation3d(0, 0, Math.PI),
+            REEF_TO_8_OCLOCK_LEFT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 7),
+            REEF_TO_10_OCLOCK_RIGHT_ROTATION = new Rotation3d(0, 0, Math.PI * 8),
+            REEF_TO_10_OCLOCK_LEFT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 9),
+            REEF_TO_12_OCLOCK_RIGHT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 10),
+            REEF_TO_12_OCLOCK_LEFT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 11);
+    public static final ArrayList<Pose3d> P = new ArrayList<>(List.of(
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_2_OCLOCK_RIGHT_ROTATION), REEF_TO_2_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_2_OCLOCK_LEFT_ROTATION), REEF_TO_2_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_4_OCLOCK_RIGHT_ROTATION), REEF_TO_4_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_4_OCLOCK_LEFT_ROTATION), REEF_TO_4_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_6_OCLOCK_RIGHT_ROTATION), REEF_TO_6_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_6_OCLOCK_LEFT_ROTATION), REEF_TO_6_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_8_OCLOCK_RIGHT_ROTATION), REEF_TO_8_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_8_OCLOCK_LEFT_ROTATION), REEF_TO_8_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_10_OCLOCK_RIGHT_ROTATION), REEF_TO_10_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_10_OCLOCK_LEFT_ROTATION), REEF_TO_10_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_12_OCLOCK_RIGHT_ROTATION), REEF_TO_12_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_12_OCLOCK_LEFT_ROTATION), REEF_TO_12_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_2_OCLOCK_RIGHT_ROTATION), REEF_TO_2_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_2_OCLOCK_LEFT_ROTATION), REEF_TO_2_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_4_OCLOCK_RIGHT_ROTATION), REEF_TO_4_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_4_OCLOCK_LEFT_ROTATION), REEF_TO_4_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_6_OCLOCK_RIGHT_ROTATION), REEF_TO_6_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_6_OCLOCK_LEFT_ROTATION), REEF_TO_6_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_8_OCLOCK_RIGHT_ROTATION), REEF_TO_8_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_8_OCLOCK_LEFT_ROTATION), REEF_TO_8_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_10_OCLOCK_RIGHT_ROTATION), REEF_TO_10_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_10_OCLOCK_LEFT_ROTATION), REEF_TO_10_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_12_OCLOCK_RIGHT_ROTATION), REEF_TO_12_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_12_OCLOCK_LEFT_ROTATION), REEF_TO_12_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_2_OCLOCK_RIGHT_ROTATION), REEF_TO_2_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_2_OCLOCK_LEFT_ROTATION), REEF_TO_2_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_4_OCLOCK_RIGHT_ROTATION), REEF_TO_4_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_4_OCLOCK_LEFT_ROTATION), REEF_TO_4_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_6_OCLOCK_RIGHT_ROTATION), REEF_TO_6_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_6_OCLOCK_LEFT_ROTATION), REEF_TO_6_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_8_OCLOCK_RIGHT_ROTATION), REEF_TO_8_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_8_OCLOCK_LEFT_ROTATION), REEF_TO_8_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_10_OCLOCK_RIGHT_ROTATION), REEF_TO_10_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_10_OCLOCK_LEFT_ROTATION), REEF_TO_10_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_12_OCLOCK_RIGHT_ROTATION), REEF_TO_12_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_12_OCLOCK_LEFT_ROTATION), REEF_TO_12_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_2_OCLOCK_RIGHT_ROTATION), REEF_TO_2_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_2_OCLOCK_LEFT_ROTATION), REEF_TO_2_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_4_OCLOCK_RIGHT_ROTATION), REEF_TO_4_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_4_OCLOCK_LEFT_ROTATION), REEF_TO_4_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_6_OCLOCK_RIGHT_ROTATION), REEF_TO_6_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_6_OCLOCK_LEFT_ROTATION), REEF_TO_6_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_8_OCLOCK_RIGHT_ROTATION), REEF_TO_8_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_8_OCLOCK_LEFT_ROTATION), REEF_TO_8_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_10_OCLOCK_RIGHT_ROTATION), REEF_TO_10_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_10_OCLOCK_LEFT_ROTATION), REEF_TO_10_OCLOCK_LEFT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_12_OCLOCK_RIGHT_ROTATION), REEF_TO_12_OCLOCK_RIGHT_ROTATION)),
+            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_12_OCLOCK_LEFT_ROTATION), REEF_TO_12_OCLOCK_LEFT_ROTATION))
+    ));
 
     public static final ArrayList<Pose3d>
             CORAL_SCORING_LOCATIONS = new ArrayList<>(List.of(

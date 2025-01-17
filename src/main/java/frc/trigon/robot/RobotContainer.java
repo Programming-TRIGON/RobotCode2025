@@ -6,6 +6,7 @@
 package frc.trigon.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -14,6 +15,7 @@ import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
+import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import frc.trigon.robot.poseestimation.poseestimator.PoseEstimator;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import frc.trigon.robot.subsystems.algaeintake.AlgaeIntake;
@@ -29,8 +31,11 @@ import frc.trigon.robot.subsystems.gripper.Gripper;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.Swerve;
+import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
+
+import java.util.ArrayList;
 
 public class RobotContainer {
     public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator();
@@ -92,6 +97,15 @@ public class RobotContainer {
         OperatorConstants.OPERATOR_CONTROLLER.x().whileTrue(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L3).alongWith(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L3_OR_L2)));
         OperatorConstants.OPERATOR_CONTROLLER.c().whileTrue(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L2).alongWith(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L3_OR_L2)));
         OperatorConstants.OPERATOR_CONTROLLER.v().whileTrue(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L1).alongWith(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L1)));
+
+        Logger.recordOutput("LOL", mapSimulatedGamePieceListToPoseArray(SimulatedGamePieceConstants.P));
+    }
+
+    private static Pose3d[] mapSimulatedGamePieceListToPoseArray(ArrayList<Pose3d> gamePieces) {
+        final Pose3d[] poses = new Pose3d[gamePieces.size()];
+        for (int i = 0; i < poses.length; i++)
+            poses[i] = gamePieces.get(i);
+        return poses;
     }
 
     private void configureSysIdBindings(MotorSubsystem subsystem) {

@@ -4,10 +4,9 @@ import com.pathplanner.lib.util.FlippingUtil;
 import edu.wpi.first.apriltag.AprilTag;
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.*;
 import org.trigon.utilities.FilesHandler;
+import org.trigon.utilities.flippable.FlippablePose2d;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -16,6 +15,8 @@ public class FieldConstants {
     public static final double
             FIELD_WIDTH_METERS = FlippingUtil.fieldSizeY,
             FIELD_LENGTH_METERS = FlippingUtil.fieldSizeX;
+
+    public static final FlippablePose2d CENTER_OF_REEF_POSE = new FlippablePose2d(new Pose2d(4.48945, FIELD_WIDTH_METERS / 2, new Rotation2d()), true);
 
     private static final boolean SHOULD_USE_HOME_TAG_LAYOUT = true;
     public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = createAprilTagFieldLayout();
