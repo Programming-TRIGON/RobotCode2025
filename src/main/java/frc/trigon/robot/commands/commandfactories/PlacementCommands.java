@@ -14,7 +14,7 @@ public class PlacementCommands {
 
     public static Command placeCoral(ElevatorConstants.ElevatorState targetReefLevel, int reefSideInAnalogClock) {
         return new SequentialCommandGroup(
-                ReefAlignmentCommand.alignToReef(reefSideInAnalogClock),
+                ReefAlignmentCommand.alignToReef(reefSideInAnalogClock).onlyIf(() -> SHOULD_ALIGN_TO_REEF),
                 getCoralLevel(targetReefLevel)
         );
     }
