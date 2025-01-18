@@ -22,8 +22,8 @@ import org.trigon.utilities.flippable.FlippablePose2d;
 public class CoralPlacingCommands {
     public static boolean SHOULD_SCORE_AUTONOMOUSLY = true;
     public static ScoringLevel TARGET_SCORING_LEVEL = ScoringLevel.L4;
-    public static FieldConstants.ReefClockPosition TARGET_SCORING_REEF_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_6_OCLOCK;
-    public static FieldConstants.ReefSide TARGET_SCORING_REEF_SIDE = FieldConstants.ReefSide.LEFT;
+    public static FieldConstants.ReefClockPosition TARGET_REEF_SCORING_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_6_OCLOCK;
+    public static FieldConstants.ReefSide TARGET_REEF_SCORING_SIDE = FieldConstants.ReefSide.LEFT;
 
     public static Command getScoreInReefCommand() {
         return new ConditionalCommand(
@@ -51,7 +51,7 @@ public class CoralPlacingCommands {
     private static Command getAutonomousDriveToReefThenManualDriveCommand() {
         return new SequentialCommandGroup(
                 SwerveCommands.getDriveToPoseCommand(
-                        () -> TARGET_SCORING_LEVEL.calculateTargetPlacingPosition(TARGET_SCORING_REEF_CLOCK_POSITION, TARGET_SCORING_REEF_SIDE),
+                        () -> TARGET_SCORING_LEVEL.calculateTargetPlacingPosition(TARGET_REEF_SCORING_CLOCK_POSITION, TARGET_REEF_SCORING_SIDE),
                         PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
                 ),
                 GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND)
