@@ -52,12 +52,12 @@ public class FieldConstants {
     }
 
     public enum ReefClockPosition {
-        REEF_0_OCLOCK(false),
         REEF_2_OCLOCK(false),
         REEF_4_OCLOCK(true),
         REEF_6_OCLOCK(true),
         REEF_8_OCLOCK(true),
-        REEF_10_OCLOCK(false);
+        REEF_10_OCLOCK(false),
+        REEF_12_OCLOCK(false);
 
         public final Rotation2d clockAngle;
         public final boolean isFacingDriverStation;
