@@ -42,6 +42,7 @@ public class RobotContainer {
         initializeGeneralSystems();
         buildAutoChooser();
         configureBindings();
+        bindSetters();
     }
 
     /**
