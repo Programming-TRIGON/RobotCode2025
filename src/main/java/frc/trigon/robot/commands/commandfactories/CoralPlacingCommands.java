@@ -21,37 +21,37 @@ import org.trigon.utilities.flippable.FlippablePose2d;
 
 public class CoralPlacingCommands {
     public static boolean SHOULD_SCORE_AUTONOMOUSLY = true;
-    public static ScoringLevel CURRENT_SCORING_LEVEL = ScoringLevel.L4;
-    public static FieldConstants.ReefClockPosition CURRENT_REEF_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_6_OCLOCK;
-    public static FieldConstants.ReefDirection CURRENT_REEF_DIRECTION = FieldConstants.ReefDirection.LEFT;
+    public static ScoringLevel TARGET_SCORING_LEVEL = ScoringLevel.L4;
+    public static FieldConstants.ReefClockPosition TARGET_SCORING_REEF_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_6_OCLOCK;
+    public static FieldConstants.ReefDirection TARGET_SCORING_REEF_DIRECTION = FieldConstants.ReefDirection.LEFT;
 
     public static Command getScoreInReefCommand() {
         return new ConditionalCommand(
-                getScoreAutonomouslyInReefCommand(),
-                getScoreManuallyInReefCommand(),
+                getAutonomouslyScoreInReefCommand(),
+                getManuallyScoreInReefCommand(),
                 () -> SHOULD_SCORE_AUTONOMOUSLY
         );
     }
 
-    private static Command getScoreManuallyInReefCommand() {
+    private static Command getManuallyScoreInReefCommand() {
         return new ParallelCommandGroup(
-                ElevatorCommands.getSetTargetStateCommand(() -> CURRENT_SCORING_LEVEL.elevatorState),
+                ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
                 getGripperSequenceCommand()
         );
     }
 
-    private static Command getScoreAutonomouslyInReefCommand() {
+    private static Command getAutonomouslyScoreInReefCommand() {
         return new ParallelCommandGroup(
-                ElevatorCommands.getSetTargetStateCommand(() -> CURRENT_SCORING_LEVEL.elevatorState),
-                getAutonomousDriveToReefThenManual(),
+                ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
+                getAutonomousDriveToReefThenManualDriveCommand(),
                 getGripperSequenceCommand()
         );
     }
 
-    private static Command getAutonomousDriveToReefThenManual() {
+    private static Command getAutonomousDriveToReefThenManualDriveCommand() {
         return new SequentialCommandGroup(
                 SwerveCommands.getDriveToPoseCommand(
-                        () -> CURRENT_SCORING_LEVEL.calculateTargetPlacingPosition(CURRENT_REEF_CLOCK_POSITION, CURRENT_REEF_DIRECTION),
+                        () -> TARGET_SCORING_LEVEL.calculateTargetPlacingPosition(TARGET_SCORING_REEF_CLOCK_POSITION, TARGET_SCORING_REEF_DIRECTION),
                         PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
                 ),
                 GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND)
@@ -60,7 +60,7 @@ public class CoralPlacingCommands {
 
     private static Command getGripperSequenceCommand() {
         return new SequentialCommandGroup(
-                GripperCommands.getSetTargetStateCommand(() -> CURRENT_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoring),
+                GripperCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoring),
                 GripperCommands.getScoreInReefCommand()
         );
     }
