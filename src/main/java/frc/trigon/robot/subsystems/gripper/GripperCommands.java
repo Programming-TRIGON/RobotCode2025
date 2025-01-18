@@ -8,7 +8,7 @@ import org.trigon.commands.GearRatioCalculationCommand;
 import org.trigon.commands.NetworkTablesCommand;
 
 import java.util.Set;
-import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 
 public class GripperCommands {
@@ -26,6 +26,28 @@ public class GripperCommands {
         return new GearRatioCalculationCommand(
                 GripperConstants.ANGLE_MOTOR,
                 GripperConstants.ANGLE_ENCODER,
+                RobotContainer.GRIPPER
+        );
+    }
+
+    /**
+     * This command will set the gripper to the score in reef state,
+     * which means the gripper will eject the coral into the reef, while keeping the current target angle.
+     *
+     * @return the command to score in reef
+     */
+    public static Command getScoreInReefCommand() {
+        return new StartEndCommand(
+                RobotContainer.GRIPPER::scoreInReef,
+                RobotContainer.GRIPPER::stop,
+                RobotContainer.GRIPPER
+        );
+    }
+
+    public static Command getSetTargetStateCommand(Supplier<GripperConstants.GripperState> targetStateSupplier) {
+        return new StartEndCommand(
+                () -> RobotContainer.GRIPPER.setTargetState(targetStateSupplier.get()),
+                RobotContainer.GRIPPER::stop,
                 RobotContainer.GRIPPER
         );
     }

@@ -81,6 +81,23 @@ public class RobotContainer {
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
     }
 
+    private void bindSetters() {
+        OperatorConstants.TURN_ON_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.TURN_ON_AUTONOMOUS_REEF_SCORING_COMMAND);
+        OperatorConstants.TURN_OFF_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.TURN_OFF_AUTONOMOUS_REEF_SCORING_COMMAND);
+
+        OperatorConstants.SET_SCORING_TARGET_SCORING_LEVEL_L1_TRIGGER.onTrue(CommandConstants.SET_SCORING_TARGET_SCORING_LEVEL_L1_COMMAND);
+        OperatorConstants.SET_SCORING_TARGET_SCORING_LEVEL_L2_TRIGGER.onTrue(CommandConstants.SET_SCORING_TARGET_SCORING_LEVEL_L2_COMMAND);
+        OperatorConstants.SET_SCORING_TARGET_SCORING_LEVEL_L3_TRIGGER.onTrue(CommandConstants.SET_SCORING_TARGET_SCORING_LEVEL_L3_COMMAND);
+        OperatorConstants.SET_SCORING_TARGET_SCORING_LEVEL_L4_TRIGGER.onTrue(CommandConstants.SET_SCORING_TARGET_SCORING_LEVEL_L4_COMMAND);
+
+        OperatorConstants.SET_TARGET_REEF_CLOCK_POSITION_8_OCLOCK_TRIGGER.onTrue(CommandConstants.SET_TARGET_REEF_CLOCK_POSITION_8_OCLOCK_COMMAND);
+        OperatorConstants.SET_TARGET_REEF_CLOCK_POSITION_6_OCLOCK_TRIGGER.onTrue(CommandConstants.SET_TARGET_REEF_CLOCK_POSITION_6_OCLOCK_COMMAND);
+        OperatorConstants.SET_TARGET_REEF_CLOCK_POSITION_4_OCLOCK_TRIGGER.onTrue(CommandConstants.SET_TARGET_REEF_CLOCK_POSITION_4_OCLOCK_COMMAND);
+        OperatorConstants.SET_TARGET_REEF_CLOCK_POSITION_2_OCLOCK_TRIGGER.onTrue(CommandConstants.SET_TARGET_REEF_CLOCK_POSITION_2_OCLOCK_COMMAND);
+        OperatorConstants.SET_TARGET_REEF_CLOCK_POSITION_0_OCLOCK_TRIGGER.onTrue(CommandConstants.SET_TARGET_REEF_CLOCK_POSITION_0_OCLOCK_COMMAND);
+        OperatorConstants.SET_TARGET_REEF_CLOCK_POSITION_10_OCLOCK_TRIGGER.onTrue(CommandConstants.SET_TARGET_REEF_CLOCK_POSITION_10_OCLOCK_COMMAND);
+    }
+
     private void configureSysIdBindings(MotorSubsystem subsystem) {
         OperatorConstants.FORWARD_QUASISTATIC_CHARACTERIZATION_TRIGGER.whileTrue(subsystem.getQuasistaticCharacterizationCommand(SysIdRoutine.Direction.kForward));
         OperatorConstants.BACKWARD_QUASISTATIC_CHARACTERIZATION_TRIGGER.whileTrue(subsystem.getQuasistaticCharacterizationCommand(SysIdRoutine.Direction.kReverse));

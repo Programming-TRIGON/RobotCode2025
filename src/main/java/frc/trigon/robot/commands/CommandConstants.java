@@ -6,7 +6,9 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.commands.commandfactories.CoralCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
+import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
@@ -59,6 +61,20 @@ public class CommandConstants {
                     RobotContainer.SWERVE::runWheelRadiusCharacterization,
                     RobotContainer.SWERVE
             );
+
+    public static final Command
+            TURN_ON_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralCommands.SHOULD_SCORE_AUTONOMOUSLY = true).ignoringDisable(true),
+            TURN_OFF_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralCommands.SHOULD_SCORE_AUTONOMOUSLY = false).ignoringDisable(true),
+            SET_SCORING_TARGET_SCORING_LEVEL_L1_COMMAND = new InstantCommand(() -> CoralCommands.CURRENT_SCORING_LEVEL = CoralCommands.ScoringLevel.L1).ignoringDisable(true),
+            SET_SCORING_TARGET_SCORING_LEVEL_L2_COMMAND = new InstantCommand(() -> CoralCommands.CURRENT_SCORING_LEVEL = CoralCommands.ScoringLevel.L2).ignoringDisable(true),
+            SET_SCORING_TARGET_SCORING_LEVEL_L3_COMMAND = new InstantCommand(() -> CoralCommands.CURRENT_SCORING_LEVEL = CoralCommands.ScoringLevel.L3).ignoringDisable(true),
+            SET_SCORING_TARGET_SCORING_LEVEL_L4_COMMAND = new InstantCommand(() -> CoralCommands.CURRENT_SCORING_LEVEL = CoralCommands.ScoringLevel.L4).ignoringDisable(true),
+            SET_TARGET_REEF_CLOCK_POSITION_8_OCLOCK_COMMAND = new InstantCommand(() -> CoralCommands.CURRENT_REEF_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_8_OCLOCK).ignoringDisable(true),
+            SET_TARGET_REEF_CLOCK_POSITION_6_OCLOCK_COMMAND = new InstantCommand(() -> CoralCommands.CURRENT_REEF_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_6_OCLOCK).ignoringDisable(true),
+            SET_TARGET_REEF_CLOCK_POSITION_4_OCLOCK_COMMAND = new InstantCommand(() -> CoralCommands.CURRENT_REEF_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_4_OCLOCK).ignoringDisable(true),
+            SET_TARGET_REEF_CLOCK_POSITION_2_OCLOCK_COMMAND = new InstantCommand(() -> CoralCommands.CURRENT_REEF_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_2_OCLOCK).ignoringDisable(true),
+            SET_TARGET_REEF_CLOCK_POSITION_0_OCLOCK_COMMAND = new InstantCommand(() -> CoralCommands.CURRENT_REEF_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_0_OCLOCK).ignoringDisable(true),
+            SET_TARGET_REEF_CLOCK_POSITION_10_OCLOCK_COMMAND = new InstantCommand(() -> CoralCommands.CURRENT_REEF_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_10_OCLOCK).ignoringDisable(true);
 
     /**
      * Calculates the target drive power from an axis value by dividing it by the shift mode value.

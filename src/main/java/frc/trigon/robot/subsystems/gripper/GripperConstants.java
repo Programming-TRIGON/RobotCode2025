@@ -140,6 +140,7 @@ public class GripperConstants {
             GRIPPER_VISUALIZATION_ORIGIN_POINT
     );
     static final Rotation2d POSITION_TOLERANCE_DEGREES = Rotation2d.fromDegrees(2);
+    static final double SCORE_IN_REEF_VOLTAGE = 3;
 
     static {
         configureGrippingMotor();
@@ -240,9 +241,9 @@ public class GripperConstants {
     public enum GripperState {
         REST(Rotation2d.fromDegrees(0), 0),
         EJECT(Rotation2d.fromDegrees(45), -3),
-        SCORE_L4(Rotation2d.fromDegrees(45), 3),
-        SCORE_L3_OR_L2(Rotation2d.fromDegrees(45), 3),
-        SCORE_L1(Rotation2d.fromDegrees(45), 3),
+        PREPARE_L4(Rotation2d.fromDegrees(45), 0),
+        PREPARE_L3_OR_L2(Rotation2d.fromDegrees(45), 0),
+        PREPARE_L1(Rotation2d.fromDegrees(45), 0),
         LOAD_CORAL(Rotation2d.fromDegrees(-56), -3),
         COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3);
 
