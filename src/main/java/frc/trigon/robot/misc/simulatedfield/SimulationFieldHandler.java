@@ -4,7 +4,6 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
-import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
@@ -119,7 +118,7 @@ public class SimulationFieldHandler {
     }
 
     private static boolean isCollectingAlgae() {
-        return RobotContainer.ALGAE_INTAKE.atState(AlgaeIntakeConstants.AlgaeIntakeState.COLLECT);
+        return false;
     }
 
     private static void updateEjection() {
@@ -161,8 +160,7 @@ public class SimulationFieldHandler {
     }
 
     private static boolean isEjectingAlgae() {
-        return RobotContainer.ALGAE_INTAKE.atState(AlgaeIntakeConstants.AlgaeIntakeState.EJECT) ||
-                RobotContainer.ALGAE_INTAKE.atState(AlgaeIntakeConstants.AlgaeIntakeState.FEED_PROCESSOR);
+        return false;
     }
 
     /**
