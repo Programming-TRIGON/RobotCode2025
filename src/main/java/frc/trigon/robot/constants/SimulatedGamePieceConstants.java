@@ -67,7 +67,7 @@ public class SimulatedGamePieceConstants {
             REEF_TO_6_OCLOCK_LEFT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 5),
             REEF_TO_8_OCLOCK_RIGHT_ROTATION = new Rotation3d(0, 0, Math.PI),
             REEF_TO_8_OCLOCK_LEFT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 7),
-            REEF_TO_10_OCLOCK_RIGHT_ROTATION = new Rotation3d(0, 0, Math.PI * 8),
+            REEF_TO_10_OCLOCK_RIGHT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 8),
             REEF_TO_10_OCLOCK_LEFT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 9),
             REEF_TO_12_OCLOCK_RIGHT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 10),
             REEF_TO_12_OCLOCK_LEFT_ROTATION = new Rotation3d(0, 0, Math.PI / 6 * 11);
