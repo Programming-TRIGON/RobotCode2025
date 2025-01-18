@@ -19,7 +19,7 @@ import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.utilities.flippable.FlippablePose2d;
 
-public class CoralCommands {
+public class CoralPlacingCommands {
     public static boolean SHOULD_SCORE_AUTONOMOUSLY = true;
     public static ScoringLevel CURRENT_SCORING_LEVEL = ScoringLevel.L4;
     public static FieldConstants.ReefClockPosition CURRENT_REEF_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_6_OCLOCK;
@@ -60,7 +60,7 @@ public class CoralCommands {
 
     private static Command getGripperSequenceCommand() {
         return new SequentialCommandGroup(
-                GripperCommands.getSetTargetStateCommand(() -> CURRENT_SCORING_LEVEL.gripperState).until(CoralCommands::canContinueScoring),
+                GripperCommands.getSetTargetStateCommand(() -> CURRENT_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoring),
                 GripperCommands.getScoreInReefCommand()
         );
     }
