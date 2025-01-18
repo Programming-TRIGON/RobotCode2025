@@ -109,8 +109,8 @@ public class CoralPlacingCommands {
          * left will always correspond to the physical left side in the driver station,
          * as opposed to "reef relative" left.
          *
-         * @param reefClockPosition the wanted clock position of the reef
-         * @param reefSide          the wanted side of the reef
+         * @param reefClockPosition the desired clock position of the reef
+         * @param reefSide          the desired side of the reef, left or right (as seen from the driver station)
          * @return the target placing position
          */
         public FlippablePose2d calculateTargetPlacingPosition(FieldConstants.ReefClockPosition reefClockPosition, FieldConstants.ReefSide reefSide) {
