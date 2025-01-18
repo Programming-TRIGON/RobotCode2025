@@ -42,7 +42,6 @@ public class RobotContainer {
         initializeGeneralSystems();
         buildAutoChooser();
         configureBindings();
-        bindSetters();
     }
 
     /**
@@ -50,18 +49,6 @@ public class RobotContainer {
      */
     public Command getAutonomousCommand() {
         return autoChooser.get();
-    }
-
-    private void configureBindings() {
-        bindDefaultCommands();
-        bindControllerCommands();
-    }
-
-    private void bindDefaultCommands() {
-        SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
-        CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
-        ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
-        GRIPPER.setDefaultCommand(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST));
     }
 
     /**
@@ -73,6 +60,19 @@ public class RobotContainer {
         Flippable.init();
         LEDConstants.init();
         PathPlannerConstants.init();
+    }
+
+    private void configureBindings() {
+        bindDefaultCommands();
+        bindControllerCommands();
+        bindSetters();
+    }
+
+    private void bindDefaultCommands() {
+        SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
+        CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
+        ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
+        GRIPPER.setDefaultCommand(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST));
     }
 
     private void bindControllerCommands() {
