@@ -52,18 +52,18 @@ public class FieldConstants {
     }
 
     public enum ReefClockPosition {
+        REEF_12_OCLOCK(false),
         REEF_2_OCLOCK(false),
         REEF_4_OCLOCK(true),
         REEF_6_OCLOCK(true),
         REEF_8_OCLOCK(true),
-        REEF_10_OCLOCK(false),
-        REEF_12_OCLOCK(false);
+        REEF_10_OCLOCK(false);
 
         public final Rotation2d clockAngle;
         public final boolean isFacingDriverStation;
 
         ReefClockPosition(boolean isFacingDriverStation) {
-            this.clockAngle = CLOCK_POSITION_DIFFERENCE.times(ordinal());
+            this.clockAngle = CLOCK_POSITION_DIFFERENCE.times(-ordinal());
             this.isFacingDriverStation = isFacingDriverStation;
         }
     }
