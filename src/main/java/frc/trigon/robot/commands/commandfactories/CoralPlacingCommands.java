@@ -71,6 +71,12 @@ public class CoralPlacingCommands {
                 OperatorConstants.CONTINUE_SCORING_TRIGGER.getAsBoolean();
     }
 
+    /**
+     * An enum that represents the different levels of scoring in the reef.
+     * Each level has a different x and y transform from the reef center,
+     * as well as a different elevator and gripper state.
+     * The x and y transform are used to calculate the target placing position from the middle of the reef.
+     */
     public enum ScoringLevel {
         L1(0.3, 0.1),
         L2(0.3, 0.1),
@@ -81,6 +87,14 @@ public class CoralPlacingCommands {
         final ElevatorConstants.ElevatorState elevatorState;
         final GripperConstants.GripperState gripperState;
 
+        /**
+         * Constructs a scoring level with the given x and y transform.
+         * The elevator and gripper state are determined automatically based on the scoring level.
+         *
+         * @param xTransform         the x transform from the middle of the reef to the target placing position
+         * @param positiveYTransform the y transform from the middle of the reef to the target placing position.
+         *                           This must be positive, and might be flipped depending on operator input
+         */
         ScoringLevel(double xTransform, double positiveYTransform) {
             this.xTransform = xTransform;
             this.positiveYTransform = positiveYTransform;
@@ -88,6 +102,17 @@ public class CoralPlacingCommands {
             this.gripperState = determineGripperState();
         }
 
+        /**
+         * Calculates the target placing position using the clock position and the target reef side.
+         * The reef side transform will be flipped depending on operator input.
+         * To make it more intuitive for the operator to input the reef side,
+         * left will always correspond to the physical left side in the driver station,
+         * as opposed to "reef relative" left.
+         *
+         * @param reefClockPosition the wanted clock position of the reef
+         * @param reefSide          the wanted side of the reef
+         * @return the target placing position
+         */
         public FlippablePose2d calculateTargetPlacingPosition(FieldConstants.ReefClockPosition reefClockPosition, FieldConstants.ReefSide reefSide) {
             final Pose2d reefCenterPose = new Pose2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, reefClockPosition.clockAngle);
             final double yTransform = reefSide.shouldFlipYTransform(reefClockPosition) ? -positiveYTransform : positiveYTransform;
