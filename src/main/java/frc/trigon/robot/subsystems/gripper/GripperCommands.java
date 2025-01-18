@@ -31,10 +31,10 @@ public class GripperCommands {
     }
 
     /**
-     * This command will set the gripper to the score in reef state,
-     * which means the gripper will eject the coral into the reef, while keeping the current target angle.
+     * Creates a command that will set the gripper to the score in reef state,
+     * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
      *
-     * @return the command to score in reef
+     * @return the command
      */
     public static Command getScoreInReefCommand() {
         return new StartEndCommand(
