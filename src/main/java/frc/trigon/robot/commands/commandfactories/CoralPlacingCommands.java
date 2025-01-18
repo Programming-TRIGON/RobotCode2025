@@ -83,7 +83,7 @@ public class CoralPlacingCommands {
         L3(0.3, 0.1),
         L4(0.3, 0.1);
 
-        final double xTransform, positiveYTransform;
+        final double xTransformMeters, positiveYTransformMeters;
         final ElevatorConstants.ElevatorState elevatorState;
         final GripperConstants.GripperState gripperState;
 
@@ -91,13 +91,13 @@ public class CoralPlacingCommands {
          * Constructs a scoring level with the given x and y transform.
          * The elevator and gripper state are determined automatically based on the scoring level.
          *
-         * @param xTransform         the x transform from the middle of the reef to the target placing position
-         * @param positiveYTransform the y transform from the middle of the reef to the target placing position.
-         *                           This must be positive, and might be flipped depending on operator input
+         * @param xTransformMeters         the x transform from the middle of the reef to the target placing position
+         * @param positiveYTransformMeters the y transform from the middle of the reef to the target placing position.
+         *                                 This must be positive (to account for flipping later on), and might be flipped depending on operator input (left or right reef side)
          */
-        ScoringLevel(double xTransform, double positiveYTransform) {
-            this.xTransform = xTransform;
-            this.positiveYTransform = positiveYTransform;
+        ScoringLevel(double xTransformMeters, double positiveYTransformMeters) {
+            this.xTransformMeters = xTransformMeters;
+            this.positiveYTransformMeters = positiveYTransformMeters;
             this.elevatorState = determineElevatorState();
             this.gripperState = determineGripperState();
         }
@@ -115,8 +115,8 @@ public class CoralPlacingCommands {
          */
         public FlippablePose2d calculateTargetPlacingPosition(FieldConstants.ReefClockPosition reefClockPosition, FieldConstants.ReefSide reefSide) {
             final Pose2d reefCenterPose = new Pose2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, reefClockPosition.clockAngle);
-            final double yTransform = reefSide.shouldFlipYTransform(reefClockPosition) ? -positiveYTransform : positiveYTransform;
-            final Transform2d transform = new Transform2d(xTransform, yTransform, new Rotation2d());
+            final double yTransform = reefSide.shouldFlipYTransform(reefClockPosition) ? -positiveYTransformMeters : positiveYTransformMeters;
+            final Transform2d transform = new Transform2d(xTransformMeters, yTransform, new Rotation2d());
             return new FlippablePose2d(reefCenterPose.plus(transform), reefClockPosition.isFacingDriverStation);
         }
 
