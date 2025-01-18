@@ -36,13 +36,13 @@ public class FieldConstants {
         return tagIdToPose;
     }
 
-    public enum ReefDirection {
+    public enum ReefSide {
         LEFT(true),
         RIGHT(false);
 
         public final boolean doesFlipYTransformWhenFacingDriverStation;
 
-        ReefDirection(boolean doesFlipYTransformWhenFacingDriverStation) {
+        ReefSide(boolean doesFlipYTransformWhenFacingDriverStation) {
             this.doesFlipYTransformWhenFacingDriverStation = doesFlipYTransformWhenFacingDriverStation;
         }
 
