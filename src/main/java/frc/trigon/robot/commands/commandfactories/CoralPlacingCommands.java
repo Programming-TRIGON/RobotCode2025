@@ -89,10 +89,10 @@ public class CoralPlacingCommands {
         }
 
         public FlippablePose2d calculateTargetPlacingPosition(FieldConstants.ReefClockPosition reefClockPosition, FieldConstants.ReefDirection reefDirection) {
-            final Pose2d reefMiddlePose = new Pose2d(FieldConstants.REEF_MIDDLE_TRANSLATION, reefClockPosition.clockAngle);
+            final Pose2d reefCenterPose = new Pose2d(FieldConstants.REEF_CENTER_TRANSLATION, reefClockPosition.clockAngle);
             final double yTransform = reefDirection.shouldFlipYTransform(reefClockPosition) ? -positiveYTransform : positiveYTransform;
             final Transform2d transform = new Transform2d(xTransform, yTransform, new Rotation2d());
-            return new FlippablePose2d(reefMiddlePose.plus(transform), reefClockPosition.isFacingDriverStation);
+            return new FlippablePose2d(reefCenterPose.plus(transform), reefClockPosition.isFacingDriverStation);
         }
 
         private ElevatorConstants.ElevatorState determineElevatorState() {

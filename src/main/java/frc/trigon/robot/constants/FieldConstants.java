@@ -17,7 +17,7 @@ public class FieldConstants {
     public static final HashMap<Integer, Pose3d> TAG_ID_TO_POSE = fieldLayoutToTagIdToPoseMap();
 
     public static final Rotation2d CLOCK_POSITION_DIFFERENCE = Rotation2d.fromDegrees(Conversions.DEGREES_PER_ROTATIONS / ReefClockPosition.values().length);
-    public static final Translation2d REEF_MIDDLE_TRANSLATION = new Translation2d(4.5, 4); // TODO: Find actual middle pose
+    public static final Translation2d REEF_CENTER_TRANSLATION = new Translation2d(4.5, 4); // TODO: Find actual middle pose
 
     private static AprilTagFieldLayout createAprilTagFieldLayout() {
         try {
