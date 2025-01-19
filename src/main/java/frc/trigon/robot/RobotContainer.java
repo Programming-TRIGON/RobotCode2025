@@ -93,7 +93,7 @@ public class RobotContainer {
         OperatorConstants.OPERATOR_CONTROLLER.c().whileTrue(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L2).alongWith(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L3_OR_L2)));
         OperatorConstants.OPERATOR_CONTROLLER.v().whileTrue(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L1).alongWith(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L1)));
 
-        Logger.recordOutput("LOL", mapSimulatedGamePieceListToPoseArray(SimulatedGamePieceConstants.P));
+        Logger.recordOutput("LOL", mapSimulatedGamePieceListToPoseArray(SimulatedGamePieceConstants.CORAL_SCORING_LOCATIONS));
     }
 
     private static Pose3d[] mapSimulatedGamePieceListToPoseArray(ArrayList<Pose3d> gamePieces) {
