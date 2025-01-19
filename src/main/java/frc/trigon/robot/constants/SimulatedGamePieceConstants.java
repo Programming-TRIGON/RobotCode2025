@@ -19,7 +19,7 @@ public class SimulatedGamePieceConstants {
     private static final double
             FIELD_WIDTH_METERS = FieldConstants.FIELD_WIDTH_METERS,
             FIELD_LENGTH_METERS = FieldConstants.FIELD_LENGTH_METERS;
-    private static final Rotation3d CORAL_TO_VERTICAL_POSITION_ROTATION = new Rotation3d(0, -Math.PI / 2, 0);
+    private static final Rotation3d CORAL_TO_VERTICAL_POSITION_ROTATION = new Rotation3d(0, Math.PI / 2, 0);
 
     public static final ArrayList<SimulatedGamePiece>
             CORAL_ON_FIELD = new ArrayList<>(List.of(
