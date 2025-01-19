@@ -14,7 +14,7 @@ public class SimulatedGamePieceConstants {
             CORAL_FEEDER_INTAKE_TOLERANCE_METERS = 1,
             ALGAE_INTAKE_TOLERANCE_METERS = 0.4,
             CORAL_SCORING_TOLERANCE_METERS = 0.1,
-            ALGAE_SCORING_TOLERANCE_METERS = 0.3;
+            ALGAE_SCORING_TOLERANCE_METERS = 0.4;
 
     private static final double
             FIELD_WIDTH_METERS = FieldConstants.FIELD_WIDTH_METERS,
