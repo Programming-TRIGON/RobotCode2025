@@ -161,6 +161,9 @@ public class CoralIntakeConstants {
     static final double
             POSITION_TOLERANCE_METERS = 0.01,
             POSITION_TOLERANCE_ROTATIONS = Conversions.distanceToRotations(POSITION_TOLERANCE_METERS, ELEVATOR_DRUM_DIAMETER_METERS);
+    public static final double
+            COLLECTION_RUMBLE_DURATION_SECONDS = 0.1,
+            COLLECTION_RUMBLE_POWER = 1;
 
     static {
         configureIntakeMotor();

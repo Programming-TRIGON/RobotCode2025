@@ -7,8 +7,6 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandclasses.CoralAlignmentCommand;
-import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeCommands;
-import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import org.trigon.hardware.misc.leds.LEDCommands;
@@ -18,13 +16,6 @@ import org.trigon.hardware.misc.leds.LEDCommands;
  */
 public class CollectionCommands {
     public static boolean SHOULD_ALIGN_TO_CORAL = true;
-
-    public static Command getAlgaeCollectionCommand() {
-        return new ParallelCommandGroup(
-                AlgaeIntakeCommands.getSetTargetStateCommand(AlgaeIntakeConstants.AlgaeIntakeState.COLLECT),
-                LEDCommands.getBlinkingCommand(Color.kAqua, AlgaeIntakeConstants.COLLECTION_LEDS_BLINKING_SPEED)
-        );
-    }
 
     public static Command getCoralCollectionCommand() {
         return getInitiateCoralCollectionCommand().unless(RobotContainer.CORAL_INTAKE::hasGamePiece).alongWith(CommandConstants.COLLECTION_RUMBLE_COMMAND);

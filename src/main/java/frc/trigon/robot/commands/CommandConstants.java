@@ -10,8 +10,7 @@ import frc.trigon.robot.commands.commandfactories.CollectionCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
-import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeCommands;
-import frc.trigon.robot.subsystems.algaeintake.AlgaeIntakeConstants;
+import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.commands.WheelRadiusCharacterizationCommand;
 import org.trigon.hardware.misc.XboxController;
@@ -62,10 +61,9 @@ public class CommandConstants {
                     RobotContainer.SWERVE::runWheelRadiusCharacterization,
                     RobotContainer.SWERVE
             ),
-            COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(AlgaeIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, AlgaeIntakeConstants.COLLECTION_RUMBLE_POWER)).onlyIf(RobotContainer.CORAL_INTAKE::hasGamePiece),
+            COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER)).onlyIf(RobotContainer.CORAL_INTAKE::hasGamePiece),
             ENABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = true),
-            DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = false),
-            ALGAE_EJECTION_COMMAND = AlgaeIntakeCommands.getSetTargetStateCommand(AlgaeIntakeConstants.AlgaeIntakeState.EJECT);
+            DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = false);
 
     /**
      * Calculates the target drive power from an axis value by dividing it by the shift mode value.
