@@ -58,59 +58,88 @@ public class SimulatedGamePieceConstants {
     private static final Transform3d
             RIGHT_BRANCH_TO_LEFT_BRANCH = new Transform3d(new Translation3d(0, -0.33, 0), new Rotation3d());
     public static final ArrayList<Pose3d> CORAL_SCORING_LOCATIONS = new ArrayList<>(List.of(
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_2_OCLOCK_ROTATION), REEF_TO_2_OCLOCK_ROTATION)).transformBy(CORAL_TO_L1_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_2_OCLOCK_ROTATION), REEF_TO_2_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L1_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_4_OCLOCK_ROTATION), REEF_TO_4_OCLOCK_ROTATION)).transformBy(CORAL_TO_L1_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_4_OCLOCK_ROTATION), REEF_TO_4_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L1_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_6_OCLOCK_ROTATION), REEF_TO_6_OCLOCK_ROTATION)).transformBy(CORAL_TO_L1_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_6_OCLOCK_ROTATION), REEF_TO_6_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L1_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_8_OCLOCK_ROTATION), REEF_TO_8_OCLOCK_ROTATION)).transformBy(CORAL_TO_L1_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_8_OCLOCK_ROTATION), REEF_TO_8_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L1_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_10_OCLOCK_ROTATION), REEF_TO_10_OCLOCK_ROTATION)).transformBy(CORAL_TO_L1_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_10_OCLOCK_ROTATION), REEF_TO_10_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L1_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_12_OCLOCK_ROTATION), REEF_TO_12_OCLOCK_ROTATION)).transformBy(CORAL_TO_L1_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L1_VECTOR.rotateBy(REEF_TO_12_OCLOCK_ROTATION), REEF_TO_12_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L1_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_2_OCLOCK_ROTATION), REEF_TO_2_OCLOCK_ROTATION)).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_2_OCLOCK_ROTATION), REEF_TO_2_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_4_OCLOCK_ROTATION), REEF_TO_4_OCLOCK_ROTATION)).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_4_OCLOCK_ROTATION), REEF_TO_4_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_6_OCLOCK_ROTATION), REEF_TO_6_OCLOCK_ROTATION)).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_6_OCLOCK_ROTATION), REEF_TO_6_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_8_OCLOCK_ROTATION), REEF_TO_8_OCLOCK_ROTATION)).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_8_OCLOCK_ROTATION), REEF_TO_8_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_10_OCLOCK_ROTATION), REEF_TO_10_OCLOCK_ROTATION)).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_10_OCLOCK_ROTATION), REEF_TO_10_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_12_OCLOCK_ROTATION), REEF_TO_12_OCLOCK_ROTATION)).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L2_VECTOR.rotateBy(REEF_TO_12_OCLOCK_ROTATION), REEF_TO_12_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_2_OCLOCK_ROTATION), REEF_TO_2_OCLOCK_ROTATION)).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_2_OCLOCK_ROTATION), REEF_TO_2_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_4_OCLOCK_ROTATION), REEF_TO_4_OCLOCK_ROTATION)).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_4_OCLOCK_ROTATION), REEF_TO_4_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_6_OCLOCK_ROTATION), REEF_TO_6_OCLOCK_ROTATION)).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_6_OCLOCK_ROTATION), REEF_TO_6_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_8_OCLOCK_ROTATION), REEF_TO_8_OCLOCK_ROTATION)).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_8_OCLOCK_ROTATION), REEF_TO_8_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_10_OCLOCK_ROTATION), REEF_TO_10_OCLOCK_ROTATION)).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_10_OCLOCK_ROTATION), REEF_TO_10_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_12_OCLOCK_ROTATION), REEF_TO_12_OCLOCK_ROTATION)).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L3_VECTOR.rotateBy(REEF_TO_12_OCLOCK_ROTATION), REEF_TO_12_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L2_AND_L3_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_2_OCLOCK_ROTATION), REEF_TO_2_OCLOCK_ROTATION)).transformBy(CORAL_TO_L4_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_2_OCLOCK_ROTATION), REEF_TO_2_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L4_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_4_OCLOCK_ROTATION), REEF_TO_4_OCLOCK_ROTATION)).transformBy(CORAL_TO_L4_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_4_OCLOCK_ROTATION), REEF_TO_4_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L4_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_6_OCLOCK_ROTATION), REEF_TO_6_OCLOCK_ROTATION)).transformBy(CORAL_TO_L4_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_6_OCLOCK_ROTATION), REEF_TO_6_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L4_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_8_OCLOCK_ROTATION), REEF_TO_8_OCLOCK_ROTATION)).transformBy(CORAL_TO_L4_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_8_OCLOCK_ROTATION), REEF_TO_8_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L4_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_10_OCLOCK_ROTATION), REEF_TO_10_OCLOCK_ROTATION)).transformBy(CORAL_TO_L4_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_10_OCLOCK_ROTATION), REEF_TO_10_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L4_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_12_OCLOCK_ROTATION), REEF_TO_12_OCLOCK_ROTATION)).transformBy(CORAL_TO_L4_ALIGNMENT),
-            new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(REEF_CENTER_TO_L4_VECTOR.rotateBy(REEF_TO_12_OCLOCK_ROTATION), REEF_TO_12_OCLOCK_ROTATION)).transformBy(RIGHT_BRANCH_TO_LEFT_BRANCH).transformBy(CORAL_TO_L4_ALIGNMENT)
+            calculateCoralScorePose(1, 2, false),
+            calculateCoralScorePose(1, 2, true),
+            calculateCoralScorePose(1, 4, false),
+            calculateCoralScorePose(1, 4, true),
+            calculateCoralScorePose(1, 6, false),
+            calculateCoralScorePose(1, 6, true),
+            calculateCoralScorePose(1, 8, false),
+            calculateCoralScorePose(1, 8, true),
+            calculateCoralScorePose(1, 10, false),
+            calculateCoralScorePose(1, 10, true),
+            calculateCoralScorePose(1, 12, false),
+            calculateCoralScorePose(1, 12, true),
+            calculateCoralScorePose(2, 2, false),
+            calculateCoralScorePose(2, 2, true),
+            calculateCoralScorePose(2, 4, false),
+            calculateCoralScorePose(2, 4, true),
+            calculateCoralScorePose(2, 6, false),
+            calculateCoralScorePose(2, 6, true),
+            calculateCoralScorePose(2, 8, false),
+            calculateCoralScorePose(2, 8, true),
+            calculateCoralScorePose(2, 10, false),
+            calculateCoralScorePose(2, 10, true),
+            calculateCoralScorePose(2, 12, false),
+            calculateCoralScorePose(2, 12, true),
+            calculateCoralScorePose(3, 2, false),
+            calculateCoralScorePose(3, 2, true),
+            calculateCoralScorePose(3, 4, false),
+            calculateCoralScorePose(3, 4, true),
+            calculateCoralScorePose(3, 6, false),
+            calculateCoralScorePose(3, 6, true),
+            calculateCoralScorePose(3, 8, false),
+            calculateCoralScorePose(3, 8, true),
+            calculateCoralScorePose(3, 10, false),
+            calculateCoralScorePose(3, 10, true),
+            calculateCoralScorePose(3, 12, false),
+            calculateCoralScorePose(3, 12, true),
+            calculateCoralScorePose(4, 2, false),
+            calculateCoralScorePose(4, 2, true),
+            calculateCoralScorePose(4, 4, false),
+            calculateCoralScorePose(4, 4, true),
+            calculateCoralScorePose(4, 6, false),
+            calculateCoralScorePose(4, 6, true),
+            calculateCoralScorePose(4, 8, false),
+            calculateCoralScorePose(4, 8, true),
+            calculateCoralScorePose(4, 10, false),
+            calculateCoralScorePose(4, 10, true),
+            calculateCoralScorePose(4, 12, false),
+            calculateCoralScorePose(4, 12, true)
     ));
     public static final Pose3d PROCESSOR_LOCATION = new Pose3d(0, 0, 0, new Rotation3d());
     public static final Pose2d
             LEFT_FEEDER_POSITION = new Pose2d(FIELD_LENGTH_METERS, 0, new Rotation2d()),//TODO: AAAAAAAAA
             RIGHT_FEEDER_POSITION = new Pose2d(FIELD_LENGTH_METERS, FIELD_WIDTH_METERS, new Rotation2d());
+
+    private static Pose3d calculateCoralScorePose(int level, int clockFace, boolean isLeftBranch) {
+        final Translation3d reefCenterToLevelVector;
+        final Rotation3d reefToClockFaceRotation;
+        final Transform3d coralAlignment;
+        switch (level) {
+            case 1 -> reefCenterToLevelVector = REEF_CENTER_TO_L1_VECTOR;
+            case 2 -> reefCenterToLevelVector = REEF_CENTER_TO_L2_VECTOR;
+            case 3 -> reefCenterToLevelVector = REEF_CENTER_TO_L3_VECTOR;
+            case 4 -> reefCenterToLevelVector = REEF_CENTER_TO_L4_VECTOR;
+            default -> reefCenterToLevelVector = new Translation3d();
+        }
+        switch (clockFace) {
+            case 2 -> reefToClockFaceRotation = REEF_TO_2_OCLOCK_ROTATION;
+            case 4 -> reefToClockFaceRotation = REEF_TO_4_OCLOCK_ROTATION;
+            case 6 -> reefToClockFaceRotation = REEF_TO_6_OCLOCK_ROTATION;
+            case 8 -> reefToClockFaceRotation = REEF_TO_8_OCLOCK_ROTATION;
+            case 10 -> reefToClockFaceRotation = REEF_TO_10_OCLOCK_ROTATION;
+            case 12 -> reefToClockFaceRotation = REEF_TO_12_OCLOCK_ROTATION;
+            default -> reefToClockFaceRotation = new Rotation3d();
+        }
+        switch (level) {
+            case 1 -> coralAlignment = CORAL_TO_L1_ALIGNMENT;
+            case 2, 3 -> coralAlignment = CORAL_TO_L2_AND_L3_ALIGNMENT;
+            case 4 -> coralAlignment = CORAL_TO_L4_ALIGNMENT;
+            default -> coralAlignment = new Transform3d();
+        }
+        return new Pose3d(FieldConstants.CENTER_OF_REEF_POSE.get()).transformBy(new Transform3d(reefCenterToLevelVector.rotateBy(reefToClockFaceRotation), reefToClockFaceRotation)).transformBy(isLeftBranch ? RIGHT_BRANCH_TO_LEFT_BRANCH : new Transform3d()).transformBy(coralAlignment);
+    }
 
     public enum GamePieceType {
         CORAL(0.06, 0),
