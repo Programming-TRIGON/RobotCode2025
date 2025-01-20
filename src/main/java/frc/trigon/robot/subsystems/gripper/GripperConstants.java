@@ -50,9 +50,9 @@ public class GripperConstants {
             ANGLE_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
     private static final double
             GRIPPING_MOTOR_GEAR_RATIO = 1,
-            ANGLE_MOTOR_GEAR_RATIO = 100;
+            ANGLE_MOTOR_GEAR_RATIO = 50;
     private static final double
-            ANGLE_P = RobotHardwareStats.isSimulation() ? 0 : 0,
+            ANGLE_P = RobotHardwareStats.isSimulation() ? 100 : 0,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_D = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_KS = RobotHardwareStats.isSimulation() ? 0 : 0,
@@ -94,7 +94,7 @@ public class GripperConstants {
             ARM_LENGTH_METERS = 1,
             ARM_MASS_KILOGRAMS = 1;
     private static final Rotation2d
-            ARM_MINIMUM_ANGLE = Rotation2d.fromDegrees(0),
+            ARM_MINIMUM_ANGLE = Rotation2d.fromDegrees(-58),
             ARM_MAXIMUM_ANGLE = Rotation2d.fromDegrees(180);
     private static final double MOMENT_OF_INERTIA = 0.003;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
@@ -132,7 +132,7 @@ public class GripperConstants {
     );
     private static final Pose3d GRIPPER_VISUALIZATION_ORIGIN_POINT = new Pose3d(
             new Translation3d(-0.22, 0, 0.858),
-            new Rotation3d(0, 0, 0)
+            new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(56.49), 0)
     );
     static final Transform3d ELEVATOR_TO_GRIPPER = new Transform3d(
             ElevatorConstants.FIRST_STAGE_VISUALIZATION_ORIGIN_POINT,
@@ -141,7 +141,8 @@ public class GripperConstants {
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(2);
     static final double SCORE_IN_REEF_VOLTAGE = 3;
-    static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-51);
+    static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-5);
+    static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
 
     static {
         configureGrippingMotor();
@@ -237,18 +238,15 @@ public class GripperConstants {
         }
     }
 
-    static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
-
     public enum GripperState {
-        REST(Rotation2d.fromDegrees(0), 0),
+        REST(Rotation2d.fromDegrees(-56), 0),
         EJECT(Rotation2d.fromDegrees(45), -3),
         PREPARE_L4(Rotation2d.fromDegrees(45), 0),
         PREPARE_L3_OR_L2(Rotation2d.fromDegrees(45), 0),
         PREPARE_L1(Rotation2d.fromDegrees(45), 0),
         LOAD_CORAL(Rotation2d.fromDegrees(-56), -3),
         COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3),
-        OPEN_FOR_ELEVATOR_MINIMUM(Rotation2d.fromDegrees(-50), 0);
-
+        OPEN_FOR_ELEVATOR_MINIMUM(Rotation2d.fromDegrees(-5), 0);
 
         final Rotation2d targetAngle;
         final double targetGripperVoltage;

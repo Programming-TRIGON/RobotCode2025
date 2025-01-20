@@ -70,8 +70,8 @@ public class Elevator extends MotorSubsystem {
         motor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
-    public boolean isAllowedToMoveToTargetState() {
-        return isAllowedToMoveToPosition(metersToRotations(targetState.targetPositionMeters));
+    public boolean willCurrentMovementMoveThroughHitRange() {
+        return willMovementMoveThroughHitRange(metersToRotations(targetState.targetPositionMeters));
     }
 
     public Pose3d getFirstStageComponentPose() {

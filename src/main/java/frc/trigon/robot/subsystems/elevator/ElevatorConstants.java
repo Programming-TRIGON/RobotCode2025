@@ -92,7 +92,7 @@ public class ElevatorConstants {
     static final double POSITION_TOLERANCE_METERS = 0.1;
     static final double
             GRIPPER_HITTING_ELEVATOR_BASE_LOWER_BOUND_POSITION_ROTATIONS = 0.1,
-            GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS = 0.2;
+            GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS = 0.4;
 
     static {
         configureMasterMotor();

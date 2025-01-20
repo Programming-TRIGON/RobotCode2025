@@ -33,9 +33,9 @@ public class GripperCommands {
 
     public static Command getDefaultCommand() {
         return GeneralCommands.getContinuousConditionalCommand(
-                getSetTargetStateCommand(GripperConstants.GripperState.REST),
                 getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_ELEVATOR_MINIMUM),
-                RobotContainer.ELEVATOR::isAllowedToMoveToTargetState
+                getSetTargetStateCommand(GripperConstants.GripperState.REST),
+                RobotContainer.ELEVATOR::willCurrentMovementMoveThroughHitRange
         );
     }
 
