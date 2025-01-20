@@ -130,7 +130,6 @@ public class GripperConstants {
             ARM_LENGTH_METERS,
             Color.kRed
     );
-
     private static final Pose3d GRIPPER_VISUALIZATION_ORIGIN_POINT = new Pose3d(
             new Translation3d(0, 0, 0),
             new Rotation3d(0, 0, 0)
@@ -139,8 +138,10 @@ public class GripperConstants {
             ElevatorConstants.FIRST_STAGE_VISUALIZATION_ORIGIN_POINT,
             GRIPPER_VISUALIZATION_ORIGIN_POINT
     );
-    static final Rotation2d POSITION_TOLERANCE_DEGREES = Rotation2d.fromDegrees(2);
+
+    static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(2);
     static final double SCORE_IN_REEF_VOLTAGE = 3;
+    static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-51);
 
     static {
         configureGrippingMotor();
@@ -245,7 +246,8 @@ public class GripperConstants {
         PREPARE_L3_OR_L2(Rotation2d.fromDegrees(45), 0),
         PREPARE_L1(Rotation2d.fromDegrees(45), 0),
         LOAD_CORAL(Rotation2d.fromDegrees(-56), -3),
-        COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3);
+        COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3),
+        OPEN_FOR_ELEVATOR_MINIMUM(Rotation2d.fromDegrees(-50), 0);
 
 
         final Rotation2d targetAngle;

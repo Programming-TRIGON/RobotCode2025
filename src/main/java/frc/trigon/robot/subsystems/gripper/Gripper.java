@@ -78,6 +78,10 @@ public class Gripper extends MotorSubsystem {
         Logger.recordOutput("Poses/Components/GripperPose", calculateVisualizationPose());
     }
 
+    public boolean isOpenForElevator() {
+        return getCurrentEncoderAngle().getDegrees() > GripperConstants.MINIMUM_OPEN_FOR_ELEVATOR_ANGLE.getDegrees();
+    }
+
     public boolean hasGamePiece() {
         return laserCAN.hasResult() && laserCAN.getDistanceMillimeters() < GripperConstants.GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS;
     }
@@ -88,7 +92,7 @@ public class Gripper extends MotorSubsystem {
 
     public boolean atTargetAngle() {
         final double currentToTargetStateDifference = Math.abs(getCurrentEncoderAngle().getDegrees() - targetState.targetAngle.getDegrees());
-        return currentToTargetStateDifference < GripperConstants.POSITION_TOLERANCE_DEGREES.getDegrees();
+        return currentToTargetStateDifference < GripperConstants.ANGLE_TOLERANCE.getDegrees();
     }
 
     /**
