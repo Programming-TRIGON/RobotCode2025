@@ -4,11 +4,12 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import org.trigon.commands.GearRatioCalculationCommand;
 import org.trigon.commands.NetworkTablesCommand;
 
 import java.util.Set;
-import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 
 public class GripperCommands {
@@ -26,6 +27,36 @@ public class GripperCommands {
         return new GearRatioCalculationCommand(
                 GripperConstants.ANGLE_MOTOR,
                 GripperConstants.ANGLE_ENCODER,
+                RobotContainer.GRIPPER
+        );
+    }
+
+    public static Command getDefaultCommand() {
+        return GeneralCommands.getContinuousConditionalCommand(
+                getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_ELEVATOR_MINIMUM),
+                getSetTargetStateCommand(GripperConstants.GripperState.REST),
+                RobotContainer.ELEVATOR::willCurrentMovementMoveThroughHitRange
+        );
+    }
+
+    /**
+     * Creates a command that will set the gripper to the score in reef state,
+     * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
+     *
+     * @return the command
+     */
+    public static Command getScoreInReefCommand() {
+        return new StartEndCommand(
+                RobotContainer.GRIPPER::scoreInReef,
+                RobotContainer.GRIPPER::stop,
+                RobotContainer.GRIPPER
+        );
+    }
+
+    public static Command getSetTargetStateCommand(Supplier<GripperConstants.GripperState> targetStateSupplier) {
+        return new StartEndCommand(
+                () -> RobotContainer.GRIPPER.setTargetState(targetStateSupplier.get()),
+                RobotContainer.GRIPPER::stop,
                 RobotContainer.GRIPPER
         );
     }

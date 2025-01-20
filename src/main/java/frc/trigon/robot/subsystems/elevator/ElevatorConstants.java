@@ -17,8 +17,8 @@ import org.trigon.utilities.mechanisms.ElevatorMechanism2d;
 
 public class ElevatorConstants {
     private static final int
-            MASTER_MOTOR_ID = 13,
-            FOLLOWER_MOTOR_ID = 14;
+            MASTER_MOTOR_ID = 12,
+            FOLLOWER_MOTOR_ID = 13;
     private static final String
             MASTER_MOTOR_NAME = "ElevatorMasterMotor",
             FOLLOWER_MOTOR_NAME = "ElevatorFollowerMotor";
@@ -90,6 +90,9 @@ public class ElevatorConstants {
 
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
     static final double POSITION_TOLERANCE_METERS = 0.1;
+    static final double
+            GRIPPER_HITTING_ELEVATOR_BASE_LOWER_BOUND_POSITION_ROTATIONS = 0.1,
+            GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS = 0.4;
 
     static {
         configureMasterMotor();

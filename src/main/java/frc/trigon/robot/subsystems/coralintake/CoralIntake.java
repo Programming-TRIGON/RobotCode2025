@@ -2,25 +2,24 @@ package frc.trigon.robot.subsystems.coralintake;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.misc.simplesensor.SimpleSensor;
+import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
+import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
-import org.trigon.utilities.Conversions;
 
 public class CoralIntake extends MotorSubsystem {
     private final TalonFXMotor
             intakeMotor = CoralIntakeConstants.INTAKE_MOTOR,
             funnelMotor = CoralIntakeConstants.FUNNEL_MOTOR,
-            elevatorMotor = CoralIntakeConstants.MASTER_ELEVATOR_MOTOR;
+            angleMotor = CoralIntakeConstants.ANGLE_MOTOR;
+    private final CANcoderEncoder angleEncoder = CoralIntakeConstants.ANGLE_ENCODER;
     private final SimpleSensor beamBreak = CoralIntakeConstants.BEAM_BREAK;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
@@ -32,29 +31,29 @@ public class CoralIntake extends MotorSubsystem {
 
     @Override
     public void setBrake(boolean brake) {
-        elevatorMotor.setBrake(brake);
+        angleMotor.setBrake(brake);
     }
 
     @Override
     public void sysIdDrive(double targetDrivePower) {
-        elevatorMotor.setControl(voltageRequest.withOutput(targetDrivePower));
+        angleMotor.setControl(voltageRequest.withOutput(targetDrivePower));
     }
 
     @Override
     public void updateLog(SysIdRoutineLog log) {
-        log.motor("CoralElevatorMotor")
-                .linearPosition(Units.Meters.of(getCurrentElevatorPositionRotations()))
-                .linearVelocity(Units.MetersPerSecond.of(elevatorMotor.getSignal(TalonFXSignal.VELOCITY)))
-                .voltage(Units.Volts.of(elevatorMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
+        log.motor("CoralAngleMotor")
+                .angularPosition(Units.Rotations.of(getCurrentEncoderAngle().getRotations()))
+                .angularVelocity(Units.RotationsPerSecond.of(angleMotor.getSignal(TalonFXSignal.VELOCITY)))
+                .voltage(Units.Volts.of(angleMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
     @Override
     public void updateMechanism() {
         CoralIntakeConstants.INTAKE_MECHANISM.update(intakeMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
         CoralIntakeConstants.FUNNEL_MECHANISM.update(funnelMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
-        CoralIntakeConstants.ELEVATOR_MECHANISM.update(
-                getCurrentElevatorPositionMeters(),
-                rotationsToMeters(elevatorMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
+        CoralIntakeConstants.ANGLE_MECHANISM.update(
+                getCurrentEncoderAngle(),
+                Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
         );
 
         Logger.recordOutput("Poses/Components/CoralIntakePose", calculateVisualizationPose());
@@ -64,28 +63,30 @@ public class CoralIntake extends MotorSubsystem {
     public void updatePeriodically() {
         intakeMotor.update();
         funnelMotor.update();
-        elevatorMotor.update();
+        angleMotor.update();
+        angleEncoder.update();
         beamBreak.updateSensor();
     }
 
     @Override
     public SysIdRoutine.Config getSysIdConfig() {
-        return CoralIntakeConstants.ELEVATOR_SYSID_CONFIG;
+        return CoralIntakeConstants.ANGLE_SYSID_CONFIG;
     }
 
     @Override
     public void stop() {
-        stopCollectionMotors();
-        elevatorMotor.stopMotor();
+        intakeMotor.stopMotor();
+        funnelMotor.stopMotor();
+        angleMotor.stopMotor();
     }
 
     public boolean atState(CoralIntakeConstants.CoralIntakeState targetState) {
-        return targetState == this.targetState && atTargetPosition();
+        return targetState == this.targetState && atTargetAngle();
     }
 
-    public boolean atTargetPosition() {
-        final double elevatorDifferenceFromTargetStateRotations = Math.abs(getCurrentElevatorPositionRotations() - targetState.targetPositionRotations);
-        return elevatorDifferenceFromTargetStateRotations < CoralIntakeConstants.POSITION_TOLERANCE_ROTATIONS;
+    public boolean atTargetAngle() {
+        final double angleDifferenceFromTargetAngleDegrees = Math.abs(getCurrentEncoderAngle().minus(targetState.targetAngle).getDegrees());
+        return angleDifferenceFromTargetAngleDegrees < CoralIntakeConstants.ANGLE_TOLERANCE.getDegrees();
     }
 
     public boolean hasGamePiece() {
@@ -114,13 +115,13 @@ public class CoralIntake extends MotorSubsystem {
         setTargetState(
                 targetState.targetIntakeVoltage,
                 targetState.targetFunnelVoltage,
-                targetState.targetPositionRotations
+                targetState.targetAngle
         );
     }
 
-    void setTargetState(double targetIntakeVoltage, double targetFunnelVoltage, double targetPositionRotations) {
+    void setTargetState(double targetIntakeVoltage, double targetFunnelVoltage, Rotation2d targetAngle) {
         setTargetVoltage(targetIntakeVoltage, targetFunnelVoltage);
-        setTargetPositionRotations(targetPositionRotations);
+        setTargetAngle(targetAngle);
     }
 
     void setTargetVoltage(double targetIntakeVoltage, double targetFunnelVoltage) {
@@ -138,29 +139,23 @@ public class CoralIntake extends MotorSubsystem {
         funnelMotor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
-    private void setTargetPositionRotations(double targetPositionRotations) {
-        elevatorMotor.setControl(positionRequest.withPosition(targetPositionRotations));
+    private void setTargetAngle(Rotation2d targetAngle) {
+        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
     }
 
     private Pose3d calculateVisualizationPose() {
         final Pose3d originPoint = CoralIntakeConstants.INTAKE_VISUALIZATION_ORIGIN_POINT;
+        final Rotation2d startingAngle = CoralIntakeConstants.INTAKE_ANGLE_FROM_GROUND;
+
         final Transform3d intakeTransform = new Transform3d(
-                new Translation3d(getCurrentElevatorPositionMeters(), 0, 0),
-                new Rotation3d(0, CoralIntakeConstants.INTAKE_ANGLE_FROM_GROUND.getRadians(), 0)
+                new Translation3d(0, 0, 0),
+                new Rotation3d(0, startingAngle.plus(getCurrentEncoderAngle()).getRadians(), 0)
         );
 
         return originPoint.transformBy(intakeTransform);
     }
 
-    private double getCurrentElevatorPositionMeters() {
-        return rotationsToMeters(getCurrentElevatorPositionRotations());
-    }
-
-    private double getCurrentElevatorPositionRotations() {
-        return elevatorMotor.getSignal(TalonFXSignal.POSITION);
-    }
-
-    private double rotationsToMeters(double positionRotations) {
-        return Conversions.rotationsToDistance(positionRotations, CoralIntakeConstants.ELEVATOR_DRUM_DIAMETER_METERS);
+    private Rotation2d getCurrentEncoderAngle() {
+        return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
     }
 }
