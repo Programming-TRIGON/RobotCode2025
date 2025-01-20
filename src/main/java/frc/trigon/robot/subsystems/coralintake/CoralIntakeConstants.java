@@ -6,6 +6,7 @@ import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.util.Color;
@@ -67,9 +68,9 @@ public class CoralIntakeConstants {
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseVelocitySign;
     private static final double
-            INTAKE_MOTOR_GEAR_RATIO = 1,
-            FUNNEL_MOTOR_GEAR_RATIO = 1,
-            ANGLE_MOTOR_GEAR_RATIO = 100;
+            INTAKE_MOTOR_GEAR_RATIO = 1.3,
+            FUNNEL_MOTOR_GEAR_RATIO = 4,
+            ANGLE_MOTOR_GEAR_RATIO = 120;
     private static final ForwardLimitSourceValue FORWARD_LIMIT_SOURCE_VALUE = ForwardLimitSourceValue.LimitSwitchPin;
     private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
@@ -85,16 +86,16 @@ public class CoralIntakeConstants {
             FUNNEL_MOTOR_AMOUNT = 1,
             ANGLE_MOTOR_AMOUNT = 1;
     private static final DCMotor
-            INTAKE_GEARBOX = DCMotor.getKrakenX60Foc(INTAKE_MOTOR_AMOUNT),
-            FUNNEL_GEARBOX = DCMotor.getKrakenX60Foc(FUNNEL_MOTOR_AMOUNT),
+            INTAKE_GEARBOX = DCMotor.getFalcon500Foc(INTAKE_MOTOR_AMOUNT),
+            FUNNEL_GEARBOX = DCMotor.getFalcon500Foc(FUNNEL_MOTOR_AMOUNT),
             ANGLE_GEARBOX = DCMotor.getKrakenX60Foc(ANGLE_MOTOR_AMOUNT);
     private static final double MOMENT_OF_INERTIA = 0.003;
     private static final double
-            INTAKE_LENGTH_METERS = 0.3,
-            INTAKE_MASS_KILOGRAMS = 5;
+            INTAKE_LENGTH_METERS = 0.44,
+            INTAKE_MASS_KILOGRAMS = 8;
     private static final Rotation2d
-            MAXIMUM_ANGLE = new Rotation2d(180),
-            MINIMUM_ANGLE = new Rotation2d(0);//TODO: Find
+            MAXIMUM_ANGLE = Rotation2d.fromDegrees(225),
+            MINIMUM_ANGLE = Rotation2d.fromDegrees(-35.31);//TODO: Find
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final SimpleMotorSimulation
             INTAKE_SIMULATION = new SimpleMotorSimulation(
@@ -125,8 +126,10 @@ public class CoralIntakeConstants {
             Units.Second.of(1000)
     );
 
-    static final Rotation2d INTAKE_ANGLE_FROM_GROUND = Rotation2d.fromDegrees(31.21);
-    static final Pose3d INTAKE_VISUALIZATION_ORIGIN_POINT = new Pose3d(-0.1665, 0, 0.5651, new Rotation3d(0, INTAKE_ANGLE_FROM_GROUND.getRadians(), 0));
+    static final Pose3d INTAKE_VISUALIZATION_ORIGIN_POINT = new Pose3d(
+            new Translation3d(0.344, 0, 0.3291),
+            new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(-158.78), 0)
+    );
     private static final double MAXIMUM_DISPLAYABLE_VELOCITY = 12;
     static final SpeedMechanism2d
             INTAKE_MECHANISM = new SpeedMechanism2d(
@@ -248,10 +251,8 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        COLLECT(12, 12, Rotation2d.fromDegrees(180)),
-        FEED(-12, -12, Rotation2d.fromDegrees(0)),
-        EJECT(-12, -12, Rotation2d.fromDegrees(180)),
-        REST(0, 0, Rotation2d.fromDegrees(0));
+        COLLECT(6, 6, Rotation2d.fromDegrees(-35)),
+        REST(0, 0, Rotation2d.fromDegrees(225));
 
         public final double
                 targetIntakeVoltage,
