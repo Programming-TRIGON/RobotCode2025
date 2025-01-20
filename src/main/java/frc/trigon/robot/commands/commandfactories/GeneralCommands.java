@@ -58,7 +58,7 @@ public class GeneralCommands {
     public static Command getContinuousConditionalCommand(Command onTrue, Command onFalse, BooleanSupplier condition) {
         return new ConditionalCommand(
                 onTrue.onlyWhile(condition),
-                onFalse.onlyWhile(() -> !condition.getAsBoolean()),
+                onFalse.until(condition),
                 condition
         ).repeatedly();
     }
