@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandfactories.CollectionCommands;
+import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
@@ -81,12 +82,13 @@ public class RobotContainer {
         OperatorConstants.TOGGLE_ROTATION_MODE_TRIGGER.onTrue(GeneralCommands.getToggleRotationModeCommand());
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
 
-        OperatorConstants.ENABLE_CORAL_ALIGNMENT_COMMAND.onTrue(CommandConstants.ENABLE_CORAL_ALIGNMENT_COMMAND);
-        OperatorConstants.DISABLE_CORAL_ALIGNMENT_COMMAND.onTrue(CommandConstants.DISABLE_CORAL_ALIGNMENT_COMMAND);
         OperatorConstants.CORAL_COLLECTION_TRIGGER.whileTrue(CollectionCommands.getCoralCollectionCommand());
+        OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
     }
 
     private void bindSetters() {
+        OperatorConstants.ENABLE_CORAL_ALIGNMENT_COMMAND.onTrue(CommandConstants.ENABLE_CORAL_ALIGNMENT_COMMAND);
+        OperatorConstants.DISABLE_CORAL_ALIGNMENT_COMMAND.onTrue(CommandConstants.DISABLE_CORAL_ALIGNMENT_COMMAND);
         OperatorConstants.ENABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
         OperatorConstants.DISABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
 
