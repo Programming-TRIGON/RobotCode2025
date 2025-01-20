@@ -2,10 +2,7 @@ package frc.trigon.robot.subsystems.gripper;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -78,6 +75,10 @@ public class Gripper extends MotorSubsystem {
         Logger.recordOutput("Poses/Components/GripperPose", calculateVisualizationPose());
     }
 
+    public boolean isOpenForElevator() {
+        return getCurrentEncoderAngle().getDegrees() > GripperConstants.MINIMUM_OPEN_FOR_ELEVATOR_ANGLE.getDegrees();
+    }
+
     public boolean hasGamePiece() {
         return laserCAN.hasResult() && laserCAN.getDistanceMillimeters() < GripperConstants.GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS;
     }
@@ -88,7 +89,15 @@ public class Gripper extends MotorSubsystem {
 
     public boolean atTargetAngle() {
         final double currentToTargetStateDifference = Math.abs(getCurrentEncoderAngle().getDegrees() - targetState.targetAngle.getDegrees());
-        return currentToTargetStateDifference < GripperConstants.POSITION_TOLERANCE_DEGREES.getDegrees();
+        return currentToTargetStateDifference < GripperConstants.ANGLE_TOLERANCE.getDegrees();
+    }
+
+    /**
+     * This will set the gripper to the score in reef state,
+     * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
+     */
+    void scoreInReef() {
+        setTargetState(targetState.targetAngle, GripperConstants.SCORE_IN_REEF_VOLTAGE);
     }
 
     void setTargetState(GripperConstants.GripperState targetState) {
@@ -116,15 +125,13 @@ public class Gripper extends MotorSubsystem {
 
     private Pose3d calculateVisualizationPose() {
         final Pose3d currentElevatorPose = RobotContainer.ELEVATOR.getFirstStageComponentPose();
-        final Transform3d elevatorToGripper = GripperConstants.ELEVATOR_TO_GRIPPER;
-        final Pose3d gripperOrigin = currentElevatorPose.transformBy(elevatorToGripper);
+        final Pose3d gripperOrigin = currentElevatorPose.transformBy(GripperConstants.ELEVATOR_TO_GRIPPER);
 
-        final Rotation3d gripperRotation = new Rotation3d(
-                0,
-                getCurrentEncoderAngle().getRadians(),
-                0
+        final Transform3d pitchTransform = new Transform3d(
+                new Translation3d(0, 0, 0),
+                new Rotation3d(0, getCurrentEncoderAngle().getRadians(), 0)
         );
-        return gripperOrigin.rotateBy(gripperRotation);
+        return gripperOrigin.transformBy(pitchTransform);
     }
 
     private Rotation2d getCurrentEncoderAngle() {
