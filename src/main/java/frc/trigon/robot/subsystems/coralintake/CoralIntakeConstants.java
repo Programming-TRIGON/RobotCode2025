@@ -80,9 +80,6 @@ public class CoralIntakeConstants {
     private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
-    private static final Rotation2d
-            MAXIMUM_ANGLE = new Rotation2d(180),
-            MINIMUM_ANGLE = new Rotation2d(0);//TODO: Find
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final double
             ANGLE_ENCODER_MAGNET_OFFSET_VALUE = 0,
@@ -101,6 +98,9 @@ public class CoralIntakeConstants {
     private static final double
             INTAKE_LENGTH_METERS = 0.3,
             INTAKE_MASS_KILOGRAMS = 5;
+    private static final Rotation2d
+            MAXIMUM_ANGLE = new Rotation2d(180),
+            MINIMUM_ANGLE = new Rotation2d(0);//TODO: Find
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final SimpleMotorSimulation
             INTAKE_SIMULATION = new SimpleMotorSimulation(
@@ -222,8 +222,6 @@ public class CoralIntakeConstants {
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = MAXIMUM_ANGLE.getRotations();
 
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
