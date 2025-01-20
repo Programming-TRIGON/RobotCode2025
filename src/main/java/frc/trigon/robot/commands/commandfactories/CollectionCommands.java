@@ -42,16 +42,16 @@ public class CollectionCommands {
 
     private static Command getRetractCoralIntakeCommand() {
         return GeneralCommands.getContinuousConditionalCommand(
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.RETRACT).until(() -> RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.RETRACT)),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_LOADING).until(() -> RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_LOADING)),
                 CoralIntakeCommands.getStopCollectionMotorsCommand(),
-                () -> RobotContainer.CORAL_INTAKE.hasGamePiece() && RobotContainer.CORAL_INTAKE.atTargetPosition()
+                () -> RobotContainer.CORAL_INTAKE.hasGamePiece() && RobotContainer.CORAL_INTAKE.atTargetAngle()
         ).asProxy();
     }
 
     private static Command getFeedCoralToGripperCommand() {
         return new ParallelCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD),
-                GeneralCommands.runWhen(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD), RobotContainer.CORAL_INTAKE::atTargetPosition)
+                GeneralCommands.runWhen(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD), RobotContainer.CORAL_INTAKE::atTargetAngle)
         ).until(RobotContainer.GRIPPER::hasGamePiece);
     }
 }

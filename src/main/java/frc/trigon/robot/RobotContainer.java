@@ -87,8 +87,8 @@ public class RobotContainer {
     }
 
     private void bindSetters() {
-        OperatorConstants.ENABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.TURN_ON_AUTONOMOUS_REEF_SCORING_COMMAND);
-        OperatorConstants.DISABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.TURN_OFF_AUTONOMOUS_REEF_SCORING_COMMAND);
+        OperatorConstants.ENABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
+        OperatorConstants.DISABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
 
         OperatorConstants.SET_TARGET_SCORING_LEVEL_L1_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_LEVEL_L1_COMMAND);
         OperatorConstants.SET_TARGET_SCORING_LEVEL_L2_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_LEVEL_L2_COMMAND);
