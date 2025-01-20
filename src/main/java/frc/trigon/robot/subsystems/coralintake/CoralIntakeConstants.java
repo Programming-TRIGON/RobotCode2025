@@ -266,8 +266,9 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD(-12, -12, Rotation2d.fromDegrees(0)),
+        LOAD_CORAL(-12, -12, Rotation2d.fromDegrees(0)),
         PREPARE_FOR_LOADING(12, 12, Rotation2d.fromDegrees(0)),
+        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, Rotation2d.fromDegrees(0)),
         COLLECT(12, 12, Rotation2d.fromDegrees(180)),
         FEED(-12, -12, Rotation2d.fromDegrees(0)),
         EJECT(-12, -12, Rotation2d.fromDegrees(180)),
