@@ -70,9 +70,8 @@ public class Elevator extends MotorSubsystem {
         motor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
-    public boolean isOpen() {
-        final double currentPositionRotations = motor.getSignal(TalonFXSignal.POSITION);
-        return currentPositionRotations > ElevatorConstants.GRIPPER_HITTING_ELEVATOR_BASE_LOWER_BOUND_POSITION_ROTATIONS;
+    public boolean isAllowedToMoveToTargetState() {
+        return isAllowedToMoveToPosition(metersToRotations(targetState.targetPositionMeters));
     }
 
     public Pose3d getFirstStageComponentPose() {

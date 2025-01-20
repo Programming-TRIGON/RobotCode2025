@@ -2,11 +2,9 @@ package frc.trigon.robot.subsystems.gripper;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
-import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import org.trigon.commands.GearRatioCalculationCommand;
 import org.trigon.commands.NetworkTablesCommand;
 
@@ -35,9 +33,9 @@ public class GripperCommands {
 
     public static Command getDefaultCommand() {
         return GeneralCommands.getContinuousConditionalCommand(
-                getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_ELEVATOR_MINIMUM),
                 getSetTargetStateCommand(GripperConstants.GripperState.REST),
-                RobotContainer.ELEVATOR::isOpen
+                getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_ELEVATOR_MINIMUM),
+                RobotContainer.ELEVATOR::isAllowedToMoveToTargetState
         );
     }
 
