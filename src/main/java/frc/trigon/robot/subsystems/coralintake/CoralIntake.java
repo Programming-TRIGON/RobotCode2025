@@ -104,11 +104,6 @@ public class CoralIntake extends MotorSubsystem {
         return CoralIntakeConstants.EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean();
     }
 
-    void stopCollectionMotors() {
-        intakeMotor.stopMotor();
-        funnelMotor.stopMotor();
-    }
-
     void setTargetState(CoralIntakeConstants.CoralIntakeState targetState) {
         this.targetState = targetState;
 
