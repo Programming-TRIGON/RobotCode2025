@@ -186,7 +186,7 @@ public class CoralIntakeConstants {
         INTAKE_MOTOR.setPhysicsSimulation(INTAKE_SIMULATION);
 
         INTAKE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
-        INTAKE_MOTOR.registerSignal(TalonFXSignal.TORQUE_CURRENT, 100);
+        INTAKE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
     }
 
     private static void configureFunnelMotor() {
