@@ -18,7 +18,7 @@ public class CoralIntake extends MotorSubsystem {
     private final TalonFXMotor
             intakeMotor = CoralIntakeConstants.INTAKE_MOTOR,
             funnelMotor = CoralIntakeConstants.FUNNEL_MOTOR,
-            angleMotor = CoralIntakeConstants.MASTER_ANGLE_MOTOR;
+            angleMotor = CoralIntakeConstants.ANGLE_MOTOR;
     private final CANcoderEncoder angleEncoder = CoralIntakeConstants.ANGLE_ENCODER;
     private final SimpleSensor beamBreak = CoralIntakeConstants.BEAM_BREAK;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);

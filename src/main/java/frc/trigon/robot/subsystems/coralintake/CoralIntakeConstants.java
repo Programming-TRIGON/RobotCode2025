@@ -2,7 +2,6 @@ package frc.trigon.robot.subsystems.coralintake;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -29,22 +28,19 @@ public class CoralIntakeConstants {
     private static final int
             INTAKE_MOTOR_ID = 9,
             FUNNEL_MOTOR_ID = 10,
-            MASTER_ANGLE_MOTOR_ID = 11,
-            FOLLOWER_ANGLE_MOTOR_ID = 12,
+            ANGLE_MOTOR_ID = 11,
             ANGLE_ENCODER_ID = 11,
             BEAM_BREAK_PORT = 0;
     private static final String
             INTAKE_MOTOR_NAME = "CoralIntakeMotor",
             FUNNEL_MOTOR_NAME = "CoralFunnelMotor",
-            MASTER_ANGLE_MOTOR_NAME = "CoralMasterAngleMotor",
-            FOLLOWER_ANGLE_MOTOR_NAME = "CoralFollowerAngleMotor",
+            ANGLE_MOTOR_NAME = "CoralAngleMotor",
             ANGLE_ENCODER_NAME = "CoralAngleEncoder",
             BEAM_BREAK_NAME = "CoralBeamBreak";
     static final TalonFXMotor
             INTAKE_MOTOR = new TalonFXMotor(INTAKE_MOTOR_ID, INTAKE_MOTOR_NAME),
             FUNNEL_MOTOR = new TalonFXMotor(FUNNEL_MOTOR_ID, FUNNEL_MOTOR_NAME),
-            MASTER_ANGLE_MOTOR = new TalonFXMotor(MASTER_ANGLE_MOTOR_ID, MASTER_ANGLE_MOTOR_NAME),
-            FOLLOWER_ANGLE_MOTOR = new TalonFXMotor(FOLLOWER_ANGLE_MOTOR_ID, FOLLOWER_ANGLE_MOTOR_NAME);
+            ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
     static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
     static final SimpleSensor BEAM_BREAK = SimpleSensor.createDigitalSensor(BEAM_BREAK_PORT, BEAM_BREAK_NAME);
 
@@ -55,9 +51,7 @@ public class CoralIntakeConstants {
     private static final InvertedValue
             INTAKE_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             FUNNEL_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
-            MASTER_ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
-            FOLLOWER_ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
-    private static final boolean ANGLE_FOLLOWER_OPPOSES_MASTER = false;
+            ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
     private static final double
             ANGLE_P = RobotHardwareStats.isSimulation() ? 300 : 0,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
@@ -89,7 +83,7 @@ public class CoralIntakeConstants {
     private static final int
             INTAKE_MOTOR_AMOUNT = 1,
             FUNNEL_MOTOR_AMOUNT = 1,
-            ANGLE_MOTOR_AMOUNT = 2;
+            ANGLE_MOTOR_AMOUNT = 1;
     private static final DCMotor
             INTAKE_GEARBOX = DCMotor.getKrakenX60Foc(INTAKE_MOTOR_AMOUNT),
             FUNNEL_GEARBOX = DCMotor.getKrakenX60Foc(FUNNEL_MOTOR_AMOUNT),
@@ -155,8 +149,7 @@ public class CoralIntakeConstants {
     static {
         configureIntakeMotor();
         configureFunnelMotor();
-        configureMasterAngleMotor();
-        configureFollowerAngleMotor();
+        configureAngleMotor();
         configureAngleEncoder();
         configureBeamBreak();
     }
@@ -195,14 +188,14 @@ public class CoralIntakeConstants {
         FUNNEL_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
     }
 
-    private static void configureMasterAngleMotor() {
+    private static void configureAngleMotor() {
         final TalonFXConfiguration config = new TalonFXConfiguration();
 
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
 
         config.MotorOutput.NeutralMode = ANGLE_MOTOR_NEUTRAL_MODE_VALUE;
-        config.MotorOutput.Inverted = MASTER_ANGLE_MOTOR_INVERTED_VALUE;
+        config.MotorOutput.Inverted = ANGLE_MOTOR_INVERTED_VALUE;
         config.Feedback.RotorToSensorRatio = ANGLE_MOTOR_GEAR_RATIO;
 
         config.Slot0.kP = ANGLE_P;
@@ -227,29 +220,14 @@ public class CoralIntakeConstants {
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
 
-        MASTER_ANGLE_MOTOR.applyConfiguration(config);
-        MASTER_ANGLE_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
+        ANGLE_MOTOR.applyConfiguration(config);
+        ANGLE_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
 
-        MASTER_ANGLE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
-        MASTER_ANGLE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
-        MASTER_ANGLE_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
-        MASTER_ANGLE_MOTOR.registerSignal(TalonFXSignal.POSITION, 100);
-        MASTER_ANGLE_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
-    }
-
-    private static void configureFollowerAngleMotor() {
-        final TalonFXConfiguration config = new TalonFXConfiguration();
-
-        config.Audio.BeepOnConfig = false;
-        config.Audio.BeepOnBoot = false;
-
-        config.MotorOutput.NeutralMode = ANGLE_MOTOR_NEUTRAL_MODE_VALUE;
-        config.MotorOutput.Inverted = FOLLOWER_ANGLE_MOTOR_INVERTED_VALUE;
-
-        FOLLOWER_ANGLE_MOTOR.applyConfiguration(config);
-
-        final Follower followerRequest = new Follower(MASTER_ANGLE_MOTOR_ID, ANGLE_FOLLOWER_OPPOSES_MASTER);
-        FOLLOWER_ANGLE_MOTOR.setControl(followerRequest);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.POSITION, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
     }
 
     private static void configureAngleEncoder() {
