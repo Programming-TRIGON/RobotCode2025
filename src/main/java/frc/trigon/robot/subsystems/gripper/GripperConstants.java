@@ -131,7 +131,7 @@ public class GripperConstants {
             Color.kRed
     );
     private static final Pose3d GRIPPER_VISUALIZATION_ORIGIN_POINT = new Pose3d(
-            new Translation3d(0, 0, 0),
+            new Translation3d(-0.22, 0, 0.858),
             new Rotation3d(0, 0, 0)
     );
     static final Transform3d ELEVATOR_TO_GRIPPER = new Transform3d(

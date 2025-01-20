@@ -121,19 +121,21 @@ public class CoralPlacingCommands {
         }
 
         private ElevatorConstants.ElevatorState determineElevatorState() {
-            return switch (this) {
-                case L1 -> ElevatorConstants.ElevatorState.SCORE_L1;
-                case L2 -> ElevatorConstants.ElevatorState.SCORE_L2;
-                case L3 -> ElevatorConstants.ElevatorState.SCORE_L3;
-                case L4 -> ElevatorConstants.ElevatorState.SCORE_L4;
+            return switch (ordinal()) {
+                case 0 -> ElevatorConstants.ElevatorState.SCORE_L1;
+                case 1 -> ElevatorConstants.ElevatorState.SCORE_L2;
+                case 2 -> ElevatorConstants.ElevatorState.SCORE_L3;
+                case 3 -> ElevatorConstants.ElevatorState.SCORE_L4;
+                default -> throw new IllegalStateException("Unexpected value: " + ordinal());
             };
         }
 
         private GripperConstants.GripperState determineGripperState() {
-            return switch (this) {
-                case L1 -> GripperConstants.GripperState.PREPARE_L1;
-                case L2, L3 -> GripperConstants.GripperState.PREPARE_L3_OR_L2;
-                case L4 -> GripperConstants.GripperState.PREPARE_L4;
+            return switch (ordinal()) {
+                case 0 -> GripperConstants.GripperState.PREPARE_L1;
+                case 1, 2 -> GripperConstants.GripperState.PREPARE_L3_OR_L2;
+                case 3 -> GripperConstants.GripperState.PREPARE_L4;
+                default -> throw new IllegalStateException("Unexpected value: " + ordinal());
             };
         }
     }
