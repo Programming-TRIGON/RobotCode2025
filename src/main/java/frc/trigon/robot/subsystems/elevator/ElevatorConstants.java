@@ -99,7 +99,7 @@ public class ElevatorConstants {
     static final double
             GRIPPER_HITTING_ELEVATOR_BASE_LOWER_BOUND_POSITION_ROTATIONS = 0.1,
             GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS = 0.4;
-    static final double FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH = 0.9;
+    static final double FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH = 0.5786;
 
     static {
         configureMasterMotor();
