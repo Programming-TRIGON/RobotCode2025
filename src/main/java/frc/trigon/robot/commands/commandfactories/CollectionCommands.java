@@ -53,7 +53,7 @@ public class CollectionCommands {
 
     private static Command getCoralIntakeCommand() {
         return new SequentialCommandGroup(
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_LOADING).until(RobotContainer.CORAL_INTAKE::hasGamePiece),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED).until(RobotContainer.CORAL_INTAKE::hasGamePiece),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED).alongWith(CommandConstants.COLLECTION_RUMBLE_COMMAND).until(RobotContainer.CORAL_INTAKE::atTargetAngle),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL)
         );
