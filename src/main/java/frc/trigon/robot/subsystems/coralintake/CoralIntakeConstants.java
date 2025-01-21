@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.trigon.robot.misc.objectdetectioncamera.SimulationObjectDetectionCameraIO;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.misc.simplesensor.SimpleSensor;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
@@ -120,7 +119,7 @@ public class CoralIntakeConstants {
             MAXIMUM_ANGLE,
             SHOULD_SIMULATE_GRAVITY
     );
-    private static final DoubleSupplier BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> SimulationObjectDetectionCameraIO.HAS_OBJECTS ? 1 : 0;
+    private static final DoubleSupplier BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> 0;
 
     static final SysIdRoutine.Config ANGLE_SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(5).per(Units.Second),
@@ -157,7 +156,7 @@ public class CoralIntakeConstants {
     ).debounce(CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS);
     private static final double
             CORAL_DETECTION_CURRENT = 50,
-            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.1;
+            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.5;
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             () -> Math.abs(INTAKE_MOTOR.getSignal(TalonFXSignal.STATOR_CURRENT)) > CORAL_DETECTION_CURRENT
@@ -272,8 +271,8 @@ public class CoralIntakeConstants {
     public enum CoralIntakeState {
         LOAD_CORAL(-3, -3, Rotation2d.fromDegrees(170)),
         PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(3, 3, Rotation2d.fromDegrees(170)),
-        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, Rotation2d.fromDegrees(0)),
-        COLLECT(3, 3, Rotation2d.fromDegrees(35)),
+        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, Rotation2d.fromDegrees(170)),
+        COLLECT(3, 3, Rotation2d.fromDegrees(-35)),
         EJECT(-3, -3, Rotation2d.fromDegrees(180)),
         REST(0, 0, Rotation2d.fromDegrees(170));
 
