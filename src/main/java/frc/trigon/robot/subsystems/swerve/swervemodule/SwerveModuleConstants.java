@@ -15,7 +15,7 @@ import org.trigon.hardware.simulation.SimpleMotorSimulation;
 
 public class SwerveModuleConstants {
     private static final double
-            DRIVE_MOTOR_GEAR_RATIO = 6.12,
+            DRIVE_MOTOR_GEAR_RATIO = 5.36,
             STEER_MOTOR_GEAR_RATIO = 12.8;
     private static final double
             DRIVE_MOTOR_OPEN_LOOP_RAMP_RATE = RobotHardwareStats.isSimulation() ? 0.1 : 0.1,
