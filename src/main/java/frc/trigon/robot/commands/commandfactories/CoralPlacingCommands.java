@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.CommandConstants;
+import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
@@ -27,8 +28,8 @@ public class CoralPlacingCommands {
 
     public static Command getScoreInReefCommand() {
         return new ConditionalCommand(
-                getAutonomouslyScoreInReefCommand(),
-                getManuallyScoreInReefCommand(),
+                getAutonomouslyScoreInReefCommand().asProxy(),
+                getManuallyScoreInReefCommand().asProxy(),
                 () -> SHOULD_SCORE_AUTONOMOUSLY
         );
     }
@@ -44,8 +45,20 @@ public class CoralPlacingCommands {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
                 getAutonomousDriveToReefThenManualDriveCommand(),
-                getGripperSequenceCommand()
+                getGripperSequenceCommand(),
+                getWaitUntilScoringTargetChangesCommand().andThen(
+                        () -> {
+                            System.out.println("TEST");
+                            getAutonomouslyScoreInReefCommand().onlyWhile(OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER).schedule();
+                        }
+                )
         );
+    }
+
+    private static Command getWaitUntilScoringTargetChangesCommand() {
+        return new WaitUntilChangeCommand<>(() -> TARGET_SCORING_LEVEL)
+                .raceWith(new WaitUntilChangeCommand<>(() -> TARGET_REEF_SCORING_CLOCK_POSITION))
+                .raceWith(new WaitUntilChangeCommand<>(() -> TARGET_REEF_SCORING_SIDE));
     }
 
     private static Command getAutonomousDriveToReefThenManualDriveCommand() {
@@ -117,7 +130,7 @@ public class CoralPlacingCommands {
             final Pose2d reefCenterPose = new Pose2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, reefClockPosition.clockAngle);
             final double yTransform = reefSide.shouldFlipYTransform(reefClockPosition) ? -positiveYTransformMeters : positiveYTransformMeters;
             final Transform2d transform = new Transform2d(xTransformMeters, yTransform, new Rotation2d());
-            return new FlippablePose2d(reefCenterPose.plus(transform), reefClockPosition.isFacingDriverStation);
+            return new FlippablePose2d(reefCenterPose.plus(transform), true);
         }
 
         private ElevatorConstants.ElevatorState determineElevatorState() {

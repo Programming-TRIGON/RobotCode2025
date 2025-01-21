@@ -55,23 +55,23 @@ public class CoralIntakeConstants {
             FUNNEL_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
     private static final double
-            ANGLE_P = RobotHardwareStats.isSimulation() ? 300 : 0,
+            ANGLE_P = RobotHardwareStats.isSimulation() ? 75 : 0,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_D = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_KV = RobotHardwareStats.isSimulation() ? 0 : 0,
+            ANGLE_D = RobotHardwareStats.isSimulation() ? 1.6663 : 0,
+            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0.074947 : 0,
+            ANGLE_KV = RobotHardwareStats.isSimulation() ? 8.7544 : 0,
             ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0 : 0;
+            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0.27712 : 0;
     private static final double
-            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 3 : 0,
-            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 3 : 0,
+            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 0,
+            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 6 : 0,
             ANGLE_MOTION_MAGIC_JERK = ANGLE_MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
-    private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseVelocitySign;
+    private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
     private static final double
             INTAKE_MOTOR_GEAR_RATIO = 1.3,
             FUNNEL_MOTOR_GEAR_RATIO = 4,
-            ANGLE_MOTOR_GEAR_RATIO = 120;
+            ANGLE_MOTOR_GEAR_RATIO = 72;
     private static final ForwardLimitSourceValue FORWARD_LIMIT_SOURCE_VALUE = ForwardLimitSourceValue.LimitSwitchPin;
     private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
@@ -95,7 +95,7 @@ public class CoralIntakeConstants {
             INTAKE_LENGTH_METERS = 0.44,
             INTAKE_MASS_KILOGRAMS = 8;
     private static final Rotation2d
-            MAXIMUM_ANGLE = Rotation2d.fromDegrees(225),
+            MAXIMUM_ANGLE = Rotation2d.fromDegrees(180),
             MINIMUM_ANGLE = Rotation2d.fromDegrees(-35.31);//TODO: Find
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final SimpleMotorSimulation
@@ -123,7 +123,7 @@ public class CoralIntakeConstants {
 
     static final SysIdRoutine.Config ANGLE_SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(5).per(Units.Second),
-            Units.Volts.of(9),
+            Units.Volts.of(5),
             Units.Second.of(1000)
     );
 

@@ -34,13 +34,17 @@ public class ElevatorConstants {
     private static final double GEAR_RATIO = 6.66666;
     private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = false;
     private static final double
-            P = RobotHardwareStats.isSimulation() ? 70 : 0,
+            P = RobotHardwareStats.isSimulation() ? 40 : 0,
             I = RobotHardwareStats.isSimulation() ? 0 : 0,
-            D = RobotHardwareStats.isSimulation() ? 0 : 0,
-            KS = RobotHardwareStats.isSimulation() ? 0 : 0,
-            KV = RobotHardwareStats.isSimulation() ? 5 : 0,
-            KG = RobotHardwareStats.isSimulation() ? 0 : 0,
+            D = RobotHardwareStats.isSimulation() ? 0.22774 : 0,
+            KS = RobotHardwareStats.isSimulation() ? 0.066659 : 0,
+            KV = RobotHardwareStats.isSimulation() ? 0.74502 : 0,
+            KG = RobotHardwareStats.isSimulation() ? 0.30539 : 0,
             KA = RobotHardwareStats.isSimulation() ? 0 : 0;
+    private static final double
+            MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 80 : 0,
+            MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 80 : 0,
+            MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
     private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
@@ -48,10 +52,6 @@ public class ElevatorConstants {
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final double REVERSE_LIMIT_SWITCH_RESET_POSITION = 0;
-    private static final double
-            MOTION_MAGIC_CRUISE_VELOCITY = 40,
-            MOTION_MAGIC_ACCELERATION = 40,
-            MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
     static final boolean FOC_ENABLED = true;
 
     private static final int MOTOR_AMOUNT = 2;
@@ -73,8 +73,8 @@ public class ElevatorConstants {
     );
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
-            Units.Volts.of(0.25).per(Units.Seconds),
-            Units.Volts.of(2),
+            Units.Volts.of(1).per(Units.Seconds),
+            Units.Volts.of(5),
             Units.Second.of(1000)
     );
 
@@ -171,7 +171,7 @@ public class ElevatorConstants {
         SCORE_L1(0),
         SCORE_L2(0.03),
         SCORE_L3(0.4),
-        SCORE_L4(1);
+        SCORE_L4(1.07);
 
         public final double targetPositionMeters;
 
