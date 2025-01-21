@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
+import org.trigon.commands.GearRatioCalculationCommand;
 import org.trigon.commands.NetworkTablesCommand;
 
 import java.util.Set;
@@ -21,6 +22,15 @@ public class CoralIntakeCommands {
                 "Debugging/TargetCoralIntakeVoltage",
                 "Debugging/TargetCoralIntakeFunnelVoltage",
                 "Debugging/TargetCoralIntakeAngleDegrees"
+        );
+    }
+
+    public static Command getGearRatioCalculationCommand() {
+        return new GearRatioCalculationCommand(
+                CoralIntakeConstants.ANGLE_MOTOR,
+                CoralIntakeConstants.ANGLE_ENCODER,
+                0.08,
+                RobotContainer.CORAL_INTAKE
         );
     }
 

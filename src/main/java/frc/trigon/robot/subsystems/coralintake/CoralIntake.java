@@ -128,14 +128,12 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     private Pose3d calculateVisualizationPose() {
-        final Pose3d originPoint = CoralIntakeConstants.INTAKE_VISUALIZATION_ORIGIN_POINT;
-
         final Transform3d intakeTransform = new Transform3d(
                 new Translation3d(0, 0, 0),
-                new Rotation3d(0, getCurrentEncoderAngle().getRadians(), 0)
+                new Rotation3d(0, -getCurrentEncoderAngle().getRadians(), 0)
         );
 
-        return originPoint.transformBy(intakeTransform);
+        return CoralIntakeConstants.INTAKE_VISUALIZATION_ORIGIN_POINT.transformBy(intakeTransform);
     }
 
     private Rotation2d getCurrentEncoderAngle() {

@@ -128,7 +128,7 @@ public class CoralIntakeConstants {
 
     static final Pose3d INTAKE_VISUALIZATION_ORIGIN_POINT = new Pose3d(
             new Translation3d(0.344, 0, 0.3291),
-            new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(-158.78), 0)
+            new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(158.78), 0)
     );
     private static final double MAXIMUM_DISPLAYABLE_VELOCITY = 12;
     static final SpeedMechanism2d
@@ -241,6 +241,7 @@ public class CoralIntakeConstants {
         config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = ANGLE_ENCODER_DISCONTINUITY_POINT;
 
         ANGLE_ENCODER.applyConfiguration(config);
+        ANGLE_ENCODER.setSimulationInputsFromTalonFX(ANGLE_MOTOR);
 
         ANGLE_ENCODER.registerSignal(CANcoderSignal.POSITION, 100);
         ANGLE_ENCODER.registerSignal(CANcoderSignal.VELOCITY, 100);
