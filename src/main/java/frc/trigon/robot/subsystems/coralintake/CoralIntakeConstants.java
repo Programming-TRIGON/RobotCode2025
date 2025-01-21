@@ -160,7 +160,7 @@ public class CoralIntakeConstants {
             CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.1;
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
-            () -> Math.abs(INTAKE_MOTOR.getSignal(TalonFXSignal.TORQUE_CURRENT)) > CORAL_DETECTION_CURRENT
+            () -> Math.abs(INTAKE_MOTOR.getSignal(TalonFXSignal.STATOR_CURRENT)) > CORAL_DETECTION_CURRENT
     ).debounce(CORAL_DETECTION_TIME_THRESHOLD_SECONDS);
     public static final double
             COLLECTION_RUMBLE_DURATION_SECONDS = 0.1,

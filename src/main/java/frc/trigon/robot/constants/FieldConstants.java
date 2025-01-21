@@ -43,8 +43,8 @@ public class FieldConstants {
     }
 
     public enum ReefSide {
-        LEFT(true),
-        RIGHT(false);
+        LEFT(false),
+        RIGHT(true);
 
         public final boolean doesFlipYTransformWhenFacingDriverStation;
 

@@ -78,10 +78,10 @@ public class CoralPlacingCommands {
      * The x and y transform are used to calculate the target placing position from the middle of the reef.
      */
     public enum ScoringLevel {
-        L1(0.3, 0.1),
-        L2(0.3, 0.1),
-        L3(0.3, 0.1),
-        L4(0.3, 0.1);
+        L1(1.3, 0.17),
+        L2(1.3, 0.17),
+        L3(1.3, 0.17),
+        L4(1.3, 0.17);
 
         final double xTransformMeters, positiveYTransformMeters;
         final ElevatorConstants.ElevatorState elevatorState;

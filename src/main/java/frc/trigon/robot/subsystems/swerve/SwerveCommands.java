@@ -157,12 +157,12 @@ public class SwerveCommands {
     }
 
     private static Command createOnTheFlyPathCommand(FlippablePose2d targetPose, PathConstraints constraints) {
-        List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
+        final List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
                 RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose(),
                 targetPose.get()
         );
 
-        PathPlannerPath path = new PathPlannerPath(
+        final PathPlannerPath path = new PathPlannerPath(
                 waypoints,
                 constraints,
                 new IdealStartingState(0, RobotContainer.SWERVE.getHeading()),
@@ -170,7 +170,10 @@ public class SwerveCommands {
         );
 
         path.preventFlipping = true;
-
-        return AutoBuilder.followPath(path);
+        try {
+            return AutoBuilder.followPath(path);
+        } catch (IndexOutOfBoundsException e) {
+            return new InstantCommand();
+        }
     }
 }

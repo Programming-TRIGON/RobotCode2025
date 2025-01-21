@@ -31,14 +31,14 @@ public class ElevatorConstants {
     private static final InvertedValue
             MASTER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             FOLLOWER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
-    private static final double GEAR_RATIO = 20;
+    private static final double GEAR_RATIO = 6.66666;
     private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = false;
     private static final double
-            P = RobotHardwareStats.isSimulation() ? 110 : 50,
+            P = RobotHardwareStats.isSimulation() ? 70 : 0,
             I = RobotHardwareStats.isSimulation() ? 0 : 0,
             D = RobotHardwareStats.isSimulation() ? 0 : 0,
             KS = RobotHardwareStats.isSimulation() ? 0 : 0,
-            KV = RobotHardwareStats.isSimulation() ? 0 : 0,
+            KV = RobotHardwareStats.isSimulation() ? 5 : 0,
             KG = RobotHardwareStats.isSimulation() ? 0 : 0,
             KA = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
@@ -49,8 +49,8 @@ public class ElevatorConstants {
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final double REVERSE_LIMIT_SWITCH_RESET_POSITION = 0;
     private static final double
-            MOTION_MAGIC_CRUISE_VELOCITY = 25,
-            MOTION_MAGIC_ACCELERATION = 25,
+            MOTION_MAGIC_CRUISE_VELOCITY = 40,
+            MOTION_MAGIC_ACCELERATION = 40,
             MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
     static final boolean FOC_ENABLED = true;
 
@@ -169,8 +169,8 @@ public class ElevatorConstants {
     public enum ElevatorState {
         REST(0),
         SCORE_L1(0),
-        SCORE_L2(0.4),
-        SCORE_L3(0.6),
+        SCORE_L2(0.03),
+        SCORE_L3(0.4),
         SCORE_L4(1);
 
         public final double targetPositionMeters;
