@@ -20,7 +20,6 @@ import org.trigon.hardware.misc.leds.LEDCommands;
  */
 public class CollectionCommands {
     public static boolean SHOULD_ALIGN_TO_CORAL = true;
-    public static boolean IS_LOADING_CORAL = false;
 
     public static Command getCoralCollectionCommand() {
         return getInitiateCoralCollectionCommand().unless(RobotContainer.CORAL_INTAKE::hasGamePiece).alongWith(
