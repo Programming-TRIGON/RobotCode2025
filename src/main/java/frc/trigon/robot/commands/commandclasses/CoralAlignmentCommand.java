@@ -11,6 +11,7 @@ import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.OperatorConstants;
+import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.hardware.RobotHardwareStats;
@@ -33,7 +34,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
     }
 
     private Command getTrackCoralCommand() {
-        return new RunCommand(CAMERA::trackObject);
+        return new RunCommand(() -> CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL));
     }
 
     private Command getSetLEDColorsCommand() {
