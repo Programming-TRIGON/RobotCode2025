@@ -11,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
+import frc.trigon.robot.commands.commandfactories.CollectionCommands;
+import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
@@ -26,7 +28,6 @@ import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.Gripper;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
-import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.Swerve;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -56,18 +57,6 @@ public class RobotContainer {
         return autoChooser.get();
     }
 
-    private void configureBindings() {
-        bindDefaultCommands();
-        bindControllerCommands();
-    }
-
-    private void bindDefaultCommands() {
-        SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
-        CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
-        ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
-        GRIPPER.setDefaultCommand(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST));
-    }
-
     /**
      * Initializes the general systems of the robot.
      * Some systems need to be initialized at the start of the robot code so that others can use their functions.
@@ -79,19 +68,27 @@ public class RobotContainer {
         PathPlannerConstants.init();
     }
 
+    private void configureBindings() {
+        bindDefaultCommands();
+        bindControllerCommands();
+        bindSetters();
+    }
+
+    private void bindDefaultCommands() {
+        SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
+        CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
+        ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
+        GRIPPER.setDefaultCommand(GripperCommands.getDefaultCommand());
+    }
+
     private void bindControllerCommands() {
         OperatorConstants.RESET_HEADING_TRIGGER.onTrue(CommandConstants.RESET_HEADING_COMMAND);
         OperatorConstants.DRIVE_FROM_DPAD_TRIGGER.whileTrue(CommandConstants.SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND);
         OperatorConstants.TOGGLE_ROTATION_MODE_TRIGGER.onTrue(GeneralCommands.getToggleRotationModeCommand());
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
 
-        OperatorConstants.DRIVER_CONTROLLER.leftBumper().whileTrue(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT));
-        OperatorConstants.DRIVER_CONTROLLER.a().whileTrue(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.COLLECT_FROM_FEEDER).alongWith(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.COLLECT_FROM_FEEDER)));
-        OperatorConstants.DRIVER_CONTROLLER.x().whileTrue(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.EJECT));
-        OperatorConstants.OPERATOR_CONTROLLER.z().whileTrue(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L4).alongWith(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L4)));
-        OperatorConstants.OPERATOR_CONTROLLER.x().whileTrue(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L3).alongWith(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L3_OR_L2)));
-        OperatorConstants.OPERATOR_CONTROLLER.c().whileTrue(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L2).alongWith(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L3_OR_L2)));
-        OperatorConstants.OPERATOR_CONTROLLER.v().whileTrue(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L1).alongWith(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L1)));
+        OperatorConstants.CORAL_COLLECTION_TRIGGER.whileTrue(CollectionCommands.getCoralCollectionCommand());
+        OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
 
         Logger.recordOutput("LOL", mapSimulatedGamePieceListToPoseArray(SimulatedGamePieceConstants.CORAL_SCORING_LOCATIONS));
     }
@@ -101,6 +98,28 @@ public class RobotContainer {
         for (int i = 0; i < poses.length; i++)
             poses[i] = gamePieces.get(i);
         return poses;
+    }
+
+    private void bindSetters() {
+        OperatorConstants.ENABLE_CORAL_ALIGNMENT_COMMAND.onTrue(CommandConstants.ENABLE_CORAL_ALIGNMENT_COMMAND);
+        OperatorConstants.DISABLE_CORAL_ALIGNMENT_COMMAND.onTrue(CommandConstants.DISABLE_CORAL_ALIGNMENT_COMMAND);
+        OperatorConstants.ENABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
+        OperatorConstants.DISABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
+
+        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L1_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_LEVEL_L1_COMMAND);
+        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L2_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_LEVEL_L2_COMMAND);
+        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L3_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_LEVEL_L3_COMMAND);
+        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L4_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_LEVEL_L4_COMMAND);
+
+        OperatorConstants.SET_TARGET_SCORING_REEF_CLOCK_POSITION_2_OCLOCK_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_CLOCK_POSITION_2_OCLOCK_COMMAND);
+        OperatorConstants.SET_TARGET_SCORING_REEF_CLOCK_POSITION_4_OCLOCK_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_CLOCK_POSITION_4_OCLOCK_COMMAND);
+        OperatorConstants.SET_TARGET_SCORING_REEF_CLOCK_POSITION_6_OCLOCK_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_CLOCK_POSITION_6_OCLOCK_COMMAND);
+        OperatorConstants.SET_TARGET_SCORING_REEF_CLOCK_POSITION_8_OCLOCK_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_CLOCK_POSITION_8_OCLOCK_COMMAND);
+        OperatorConstants.SET_TARGET_SCORING_REEF_CLOCK_POSITION_10_OCLOCK_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_CLOCK_POSITION_10_OCLOCK_COMMAND);
+        OperatorConstants.SET_TARGET_SCORING_REEF_CLOCK_POSITION_12_OCLOCK_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_CLOCK_POSITION_12_OCLOCK_COMMAND);
+
+        OperatorConstants.SET_TARGET_REEF_SCORING_SIDE_LEFT_TRIGGER.onTrue(CommandConstants.SET_TARGET_REEF_SCORING_SIDE_LEFT_COMMAND);
+        OperatorConstants.SET_TARGET_REEF_SCORING_SIDE_RIGHT_TRIGGER.onTrue(CommandConstants.SET_TARGET_REEF_SCORING_SIDE_RIGHT_COMMAND);
     }
 
     private void configureSysIdBindings(MotorSubsystem subsystem) {

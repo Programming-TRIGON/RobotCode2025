@@ -19,16 +19,16 @@ import java.io.IOException;
  * A class that contains the constants and configurations for everything related to PathPlanner.
  */
 public class PathPlannerConstants {
-    public static final PathConstraints REAL_TIME_PATH_CONSTRAINTS = new PathConstraints(2.5, 2.5, 4, 4);
+    public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(4, 4, 6, 6);
     public static final RobotConfig ROBOT_CONFIG = getRobotConfig();
 
     private static final PIDConstants
             AUTO_TRANSLATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
             new PIDConstants(4, 0, 0.2) :
-            new PIDConstants(0, 0, 0),
+            new PIDConstants(6, 0, 0),
             AUTO_ROTATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
                     new PIDConstants(1, 0, 0.05) :
-                    new PIDConstants(0, 0, 0);
+                    new PIDConstants(5, 0, 0);
 
     private static final PPHolonomicDriveController AUTO_PATH_FOLLOWING_CONTROLLER = new PPHolonomicDriveController(
             AUTO_TRANSLATION_PID_CONSTANTS,

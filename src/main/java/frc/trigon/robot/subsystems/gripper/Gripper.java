@@ -76,6 +76,10 @@ public class Gripper extends MotorSubsystem {
         Logger.recordOutput("Poses/Components/GripperPose", calculateVisualizationPose());
     }
 
+    public boolean isOpenForElevator() {
+        return getCurrentEncoderAngle().getDegrees() > GripperConstants.MINIMUM_OPEN_FOR_ELEVATOR_ANGLE.getDegrees();
+    }
+
     public boolean hasGamePiece() {
         return laserCAN.hasResult() && laserCAN.getDistanceMillimeters() < GripperConstants.GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS;
     }
@@ -86,7 +90,15 @@ public class Gripper extends MotorSubsystem {
 
     public boolean atTargetAngle() {
         final double currentToTargetStateDifference = Math.abs(getCurrentEncoderAngle().getDegrees() - targetState.targetAngle.getDegrees());
-        return currentToTargetStateDifference < GripperConstants.POSITION_TOLERANCE_DEGREES.getDegrees();
+        return currentToTargetStateDifference < GripperConstants.ANGLE_TOLERANCE.getDegrees();
+    }
+
+    /**
+     * This will set the gripper to the score in reef state,
+     * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
+     */
+    void scoreInReef() {
+        setTargetState(targetState.targetAngle, GripperConstants.SCORE_IN_REEF_VOLTAGE);
     }
 
     public Pose3d calculateCoralReleasePoint() {
@@ -126,14 +138,13 @@ public class Gripper extends MotorSubsystem {
 
     private Pose3d calculateVisualizationPose() {
         final Pose3d currentElevatorPose = RobotContainer.ELEVATOR.getFirstStageComponentPose();
-        final Transform3d elevatorToGripper = GripperConstants.ELEVATOR_TO_GRIPPER;
-        final Pose3d gripperOrigin = currentElevatorPose.transformBy(elevatorToGripper);
+        final Pose3d gripperOrigin = currentElevatorPose.transformBy(GripperConstants.ELEVATOR_TO_GRIPPER);
 
-        final Transform3d transform = new Transform3d(
+        final Transform3d pitchTransform = new Transform3d(
                 new Translation3d(0, 0, 0),
                 new Rotation3d(0, getCurrentEncoderAngle().getRadians(), 0)
         );
-        return gripperOrigin.transformBy(transform);
+        return gripperOrigin.transformBy(pitchTransform);
     }
 
     private Rotation2d getCurrentEncoderAngle() {

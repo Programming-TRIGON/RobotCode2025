@@ -151,13 +151,13 @@ public class SimulationFieldHandler {
     }
 
     private static boolean isEjectingCoral() {
-        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L1) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L1))
+        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L1) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.PREPARE_L1))
             return true;
-        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L2) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L3_OR_L2))
+        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L2) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.PREPARE_L3_OR_L2))
             return true;
-        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L3) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L3_OR_L2))
+        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L3) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.PREPARE_L3_OR_L2))
             return true;
-        return RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L4) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L4);
+        return RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L4) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.PREPARE_L4);
     }
 
     private static boolean isIntakeEjectingCoral() {
