@@ -45,7 +45,7 @@ public class CollectionCommands {
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.LOAD_CORAL),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
                 getCoralIntakeCommand()
-        ).until(RobotContainer.CORAL_INTAKE::hasGamePiece).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
+        ).until(RobotContainer.GRIPPER::hasGamePiece).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
     }
 
     private static Command getCoralIntakeCommand() {

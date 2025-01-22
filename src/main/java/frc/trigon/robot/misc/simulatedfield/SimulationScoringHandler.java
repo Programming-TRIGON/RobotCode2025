@@ -1,12 +1,11 @@
 package frc.trigon.robot.misc.simulatedfield;
 
 import edu.wpi.first.math.geometry.Pose3d;
-import frc.trigon.robot.constants.SimulatedGamePieceConstants;
+import org.trigon.utilities.flippable.FlippablePose3d;
 
 import java.util.ArrayList;
 
 public class SimulationScoringHandler {
-
     public static void checkGamePieceScored(SimulatedGamePiece gamePiece) {
         if (gamePiece.gamePieceType.equals(SimulatedGamePieceConstants.GamePieceType.CORAL))
             checkCoralScored(gamePiece);
@@ -15,11 +14,12 @@ public class SimulationScoringHandler {
     }
 
     private static void checkCoralScored(SimulatedGamePiece coral) {
-        final ArrayList<Pose3d> scoreLocations = SimulatedGamePieceConstants.CORAL_SCORING_LOCATIONS;
-        for (Pose3d scoreLocation : scoreLocations) {
-            if (isGamePieceScored(coral, scoreLocation, SimulatedGamePieceConstants.CORAL_SCORING_TOLERANCE_METERS)) {
+        final ArrayList<FlippablePose3d> scoreLocations = SimulatedGamePieceConstants.CORAL_SCORING_LOCATIONS;
+        for (FlippablePose3d scoreLocation : scoreLocations) {
+            final Pose3d flippedPose = scoreLocation.get();
+            if (isGamePieceScored(coral, flippedPose, SimulatedGamePieceConstants.CORAL_SCORING_TOLERANCE_METERS)) {
                 coral.isScored = true;
-                coral.updatePose(scoreLocation);
+                coral.updatePose(flippedPose);
                 scoreLocations.remove(scoreLocation);
                 return;
             }

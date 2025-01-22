@@ -17,7 +17,6 @@ import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
-import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import frc.trigon.robot.poseestimation.poseestimator.PoseEstimator;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import frc.trigon.robot.subsystems.coralintake.CoralIntake;
@@ -29,7 +28,6 @@ import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.Gripper;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.swerve.Swerve;
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
 
@@ -89,8 +87,6 @@ public class RobotContainer {
 
         OperatorConstants.CORAL_COLLECTION_TRIGGER.whileTrue(CollectionCommands.getCoralCollectionCommand());
         OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
-
-        Logger.recordOutput("LOL", mapSimulatedGamePieceListToPoseArray(SimulatedGamePieceConstants.CORAL_SCORING_LOCATIONS));
     }
 
     private static Pose3d[] mapSimulatedGamePieceListToPoseArray(ArrayList<Pose3d> gamePieces) {

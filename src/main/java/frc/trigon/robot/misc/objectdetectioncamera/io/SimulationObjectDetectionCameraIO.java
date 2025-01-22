@@ -1,12 +1,15 @@
 package frc.trigon.robot.misc.objectdetectioncamera.io;
 
-import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import frc.trigon.robot.RobotContainer;
-import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraIO;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraInputsAutoLogged;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePiece;
+import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.misc.simulatedfield.SimulationFieldHandler;
 import org.littletonrobotics.junction.Logger;
 
@@ -62,7 +65,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         for (int i = 0; i < visibleGamePieces.length; i++) {
             if (inputs.hasTarget[i]) {
                 final SimulatedGamePiece closestGamePiece = calculateClosestVisibleObject(robotPose, visibleGamePieces[i]);
-                inputs.visibleObjectYaws[i][0] = calculateCameraYawToObject(closestGamePiece.getPose(), robotPose);
+                inputs.visibleObjectYaws[i] = new Rotation2d[]{calculateCameraYawToObject(closestGamePiece.getPose(), robotPose)};
             }
         }
 
@@ -81,7 +84,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
 
         for (SimulatedGamePiece currentObject : gamePiecesOnField) {
             final Rotation2d cameraYawToObject = calculateCameraYawToObject(currentObject.getPose(), robotPose);
-            if (isWithinHorizontalFOV(cameraYawToObject, robotPose) &&
+            if (isWithinHorizontalFOV(cameraYawToObject) &&
                     isWithinDistance(currentObject, robotPose))
                 visibleTargetObjects.add(currentObject);
         }
@@ -127,11 +130,10 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * Checks if an object is within the field-of-view of the camera.
      *
      * @param objectYaw the yaw of the object relative to the camera
-     * @param robotPose the position of the robot on the field
      * @return if the object is within the field-of-view of the camera
      */
-    private boolean isWithinHorizontalFOV(Rotation2d objectYaw, Pose2d robotPose) {
-        return Math.abs(objectYaw.minus(robotPose.getRotation()).minus(cameraMountYaw).getRadians()) <= CAMERA_HORIZONTAL_FOV.getRadians() / 2;
+    private boolean isWithinHorizontalFOV(Rotation2d objectYaw) {
+        return Math.abs(objectYaw.getRadians()) <= CAMERA_HORIZONTAL_FOV.getRadians() / 2;
     }
 
     /**

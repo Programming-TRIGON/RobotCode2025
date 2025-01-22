@@ -5,7 +5,6 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.wpilibj.Timer;
-import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 
 public class SimulatedGamePiece {
     protected SimulatedGamePieceConstants.GamePieceType gamePieceType;
@@ -21,14 +20,14 @@ public class SimulatedGamePiece {
         this.gamePieceType = gamePieceType;
     }
 
-    public void updatePeriodically() {
-        checkScored();
+    public void updatePeriodically(boolean isHeld) {
+        if (!isHeld)
+            checkScored();
         if (!isScored && !isTouchingGround)
             applyGravity();
     }
 
-    public void release(Pose3d releasePose, Translation3d fieldRelativeReleaseVelocity) {
-        fieldRelativePose = releasePose;
+    public void release(Translation3d fieldRelativeReleaseVelocity) {
         velocityAtRelease = fieldRelativeReleaseVelocity;
         release();
     }
@@ -38,7 +37,6 @@ public class SimulatedGamePiece {
         timestampAtRelease = Timer.getTimestamp();
 
         updateIsTouchingGround();
-        checkScored();
     }
 
     public void updatePose(Pose3d fieldRelativePose) {
@@ -57,16 +55,16 @@ public class SimulatedGamePiece {
         if (poseAtRelease == null)
             return;
         final double timeSinceEject = Timer.getTimestamp() - timestampAtRelease;
-        this.fieldRelativePose = new Pose3d(poseAtRelease.getTranslation(), new Rotation3d()).transformBy(calculatePoseTransform(timeSinceEject));
+        this.fieldRelativePose = new Pose3d(poseAtRelease.getTranslation(), new Rotation3d()).transformBy(calculateVelocityPoseTransform(timeSinceEject));
 
         updateIsTouchingGround();
     }
 
-    private Transform3d calculatePoseTransform(double elapsedTime) {
+    private Transform3d calculateVelocityPoseTransform(double elapsedTime) {
         return new Transform3d(
                 velocityAtRelease.getX() * elapsedTime,
                 velocityAtRelease.getY() * elapsedTime,
-                velocityAtRelease.getZ() * elapsedTime - SimulatedGamePieceConstants.G_FORCE / 2 * elapsedTime * elapsedTime,
+                velocityAtRelease.getZ() * elapsedTime - ((SimulatedGamePieceConstants.G_FORCE / 2) * elapsedTime * elapsedTime),
                 poseAtRelease.getRotation()
         );
     }

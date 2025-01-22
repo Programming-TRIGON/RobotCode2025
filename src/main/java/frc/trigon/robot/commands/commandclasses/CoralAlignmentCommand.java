@@ -11,8 +11,8 @@ import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.OperatorConstants;
-import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
+import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.misc.leds.LEDCommands;
@@ -28,7 +28,11 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
     public CoralAlignmentCommand() {
         addCommands(
                 getSetLEDColorsCommand(),
-                getDriveWhileAligningToCoralCommand(),
+                GeneralCommands.getContinuousConditionalCommand(
+                        getDriveWhileAligningToCoralCommand(),
+                        GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND),
+                        CAMERA::hasTargets
+                ),
                 getTrackCoralCommand()
         );
     }

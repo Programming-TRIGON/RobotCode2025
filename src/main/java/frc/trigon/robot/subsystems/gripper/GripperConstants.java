@@ -10,6 +10,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.trigon.robot.misc.simulatedfield.SimulationFieldHandler;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.grapple.lasercan.LaserCAN;
@@ -97,7 +98,7 @@ public class GripperConstants {
             ARM_MAXIMUM_ANGLE = Rotation2d.fromDegrees(110);
     private static final double MOMENT_OF_INERTIA = 0.003;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
-    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> 1;
+    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> SimulationFieldHandler.isCoralInGripper() && SimulationFieldHandler.isHoldingCoral() ? 1 : 10000;
     private static final SimpleMotorSimulation GRIPPING_SIMULATION = new SimpleMotorSimulation(
             GRIPPING_GEARBOX,
             GRIPPING_MOTOR_GEAR_RATIO,
@@ -149,7 +150,8 @@ public class GripperConstants {
 
     static final double WHEEL_DIAMETER_METERS = edu.wpi.first.math.util.Units.inchesToMeters(2.25);
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(2);
-    static final double SCORE_IN_REEF_VOLTAGE = 3;
+    static final double SCORE_IN_REEF_VOLTAGE = -3;
+    static final double MINIMUM_VOLTAGE_FOR_EJECTING = -1;
     static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-55);
     static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
 
@@ -250,10 +252,10 @@ public class GripperConstants {
     public enum GripperState {
         REST(Rotation2d.fromDegrees(-60), 0),
         EJECT(Rotation2d.fromDegrees(45), -3),
-        PREPARE_L4(Rotation2d.fromDegrees(45), 0),
+        PREPARE_L4(Rotation2d.fromDegrees(55), 0),
         PREPARE_L3_OR_L2(Rotation2d.fromDegrees(45), 0),
         PREPARE_L1(Rotation2d.fromDegrees(45), 0),
-        LOAD_CORAL(Rotation2d.fromDegrees(-62), -3),
+        LOAD_CORAL(Rotation2d.fromDegrees(-62), 3),
         COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3),
         OPEN_FOR_ELEVATOR_MINIMUM(Rotation2d.fromDegrees(-54), 0);
 

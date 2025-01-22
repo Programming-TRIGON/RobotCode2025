@@ -76,6 +76,10 @@ public class Gripper extends MotorSubsystem {
         Logger.recordOutput("Poses/Components/GripperPose", calculateVisualizationPose());
     }
 
+    public boolean isEjecting() {
+        return grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE) < GripperConstants.MINIMUM_VOLTAGE_FOR_EJECTING;
+    }
+
     public boolean isOpenForElevator() {
         return getCurrentEncoderAngle().getDegrees() > GripperConstants.MINIMUM_OPEN_FOR_ELEVATOR_ANGLE.getDegrees();
     }

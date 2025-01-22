@@ -6,10 +6,8 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.trigon.robot.misc.simulatedfield.SimulationFieldHandler;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.Logger;
-import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.misc.simplesensor.SimpleSensor;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
@@ -68,8 +66,6 @@ public class CoralIntake extends MotorSubsystem {
         angleMotor.update();
         angleEncoder.update();
         beamBreak.updateSensor();
-        if (RobotHardwareStats.isSimulation())
-            updateHeldGamePieceState();
     }
 
     @Override
@@ -114,7 +110,9 @@ public class CoralIntake extends MotorSubsystem {
      * @return the pose
      */
     public Pose3d calculateCoralCollectionPose() {
-        return calculateVisualizationPose().transformBy(CoralIntakeConstants.CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_COLLECTION_TRANSFORM);
+        return calculateVisualizationPose()
+                .transformBy(getVisualizationToRealPitchTransform())
+                .transformBy(CoralIntakeConstants.CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_COLLECTION_TRANSFORM);
     }
 
     /**
@@ -123,7 +121,9 @@ public class CoralIntake extends MotorSubsystem {
      * @return the pose
      */
     public Pose3d calculateCollectedCoralPose() {
-        return calculateVisualizationPose().transformBy(CoralIntakeConstants.CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_VISUALIZATION_TRANSFORM);
+        return calculateVisualizationPose()
+                .transformBy(getVisualizationToRealPitchTransform())
+                .transformBy(CoralIntakeConstants.CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_VISUALIZATION_TRANSFORM);
     }
 
     void setTargetState(CoralIntakeConstants.CoralIntakeState targetState) {
@@ -169,15 +169,14 @@ public class CoralIntake extends MotorSubsystem {
         return CoralIntakeConstants.INTAKE_VISUALIZATION_ORIGIN_POINT.transformBy(intakeTransform);
     }
 
-    private Rotation2d getCurrentEncoderAngle() {
-        return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
+    private Transform3d getVisualizationToRealPitchTransform() {
+        return new Transform3d(
+                new Translation3d(),
+                CoralIntakeConstants.INTAKE_VISUALIZATION_ORIGIN_POINT.getRotation().unaryMinus()
+        );
     }
 
-    private void updateHeldGamePieceState() {
-        if (hasGamePiece() && atTargetAngle()) {
-            SimulationFieldHandler.setCanEjectCoral(true);
-            return;
-        }
-        SimulationFieldHandler.setCanEjectCoral(false);
+    private Rotation2d getCurrentEncoderAngle() {
+        return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
     }
 }

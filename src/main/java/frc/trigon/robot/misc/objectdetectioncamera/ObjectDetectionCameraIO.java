@@ -1,7 +1,7 @@
 package frc.trigon.robot.misc.objectdetectioncamera;
 
 import edu.wpi.first.math.geometry.Rotation2d;
-import frc.trigon.robot.constants.SimulatedGamePieceConstants;
+import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import org.littletonrobotics.junction.AutoLog;
 
 public class ObjectDetectionCameraIO {

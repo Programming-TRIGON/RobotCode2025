@@ -1,8 +1,10 @@
-package frc.trigon.robot.constants;
+package frc.trigon.robot.misc.simulatedfield;
 
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.util.Units;
-import frc.trigon.robot.misc.simulatedfield.SimulatedGamePiece;
+import frc.trigon.robot.constants.FieldConstants;
+import org.trigon.utilities.flippable.FlippablePose3d;
+import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,60 +59,11 @@ public class SimulatedGamePieceConstants {
             CORAL_TO_L4_ALIGNMENT = new Transform3d(new Translation3d(0, 0, 0), CORAL_TO_VERTICAL_POSITION_ROTATION);
     private static final Transform3d
             RIGHT_BRANCH_TO_LEFT_BRANCH = new Transform3d(new Translation3d(0, -0.33, 0), new Rotation3d());
-    public static final ArrayList<Pose3d> CORAL_SCORING_LOCATIONS = new ArrayList<>(List.of(
-            calculateCoralScorePose(1, 2, false),
-            calculateCoralScorePose(1, 2, true),
-            calculateCoralScorePose(1, 4, false),
-            calculateCoralScorePose(1, 4, true),
-            calculateCoralScorePose(1, 6, false),
-            calculateCoralScorePose(1, 6, true),
-            calculateCoralScorePose(1, 8, false),
-            calculateCoralScorePose(1, 8, true),
-            calculateCoralScorePose(1, 10, false),
-            calculateCoralScorePose(1, 10, true),
-            calculateCoralScorePose(1, 12, false),
-            calculateCoralScorePose(1, 12, true),
-            calculateCoralScorePose(2, 2, false),
-            calculateCoralScorePose(2, 2, true),
-            calculateCoralScorePose(2, 4, false),
-            calculateCoralScorePose(2, 4, true),
-            calculateCoralScorePose(2, 6, false),
-            calculateCoralScorePose(2, 6, true),
-            calculateCoralScorePose(2, 8, false),
-            calculateCoralScorePose(2, 8, true),
-            calculateCoralScorePose(2, 10, false),
-            calculateCoralScorePose(2, 10, true),
-            calculateCoralScorePose(2, 12, false),
-            calculateCoralScorePose(2, 12, true),
-            calculateCoralScorePose(3, 2, false),
-            calculateCoralScorePose(3, 2, true),
-            calculateCoralScorePose(3, 4, false),
-            calculateCoralScorePose(3, 4, true),
-            calculateCoralScorePose(3, 6, false),
-            calculateCoralScorePose(3, 6, true),
-            calculateCoralScorePose(3, 8, false),
-            calculateCoralScorePose(3, 8, true),
-            calculateCoralScorePose(3, 10, false),
-            calculateCoralScorePose(3, 10, true),
-            calculateCoralScorePose(3, 12, false),
-            calculateCoralScorePose(3, 12, true),
-            calculateCoralScorePose(4, 2, false),
-            calculateCoralScorePose(4, 2, true),
-            calculateCoralScorePose(4, 4, false),
-            calculateCoralScorePose(4, 4, true),
-            calculateCoralScorePose(4, 6, false),
-            calculateCoralScorePose(4, 6, true),
-            calculateCoralScorePose(4, 8, false),
-            calculateCoralScorePose(4, 8, true),
-            calculateCoralScorePose(4, 10, false),
-            calculateCoralScorePose(4, 10, true),
-            calculateCoralScorePose(4, 12, false),
-            calculateCoralScorePose(4, 12, true)
-    ));
+    public static final ArrayList<FlippablePose3d> CORAL_SCORING_LOCATIONS = calculatedCoralScoringLocations();
     public static final Pose3d PROCESSOR_LOCATION = new Pose3d(0, 0, 0, new Rotation3d());
-    public static final Pose2d
-            LEFT_FEEDER_POSITION = new Pose2d(FIELD_LENGTH_METERS, 0, new Rotation2d()),//TODO: AAAAAAAAA
-            RIGHT_FEEDER_POSITION = new Pose2d(FIELD_LENGTH_METERS, FIELD_WIDTH_METERS, new Rotation2d());
+    public static final FlippableTranslation2d
+            LEFT_FEEDER_POSITION = new FlippableTranslation2d(0.923, 7.370, true),//TODO: AAAAAAAAA
+            RIGHT_FEEDER_POSITION = new FlippableTranslation2d(0.923, 0.668, true);
 
     private static SimulatedGamePiece createNewCoral(Pose3d startingPose) {
         return new SimulatedGamePiece(startingPose, GamePieceType.CORAL);
@@ -120,7 +73,18 @@ public class SimulatedGamePieceConstants {
         return new SimulatedGamePiece(startingPose, GamePieceType.ALGAE);
     }
 
-    private static Pose3d calculateCoralScorePose(int level, int clockFace, boolean isLeftBranch) {
+    private static ArrayList<FlippablePose3d> calculatedCoralScoringLocations() {
+        final ArrayList<FlippablePose3d> coralScoringPoses = new ArrayList<>();
+        for (int level = 1; level <= 4; level++) {
+            for (int clockFace = 2; clockFace <= 12; clockFace += 2) {
+                coralScoringPoses.add(calculateCoralScorePose(level, clockFace, false));
+                coralScoringPoses.add(calculateCoralScorePose(level, clockFace, true));
+            }
+        }
+        return coralScoringPoses;
+    }
+
+    private static FlippablePose3d calculateCoralScorePose(int level, int clockFace, boolean isLeftBranch) {
         final Translation3d reefCenterToLevelVector;
         final Rotation3d reefToClockFaceRotation;
         final Transform3d coralAlignment;
@@ -146,7 +110,7 @@ public class SimulatedGamePieceConstants {
             case 4 -> coralAlignment = CORAL_TO_L4_ALIGNMENT;
             default -> coralAlignment = new Transform3d();
         }
-        return new Pose3d(new Pose2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, new Rotation2d())).transformBy(new Transform3d(reefCenterToLevelVector.rotateBy(reefToClockFaceRotation), reefToClockFaceRotation)).transformBy(isLeftBranch ? RIGHT_BRANCH_TO_LEFT_BRANCH : new Transform3d()).transformBy(coralAlignment);
+        return new FlippablePose3d(new Pose3d(new Pose2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, new Rotation2d())).transformBy(new Transform3d(reefCenterToLevelVector.rotateBy(reefToClockFaceRotation), reefToClockFaceRotation)).transformBy(isLeftBranch ? RIGHT_BRANCH_TO_LEFT_BRANCH : new Transform3d()).transformBy(coralAlignment), true);
     }
 
     public enum GamePieceType {

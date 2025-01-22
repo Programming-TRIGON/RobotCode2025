@@ -4,10 +4,6 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.*;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
@@ -121,7 +117,7 @@ public class CoralIntakeConstants {
             MAXIMUM_ANGLE,
             SHOULD_SIMULATE_GRAVITY
     );
-    private static final DoubleSupplier BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> SimulationFieldHandler.isHoldingCoral() ? 1 : 0;
+    private static final DoubleSupplier BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> SimulationFieldHandler.isHoldingCoral() && !SimulationFieldHandler.isCoralInGripper() ? 1 : 0;
 
     static final SysIdRoutine.Config ANGLE_SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(5).per(Units.Second),
@@ -131,8 +127,17 @@ public class CoralIntakeConstants {
 
     static final Pose3d INTAKE_VISUALIZATION_ORIGIN_POINT = new Pose3d(
             new Translation3d(0.344, 0, 0.3291),
-            new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(158.78), 0)
+            new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(137), 0)
     );
+    static final Transform3d
+            CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_COLLECTION_TRANSFORM = new Transform3d(
+            new Translation3d(0.44, 0, 0),
+            new Rotation3d(0, 0, 0)
+    ),
+            CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_VISUALIZATION_TRANSFORM = new Transform3d(
+                    new Translation3d(0.33, 0, 0.015),
+                    new Rotation3d(0, 0, 0)
+            );
     private static final double MAXIMUM_DISPLAYABLE_VELOCITY = 12;
     static final SpeedMechanism2d
             INTAKE_MECHANISM = new SpeedMechanism2d(
@@ -149,15 +154,6 @@ public class CoralIntakeConstants {
             INTAKE_LENGTH_METERS,
             Color.kRed
     );
-    static final Transform3d
-            CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_COLLECTION_TRANSFORM = new Transform3d(
-            new Translation3d(0.5, 0, -0.2),
-            new Rotation3d(0, 0, 0)
-    ),
-            CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_VISUALIZATION_TRANSFORM = new Transform3d(
-                    new Translation3d(0.33, 0, -0.11),
-                    new Rotation3d(0, 0, 0)
-            ); // TODO: Find
 
     public static final double COLLECTION_LEDS_BLINKING_SPEED = 0.5;
     private static final double CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS = 0.1;
@@ -175,7 +171,7 @@ public class CoralIntakeConstants {
     public static final double
             COLLECTION_RUMBLE_DURATION_SECONDS = 0.1,
             COLLECTION_RUMBLE_POWER = 1;
-    static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
+    static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(3);
 
     static {
         configureIntakeMotor();
@@ -250,7 +246,7 @@ public class CoralIntakeConstants {
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
-        
+
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
 
@@ -280,12 +276,12 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD_CORAL(-3, -3, Rotation2d.fromDegrees(170)),
-        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(3, 3, Rotation2d.fromDegrees(170)),
-        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, Rotation2d.fromDegrees(170)),
+        LOAD_CORAL(-3, -3, Rotation2d.fromDegrees(145)),
+        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(3, 3, Rotation2d.fromDegrees(145)),
+        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, Rotation2d.fromDegrees(145)),
         COLLECT(3, 3, Rotation2d.fromDegrees(-35)),
-        EJECT(-3, -3, Rotation2d.fromDegrees(180)),
-        REST(0, 0, Rotation2d.fromDegrees(170));
+        EJECT(-3, -3, Rotation2d.fromDegrees(90)),
+        REST(0, 0, Rotation2d.fromDegrees(145));
 
         public final double
                 targetIntakeVoltage,

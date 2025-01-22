@@ -2,9 +2,9 @@ package frc.trigon.robot.misc.objectdetectioncamera;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.io.PhotonObjectDetectionCameraIO;
 import frc.trigon.robot.misc.objectdetectioncamera.io.SimulationObjectDetectionCameraIO;
+import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.RobotHardwareStats;
 
@@ -90,7 +90,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
         Rotation2d closestToTrackedTargetYaw = new Rotation2d();
 
         for (Rotation2d currentObjectYaw : getTargetObjectYaws()) {
-            final Rotation2d currentFieldRelativeYaw  = currentObjectYaw.plus(cameraMountYaw);
+            final Rotation2d currentFieldRelativeYaw = currentObjectYaw.plus(cameraMountYaw);
             final double currentObjectToTrackedTargetYawDifference = Math.abs(currentFieldRelativeYaw.getRadians() - trackedObjectYaw.getRadians());
 
             if (currentObjectToTrackedTargetYawDifference < closestTargetToTrackedTargetYawDifference) {
