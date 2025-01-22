@@ -42,11 +42,11 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         }
 
         if (hasAnyTarget) {
-            updateNoNewResultInputs(inputs);
+            updateHasNewResultInputs(visibleGamePieces, robotPose, inputs);
             return;
         }
 
-        updateHasNewResultInputs(visibleGamePieces, robotPose, inputs);
+        updateNoNewResultInputs(inputs);
     }
 
     private ArrayList<SimulatedGamePiece>[] calculateAllVisibleGamePieces(Pose2d robotPose) {
