@@ -47,10 +47,7 @@ public class CoralPlacingCommands {
                 getAutonomousDriveToReefThenManualDriveCommand(),
                 getGripperSequenceCommand(),
                 getWaitUntilScoringTargetChangesCommand().andThen(
-                        () -> {
-                            System.out.println("TEST");
-                            getAutonomouslyScoreInReefCommand().onlyWhile(OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER).schedule();
-                        }
+                        () -> getAutonomouslyScoreInReefCommand().onlyWhile(OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER).schedule()
                 )
         );
     }
