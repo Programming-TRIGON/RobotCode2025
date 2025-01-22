@@ -9,6 +9,7 @@ import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
@@ -69,18 +70,25 @@ public class Elevator extends MotorSubsystem {
         motor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
-    public boolean atState(ElevatorConstants.ElevatorState targetState) {
-        return targetState == this.targetState && atTargetState();
+    public boolean willCurrentMovementMoveThroughHitRange() {
+        return willMovementMoveThroughHitRange(metersToRotations(targetState.targetPositionMeters));
     }
 
     public Pose3d getFirstStageComponentPose() {
-        final Pose3d originPoint = ElevatorConstants.FIRST_STAGE_VISUALIZATION_ORIGIN_POINT;
-        return calculateCurrentElevatorPoseFromOrigin(originPoint);
+        return calculateCurrentElevatorPoseFromOrigin(ElevatorConstants.FIRST_STAGE_VISUALIZATION_ORIGIN_POINT);
+    }
+
+    public boolean atState(ElevatorConstants.ElevatorState targetState) {
+        return targetState == this.targetState && atTargetState();
     }
 
     public boolean atTargetState() {
         final double currentToTargetStateDifference = Math.abs(targetState.targetPositionMeters - getPositionMeters());
         return currentToTargetStateDifference < ElevatorConstants.POSITION_TOLERANCE_METERS;
+    }
+
+    public double metersToRotations(double positionMeters) {
+        return Conversions.distanceToRotations(positionMeters, ElevatorConstants.DRUM_DIAMETER_METERS);
     }
 
     void setTargetState(ElevatorConstants.ElevatorState targetState) {
@@ -92,9 +100,30 @@ public class Elevator extends MotorSubsystem {
         motor.setControl(positionRequest.withPosition(targetPositionRotations));
     }
 
+    boolean isAllowedToMoveToPosition(double targetPositionRotations) {
+        if (!willMovementMoveThroughHitRange(targetPositionRotations))
+            return true;
+
+        return RobotContainer.GRIPPER.isOpenForElevator();
+    }
+
+    private boolean willMovementMoveThroughHitRange(double targetPositionRotations) {
+        final double currentPositionRotations = motor.getSignal(TalonFXSignal.POSITION);
+        if (isInGripperHitRange(currentPositionRotations) || isInGripperHitRange(targetPositionRotations))
+            return true;
+
+        if (currentPositionRotations > ElevatorConstants.GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS)
+            return targetPositionRotations < ElevatorConstants.GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS;
+
+        return targetPositionRotations > ElevatorConstants.GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS;
+    }
+
+    private boolean isInGripperHitRange(double positionRotations) {
+        return positionRotations > ElevatorConstants.GRIPPER_HITTING_ELEVATOR_BASE_LOWER_BOUND_POSITION_ROTATIONS && positionRotations < ElevatorConstants.GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS;
+    }
+
     private Pose3d getSecondStageComponentPose() {
-        final Pose3d originPoint = ElevatorConstants.SECOND_STAGE_VISUALIZATION_ORIGIN_POINT;
-        return calculateComponentPose(getSecondPoseHeight(), originPoint);
+        return calculateComponentPose(getSecondPoseHeight(), ElevatorConstants.SECOND_STAGE_VISUALIZATION_ORIGIN_POINT);
     }
 
     private double getSecondPoseHeight() {
@@ -129,9 +158,5 @@ public class Elevator extends MotorSubsystem {
 
     private double rotationsToMeters(double positionRotations) {
         return Conversions.rotationsToDistance(positionRotations, ElevatorConstants.DRUM_DIAMETER_METERS);
-    }
-
-    private double metersToRotations(double positionMeters) {
-        return Conversions.distanceToRotations(positionMeters, ElevatorConstants.DRUM_DIAMETER_METERS);
     }
 }

@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.util.Color;
@@ -17,8 +18,8 @@ import org.trigon.utilities.mechanisms.ElevatorMechanism2d;
 
 public class ElevatorConstants {
     private static final int
-            MASTER_MOTOR_ID = 13,
-            FOLLOWER_MOTOR_ID = 14;
+            MASTER_MOTOR_ID = 12,
+            FOLLOWER_MOTOR_ID = 13;
     private static final String
             MASTER_MOTOR_NAME = "ElevatorMasterMotor",
             FOLLOWER_MOTOR_NAME = "ElevatorFollowerMotor";
@@ -54,12 +55,12 @@ public class ElevatorConstants {
     static final boolean FOC_ENABLED = true;
 
     private static final int MOTOR_AMOUNT = 2;
-    private static final DCMotor GEARBOX = DCMotor.getKrakenX60Foc(MOTOR_AMOUNT);
+    private static final DCMotor GEARBOX = DCMotor.getFalcon500Foc(MOTOR_AMOUNT);
     private static final double
-            ELEVATOR_MASS_KILOGRAMS = 7,
-            DRUM_RADIUS_METERS = 0.02,
-            RETRACTED_ELEVATOR_HEIGHT_METERS = 0.5,
-            MAXIMUM_ELEVATOR_HEIGHT_METERS = 1.9;
+            ELEVATOR_MASS_KILOGRAMS = 8,
+            DRUM_RADIUS_METERS = 0.025,
+            RETRACTED_ELEVATOR_HEIGHT_METERS = 0.73, // AFTER SEASON TODO: remove the need for this
+            MAXIMUM_ELEVATOR_HEIGHT_METERS = 1.8;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
             GEARBOX,
@@ -77,11 +78,18 @@ public class ElevatorConstants {
             Units.Second.of(1000)
     );
 
-    public static final Pose3d FIRST_STAGE_VISUALIZATION_ORIGIN_POINT = new Pose3d(-0.120, 0, 0.1312, new Rotation3d(0, 0, 0));
-    static final Pose3d SECOND_STAGE_VISUALIZATION_ORIGIN_POINT = new Pose3d(-0.120, 0, 0.1111, new Rotation3d(0, 0, 0));
+    public static final Pose3d FIRST_STAGE_VISUALIZATION_ORIGIN_POINT = new Pose3d(
+            new Translation3d(-0.120, 0, 0.131),
+            new Rotation3d(0, 0, 0)
+    );
+    static final Pose3d SECOND_STAGE_VISUALIZATION_ORIGIN_POINT = new Pose3d(
+            new Translation3d(-0.120, 0, 0.1111),
+            new Rotation3d(0, 0, 0)
+    );
+    static final double MECHANISM_EXTRA_VISUALIZATION_LENGTH_METERS = 0.1;
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
-            MAXIMUM_ELEVATOR_HEIGHT_METERS,
+            MAXIMUM_ELEVATOR_HEIGHT_METERS + MECHANISM_EXTRA_VISUALIZATION_LENGTH_METERS,
             RETRACTED_ELEVATOR_HEIGHT_METERS,
             Color.kYellow
     );
@@ -89,6 +97,10 @@ public class ElevatorConstants {
     static final double FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH_METERS = 0.6;
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
     static final double POSITION_TOLERANCE_METERS = 0.01;
+    static final double
+            GRIPPER_HITTING_ELEVATOR_BASE_LOWER_BOUND_POSITION_ROTATIONS = 0.1,
+            GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS = 0.4;
+    static final double FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH = 0.5786;
 
     static {
         configureMasterMotor();
@@ -157,11 +169,10 @@ public class ElevatorConstants {
 
     public enum ElevatorState {
         REST(0),
-        COLLECT_FROM_FEEDER(0),
         SCORE_L1(0),
-        SCORE_L2(0),
-        SCORE_L3(0.33),
-        SCORE_L4(1.15);
+        SCORE_L2(0.4),
+        SCORE_L3(0.6),
+        SCORE_L4(1);
 
         public final double targetPositionMeters;
 
