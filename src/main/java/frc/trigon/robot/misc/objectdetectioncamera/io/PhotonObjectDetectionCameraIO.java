@@ -13,12 +13,10 @@ import java.util.List;
 
 public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private final PhotonCamera photonCamera;
-    private final Rotation2d cameraMountYaw;
 
-    public PhotonObjectDetectionCameraIO(String hostname, Rotation2d cameraMountYaw) {
+    public PhotonObjectDetectionCameraIO(String hostname) {
         PhotonCamera.setVersionCheckEnabled(false);
         photonCamera = new PhotonCamera(hostname);
-        this.cameraMountYaw = cameraMountYaw;
     }
 
     @Override
@@ -86,7 +84,7 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
 
         boolean hasSeenBestTarget = false;
         for (int i = 0; i < visibleObjectYaws.length; i++) {
-            final Rotation2d objectYaw = Rotation2d.fromDegrees(-visibleObjects.get(i).getYaw()).plus(cameraMountYaw);
+            final Rotation2d objectYaw = Rotation2d.fromDegrees(-visibleObjects.get(i).getYaw());
             if (objectYaw.equals(visibleObjectYaws[0])) {
                 hasSeenBestTarget = true;
                 continue;
@@ -111,7 +109,7 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
             if (closestObjectDistance > currentObjectDistance &&
                     object.objDetectId == targetId) {
                 closestObjectDistance = currentObjectDistance;
-                bestObjectYaw = Rotation2d.fromDegrees(-object.getYaw()).plus(cameraMountYaw);
+                bestObjectYaw = Rotation2d.fromDegrees(-object.getYaw());
             }
         }
         return bestObjectYaw;

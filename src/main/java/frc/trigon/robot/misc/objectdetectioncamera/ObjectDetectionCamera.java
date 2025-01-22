@@ -15,13 +15,15 @@ public class ObjectDetectionCamera extends SubsystemBase {
     private final ObjectDetectionCameraInputsAutoLogged objectDetectionCameraInputs = new ObjectDetectionCameraInputsAutoLogged();
     private final ObjectDetectionCameraIO objectDetectionCameraIO;
     private final String hostname;
+    private final Rotation2d cameraMountYaw;
     private Rotation2d trackedObjectYaw = new Rotation2d();
     private boolean trackedTargetWasVisible = false;
     private int currentTrackedObjectId;
 
     public ObjectDetectionCamera(String hostname, Rotation2d cameraMountYaw) {
         this.hostname = hostname;
-        objectDetectionCameraIO = generateIO(hostname, cameraMountYaw);
+        this.cameraMountYaw = cameraMountYaw;
+        this.objectDetectionCameraIO = generateIO(hostname, cameraMountYaw);
     }
 
     @Override
@@ -68,7 +70,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
      * @return the yaw (x-axis position) of the target object
      */
     public Rotation2d getBestObjectYaw() {
-        return getTargetObjectYaws()[0];
+        return getTargetObjectYaws()[0].plus(cameraMountYaw);
     }
 
     /**
@@ -88,10 +90,12 @@ public class ObjectDetectionCamera extends SubsystemBase {
         Rotation2d closestToTrackedTargetYaw = new Rotation2d();
 
         for (Rotation2d currentObjectYaw : getTargetObjectYaws()) {
-            final double currentObjectToTrackedTargetYawDifference = Math.abs(currentObjectYaw.getRadians() - trackedObjectYaw.getRadians());
+            final Rotation2d currentFieldRelativeYaw  = currentObjectYaw.plus(cameraMountYaw);
+            final double currentObjectToTrackedTargetYawDifference = Math.abs(currentFieldRelativeYaw.getRadians() - trackedObjectYaw.getRadians());
+
             if (currentObjectToTrackedTargetYawDifference < closestTargetToTrackedTargetYawDifference) {
                 closestTargetToTrackedTargetYawDifference = currentObjectToTrackedTargetYawDifference;
-                closestToTrackedTargetYaw = currentObjectYaw;
+                closestToTrackedTargetYaw = currentFieldRelativeYaw;
             }
         }
 
@@ -109,6 +113,6 @@ public class ObjectDetectionCamera extends SubsystemBase {
             return new ObjectDetectionCameraIO();
         if (RobotHardwareStats.isSimulation())
             return new SimulationObjectDetectionCameraIO(hostname, cameraMountYaw);
-        return new PhotonObjectDetectionCameraIO(hostname, cameraMountYaw);
+        return new PhotonObjectDetectionCameraIO(hostname);
     }
 }

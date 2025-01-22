@@ -1,9 +1,6 @@
 package frc.trigon.robot.misc.objectdetectioncamera.io;
 
-import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation2d;
-import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraConstants;
@@ -62,11 +59,12 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     }
 
     private void updateHasNewResultInputs(ArrayList<SimulatedGamePiece>[] visibleGamePieces, Pose2d robotPose, ObjectDetectionCameraInputsAutoLogged inputs) {
-        for (int i = 0; i < visibleGamePieces.length; i++)
+        for (int i = 0; i < visibleGamePieces.length; i++) {
             if (inputs.hasTarget[i]) {
                 final SimulatedGamePiece closestGamePiece = calculateClosestVisibleObject(robotPose, visibleGamePieces[i]);
-                inputs.visibleObjectYaws[i][0] = calculateCameraYawToObject(closestGamePiece.getPose(), robotPose).plus(cameraMountYaw);
+                inputs.visibleObjectYaws[i][0] = calculateCameraYawToObject(closestGamePiece.getPose(), robotPose);
             }
+        }
 
         logVisibleGamePieces(visibleGamePieces);
     }
@@ -119,8 +117,10 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * @return the yaw of the object relative to the camera
      */
     private Rotation2d calculateCameraYawToObject(Pose3d objectPlacement, Pose2d robotPose) {
-        final Transform2d robotToObject = objectPlacement.toPose2d().minus(robotPose);
-        return robotToObject.getRotation().minus(cameraMountYaw);
+        final Translation2d difference = objectPlacement.toPose2d().getTranslation().minus(robotPose.getTranslation());
+        final Rotation2d differenceAngle = difference.getAngle();
+        final Rotation2d cameraFieldRelativeAngle = robotPose.getRotation().plus(cameraMountYaw);
+        return differenceAngle.minus(cameraFieldRelativeAngle);
     }
 
     /**
