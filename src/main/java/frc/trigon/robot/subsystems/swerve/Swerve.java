@@ -164,6 +164,11 @@ public class Swerve extends MotorSubsystem {
         setTargetModuleStates(swerveModuleStates);
     }
 
+    public Rotation2d getDriveRelativeAngle() {
+        final Rotation2d currentAngle = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getRotation();
+        return Flippable.isRedAlliance() ? currentAngle.rotateBy(Rotation2d.fromDegrees(180)) : currentAngle;
+    }
+
     void initializeDrive(boolean shouldUseClosedLoop) {
         previousSetpoint = new SwerveSetpoint(getSelfRelativeVelocity(), getModuleStates(), DriveFeedforwards.zeros(PathPlannerConstants.ROBOT_CONFIG.numModules));
         setClosedLoop(shouldUseClosedLoop);
@@ -268,11 +273,6 @@ public class Swerve extends MotorSubsystem {
     private void setTargetModuleStates(SwerveModuleState[] swerveModuleStates) {
         for (int i = 0; i < swerveModules.length; i++)
             swerveModules[i].setTargetState(swerveModuleStates[i]);
-    }
-
-    private Rotation2d getDriveRelativeAngle() {
-        final Rotation2d currentAngle = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getRotation();
-        return Flippable.isRedAlliance() ? currentAngle.rotateBy(Rotation2d.fromDegrees(180)) : currentAngle;
     }
 
     private void setClosedLoop(boolean shouldUseClosedLoop) {
