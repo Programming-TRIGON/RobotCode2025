@@ -87,10 +87,10 @@ public class SimulationFieldHandler {
 
         if (isCollectingCoral() && HELD_CORAL_INDEX == null)
             HELD_CORAL_INDEX = getIndexOfCollectedGamePiece(coralCollectionPose, CORAL_ON_FIELD, SimulatedGamePieceConstants.CORAL_INTAKE_TOLERANCE_METERS);
-        if (isCollectingCoralFromSource() && HELD_CORAL_INDEX == null && (new Transform2d(robotPose.toPose2d(), SimulatedGamePieceConstants.LEFT_FEEDER_POSITION).getTranslation().getNorm() < SimulatedGamePieceConstants.CORAL_FEEDER_INTAKE_TOLERANCE_METERS || new Transform2d(robotPose.toPose2d(), SimulatedGamePieceConstants.RIGHT_FEEDER_POSITION).getTranslation().getNorm() < SimulatedGamePieceConstants.CORAL_FEEDER_INTAKE_TOLERANCE_METERS)) {
-            CORAL_ON_FIELD.add(new SimulatedGamePiece(new Pose3d(), SimulatedGamePieceConstants.GamePieceType.CORAL));
-            HELD_CORAL_INDEX = CORAL_ON_FIELD.size() - 1;
-        }
+//        if (isCollectingCoralFromSource() && HELD_CORAL_INDEX == null && (new Transform2d(robotPose.toPose2d(), SimulatedGamePieceConstants.LEFT_FEEDER_POSITION).getTranslation().getNorm() < SimulatedGamePieceConstants.CORAL_FEEDER_INTAKE_TOLERANCE_METERS || new Transform2d(robotPose.toPose2d(), SimulatedGamePieceConstants.RIGHT_FEEDER_POSITION).getTranslation().getNorm() < SimulatedGamePieceConstants.CORAL_FEEDER_INTAKE_TOLERANCE_METERS)) {
+//            CORAL_ON_FIELD.add(new SimulatedGamePiece(new Pose3d(), SimulatedGamePieceConstants.GamePieceType.CORAL));
+//            HELD_CORAL_INDEX = CORAL_ON_FIELD.size() - 1;
+//        } // TODO: Gripper doesn't collect from reef anymore
         if (isCollectingAlgae() && HELD_ALGAE_INDEX == null)
             HELD_ALGAE_INDEX = getIndexOfCollectedGamePiece(algaeCollectionPose, ALGAE_ON_FIELD, SimulatedGamePieceConstants.ALGAE_INTAKE_TOLERANCE_METERS);
     }
@@ -111,10 +111,6 @@ public class SimulationFieldHandler {
 
     private static boolean isCollectingCoral() {
         return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT);
-    }
-
-    private static boolean isCollectingCoralFromSource() {
-        return RobotContainer.GRIPPER.atState(GripperConstants.GripperState.COLLECT_FROM_FEEDER) && RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.COLLECT_FROM_FEEDER);
     }
 
     private static boolean isCollectingAlgae() {
@@ -146,13 +142,13 @@ public class SimulationFieldHandler {
     }
 
     private static boolean isEjectingCoral() {
-        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L1) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L1))
+        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L1) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.PREPARE_L1))
             return true;
-        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L2) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L3_OR_L2))
+        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L2) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.PREPARE_L3_OR_L2))
             return true;
-        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L3) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L3_OR_L2))
+        if (RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L3) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.PREPARE_L3_OR_L2))
             return true;
-        return RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L4) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L4);
+        return RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L4) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.PREPARE_L4);
     }
 
     private static boolean isIntakeEjectingCoral() {

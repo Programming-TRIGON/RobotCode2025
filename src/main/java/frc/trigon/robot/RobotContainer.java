@@ -85,14 +85,6 @@ public class RobotContainer {
         OperatorConstants.TOGGLE_ROTATION_MODE_TRIGGER.onTrue(GeneralCommands.getToggleRotationModeCommand());
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
 
-        OperatorConstants.DRIVER_CONTROLLER.leftBumper().whileTrue(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT));
-        OperatorConstants.DRIVER_CONTROLLER.a().whileTrue(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.COLLECT_FROM_FEEDER).alongWith(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.COLLECT_FROM_FEEDER)));
-        OperatorConstants.DRIVER_CONTROLLER.x().whileTrue(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.EJECT));
-        OperatorConstants.OPERATOR_CONTROLLER.z().whileTrue(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L4).alongWith(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L4)));
-        OperatorConstants.OPERATOR_CONTROLLER.x().whileTrue(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L3).alongWith(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L3_OR_L2)));
-        OperatorConstants.OPERATOR_CONTROLLER.c().whileTrue(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L2).alongWith(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L3_OR_L2)));
-        OperatorConstants.OPERATOR_CONTROLLER.v().whileTrue(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L1).alongWith(GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L1)));
-
         Logger.recordOutput("LOL", mapSimulatedGamePieceListToPoseArray(SimulatedGamePieceConstants.CORAL_SCORING_LOCATIONS));
     }
 
