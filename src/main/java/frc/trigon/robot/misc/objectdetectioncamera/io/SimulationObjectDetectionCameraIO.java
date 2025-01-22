@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.SimulatedGamePieceConstants;
+import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraIO;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraInputsAutoLogged;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePiece;
@@ -15,7 +16,6 @@ import org.littletonrobotics.junction.Logger;
 import java.util.ArrayList;
 
 public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
-    private static final int NUMBER_OF_GAME_PIECE_TYPES = SimulatedGamePieceConstants.GamePieceType.values().length;
     private static final Rotation2d CAMERA_HORIZONTAL_FOV = Rotation2d.fromDegrees(75);
     private static final double
             MAXIMUM_VISIBLE_DISTANCE_METERS = 5,
@@ -35,7 +35,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         final ArrayList<SimulatedGamePiece>[] visibleGamePieces = calculateAllVisibleGamePieces(robotPose);
 
         boolean hasAnyTarget = false;
-        for (int i = 0; i < NUMBER_OF_GAME_PIECE_TYPES; i++) {
+        for (int i = 0; i < ObjectDetectionCameraConstants.NUMBER_OF_GAME_PIECE_TYPES; i++) {
             inputs.hasTarget[i] = !visibleGamePieces[i].isEmpty();
             if (inputs.hasTarget[i])
                 hasAnyTarget = true;
@@ -50,10 +50,25 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     }
 
     private ArrayList<SimulatedGamePiece>[] calculateAllVisibleGamePieces(Pose2d robotPose) {
-        final ArrayList<SimulatedGamePiece>[] visibleGamePieces = new ArrayList[NUMBER_OF_GAME_PIECE_TYPES];
-        for (int i = 0; i < NUMBER_OF_GAME_PIECE_TYPES; i++)
+        final ArrayList<SimulatedGamePiece>[] visibleGamePieces = new ArrayList[ObjectDetectionCameraConstants.NUMBER_OF_GAME_PIECE_TYPES];
+        for (int i = 0; i < visibleGamePieces.length; i++)
             visibleGamePieces[i] = calculateVisibleGamePieces(robotPose, i);
         return visibleGamePieces;
+    }
+
+    private void updateNoNewResultInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
+        inputs.hasTarget = new boolean[ObjectDetectionCameraConstants.NUMBER_OF_GAME_PIECE_TYPES];
+        inputs.visibleObjectYaws = new Rotation2d[ObjectDetectionCameraConstants.NUMBER_OF_GAME_PIECE_TYPES][0];
+    }
+
+    private void updateHasNewResultInputs(ArrayList<SimulatedGamePiece>[] visibleGamePieces, Pose2d robotPose, ObjectDetectionCameraInputsAutoLogged inputs) {
+        for (int i = 0; i < visibleGamePieces.length; i++)
+            if (inputs.hasTarget[i]) {
+                final SimulatedGamePiece closestGamePiece = calculateClosestVisibleObject(robotPose, visibleGamePieces[i]);
+                inputs.visibleObjectYaws[i][0] = calculateCameraYawToObject(closestGamePiece.getPose(), robotPose).plus(cameraMountYaw);
+            }
+
+        logVisibleGamePieces(visibleGamePieces);
     }
 
     /**
@@ -65,31 +80,14 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private ArrayList<SimulatedGamePiece> calculateVisibleGamePieces(Pose2d robotPose, int targetId) {
         final ArrayList<SimulatedGamePiece> gamePiecesOnField = targetId == 0 ? SimulationFieldHandler.getSimulatedCoral() : SimulationFieldHandler.getSimulatedAlgae();
         final ArrayList<SimulatedGamePiece> visibleTargetObjects = new ArrayList<>();
-        int currentIndex = 0;
 
         for (SimulatedGamePiece currentObject : gamePiecesOnField) {
             final Rotation2d cameraYawToObject = calculateCameraYawToObject(currentObject.getPose(), robotPose);
-            if (!isWithinHorizontalFOV(cameraYawToObject, robotPose) || !isWithinDistance(currentObject, robotPose))
-                continue;
-            visibleTargetObjects.add(currentIndex, currentObject);
-            currentIndex++;
+            if (isWithinHorizontalFOV(cameraYawToObject, robotPose) &&
+                    isWithinDistance(currentObject, robotPose))
+                visibleTargetObjects.add(currentObject);
         }
         return visibleTargetObjects;
-    }
-
-    private void updateNoNewResultInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
-        inputs.hasTarget = new boolean[NUMBER_OF_GAME_PIECE_TYPES];
-        inputs.visibleObjectYaws = new Rotation2d[NUMBER_OF_GAME_PIECE_TYPES][0];
-    }
-
-    private void updateHasNewResultInputs(ArrayList<SimulatedGamePiece>[] visibleGamePieces, Pose2d robotPose, ObjectDetectionCameraInputsAutoLogged inputs) {
-        for (int i = 0; i < NUMBER_OF_GAME_PIECE_TYPES; i++)
-            if (inputs.hasTarget[i]) {
-                final SimulatedGamePiece closestGamePiece = calculateClosestVisibleObject(robotPose, visibleGamePieces[i]);
-                inputs.visibleObjectYaws[i][0] = calculateCameraYawToObject(closestGamePiece.getPose(), robotPose).plus(cameraMountYaw);
-            }
-
-        logVisibleGamePieces(visibleGamePieces);
     }
 
     /**
@@ -100,17 +98,17 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      */
     private SimulatedGamePiece calculateClosestVisibleObject(Pose2d robotPose, ArrayList<SimulatedGamePiece> visibleGamePieces) {
         double closestObjectDistance = Double.POSITIVE_INFINITY;
-        SimulatedGamePiece closestObject = null;
+        SimulatedGamePiece closestVisibleObject = null;
 
-        for (SimulatedGamePiece targetObjectPlacement : visibleGamePieces) {
-            final double robotDistanceToObject = targetObjectPlacement.getDistanceMeters(new Pose3d(robotPose));
+        for (SimulatedGamePiece object : visibleGamePieces) {
+            final double robotDistanceToObject = object.getDistanceFromPoseMeters(new Pose3d(robotPose));
             if (robotDistanceToObject < closestObjectDistance) {
                 closestObjectDistance = robotDistanceToObject;
-                closestObject = targetObjectPlacement;
+                closestVisibleObject = object;
             }
         }
 
-        return closestObject;
+        return closestVisibleObject;
     }
 
     /**
@@ -122,7 +120,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      */
     private Rotation2d calculateCameraYawToObject(Pose3d objectPlacement, Pose2d robotPose) {
         final Transform2d robotToObject = objectPlacement.toPose2d().minus(robotPose);
-        return robotToObject.getRotation();
+        return robotToObject.getRotation().minus(cameraMountYaw);
     }
 
     /**
@@ -133,7 +131,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * @return if the object is within the field-of-view of the camera
      */
     private boolean isWithinHorizontalFOV(Rotation2d objectYaw, Pose2d robotPose) {
-        return Math.abs(objectYaw.minus(robotPose.getRotation()).plus(cameraMountYaw).getRadians()) <= CAMERA_HORIZONTAL_FOV.getRadians() / 2;
+        return Math.abs(objectYaw.minus(robotPose.getRotation()).minus(cameraMountYaw).getRadians()) <= CAMERA_HORIZONTAL_FOV.getRadians() / 2;
     }
 
     /**
@@ -145,14 +143,15 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * @return if the object is withing the distance range of the camera
      */
     private boolean isWithinDistance(SimulatedGamePiece objectPlacement, Pose2d robotPose) {
-        final double robotToObjectDistanceMeters = objectPlacement.getDistanceMeters(new Pose3d(robotPose));
-        return robotToObjectDistanceMeters <= MAXIMUM_VISIBLE_DISTANCE_METERS && robotToObjectDistanceMeters >= MINIMUM_VISIBLE_DISTANCE_METERS;
+        final double robotToObjectDistanceMeters = objectPlacement.getDistanceFromPoseMeters(new Pose3d(robotPose));
+        return robotToObjectDistanceMeters <= MAXIMUM_VISIBLE_DISTANCE_METERS &&
+                robotToObjectDistanceMeters >= MINIMUM_VISIBLE_DISTANCE_METERS;
     }
 
     private void logVisibleGamePieces(ArrayList<SimulatedGamePiece>[] visibleGamePieces) {
-        for (int i = 0; i < NUMBER_OF_GAME_PIECE_TYPES; i++) {
-            final String gamePieceTypeString = SimulatedGamePieceConstants.GamePieceType.getNameByID(i);
-            Logger.recordOutput(hostname + "/Visible" + gamePieceTypeString, mapSimulatedGamePieceListToPoseArray(visibleGamePieces[i]));
+        for (int i = 0; i < visibleGamePieces.length; i++) {
+            final String gamePieceTypeName = SimulatedGamePieceConstants.GamePieceType.getNameFromID(i);
+            Logger.recordOutput(hostname + "/Visible" + gamePieceTypeName, mapSimulatedGamePieceListToPoseArray(visibleGamePieces[i]));
         }
     }
 

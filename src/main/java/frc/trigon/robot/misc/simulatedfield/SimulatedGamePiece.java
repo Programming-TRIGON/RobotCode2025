@@ -49,7 +49,7 @@ public class SimulatedGamePiece {
         return fieldRelativePose;
     }
 
-    public double getDistanceMeters(Pose3d pose) {
+    public double getDistanceFromPoseMeters(Pose3d pose) {
         return fieldRelativePose.minus(pose).getTranslation().getNorm();
     }
 

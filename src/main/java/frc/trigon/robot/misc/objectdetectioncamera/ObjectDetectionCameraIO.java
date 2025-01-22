@@ -13,7 +13,7 @@ public class ObjectDetectionCameraIO {
     @AutoLog
     public static class ObjectDetectionCameraInputs {
         /**
-         * Whether there is at least on target or not for each game piece, by game piece index (type).
+         * Whether there is at least one target or not for each game piece, by game piece index (type).
          */
         public boolean[] hasTarget = new boolean[0];
         /**

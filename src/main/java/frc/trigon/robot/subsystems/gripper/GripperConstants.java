@@ -143,6 +143,10 @@ public class GripperConstants {
             GRIPPER_TO_CORAL_RELEASE = new Transform3d(
                     new Translation3d(0.13, 0, -0.195),
                     new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(30), 0)
+            ),
+            GRIPPER_TO_HELD_CORAL = new Transform3d(
+                    new Translation3d(0.12, 0, -0.185),//TODO: Find
+                    new Rotation3d(0, 0, 0)
             );
     static final Rotation2d POSITION_TOLERANCE_DEGREES = Rotation2d.fromDegrees(1);
     static final double WHEEL_DIAMETER_METERS = edu.wpi.first.math.util.Units.inchesToMeters(2.25);

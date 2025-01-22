@@ -35,7 +35,7 @@ public class SimulationScoringHandler {
     }
 
     private static boolean isGamePieceScored(SimulatedGamePiece gamePiece, Pose3d scoreLocation, double scoringToleranceMeters) {
-        final double distanceFromScoreZoneMeters = gamePiece.getDistanceMeters(scoreLocation);
+        final double distanceFromScoreZoneMeters = gamePiece.getDistanceFromPoseMeters(scoreLocation);
         return distanceFromScoreZoneMeters < scoringToleranceMeters;
     }
 }
