@@ -3,6 +3,7 @@ package frc.trigon.robot.commands.commandfactories;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -43,12 +44,19 @@ public class CoralPlacingCommands {
 
     private static Command getAutonomouslyScoreInReefCommand() {
         return new ParallelCommandGroup(
-                ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
+                getOpenElevatorWhenCloseToReefCommand(),
                 getAutonomousDriveToReefThenManualDriveCommand(),
                 getGripperSequenceCommand(),
                 getWaitUntilScoringTargetChangesCommand().andThen(
                         () -> getAutonomouslyScoreInReefCommand().onlyWhile(OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER).schedule()
                 )
+        );
+    }
+
+    private static Command getOpenElevatorWhenCloseToReefCommand() {
+        return GeneralCommands.runWhen(
+                ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
+                () -> calculateDistanceToTargetScoringPose() < PathPlannerConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR
         );
     }
 
@@ -61,7 +69,7 @@ public class CoralPlacingCommands {
     private static Command getAutonomousDriveToReefThenManualDriveCommand() {
         return new SequentialCommandGroup(
                 SwerveCommands.getDriveToPoseCommand(
-                        () -> TARGET_SCORING_LEVEL.calculateTargetPlacingPosition(TARGET_REEF_SCORING_CLOCK_POSITION, TARGET_REEF_SCORING_SIDE),
+                        CoralPlacingCommands::calculateTargetScoringPose,
                         PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
                 ),
                 GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND)
@@ -73,6 +81,16 @@ public class CoralPlacingCommands {
                 GripperCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoring),
                 GripperCommands.getScoreInReefCommand()
         );
+    }
+
+    private static double calculateDistanceToTargetScoringPose() {
+        final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getTranslation();
+        final Translation2d targetTranslation = calculateTargetScoringPose().get().getTranslation();
+        return currentTranslation.getDistance(targetTranslation);
+    }
+
+    private static FlippablePose2d calculateTargetScoringPose() {
+        return TARGET_SCORING_LEVEL.calculateTargetPlacingPosition(TARGET_REEF_SCORING_CLOCK_POSITION, TARGET_REEF_SCORING_SIDE);
     }
 
     private static boolean canContinueScoring() {
