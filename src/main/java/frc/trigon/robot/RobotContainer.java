@@ -6,7 +6,6 @@
 package frc.trigon.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -30,8 +29,6 @@ import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.swerve.Swerve;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
-
-import java.util.ArrayList;
 
 public class RobotContainer {
     public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator();
@@ -87,13 +84,6 @@ public class RobotContainer {
 
         OperatorConstants.CORAL_COLLECTION_TRIGGER.whileTrue(CollectionCommands.getCoralCollectionCommand());
         OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
-    }
-
-    private static Pose3d[] mapSimulatedGamePieceListToPoseArray(ArrayList<Pose3d> gamePieces) {
-        final Pose3d[] poses = new Pose3d[gamePieces.size()];
-        for (int i = 0; i < poses.length; i++)
-            poses[i] = gamePieces.get(i);
-        return poses;
     }
 
     private void bindSetters() {
