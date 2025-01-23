@@ -20,10 +20,10 @@ import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 
 public class CoralAlignmentCommand extends ParallelCommandGroup {
-    private static final ObjectDetectionCamera CAMERA = CameraConstants.CORAL_DETECTION_CAMERA;
-    private static final PIDController Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
+    public static final PIDController Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new PIDController(0.0075, 0, 0) :
             new PIDController(0.0002, 0, 0);
+    private static final ObjectDetectionCamera CAMERA = CameraConstants.CORAL_DETECTION_CAMERA;
 
     public CoralAlignmentCommand() {
         addCommands(

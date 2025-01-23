@@ -1,0 +1,66 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.94875,
+        "y": 5.24375
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.6628688524590167,
+        "y": 6.5056557377049185
+      },
+      "isLocked": false,
+      "linkedName": "ScoreFourL4Corals1"
+    },
+    {
+      "anchor": {
+        "x": 1.33575,
+        "y": 7.05725
+      },
+      "prevControl": {
+        "x": 2.377842573944722,
+        "y": 5.980825730276226
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "ScoreFourL4Corals2"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "CollectCoral",
+      "waypointRelativePos": 0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "CollectCoral"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.2,
+    "maxAcceleration": 5.5,
+    "maxAngularVelocity": 400.0,
+    "maxAngularAcceleration": 400.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 135.48969559312923
+  },
+  "reversed": false,
+  "folder": "ScoreFourL4Corals",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 122.14583111534118
+  },
+  "useDefaultConstraints": true
+}

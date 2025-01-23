@@ -40,7 +40,7 @@ public class CollectionCommands {
         ).unless(() -> RobotContainer.CORAL_INTAKE.hasGamePiece() || RobotContainer.GRIPPER.hasGamePiece());
     }
 
-    private static Command getLoadCoralCommand() {
+    public static Command getLoadCoralCommand() {
         return new ParallelCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.LOAD_CORAL),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),

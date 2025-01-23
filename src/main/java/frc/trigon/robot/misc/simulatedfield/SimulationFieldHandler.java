@@ -19,9 +19,9 @@ public class SimulationFieldHandler {
             CORAL_ON_FIELD = SimulatedGamePieceConstants.CORAL_ON_FIELD,
             ALGAE_ON_FIELD = SimulatedGamePieceConstants.ALGAE_ON_FIELD;
     private static Integer
-            HELD_CORAL_INDEX = null,
+            HELD_CORAL_INDEX = 0,
             HELD_ALGAE_INDEX = null;
-    private static boolean IS_CORAL_IN_GRIPPER = false;
+    private static boolean IS_CORAL_IN_GRIPPER = true;
 
     public static ArrayList<SimulatedGamePiece> getSimulatedCoral() {
         return CORAL_ON_FIELD;
@@ -81,7 +81,7 @@ public class SimulationFieldHandler {
                 algaeCollectionPose = robotPose.plus(toTransform(new Pose3d()));
 
         updateCoralFeederCollection(robotPose);
-        
+
         if (isCollectingCoral() && HELD_CORAL_INDEX == null)
             HELD_CORAL_INDEX = getIndexOfCollectedGamePiece(coralCollectionPose, CORAL_ON_FIELD, SimulatedGamePieceConstants.CORAL_INTAKE_TOLERANCE_METERS);
 

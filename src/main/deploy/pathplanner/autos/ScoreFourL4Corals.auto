@@ -1,0 +1,118 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ScoreFourL4Corals1"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "FeedCoral"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ScoreFourL4Corals2"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ScoreFourL4Corals3"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "named",
+                "data": {
+                  "name": "FeedCoral"
+                }
+              },
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.1
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ScoreFourL4Corals4"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ScoreFourL4Corals5"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "wait",
+                "data": {
+                  "waitTime": 0.1
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "FeedCoral"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ScoreFourL4Corals6"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ScoreFourL4Corals7"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedCoral"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": false,
+  "folder": null,
+  "choreoAuto": false
+}
