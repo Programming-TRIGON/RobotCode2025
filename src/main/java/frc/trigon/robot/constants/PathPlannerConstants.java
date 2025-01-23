@@ -1,7 +1,6 @@
 package frc.trigon.robot.constants;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathfindingCommand;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
@@ -41,7 +40,6 @@ public class PathPlannerConstants {
     public static void init() {
         Pathfinding.setPathfinder(new LocalADStarAK());
         configureAutoBuilder();
-        PathfindingCommand.warmupCommand().schedule();
         registerCommands();
     }
 
