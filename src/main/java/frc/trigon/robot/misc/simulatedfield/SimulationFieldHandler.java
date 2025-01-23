@@ -79,20 +79,28 @@ public class SimulationFieldHandler {
         final Pose3d
                 coralCollectionPose = robotPose.plus(toTransform(RobotContainer.CORAL_INTAKE.calculateCoralCollectionPose())),
                 algaeCollectionPose = robotPose.plus(toTransform(new Pose3d()));
+
+        updateCoralFeederCollection(robotPose);
+        
+        if (isCollectingCoral() && HELD_CORAL_INDEX == null)
+            HELD_CORAL_INDEX = getIndexOfCollectedGamePiece(coralCollectionPose, CORAL_ON_FIELD, SimulatedGamePieceConstants.CORAL_INTAKE_TOLERANCE_METERS);
+
+
+        if (isCollectingAlgae() && HELD_ALGAE_INDEX == null)
+            HELD_ALGAE_INDEX = getIndexOfCollectedGamePiece(algaeCollectionPose, ALGAE_ON_FIELD, SimulatedGamePieceConstants.ALGAE_INTAKE_TOLERANCE_METERS);
+    }
+
+    private static void updateCoralFeederCollection(Pose3d robotPose) {
         final double
                 distanceFromLeftFeeder = robotPose.toPose2d().getTranslation().getDistance(SimulatedGamePieceConstants.LEFT_FEEDER_POSITION.get()),
                 distanceFromRightFeeder = robotPose.toPose2d().getTranslation().getDistance(SimulatedGamePieceConstants.RIGHT_FEEDER_POSITION.get());
         final double distanceFromBestFeederMeters = Math.min(distanceFromLeftFeeder, distanceFromRightFeeder);
 
-        if (isCollectingCoral() && HELD_CORAL_INDEX == null)
-            HELD_CORAL_INDEX = getIndexOfCollectedGamePiece(coralCollectionPose, CORAL_ON_FIELD, SimulatedGamePieceConstants.CORAL_INTAKE_TOLERANCE_METERS);
         if (isCollectingCoral() && HELD_CORAL_INDEX == null &&
                 distanceFromBestFeederMeters < SimulatedGamePieceConstants.CORAL_FEEDER_INTAKE_TOLERANCE_METERS) {
             CORAL_ON_FIELD.add(new SimulatedGamePiece(new Pose3d(), SimulatedGamePieceConstants.GamePieceType.CORAL));
             HELD_CORAL_INDEX = CORAL_ON_FIELD.size() - 1;
         }
-        if (isCollectingAlgae() && HELD_ALGAE_INDEX == null)
-            HELD_ALGAE_INDEX = getIndexOfCollectedGamePiece(algaeCollectionPose, ALGAE_ON_FIELD, SimulatedGamePieceConstants.ALGAE_INTAKE_TOLERANCE_METERS);
     }
 
     private static void updateCoralLoading() {
@@ -129,26 +137,8 @@ public class SimulationFieldHandler {
     }
 
     private static void updateEjection() {
-        if (HELD_CORAL_INDEX != null) {
-            final SimulatedGamePiece heldCoral = CORAL_ON_FIELD.get(HELD_CORAL_INDEX);
-            if (isIntakeEjectingCoral()) {
-                heldCoral.release();
-                HELD_CORAL_INDEX = null;
-            }
-            if (isEjectingCoral()) {
-                final Pose3d robotPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
-                final Pose3d robotRelativeGripperReleasePose = RobotContainer.GRIPPER.calculateCoralReleasePoint();
-                final Translation3d robotRelativeReleaseVelocity = RobotContainer.GRIPPER.getRobotRelativeExitVelocity();
-                final ChassisSpeeds swerveWheelSpeeds = RobotContainer.SWERVE.getSelfRelativeVelocity();
-                final Translation3d robotSelfRelativeVelocity = new Translation3d(swerveWheelSpeeds.vxMetersPerSecond, swerveWheelSpeeds.vyMetersPerSecond, 0);
-
-                heldCoral.updatePose(robotPose.transformBy(toTransform(robotRelativeGripperReleasePose)));
-                heldCoral.release(robotSelfRelativeVelocity.plus(robotRelativeReleaseVelocity).rotateBy(new Rotation3d(RobotContainer.SWERVE.getHeading())));
-
-                HELD_CORAL_INDEX = null;
-                IS_CORAL_IN_GRIPPER = false;
-            }
-        }
+        if (HELD_CORAL_INDEX != null)
+            updateCoralEjection();
 
         if (HELD_ALGAE_INDEX != null && isEjectingAlgae()) {
             final SimulatedGamePiece heldAlgae = ALGAE_ON_FIELD.get(HELD_ALGAE_INDEX);
@@ -157,7 +147,33 @@ public class SimulationFieldHandler {
         }
     }
 
-    private static boolean isEjectingCoral() {
+    private static void updateCoralEjection() {
+        final SimulatedGamePiece heldCoral = CORAL_ON_FIELD.get(HELD_CORAL_INDEX);
+
+        if (isIntakeEjectingCoral()) {
+            heldCoral.release();
+            HELD_CORAL_INDEX = null;
+        }
+
+        if (isGripperEjectingCoral())
+            ejectCoralFromGripper(heldCoral);
+    }
+
+    private static void ejectCoralFromGripper(SimulatedGamePiece ejectedCoral) {
+        final Pose3d robotPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
+        final Pose3d robotRelativeGripperReleasePose = RobotContainer.GRIPPER.calculateCoralReleasePoint();
+        final Translation3d robotRelativeReleaseVelocity = RobotContainer.GRIPPER.getRobotRelativeExitVelocity();
+        final ChassisSpeeds swerveWheelSpeeds = RobotContainer.SWERVE.getSelfRelativeVelocity();
+        final Translation3d robotSelfRelativeVelocity = new Translation3d(swerveWheelSpeeds.vxMetersPerSecond, swerveWheelSpeeds.vyMetersPerSecond, 0);
+
+        ejectedCoral.updatePose(robotPose.transformBy(toTransform(robotRelativeGripperReleasePose)));
+        ejectedCoral.release(robotSelfRelativeVelocity.plus(robotRelativeReleaseVelocity).rotateBy(new Rotation3d(RobotContainer.SWERVE.getHeading())));
+
+        HELD_CORAL_INDEX = null;
+        IS_CORAL_IN_GRIPPER = false;
+    }
+
+    private static boolean isGripperEjectingCoral() {
         return RobotContainer.GRIPPER.isEjecting() && IS_CORAL_IN_GRIPPER;
     }
 
