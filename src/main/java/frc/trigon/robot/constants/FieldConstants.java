@@ -67,10 +67,12 @@ public class FieldConstants {
 
         public final Rotation2d clockAngle;
         public final boolean isFacingDriverStation;
+        public final int clockPosition;
 
         ReefClockPosition(boolean isFacingDriverStation) {
             this.clockAngle = calculateClockAngle();
             this.isFacingDriverStation = isFacingDriverStation;
+            this.clockPosition = ordinal() == 0 ? 12 : ordinal() * 2;
         }
 
         private Rotation2d calculateClockAngle() {

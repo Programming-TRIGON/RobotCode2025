@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.misc.simplesensor.SimpleSensor;
@@ -66,6 +67,7 @@ public class CoralIntake extends MotorSubsystem {
         angleMotor.update();
         angleEncoder.update();
         beamBreak.updateSensor();
+        logTargetPlacementStates();
     }
 
     @Override
@@ -149,5 +151,11 @@ public class CoralIntake extends MotorSubsystem {
 
     private Rotation2d getCurrentEncoderAngle() {
         return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
+    }
+
+    private void logTargetPlacementStates() {
+        Logger.recordOutput("TargetCoralPlacementStates/TargetClockPosition", CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition);
+        Logger.recordOutput("TargetCoralPlacementStates/TargetLevel", CoralPlacingCommands.TARGET_SCORING_LEVEL.level);
+        Logger.recordOutput("TargetCoralPlacementStates/IsTargetSideRight", CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation);
     }
 }

@@ -93,6 +93,7 @@ public class CoralPlacingCommands {
         L3(1.3, 0.17),
         L4(1.3, 0.17);
 
+        public final int level = ordinal() + 1;
         final double xTransformMeters, positiveYTransformMeters;
         final ElevatorConstants.ElevatorState elevatorState;
         final GripperConstants.GripperState gripperState;
