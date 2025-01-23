@@ -136,10 +136,13 @@ public class SimulationFieldHandler {
                 HELD_CORAL_INDEX = null;
             }
             if (isEjectingCoral()) {
+                final Pose3d robotPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose());
+                final Pose3d robotRelativeGripperReleasePose = RobotContainer.GRIPPER.calculateCoralReleasePoint();
                 final Translation3d robotRelativeReleaseVelocity = RobotContainer.GRIPPER.getRobotRelativeExitVelocity();
                 final ChassisSpeeds swerveWheelSpeeds = RobotContainer.SWERVE.getSelfRelativeVelocity();
                 final Translation3d robotSelfRelativeVelocity = new Translation3d(swerveWheelSpeeds.vxMetersPerSecond, swerveWheelSpeeds.vyMetersPerSecond, 0);
 
+                heldCoral.updatePose(robotPose.transformBy(toTransform(robotRelativeGripperReleasePose)));
                 heldCoral.release(robotSelfRelativeVelocity.plus(robotRelativeReleaseVelocity).rotateBy(new Rotation3d(RobotContainer.SWERVE.getHeading())));
 
                 HELD_CORAL_INDEX = null;

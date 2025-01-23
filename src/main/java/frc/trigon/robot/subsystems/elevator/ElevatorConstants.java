@@ -171,7 +171,7 @@ public class ElevatorConstants {
         REST(0),
         SCORE_L1(0),
         SCORE_L2(0.03),
-        SCORE_L3(0.4),
+        SCORE_L3(0.45),
         SCORE_L4(1.07);
 
         public final double targetPositionMeters;

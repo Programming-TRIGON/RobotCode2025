@@ -19,7 +19,8 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private static final Rotation2d CAMERA_HORIZONTAL_FOV = Rotation2d.fromDegrees(75);
     private static final double
             MAXIMUM_VISIBLE_DISTANCE_METERS = 5,
-            MINIMUM_VISIBLE_DISTANCE_METERS = 0.05;
+            MINIMUM_VISIBLE_DISTANCE_METERS = 0.05,
+            MAXIMUM_VISIBLE_HEIGHT_METERS = 0.6;
 
     private final String hostname;
     private final Rotation2d cameraMountYaw;
@@ -146,7 +147,8 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      */
     private boolean isWithinDistance(SimulatedGamePiece objectPlacement, Pose2d robotPose) {
         final double robotToObjectDistanceMeters = objectPlacement.getDistanceFromPoseMeters(new Pose3d(robotPose));
-        return robotToObjectDistanceMeters <= MAXIMUM_VISIBLE_DISTANCE_METERS &&
+        return objectPlacement.getPose().getZ() < MAXIMUM_VISIBLE_HEIGHT_METERS &&
+                robotToObjectDistanceMeters <= MAXIMUM_VISIBLE_DISTANCE_METERS &&
                 robotToObjectDistanceMeters >= MINIMUM_VISIBLE_DISTANCE_METERS;
     }
 

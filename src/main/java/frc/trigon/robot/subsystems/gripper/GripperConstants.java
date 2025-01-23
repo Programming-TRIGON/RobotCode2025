@@ -140,18 +140,18 @@ public class GripperConstants {
             GRIPPER_VISUALIZATION_ORIGIN_POINT
     ),
             GRIPPER_TO_CORAL_RELEASE = new Transform3d(
-                    new Translation3d(0.13, 0, -0.195),
-                    new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(30), 0)
+                    new Translation3d(0.3, 0, -0.1),
+                    new Rotation3d(0, 0, 0)
             ),
             GRIPPER_TO_HELD_CORAL = new Transform3d(
-                    new Translation3d(0.12, 0, -0.185),//TODO: Find
+                    new Translation3d(0.05, 0, -0.1),
                     new Rotation3d(0, 0, 0)
             );
 
-    static final double WHEEL_DIAMETER_METERS = edu.wpi.first.math.util.Units.inchesToMeters(2.25);
+    static final double WHEEL_DIAMETER_METERS = edu.wpi.first.math.util.Units.inchesToMeters(2.5);
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(2);
-    static final double SCORE_IN_REEF_VOLTAGE = -3;
-    static final double MINIMUM_VOLTAGE_FOR_EJECTING = -1;
+    static final double SCORE_IN_REEF_VOLTAGE = -8;
+    static final double MINIMUM_VOLTAGE_FOR_EJECTING = -6;
     static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-55);
     static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
 
@@ -253,8 +253,8 @@ public class GripperConstants {
         REST(Rotation2d.fromDegrees(-60), 0),
         EJECT(Rotation2d.fromDegrees(45), -3),
         PREPARE_L4(Rotation2d.fromDegrees(55), 0),
-        PREPARE_L3_OR_L2(Rotation2d.fromDegrees(45), 0),
-        PREPARE_L1(Rotation2d.fromDegrees(45), 0),
+        PREPARE_L3_OR_L2(Rotation2d.fromDegrees(55), 0),
+        PREPARE_L1(Rotation2d.fromDegrees(55), 0),
         LOAD_CORAL(Rotation2d.fromDegrees(-62), 3),
         COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3),
         OPEN_FOR_ELEVATOR_MINIMUM(Rotation2d.fromDegrees(-54), 0);
