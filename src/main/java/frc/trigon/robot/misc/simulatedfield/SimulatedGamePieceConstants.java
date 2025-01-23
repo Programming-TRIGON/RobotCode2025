@@ -23,6 +23,10 @@ public class SimulatedGamePieceConstants {
             FIELD_LENGTH_METERS = FieldConstants.FIELD_LENGTH_METERS;
     private static final Rotation3d CORAL_TO_VERTICAL_POSITION_ROTATION = new Rotation3d(0, Math.PI / 2, 0);
 
+    /**
+     * Stores all the game pieces.
+     * Starts out with the game pieces the start on the field.
+     */
     public static final ArrayList<SimulatedGamePiece>
             CORAL_ON_FIELD = new ArrayList<>(List.of(
             createNewCoral(new Pose3d(1.22, FIELD_WIDTH_METERS / 2, 0.15, CORAL_TO_VERTICAL_POSITION_ROTATION)),
@@ -62,7 +66,7 @@ public class SimulatedGamePieceConstants {
     public static final ArrayList<FlippablePose3d> CORAL_SCORING_LOCATIONS = calculatedCoralScoringLocations();
     public static final Pose3d PROCESSOR_LOCATION = new Pose3d(0, 0, 0, new Rotation3d());
     public static final FlippableTranslation2d
-            LEFT_FEEDER_POSITION = new FlippableTranslation2d(0.923, 7.370, true),//TODO: AAAAAAAAA
+            LEFT_FEEDER_POSITION = new FlippableTranslation2d(0.923, 7.370, true),
             RIGHT_FEEDER_POSITION = new FlippableTranslation2d(0.923, 0.668, true);
 
     private static SimulatedGamePiece createNewCoral(Pose3d startingPose) {
