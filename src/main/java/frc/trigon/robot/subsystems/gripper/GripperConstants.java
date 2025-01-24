@@ -251,6 +251,7 @@ public class GripperConstants {
 
     public enum GripperState {
         REST(Rotation2d.fromDegrees(-60), 0),
+        PREPARE_FOR_EJECTING(Rotation2d.fromDegrees(45), 0),
         EJECT(Rotation2d.fromDegrees(45), -3),
         PREPARE_L4(Rotation2d.fromDegrees(55), 0),
         PREPARE_L3_OR_L2(Rotation2d.fromDegrees(55), 0),

@@ -37,7 +37,7 @@ public class CollectionCommands {
                     if (!interrupted)
                         getLoadCoralCommand().schedule();
                 }
-        ).unless(() -> RobotContainer.CORAL_INTAKE.hasGamePiece() || RobotContainer.GRIPPER.hasGamePiece());
+        ).unless(RobotContainer.GRIPPER::hasGamePiece);
     }
 
     public static Command getLoadCoralCommand() {

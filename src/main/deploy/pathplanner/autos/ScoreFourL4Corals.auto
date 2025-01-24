@@ -11,28 +11,34 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4Wait"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedCoral"
+          }
+        },
+        {
           "type": "race",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "FeedCoral"
+                  "pathName": "ScoreFourL4Corals2"
                 }
               },
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 0.1
+                  "name": "CollectCoral"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ScoreFourL4Corals2"
           }
         },
         {
@@ -42,28 +48,34 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4Wait"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedCoral"
+          }
+        },
+        {
           "type": "race",
           "data": {
             "commands": [
               {
-                "type": "named",
+                "type": "path",
                 "data": {
-                  "name": "FeedCoral"
+                  "pathName": "ScoreFourL4Corals4"
                 }
               },
               {
-                "type": "wait",
+                "type": "named",
                 "data": {
-                  "waitTime": 0.1
+                  "name": "CollectCoral"
                 }
               }
             ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ScoreFourL4Corals4"
           }
         },
         {
@@ -73,19 +85,31 @@
           }
         },
         {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4Wait"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedCoral"
+          }
+        },
+        {
           "type": "race",
           "data": {
             "commands": [
               {
-                "type": "wait",
+                "type": "path",
                 "data": {
-                  "waitTime": 0.1
+                  "pathName": "ScoreFourL4Corals6"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "FeedCoral"
+                  "name": "CollectCoral"
                 }
               }
             ]
@@ -94,13 +118,13 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ScoreFourL4Corals6"
+            "pathName": "ScoreFourL4Corals7"
           }
         },
         {
-          "type": "path",
+          "type": "named",
           "data": {
-            "pathName": "ScoreFourL4Corals7"
+            "name": "ScoreL4Wait"
           }
         },
         {
