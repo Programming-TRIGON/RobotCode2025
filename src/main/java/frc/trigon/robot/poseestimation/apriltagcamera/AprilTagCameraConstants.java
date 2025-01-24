@@ -17,7 +17,7 @@ public class AprilTagCameraConstants {
     static final Pose2d[] EMPTY_POSE_LIST = new Pose2d[0];
     static final double MAXIMUM_AMBIGUITY = 0.4;
 
-    public static final VisionSystemSim VISION_SIMULATION = new VisionSystemSim("VisionSimulation");
+    public static final VisionSystemSim VISION_SIMULATION = RobotHardwareStats.isSimulation() ? new VisionSystemSim("VisionSimulation") : null;
     private static final int
             SIMULATION_CAMERA_RESOLUTION_WIDTH = 1600,
             SIMULATION_CAMERA_RESOLUTION_HEIGHT = 1200,

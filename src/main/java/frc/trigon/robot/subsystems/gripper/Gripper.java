@@ -8,12 +8,14 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.subsystems.MotorSubsystem;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.grapple.lasercan.LaserCAN;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
+import org.trigon.utilities.Conversions;
 
 public class Gripper extends MotorSubsystem {
     private final TalonFXMotor grippingMotor = GripperConstants.GRIPPING_MOTOR;
@@ -75,6 +77,10 @@ public class Gripper extends MotorSubsystem {
         Logger.recordOutput("Poses/Components/GripperPose", calculateVisualizationPose());
     }
 
+    public boolean isEjecting() {
+        return grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE) < GripperConstants.MINIMUM_VOLTAGE_FOR_EJECTING;
+    }
+
     public boolean isOpenForElevator() {
         return getCurrentEncoderAngle().getDegrees() > GripperConstants.MINIMUM_OPEN_FOR_ELEVATOR_ANGLE.getDegrees();
     }
@@ -98,6 +104,22 @@ public class Gripper extends MotorSubsystem {
      */
     void scoreInReef() {
         setTargetState(targetState.targetAngle, GripperConstants.SCORE_IN_REEF_VOLTAGE);
+    }
+
+    public Pose3d calculateCoralReleasePoint() {
+        return calculateVisualizationPose()
+                .transformBy(getVisualizationToRealPitchTransform())
+                .transformBy(GripperConstants.GRIPPER_TO_CORAL_RELEASE);
+    }
+
+    public Pose3d calculateHeldCoralVisualizationPose() {
+        return calculateVisualizationPose()
+                .transformBy(getVisualizationToRealPitchTransform())
+                .transformBy(GripperConstants.GRIPPER_TO_HELD_CORAL);
+    }
+
+    public Translation3d getRobotRelativeExitVelocity() {
+        return new Translation3d(getGrippingWheelVelocityMetersPerSecond(), new Rotation3d(0, -getCurrentEncoderAngle().getRadians(), 0));
     }
 
     void setTargetState(GripperConstants.GripperState targetState) {
@@ -134,7 +156,19 @@ public class Gripper extends MotorSubsystem {
         return gripperOrigin.transformBy(pitchTransform);
     }
 
+    private Transform3d getVisualizationToRealPitchTransform() {
+        return new Transform3d(
+                new Translation3d(),
+                new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(-62 + 90), 0)
+        );
+    }
+
     private Rotation2d getCurrentEncoderAngle() {
         return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
+    }
+
+    @AutoLogOutput(key = "Gripper/GrippingWheelVelocityMeters")
+    private double getGrippingWheelVelocityMetersPerSecond() {
+        return Conversions.rotationsToDistance(grippingMotor.getSignal(TalonFXSignal.VELOCITY), GripperConstants.WHEEL_DIAMETER_METERS);
     }
 }

@@ -12,6 +12,7 @@ import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
+import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.misc.leds.LEDCommands;
@@ -19,21 +20,25 @@ import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 
 public class CoralAlignmentCommand extends ParallelCommandGroup {
-    private static final ObjectDetectionCamera CAMERA = CameraConstants.CORAL_DETECTION_CAMERA;
-    private static final PIDController Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
+    public static final PIDController Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new PIDController(0.0075, 0, 0) :
             new PIDController(0.0002, 0, 0);
+    private static final ObjectDetectionCamera CAMERA = CameraConstants.CORAL_DETECTION_CAMERA;
 
     public CoralAlignmentCommand() {
         addCommands(
                 getSetLEDColorsCommand(),
-                getDriveWhileAligningToCoralCommand(),
+                GeneralCommands.getContinuousConditionalCommand(
+                        getDriveWhileAligningToCoralCommand(),
+                        GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND),
+                        CAMERA::hasTargets
+                ),
                 getTrackCoralCommand()
         );
     }
 
     private Command getTrackCoralCommand() {
-        return new RunCommand(CAMERA::trackObject);
+        return new RunCommand(() -> CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL));
     }
 
     private Command getSetLEDColorsCommand() {
