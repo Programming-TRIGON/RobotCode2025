@@ -52,7 +52,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
     private Command getDriveWhileAligningToCoralCommand() {
         return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                 () -> fieldRelativePowersToSelfRelativeXPower(OperatorConstants.DRIVER_CONTROLLER.getLeftY(), OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
-                () -> -Y_PID_CONTROLLER.calculate(CAMERA.getTrackedObjectYaw().getDegrees()),
+                () -> -Y_PID_CONTROLLER.calculate(CAMERA.getTrackedObjectRotation().getDegrees()),
                 this::getTargetAngle
         );
     }
@@ -67,6 +67,6 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
 
     private FlippableRotation2d getTargetAngle() {
         final Rotation2d currentRotation = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getRotation();
-        return new FlippableRotation2d(currentRotation.plus(CAMERA.getTrackedObjectYaw()), false);
+        return new FlippableRotation2d(currentRotation.plus(CAMERA.getTrackedObjectRotation()), false);
     }
 }

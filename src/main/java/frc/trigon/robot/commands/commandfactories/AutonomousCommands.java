@@ -39,8 +39,8 @@ public class AutonomousCommands {
     public static Command getAlignToCoralCommand() {
         return new FunctionalCommand(
                 () -> {
-                    PPHolonomicDriveController.overrideYFeedback(() -> -CoralAlignmentCommand.Y_PID_CONTROLLER.calculate(CameraConstants.CORAL_DETECTION_CAMERA.getTrackedObjectYaw().getDegrees()));
-                    PPHolonomicDriveController.setRotationTargetOverride(() -> Optional.of(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getRotation().plus(CameraConstants.CORAL_DETECTION_CAMERA.getTrackedObjectYaw())));
+                    PPHolonomicDriveController.overrideYFeedback(() -> -CoralAlignmentCommand.Y_PID_CONTROLLER.calculate(CameraConstants.CORAL_DETECTION_CAMERA.getTrackedObjectRotation().getDegrees()));
+                    PPHolonomicDriveController.setRotationTargetOverride(() -> Optional.of(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getRotation().plus(CameraConstants.CORAL_DETECTION_CAMERA.getTrackedObjectRotation())));
                 },
                 () -> CameraConstants.CORAL_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL),
                 (interrupted) -> {
