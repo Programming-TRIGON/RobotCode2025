@@ -91,7 +91,9 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
 
     private Rotation3d calculateCameraAngleToObject(Pose3d objectPose, Pose3d cameraPose) {
         final Translation3d cameraPosition = cameraPose.getTranslation();
-        final Translation3d objectPosition = objectPose.getTranslation().plus(new Translation3d(0, 0, -objectPose.getTranslation().getZ()));
+        Translation3d objectPosition = objectPose.getTranslation();
+        if (objectPose.getRotation().getY() < 0.2)
+            objectPosition = objectPosition.plus(new Translation3d(0, 0, -objectPosition.getZ()));
 
         final Translation3d difference = cameraPosition.minus(objectPosition);
         final Rotation3d differenceAsAngle = getAngle(difference);
