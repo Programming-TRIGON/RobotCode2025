@@ -16,14 +16,14 @@ public class ObjectDetectionCamera extends SubsystemBase {
     private final ObjectDetectionCameraInputsAutoLogged objectDetectionCameraInputs = new ObjectDetectionCameraInputsAutoLogged();
     private final ObjectDetectionCameraIO objectDetectionCameraIO;
     private final String hostname;
-    private final Transform3d robotToCamera;
+    private final Transform3d robotCenterToCamera;
     private Rotation3d trackedObjectRotation = new Rotation3d();
     private boolean trackedTargetWasVisible = false;
 
-    public ObjectDetectionCamera(String hostname, Transform3d robotToCamera) {
+    public ObjectDetectionCamera(String hostname, Transform3d robotCenterToCamera) {
         this.hostname = hostname;
-        this.robotToCamera = robotToCamera;
-        this.objectDetectionCameraIO = generateIO(hostname, robotToCamera);
+        this.robotCenterToCamera = robotCenterToCamera;
+        this.objectDetectionCameraIO = generateIO(hostname, robotCenterToCamera);
     }
 
     @Override
@@ -69,7 +69,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
      * @return the object's 2d position on the field (z can be assumed to be 0)
      */
     public Translation2d calculateObjectPositionFromRotation(Rotation3d objectRotation) {
-        final Pose3d cameraPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose()).plus(robotToCamera);
+        final Pose3d cameraPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose()).plus(robotCenterToCamera);
         objectRotation = new Rotation3d(0, -objectRotation.getY(), objectRotation.getZ());
         final Pose3d objectRotationStart = cameraPose.plus(new Transform3d(0, 0, 0, objectRotation));
 
@@ -81,7 +81,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
         return objectRotationStart.transformBy(objectRotationStartToGround).getTranslation().toTranslation2d();
     }
 
-    public void initializeTracking(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
+    public void initializeTracking() {
         trackedTargetWasVisible = false;
     }
 
@@ -170,11 +170,11 @@ public class ObjectDetectionCamera extends SubsystemBase {
         return objectDetectionCameraInputs.visibleObjectRotations[objectID];
     }
 
-    private ObjectDetectionCameraIO generateIO(String hostname, Transform3d robotToCamera) {
+    private ObjectDetectionCameraIO generateIO(String hostname, Transform3d robotCenterToCamera) {
         if (RobotHardwareStats.isReplay())
             return new ObjectDetectionCameraIO();
         if (RobotHardwareStats.isSimulation())
-            return new SimulationObjectDetectionCameraIO(hostname, robotToCamera);
+            return new SimulationObjectDetectionCameraIO(hostname, robotCenterToCamera);
         return new PhotonObjectDetectionCameraIO(hostname);
     }
 }

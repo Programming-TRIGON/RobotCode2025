@@ -24,7 +24,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
     public static final PIDController Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new PIDController(0.5, 0, 0) :
             new PIDController(0.0002, 0, 0);
-    private static final ObjectDetectionCamera CAMERA = CameraConstants.CORAL_DETECTION_CAMERA;
+    private static final ObjectDetectionCamera CAMERA = CameraConstants.OBJECT_DETECTION_CAMERA;
     private static final double HAS_SEEN_CORAL_TIMEOUT_SECONDS = 0.5;
     private static final BooleanEvent IS_CORAL_VISIBLE = new BooleanEvent(
             CommandScheduler.getInstance().getDefaultButtonLoop(),
@@ -35,7 +35,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
 
     public CoralAlignmentCommand() {
         addCommands(
-                new InstantCommand(() -> CAMERA.initializeTracking(SimulatedGamePieceConstants.GamePieceType.CORAL)),
+                new InstantCommand(CAMERA::initializeTracking),
                 getSetLEDColorsCommand(),
                 GeneralCommands.getContinuousConditionalCommand(
                         getDriveWhileAligningToCoralCommand(),

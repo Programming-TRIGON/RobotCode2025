@@ -19,17 +19,17 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
             CAMERA_VERTICAL_FOV = Rotation2d.fromDegrees(75);
 
     private final String hostname;
-    private final Transform3d robotToCamera;
+    private final Transform3d robotCenterToCamera;
 
-    public SimulationObjectDetectionCameraIO(String hostname, Transform3d robotToCamera) {
+    public SimulationObjectDetectionCameraIO(String hostname, Transform3d robotCenterToCamera) {
         this.hostname = hostname;
-        this.robotToCamera = robotToCamera;
+        this.robotCenterToCamera = robotCenterToCamera;
     }
 
     @Override
     protected void updateInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
-        final Pose3d cameraPose = new Pose3d(robotPose).plus(robotToCamera);
+        final Pose3d cameraPose = new Pose3d(robotPose).plus(robotCenterToCamera);
         final ArrayList<Pair<SimulatedGamePiece, Rotation3d>>[] visibleGamePieces = calculateAllVisibleGamePieces(cameraPose);
 
         boolean hasAnyTarget = false;
@@ -146,10 +146,6 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         for (int i = 0; i < visibleGamePieces.length; i++) {
             final String gamePieceTypeName = SimulatedGamePieceConstants.GamePieceType.getNameFromID(i);
             Logger.recordOutput(hostname + "/Visible" + gamePieceTypeName, mapSimulatedGamePieceListToPoseArray(visibleGamePieces[i]));
-            final Pose3d[] visibleGamePiecesAngles = new Pose3d[visibleGamePieces[i].size()];
-            for (int j = 0; j < visibleGamePiecesAngles.length; j++)
-                visibleGamePiecesAngles[j] = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose()).transformBy(robotToCamera).plus(new Transform3d(new Translation3d(), visibleGamePieces[i].get(j).getSecond()));
-            Logger.recordOutput(hostname + "/Angle" + gamePieceTypeName, visibleGamePiecesAngles);
         }
     }
 

@@ -39,7 +39,7 @@ public class AutonomousCommands {
 //                    PPHolonomicDriveController.overrideYFeedback(() -> -CoralAlignmentCommand.Y_PID_CONTROLLER.calculate(CameraConstants.CORAL_DETECTION_CAMERA.getTrackedObjectRotation().getDegrees()));
 //                    PPHolonomicDriveController.setRotationTargetOverride(() -> Optional.of(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getRotation().plus(CameraConstants.CORAL_DETECTION_CAMERA.getTrackedObjectRotation())));
                 },
-                () -> CameraConstants.CORAL_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL),
+                () -> CameraConstants.OBJECT_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL),
                 (interrupted) -> {
 //                    PPHolonomicDriveController.clearFeedbackOverrides();
 //                    PPHolonomicDriveController.setRotationTargetOverride(Optional::empty);
