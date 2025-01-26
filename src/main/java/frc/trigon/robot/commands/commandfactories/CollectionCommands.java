@@ -22,7 +22,7 @@ public class CollectionCommands {
     public static boolean SHOULD_ALIGN_TO_CORAL = true;
 
     public static Command getCoralCollectionCommand() {
-        return getInitiateCoralCollectionCommand().unless(RobotContainer.CORAL_INTAKE::hasGamePiece).alongWith(
+        return getInitiateCoralCollectionCommand().unless(RobotContainer.GRIPPER::hasGamePiece).alongWith(
                 GeneralCommands.runWhen(GeneralCommands.duplicate(CommandConstants.COLLECTION_RUMBLE_COMMAND), RobotContainer.CORAL_INTAKE::hasGamePiece)
         );
     }
@@ -37,7 +37,7 @@ public class CollectionCommands {
                     if (!interrupted)
                         getLoadCoralCommand().schedule();
                 }
-        ).unless(RobotContainer.GRIPPER::hasGamePiece);
+        );
     }
 
     public static Command getLoadCoralCommand() {

@@ -1,11 +1,12 @@
 package frc.trigon.robot.commands.commandclasses;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
@@ -21,39 +22,51 @@ import org.trigon.utilities.flippable.FlippableRotation2d;
 
 public class CoralAlignmentCommand extends ParallelCommandGroup {
     public static final PIDController Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
-            new PIDController(0.0075, 0, 0) :
+            new PIDController(0.5, 0, 0) :
             new PIDController(0.0002, 0, 0);
     private static final ObjectDetectionCamera CAMERA = CameraConstants.CORAL_DETECTION_CAMERA;
+    private static final double HAS_SEEN_CORAL_TIMEOUT_SECONDS = 0.5;
+    private static final BooleanEvent IS_CORAL_VISIBLE = new BooleanEvent(
+            CommandScheduler.getInstance().getDefaultButtonLoop(),
+            () -> CAMERA.hasTargets(SimulatedGamePieceConstants.GamePieceType.CORAL)
+    ).debounce(HAS_SEEN_CORAL_TIMEOUT_SECONDS);
+
+    private Translation2d targetCoralTranslation = new Translation2d(0, 0);
 
     public CoralAlignmentCommand() {
         addCommands(
+                new InstantCommand(() -> CAMERA.initializeTracking(SimulatedGamePieceConstants.GamePieceType.CORAL)),
                 getSetLEDColorsCommand(),
                 GeneralCommands.getContinuousConditionalCommand(
                         getDriveWhileAligningToCoralCommand(),
                         GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND),
-                        CAMERA::hasTargets
+                        IS_CORAL_VISIBLE
                 ),
                 getTrackCoralCommand()
         );
     }
 
     private Command getTrackCoralCommand() {
-        return new RunCommand(() -> CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL));
+        return new RunCommand(() -> {
+            CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL);
+            if (CAMERA.getTrackedObjectRotation() != null)
+                targetCoralTranslation = CAMERA.calculateTrackedObjectPositionOnField();
+        });
     }
 
     private Command getSetLEDColorsCommand() {
         return GeneralCommands.getContinuousConditionalCommand(
                 LEDCommands.getStaticColorCommand(Color.kGreen, LEDStrip.LED_STRIPS),
                 LEDCommands.getStaticColorCommand(Color.kRed, LEDStrip.LED_STRIPS),
-                CAMERA::hasTargets
+                () -> CAMERA.hasTargets(SimulatedGamePieceConstants.GamePieceType.CORAL)
         );
     }
 
     private Command getDriveWhileAligningToCoralCommand() {
         return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                 () -> fieldRelativePowersToSelfRelativeXPower(OperatorConstants.DRIVER_CONTROLLER.getLeftY(), OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
-                () -> -Y_PID_CONTROLLER.calculate(CAMERA.getTrackedObjectRotation().getDegrees()),
-                this::getTargetAngle
+                this::calculateYControllerOutput,
+                this::calculateTargetAngle
         );
     }
 
@@ -65,8 +78,17 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
         return (xValue * robotHeading.getCos()) + (yValue * robotHeading.getSin());
     }
 
-    private FlippableRotation2d getTargetAngle() {
-        final Rotation2d currentRotation = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getRotation();
-        return new FlippableRotation2d(currentRotation.plus(CAMERA.getTrackedObjectRotation()), false);
+    private double calculateYControllerOutput() {
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+        final Translation2d difference = robotPose.getTranslation().minus(targetCoralTranslation);
+        final Translation2d selfRelativeDifference = difference.rotateBy(robotPose.getRotation().unaryMinus());
+        return Y_PID_CONTROLLER.calculate(selfRelativeDifference.getY());
+    }
+
+    private FlippableRotation2d calculateTargetAngle() {
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+        final Translation2d difference = targetCoralTranslation.minus(robotPose.getTranslation());
+        final Rotation2d differenceAngle = new Rotation2d(Math.atan2(difference.getY(), difference.getX()));
+        return new FlippableRotation2d(differenceAngle, false);
     }
 }

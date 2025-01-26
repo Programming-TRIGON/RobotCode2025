@@ -79,7 +79,6 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private ArrayList<Pair<SimulatedGamePiece, Rotation3d>> calculateVisibleGamePieces(Pose3d cameraPose, int objectID) {
         final ArrayList<SimulatedGamePiece> gamePiecesOnField = objectID == 0 ? SimulationFieldHandler.getSimulatedCoral() : SimulationFieldHandler.getSimulatedAlgae();
         final ArrayList<Pair<SimulatedGamePiece, Rotation3d>> visibleTargetObjects = new ArrayList<>();
-
         for (SimulatedGamePiece currentObject : gamePiecesOnField) {
             final Rotation3d cameraAngleToObject = calculateCameraAngleToObject(currentObject.getPose(), cameraPose);
 
@@ -91,13 +90,21 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     }
 
     private Rotation3d calculateCameraAngleToObject(Pose3d objectPose, Pose3d cameraPose) {
-        final Translation3d objectPosition = objectPose.getTranslation();
         final Translation3d cameraPosition = cameraPose.getTranslation();
+        final Translation3d objectPosition = objectPose.getTranslation();
 
         final Translation3d difference = cameraPosition.minus(objectPosition);
         final Rotation3d differenceAsAngle = getAngle(difference);
 
-        return differenceAsAngle.minus(cameraPose.getRotation());
+        return minus(differenceAsAngle, cameraPose.getRotation());
+    }
+
+    private Rotation3d minus(Rotation3d rotation, Rotation3d other) {
+        return new Rotation3d(
+                0,
+                rotation.getY() + other.getY(),
+                rotation.getZ() - other.getZ()
+        );
     }
 
     private Rotation3d getAngle(Translation3d translation) {
@@ -111,7 +118,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * @return the yaw of the vector
      */
     private Rotation2d getYaw(Translation3d vector) {
-        return new Rotation2d(vector.getX(), vector.getY());
+        return new Rotation2d(Math.atan2(-vector.getY(), -vector.getX()));
     }
 
     /**
@@ -121,7 +128,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * @return the pitch of the vector
      */
     private Rotation2d getPitch(Translation3d vector) {
-        return new Rotation2d(Math.atan2(vector.getZ(), Math.hypot(vector.getX(), vector.getY())));
+        return new Rotation2d(Math.acos(vector.getZ() / Math.hypot(vector.getX(), vector.getY()))).minus(Rotation2d.fromDegrees(90));
     }
 
     /**
@@ -139,14 +146,18 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         for (int i = 0; i < visibleGamePieces.length; i++) {
             final String gamePieceTypeName = SimulatedGamePieceConstants.GamePieceType.getNameFromID(i);
             Logger.recordOutput(hostname + "/Visible" + gamePieceTypeName, mapSimulatedGamePieceListToPoseArray(visibleGamePieces[i]));
+            final Pose3d[] visibleGamePiecesAngles = new Pose3d[visibleGamePieces[i].size()];
+            for (int j = 0; j < visibleGamePiecesAngles.length; j++)
+                visibleGamePiecesAngles[j] = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose()).transformBy(robotToCamera).plus(new Transform3d(new Translation3d(), visibleGamePieces[i].get(j).getSecond()));
+            Logger.recordOutput(hostname + "/Angle" + gamePieceTypeName, visibleGamePiecesAngles);
         }
     }
 
     private Pose3d[] mapSimulatedGamePieceListToPoseArray(ArrayList<Pair<SimulatedGamePiece, Rotation3d>> gamePieces) {
         final Pose3d[] poses = new Pose3d[gamePieces.size()];
-        for (int i = 0; i < poses.length; i++) {
+        for (int i = 0; i < poses.length; i++)
             poses[i] = gamePieces.get(i).getFirst().getPose();
-        }
+
         return poses;
     }
 }

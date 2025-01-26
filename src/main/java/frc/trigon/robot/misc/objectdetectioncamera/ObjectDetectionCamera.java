@@ -1,9 +1,6 @@
 package frc.trigon.robot.misc.objectdetectioncamera;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation3d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.misc.objectdetectioncamera.io.PhotonObjectDetectionCameraIO;
@@ -41,12 +38,14 @@ public class ObjectDetectionCamera extends SubsystemBase {
      * Once it is known that the object is on the ground,
      * one can simply find the transform from the camera to the ground and apply it to the object's rotation.
      *
-     * @return the tracked object's 3d position on the field
+     * @return the tracked object's 2d position on the field (z can be assumed to be 0)
      */
-    public Translation3d calculateTrackedObjectPositionOnField() {
+    public Translation2d calculateTrackedObjectPositionOnField() {
+        if (trackedObjectRotation == null)
+            return null;
+        Logger.recordOutput("TrackedObjectRotation", new Translation3d(calculateObjectPositionFromRotation(trackedObjectRotation)));
         return calculateObjectPositionFromRotation(trackedObjectRotation);
     }
-
 
     /**
      * Calculates the position of the best object on the field from the rotation of the object.
@@ -54,9 +53,9 @@ public class ObjectDetectionCamera extends SubsystemBase {
      * Once it is known that the object is on the ground,
      * one can simply find the transform from the camera to the ground and apply it to the object's rotation.
      *
-     * @return the best object's 3d position on the field
+     * @return the best object's 2d position on the field (z can be assumed to be 0)
      */
-    public Translation3d calculateBestObjectPositionOnField(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
+    public Translation2d calculateBestObjectPositionOnField(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
         return calculateObjectPositionFromRotation(calculateBestObjectRotation(targetGamePiece));
     }
 
@@ -67,10 +66,11 @@ public class ObjectDetectionCamera extends SubsystemBase {
      * one can simply find the transform from the camera to the ground and apply it to the object's rotation.
      *
      * @param objectRotation the object's 3d rotation relative to the camera
-     * @return the object's 3d position on the field
+     * @return the object's 2d position on the field (z can be assumed to be 0)
      */
-    public Translation3d calculateObjectPositionFromRotation(Rotation3d objectRotation) {
+    public Translation2d calculateObjectPositionFromRotation(Rotation3d objectRotation) {
         final Pose3d cameraPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose()).plus(robotToCamera);
+        objectRotation = new Rotation3d(0, -objectRotation.getY(), objectRotation.getZ());
         final Pose3d objectRotationStart = cameraPose.plus(new Transform3d(0, 0, 0, objectRotation));
 
         final double cameraZ = cameraPose.getTranslation().getZ();
@@ -78,7 +78,11 @@ public class ObjectDetectionCamera extends SubsystemBase {
         final double transformX = cameraZ / objectPitchSin;
         final Transform3d objectRotationStartToGround = new Transform3d(transformX, 0, 0, new Rotation3d());
 
-        return objectRotationStart.transformBy(objectRotationStartToGround).getTranslation();
+        return objectRotationStart.transformBy(objectRotationStartToGround).getTranslation().toTranslation2d();
+    }
+
+    public void initializeTracking(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
+        trackedTargetWasVisible = false;
     }
 
     /**
@@ -99,6 +103,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
         }
 
         if (!hasTargets) {
+            trackedObjectRotation = null;
             trackedTargetWasVisible = false;
             return;
         }
@@ -119,10 +124,10 @@ public class ObjectDetectionCamera extends SubsystemBase {
 
         for (int i = 1; i < targetObjectsRotations.length; i++) {
             final Rotation3d currentObjectRotation = targetObjectsRotations[i];
-            final double bestObjectDistance = calculateDistance(bestObjectRotation, ObjectDetectionCameraConstants.BEST_ROTATION);
-            final double currentObjectDistance = calculateDistance(currentObjectRotation, ObjectDetectionCameraConstants.BEST_ROTATION);
+            final double bestObjectDifference = Math.abs(bestObjectRotation.getY() - ObjectDetectionCameraConstants.BEST_PITCH.getRadians());
+            final double currentObjectDifference = Math.abs(currentObjectRotation.getY() - ObjectDetectionCameraConstants.BEST_PITCH.getRadians());
 
-            if (currentObjectDistance < bestObjectDistance)
+            if (currentObjectDifference < bestObjectDifference)
                 bestObjectRotation = currentObjectRotation;
         }
 
