@@ -43,7 +43,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
     public Translation2d calculateTrackedObjectPositionOnField() {
         if (trackedObjectRotation == null)
             return null;
-        Logger.recordOutput("TrackedObjectRotation", new Translation3d(calculateObjectPositionFromRotation(trackedObjectRotation)));
+        Logger.recordOutput("TrackedObjectPosition", new Translation3d(calculateObjectPositionFromRotation(trackedObjectRotation)));
         return calculateObjectPositionFromRotation(trackedObjectRotation);
     }
 
@@ -70,7 +70,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
      */
     public Translation2d calculateObjectPositionFromRotation(Rotation3d objectRotation) {
         final Pose3d cameraPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose()).plus(robotCenterToCamera);
-        objectRotation = new Rotation3d(0, -objectRotation.getY(), objectRotation.getZ());
+        objectRotation = new Rotation3d(objectRotation.getX(), -objectRotation.getY(), objectRotation.getZ());
         final Pose3d objectRotationStart = cameraPose.plus(new Transform3d(0, 0, 0, objectRotation));
 
         final double cameraZ = cameraPose.getTranslation().getZ();

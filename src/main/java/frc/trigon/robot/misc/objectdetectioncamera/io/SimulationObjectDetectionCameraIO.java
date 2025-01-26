@@ -91,7 +91,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
 
     private Rotation3d calculateCameraAngleToObject(Pose3d objectPose, Pose3d cameraPose) {
         final Translation3d cameraPosition = cameraPose.getTranslation();
-        final Translation3d objectPosition = objectPose.getTranslation();
+        final Translation3d objectPosition = objectPose.getTranslation().plus(new Translation3d(0, 0, -objectPose.getTranslation().getZ()));
 
         final Translation3d difference = cameraPosition.minus(objectPosition);
         final Rotation3d differenceAsAngle = getAngle(difference);
@@ -128,7 +128,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * @return the pitch of the vector
      */
     private Rotation2d getPitch(Translation3d vector) {
-        return new Rotation2d(Math.acos(vector.getZ() / Math.hypot(vector.getX(), vector.getY()))).minus(Rotation2d.fromDegrees(90));
+        return new Rotation2d(-Math.atan2(vector.getZ(), Math.hypot(vector.getX(), vector.getY())));
     }
 
     /**
