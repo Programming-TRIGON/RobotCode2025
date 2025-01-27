@@ -5,6 +5,7 @@
 
 package frc.trigon.robot;
 
+import au.grapplerobotics.CanBridge;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.trigon.robot.constants.RobotConstants;
@@ -28,6 +29,7 @@ public class Robot extends LoggedRobot {
         RobotConstants.init();
         configLogger();
         robotContainer = new RobotContainer();
+        CanBridge.runTCP();
     }
 
     @Override
