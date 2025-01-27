@@ -137,8 +137,7 @@ public class SwerveCommands {
     private static Command getCurrentDriveToPoseCommand(FlippablePose2d targetPose, PathConstraints constraints) {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> RobotContainer.SWERVE.initializeDrive(true)),
-                getPathfindToPoseCommand(targetPose, constraints),
-                getPIDToPoseCommand(targetPose)
+                getPathfindToPoseCommand(targetPose, constraints)
         );
     }
 

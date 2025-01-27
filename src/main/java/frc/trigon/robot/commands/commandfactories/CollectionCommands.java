@@ -37,15 +37,15 @@ public class CollectionCommands {
                     if (!interrupted)
                         getLoadCoralCommand().schedule();
                 }
-        ).unless(RobotContainer.CORAL_INTAKE::hasGamePiece);
+        ).unless(RobotContainer.GRIPPER::hasGamePiece);
     }
 
-    private static Command getLoadCoralCommand() {
+    public static Command getLoadCoralCommand() {
         return new ParallelCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.LOAD_CORAL),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
                 getCoralIntakeCommand()
-        ).until(RobotContainer.CORAL_INTAKE::hasGamePiece).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
+        ).until(RobotContainer.GRIPPER::hasGamePiece).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
     }
 
     private static Command getCoralIntakeCommand() {

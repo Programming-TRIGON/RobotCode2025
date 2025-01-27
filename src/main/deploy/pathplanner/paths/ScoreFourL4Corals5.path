@@ -1,0 +1,92 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 1.5502500000000001,
+        "y": 7.1255
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 2.566799739202616,
+        "y": 6.358174783607805
+      },
+      "isLocked": false,
+      "linkedName": "ScoreFourL4Corals4"
+    },
+    {
+      "anchor": {
+        "x": 3.1492500000000003,
+        "y": 4.17125
+      },
+      "prevControl": {
+        "x": 2.2733831275797005,
+        "y": 4.0556072572193615
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "ScoreFourL4Corals5"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "ScoreL4",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "sequential",
+        "data": {
+          "commands": [
+            {
+              "type": "named",
+              "data": {
+                "name": "LoadCoral"
+              }
+            },
+            {
+              "type": "parallel",
+              "data": {
+                "commands": [
+                  {
+                    "type": "named",
+                    "data": {
+                      "name": "ScoreL4"
+                    }
+                  },
+                  {
+                    "type": "named",
+                    "data": {
+                      "name": "RestCoralIntake"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.2,
+    "maxAcceleration": 5.5,
+    "maxAngularVelocity": 400.0,
+    "maxAngularAcceleration": 400.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -179.27477570094078
+  },
+  "reversed": false,
+  "folder": "ScoreFourL4Corals",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 127.13092444820948
+  },
+  "useDefaultConstraints": true
+}

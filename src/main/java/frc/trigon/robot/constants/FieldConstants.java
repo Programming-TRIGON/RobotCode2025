@@ -29,7 +29,7 @@ public class FieldConstants {
         try {
             return SHOULD_USE_HOME_TAG_LAYOUT ?
                     new AprilTagFieldLayout(FilesHandler.DEPLOY_PATH + "2025-reefscape.json") :
-                    AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);//TODO: Change for year
+                    AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

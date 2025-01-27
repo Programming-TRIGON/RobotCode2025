@@ -31,6 +31,7 @@ public class ElevatorConstants {
     private static final InvertedValue
             MASTER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             FOLLOWER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
+
     private static final double GEAR_RATIO = 6.66666;
     private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = false;
     private static final double
@@ -94,12 +95,12 @@ public class ElevatorConstants {
             Color.kYellow
     );
 
+    static final double FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH_METERS = 0.6;
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
-    static final double POSITION_TOLERANCE_METERS = 0.1;
+    static final double POSITION_TOLERANCE_METERS = 0.01;
     static final double
             GRIPPER_HITTING_ELEVATOR_BASE_LOWER_BOUND_POSITION_ROTATIONS = 0.1,
             GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS = 0.4;
-    static final double FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH = 0.5786;
 
     static {
         configureMasterMotor();
@@ -170,7 +171,7 @@ public class ElevatorConstants {
         REST(0),
         SCORE_L1(0),
         SCORE_L2(0.03),
-        SCORE_L3(0.4),
+        SCORE_L3(0.45),
         SCORE_L4(1.07);
 
         public final double targetPositionMeters;

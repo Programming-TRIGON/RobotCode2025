@@ -24,7 +24,8 @@ public class ElevatorCommands {
                 RobotContainer.ELEVATOR.metersToRotations(targetStateSupplier.get().targetPositionMeters)
         ).andThen(new StartEndCommand(
                 () -> RobotContainer.ELEVATOR.setTargetState(targetStateSupplier.get()),
-                RobotContainer.ELEVATOR::stop,
+                () -> {
+                },
                 RobotContainer.ELEVATOR
         ));
     }
