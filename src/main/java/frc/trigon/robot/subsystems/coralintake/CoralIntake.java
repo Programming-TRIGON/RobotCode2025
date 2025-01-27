@@ -186,5 +186,13 @@ public class CoralIntake extends MotorSubsystem {
         Logger.recordOutput("TargetCoralPlacementStates/TargetClockPosition", CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition);
         Logger.recordOutput("TargetCoralPlacementStates/TargetLevel", CoralPlacingCommands.TARGET_SCORING_LEVEL.level);
         Logger.recordOutput("TargetCoralPlacementStates/IsTargetSideRight", CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation);
+//        Logger.recordOutput("TargetCoralPlacementStates/IsTargetSideLeft", !CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation);
+//        Logger.recordOutput("TargetCoralPlacementStates/TargetClockPositionForElastic", getClockPositionForElastic());
     }
+
+//    private double getClockPositionForElastic() {
+//        if (CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation)
+//            return CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition;
+//        return CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition + 0.5;
+//    }
 }
