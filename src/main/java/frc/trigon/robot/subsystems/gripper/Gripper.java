@@ -51,6 +51,7 @@ public class Gripper extends MotorSubsystem {
         angleMotor.update();
         angleEncoder.update();
         laserCAN.update();
+        Logger.recordOutput("Gripper/CurrentAngleDegrees", getCurrentEncoderAngle().getDegrees());
     }
 
     @Override

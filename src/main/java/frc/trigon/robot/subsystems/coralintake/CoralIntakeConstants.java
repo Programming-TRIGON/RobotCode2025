@@ -75,6 +75,9 @@ public class CoralIntakeConstants {
     private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
+    private static final Rotation2d
+            ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(-0.105),
+            ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(0.39);
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final double
             ANGLE_ENCODER_MAGNET_OFFSET_VALUE = -0.32502,
@@ -95,7 +98,7 @@ public class CoralIntakeConstants {
             INTAKE_MASS_KILOGRAMS = 8;
     private static final Rotation2d
             MAXIMUM_ANGLE = Rotation2d.fromDegrees(180),
-            MINIMUM_ANGLE = Rotation2d.fromDegrees(-35.31);//TODO: Find
+            MINIMUM_ANGLE = Rotation2d.fromDegrees(-35.31);
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final SimpleMotorSimulation
             INTAKE_SIMULATION = new SimpleMotorSimulation(
@@ -251,11 +254,11 @@ public class CoralIntakeConstants {
 //        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
 //        config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
 
-        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.39;
-
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.105;
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD.getRotations();
+
+        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD.getRotations();
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
