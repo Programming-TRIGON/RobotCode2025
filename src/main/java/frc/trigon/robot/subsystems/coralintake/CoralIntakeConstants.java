@@ -61,22 +61,22 @@ public class CoralIntakeConstants {
             ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_KG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.37196;
     private static final double
-            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 6,
-            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 6 : 6,
+            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 5,
+            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 6 : 4,
             ANGLE_MOTION_MAGIC_JERK = ANGLE_MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final FeedbackSensorSourceValue FEEDBACK_SENSOR_SOURCE = FeedbackSensorSourceValue.FusedCANcoder;
+    private static final FeedbackSensorSourceValue FEEDBACK_SENSOR_SOURCE = FeedbackSensorSourceValue.RemoteCANcoder;
     static final double
             INTAKE_MOTOR_GEAR_RATIO = 1.3,
             FUNNEL_MOTOR_GEAR_RATIO = 4,
-            ANGLE_MOTOR_GEAR_RATIO = 73.121667;
+            ANGLE_MOTOR_GEAR_RATIO = 72;
     private static final ForwardLimitSourceValue FORWARD_LIMIT_SOURCE_VALUE = ForwardLimitSourceValue.LimitSwitchPin;
     private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
     private static final Rotation2d
-            ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(-0.105),
+            ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(-0.12),
             ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(0.39);
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final double
@@ -291,10 +291,10 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD_CORAL(-3, 0, Rotation2d.fromRotations(0.396973)),
-        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(3, 3, Rotation2d.fromRotations(0.396973)),
-        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, Rotation2d.fromRotations(0.396973)),
-        COLLECT(6, 2, Rotation2d.fromDegrees(-35)),
+        LOAD_CORAL(-3, -1, Rotation2d.fromRotations(0.38)),
+        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(3, 3, Rotation2d.fromRotations(0.38)),
+        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, Rotation2d.fromRotations(0.38)),
+        COLLECT(6, 2, Rotation2d.fromDegrees(-43)),
         EJECT(-3, -3, Rotation2d.fromDegrees(90)),
         REST(0, 0, Rotation2d.fromDegrees(145));
 
