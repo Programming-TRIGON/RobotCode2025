@@ -1,7 +1,6 @@
 package frc.trigon.robot.commands.commandfactories;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -9,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.trigon.robot.RobotContainer;
-import frc.trigon.robot.commands.commandclasses.CoralAlignmentCommand;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
@@ -22,7 +20,6 @@ import org.json.simple.parser.ParseException;
 import org.trigon.utilities.flippable.FlippablePose2d;
 
 import java.io.IOException;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 /**
@@ -39,13 +36,13 @@ public class AutonomousCommands {
     public static Command getAlignToCoralCommand() {
         return new FunctionalCommand(
                 () -> {
-                    PPHolonomicDriveController.overrideYFeedback(() -> -CoralAlignmentCommand.Y_PID_CONTROLLER.calculate(CameraConstants.CORAL_DETECTION_CAMERA.getTrackedObjectYaw().getDegrees()));
-                    PPHolonomicDriveController.setRotationTargetOverride(() -> Optional.of(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getRotation().plus(CameraConstants.CORAL_DETECTION_CAMERA.getTrackedObjectYaw())));
+//                    PPHolonomicDriveController.overrideYFeedback(() -> -CoralAlignmentCommand.Y_PID_CONTROLLER.calculate(CameraConstants.CORAL_DETECTION_CAMERA.getTrackedObjectRotation().getDegrees()));
+//                    PPHolonomicDriveController.setRotationTargetOverride(() -> Optional.of(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getRotation().plus(CameraConstants.CORAL_DETECTION_CAMERA.getTrackedObjectRotation())));
                 },
-                () -> CameraConstants.CORAL_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL),
+                () -> CameraConstants.OBJECT_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL),
                 (interrupted) -> {
-                    PPHolonomicDriveController.clearFeedbackOverrides();
-                    PPHolonomicDriveController.setRotationTargetOverride(Optional::empty);
+//                    PPHolonomicDriveController.clearFeedbackOverrides();
+//                    PPHolonomicDriveController.setRotationTargetOverride(Optional::empty);
                 },
                 () -> RobotContainer.CORAL_INTAKE.hasGamePiece() || RobotContainer.GRIPPER.hasGamePiece()
         );

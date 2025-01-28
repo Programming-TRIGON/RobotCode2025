@@ -151,7 +151,7 @@ public class GripperConstants {
     static final double WHEEL_DIAMETER_METERS = edu.wpi.first.math.util.Units.inchesToMeters(2.5);
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(2);
     static final double SCORE_IN_REEF_VOLTAGE = -8;
-    static final double MINIMUM_VOLTAGE_FOR_EJECTING = -6;
+    static final double MINIMUM_VOLTAGE_FOR_EJECTING = -3;
     static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-55);
     static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
 
@@ -252,7 +252,7 @@ public class GripperConstants {
     public enum GripperState {
         REST(Rotation2d.fromDegrees(-60), 0),
         PREPARE_FOR_EJECTING(Rotation2d.fromDegrees(45), 0),
-        EJECT(Rotation2d.fromDegrees(45), -3),
+        EJECT(Rotation2d.fromDegrees(45), -5),
         PREPARE_L4(Rotation2d.fromDegrees(55), 0),
         PREPARE_L3_OR_L2(Rotation2d.fromDegrees(55), 0),
         PREPARE_L1(Rotation2d.fromDegrees(55), 0),
