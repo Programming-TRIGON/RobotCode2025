@@ -63,11 +63,11 @@ public class CommandConstants {
                     RobotContainer.SWERVE::runWheelRadiusCharacterization,
                     RobotContainer.SWERVE
             ),
-            COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER)),
-            ENABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = true),
-            DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = false);
+            COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER));
 
     public static final Command
+            ENABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = true).ignoringDisable(true),
+            DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = false).ignoringDisable(true),
             ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = true).ignoringDisable(true),
             DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = false).ignoringDisable(true),
             SET_TARGET_SCORING_REEF_LEVEL_L1_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L1).ignoringDisable(true),

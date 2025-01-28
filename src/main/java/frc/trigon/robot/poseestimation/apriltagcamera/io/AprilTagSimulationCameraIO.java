@@ -15,7 +15,7 @@ public class AprilTagSimulationCameraIO extends AprilTagPhotonCameraIO {
     }
 
     @Override
-    protected void addSimulatedCameraToVisionSimulation(Transform3d robotToCamera) {
-        AprilTagCameraConstants.VISION_SIMULATION.addCamera(cameraSimulation, robotToCamera);
+    protected void addSimulatedCameraToVisionSimulation(Transform3d robotCenterToCamera) {
+        AprilTagCameraConstants.VISION_SIMULATION.addCamera(cameraSimulation, robotCenterToCamera);
     }
 }
