@@ -20,9 +20,9 @@ public class AprilTagCameraIO {
     /**
      * Adds the simulated camera to the pose estimation simulation.
      *
-     * @param robotToCamera the transform of the robot's origin point to the camera
+     * @param robotCenterToCamera the transform of the robot's origin point to the camera
      */
-    protected void addSimulatedCameraToVisionSimulation(Transform3d robotToCamera) {
+    protected void addSimulatedCameraToVisionSimulation(Transform3d robotCenterToCamera) {
     }
 
     @AutoLog

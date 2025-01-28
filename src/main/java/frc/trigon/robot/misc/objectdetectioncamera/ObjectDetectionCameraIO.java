@@ -1,7 +1,6 @@
 package frc.trigon.robot.misc.objectdetectioncamera;
 
-import edu.wpi.first.math.geometry.Rotation2d;
-import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
+import edu.wpi.first.math.geometry.Rotation3d;
 import org.littletonrobotics.junction.AutoLog;
 
 public class ObjectDetectionCameraIO {
@@ -16,12 +15,12 @@ public class ObjectDetectionCameraIO {
         /**
          * Whether there is at least one target or not for each game piece, by game piece index (type).
          */
-        public boolean[] hasTarget = new boolean[SimulatedGamePieceConstants.GamePieceType.values().length];
+        public boolean[] hasTarget = new boolean[ObjectDetectionCameraConstants.NUMBER_OF_GAME_PIECE_TYPES];
         /**
-         * Stores the yaws of all visible objects.
+         * Stores the Rotation3d of all visible objects.
          * The first index is the game piece ID (type).
-         * The second index is the index of the game piece's yaws, with the best yaw placed first (index 0).
+         * The second index is the index of the game piece's Rotation3d, with the best object placed first (index 0).
          */
-        public Rotation2d[][] visibleObjectYaws = new Rotation2d[SimulatedGamePieceConstants.GamePieceType.values().length][0];
+        public Rotation3d[][] visibleObjectRotations = new Rotation3d[ObjectDetectionCameraConstants.NUMBER_OF_GAME_PIECE_TYPES][0];
     }
 }
