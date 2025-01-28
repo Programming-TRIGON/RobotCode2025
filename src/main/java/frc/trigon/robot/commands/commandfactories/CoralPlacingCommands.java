@@ -3,12 +3,14 @@ package frc.trigon.robot.commands.commandfactories;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.CommandConstants;
+import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
@@ -27,8 +29,8 @@ public class CoralPlacingCommands {
 
     public static Command getScoreInReefCommand() {
         return new ConditionalCommand(
-                getAutonomouslyScoreInReefCommand(),
-                getManuallyScoreInReefCommand(),
+                getAutonomouslyScoreInReefCommand().asProxy(),
+                getManuallyScoreInReefCommand().asProxy(),
                 () -> SHOULD_SCORE_AUTONOMOUSLY
         );
     }
@@ -42,16 +44,32 @@ public class CoralPlacingCommands {
 
     private static Command getAutonomouslyScoreInReefCommand() {
         return new ParallelCommandGroup(
-                ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
+                getOpenElevatorWhenCloseToReefCommand(),
                 getAutonomousDriveToReefThenManualDriveCommand(),
-                getGripperSequenceCommand()
+                getGripperSequenceCommand(),
+                getWaitUntilScoringTargetChangesCommand().andThen(
+                        () -> getAutonomouslyScoreInReefCommand().onlyWhile(OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER).schedule()
+                )
         );
+    }
+
+    private static Command getOpenElevatorWhenCloseToReefCommand() {
+        return GeneralCommands.runWhen(
+                ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
+                () -> calculateDistanceToTargetScoringPose() < PathPlannerConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR
+        );
+    }
+
+    private static Command getWaitUntilScoringTargetChangesCommand() {
+        return new WaitUntilChangeCommand<>(() -> TARGET_SCORING_LEVEL)
+                .raceWith(new WaitUntilChangeCommand<>(() -> TARGET_REEF_SCORING_CLOCK_POSITION))
+                .raceWith(new WaitUntilChangeCommand<>(() -> TARGET_REEF_SCORING_SIDE));
     }
 
     private static Command getAutonomousDriveToReefThenManualDriveCommand() {
         return new SequentialCommandGroup(
                 SwerveCommands.getDriveToPoseCommand(
-                        () -> TARGET_SCORING_LEVEL.calculateTargetPlacingPosition(TARGET_REEF_SCORING_CLOCK_POSITION, TARGET_REEF_SCORING_SIDE),
+                        CoralPlacingCommands::calculateTargetScoringPose,
                         PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
                 ),
                 GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND)
@@ -63,6 +81,16 @@ public class CoralPlacingCommands {
                 GripperCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoring),
                 GripperCommands.getScoreInReefCommand()
         );
+    }
+
+    private static double calculateDistanceToTargetScoringPose() {
+        final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getTranslation();
+        final Translation2d targetTranslation = calculateTargetScoringPose().get().getTranslation();
+        return currentTranslation.getDistance(targetTranslation);
+    }
+
+    private static FlippablePose2d calculateTargetScoringPose() {
+        return TARGET_SCORING_LEVEL.calculateTargetPlacingPosition(TARGET_REEF_SCORING_CLOCK_POSITION, TARGET_REEF_SCORING_SIDE);
     }
 
     private static boolean canContinueScoring() {
@@ -78,10 +106,10 @@ public class CoralPlacingCommands {
      * The x and y transform are used to calculate the target placing position from the middle of the reef.
      */
     public enum ScoringLevel {
-        L1(0.3, 0.1),
-        L2(0.3, 0.1),
-        L3(0.3, 0.1),
-        L4(0.3, 0.1);
+        L1(1.3, 0.17),
+        L2(1.3, 0.17),
+        L3(1.3, 0.17),
+        L4(1.3, 0.17);
 
         final double xTransformMeters, positiveYTransformMeters;
         final ElevatorConstants.ElevatorState elevatorState;
@@ -117,7 +145,7 @@ public class CoralPlacingCommands {
             final Pose2d reefCenterPose = new Pose2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, reefClockPosition.clockAngle);
             final double yTransform = reefSide.shouldFlipYTransform(reefClockPosition) ? -positiveYTransformMeters : positiveYTransformMeters;
             final Transform2d transform = new Transform2d(xTransformMeters, yTransform, new Rotation2d());
-            return new FlippablePose2d(reefCenterPose.plus(transform), reefClockPosition.isFacingDriverStation);
+            return new FlippablePose2d(reefCenterPose.plus(transform), true);
         }
 
         private ElevatorConstants.ElevatorState determineElevatorState() {

@@ -10,6 +10,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.trigon.robot.misc.simulatedfield.SimulationFieldHandler;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.grapple.lasercan.LaserCAN;
@@ -65,10 +66,9 @@ public class GripperConstants {
             ANGLE_MOTION_MAGIC_JERK = ANGLE_MOTION_MAGIC_ACCELERATION * 10;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseVelocitySign;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
-    private static final ForwardLimitSourceValue FORWARD_LIMIT_SOURCE_VALUE = ForwardLimitSourceValue.LimitSwitchPin;
     private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
-    private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
+    private static final Rotation2d FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromDegrees(110);
 
     private static final FeedbackSensorSourceValue ANGLE_ENCODER_TYPE = FeedbackSensorSourceValue.FusedCANcoder;
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
@@ -98,7 +98,7 @@ public class GripperConstants {
             ARM_MAXIMUM_ANGLE = Rotation2d.fromDegrees(110);
     private static final double MOMENT_OF_INERTIA = 0.003;
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
-    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> 1;
+    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> SimulationFieldHandler.isCoralInGripper() && SimulationFieldHandler.isHoldingCoral() ? 1 : 10000;
     private static final SimpleMotorSimulation GRIPPING_SIMULATION = new SimpleMotorSimulation(
             GRIPPING_GEARBOX,
             GRIPPING_MOTOR_GEAR_RATIO,
@@ -134,13 +134,24 @@ public class GripperConstants {
             new Translation3d(-0.224, 0, 0.8622),
             new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(62), 0)
     );
-    static final Transform3d ELEVATOR_TO_GRIPPER = new Transform3d(
+    static final Transform3d
+            ELEVATOR_TO_GRIPPER = new Transform3d(
             ElevatorConstants.FIRST_STAGE_VISUALIZATION_ORIGIN_POINT,
             GRIPPER_VISUALIZATION_ORIGIN_POINT
-    );
+    ),
+            GRIPPER_TO_CORAL_RELEASE = new Transform3d(
+                    new Translation3d(0.3, 0, -0.1),
+                    new Rotation3d(0, 0, 0)
+            ),
+            GRIPPER_TO_HELD_CORAL = new Transform3d(
+                    new Translation3d(0.05, 0, -0.1),
+                    new Rotation3d(0, 0, 0)
+            );
 
+    static final double WHEEL_DIAMETER_METERS = edu.wpi.first.math.util.Units.inchesToMeters(2.5);
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(2);
-    static final double SCORE_IN_REEF_VOLTAGE = 3;
+    static final double SCORE_IN_REEF_VOLTAGE = -8;
+    static final double MINIMUM_VOLTAGE_FOR_EJECTING = -6;
     static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-55);
     static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
 
@@ -166,6 +177,7 @@ public class GripperConstants {
 
         GRIPPING_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
         GRIPPING_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
+        GRIPPING_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
     }
 
     private static void configureAngleMotor() {
@@ -195,13 +207,12 @@ public class GripperConstants {
         config.MotionMagic.MotionMagicAcceleration = ANGLE_MOTION_MAGIC_ACCELERATION;
         config.MotionMagic.MotionMagicJerk = ANGLE_MOTION_MAGIC_JERK;
 
-        config.HardwareLimitSwitch.ForwardLimitEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
-        config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
-
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
+
+        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = FORWARD_SOFT_LIMIT_THRESHOLD.getRotations();
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ARM_SIMULATION);
@@ -240,11 +251,12 @@ public class GripperConstants {
 
     public enum GripperState {
         REST(Rotation2d.fromDegrees(-60), 0),
+        PREPARE_FOR_EJECTING(Rotation2d.fromDegrees(45), 0),
         EJECT(Rotation2d.fromDegrees(45), -3),
-        PREPARE_L4(Rotation2d.fromDegrees(45), 0),
-        PREPARE_L3_OR_L2(Rotation2d.fromDegrees(45), 0),
-        PREPARE_L1(Rotation2d.fromDegrees(45), 0),
-        LOAD_CORAL(Rotation2d.fromDegrees(-62), -3),
+        PREPARE_L4(Rotation2d.fromDegrees(55), 0),
+        PREPARE_L3_OR_L2(Rotation2d.fromDegrees(55), 0),
+        PREPARE_L1(Rotation2d.fromDegrees(55), 0),
+        LOAD_CORAL(Rotation2d.fromDegrees(-62), 3),
         COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3),
         OPEN_FOR_ELEVATOR_MINIMUM(Rotation2d.fromDegrees(-54), 0);
 

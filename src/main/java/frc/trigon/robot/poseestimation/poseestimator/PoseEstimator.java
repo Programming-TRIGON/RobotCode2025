@@ -10,13 +10,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.poseestimation.apriltagcamera.AprilTagCamera;
-import frc.trigon.robot.poseestimation.apriltagcamera.AprilTagCameraConstants;
 import frc.trigon.robot.poseestimation.relativerobotposesource.RelativeRobotPoseSource;
 import frc.trigon.robot.poseestimation.relativerobotposesource.RelativeRobotPoseSourceConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveConstants;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.utilities.QuickSortHandler;
 
 import java.util.Arrays;
@@ -86,8 +84,6 @@ public class PoseEstimator implements AutoCloseable {
             updateFromAprilTagCameras();
 
         field.setRobotPose(getCurrentEstimatedPose());
-        if (RobotHardwareStats.isSimulation())
-            AprilTagCameraConstants.VISION_SIMULATION.update(RobotContainer.POSE_ESTIMATOR.getCurrentOdometryPose());
     }
 
     /**

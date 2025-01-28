@@ -1,13 +1,22 @@
 package frc.trigon.robot.constants;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import com.pathplanner.lib.commands.PathfindingCommand;
+import com.pathplanner.lib.auto.NamedCommands;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.commands.commandfactories.AutonomousCommands;
+import frc.trigon.robot.commands.commandfactories.CollectionCommands;
+import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
+import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
+import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
+import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
+import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
+import frc.trigon.robot.subsystems.gripper.GripperCommands;
+import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import org.json.simple.parser.ParseException;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.utilities.LocalADStarAK;
@@ -19,16 +28,17 @@ import java.io.IOException;
  * A class that contains the constants and configurations for everything related to PathPlanner.
  */
 public class PathPlannerConstants {
-    public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(2.5, 2.5, 4, 4);
+    public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(4, 4, 6, 6);
+    public static final double MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR = 1.5;
     public static final RobotConfig ROBOT_CONFIG = getRobotConfig();
 
     private static final PIDConstants
             AUTO_TRANSLATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
-            new PIDConstants(4, 0, 0.2) :
-            new PIDConstants(0, 0, 0),
+            new PIDConstants(6, 0, 0) :
+            new PIDConstants(6, 0, 0),
             AUTO_ROTATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
-                    new PIDConstants(1, 0, 0.05) :
-                    new PIDConstants(0, 0, 0);
+                    new PIDConstants(5, 0, 0) :
+                    new PIDConstants(5, 0, 0);
 
     private static final PPHolonomicDriveController AUTO_PATH_FOLLOWING_CONTROLLER = new PPHolonomicDriveController(
             AUTO_TRANSLATION_PID_CONSTANTS,
@@ -41,7 +51,6 @@ public class PathPlannerConstants {
     public static void init() {
         Pathfinding.setPathfinder(new LocalADStarAK());
         configureAutoBuilder();
-        PathfindingCommand.warmupCommand().schedule();
         registerCommands();
     }
 
@@ -67,6 +76,17 @@ public class PathPlannerConstants {
     }
 
     private static void registerCommands() {
-        // NamedCommands.registerCommand(name, command); //TODO:Implement NamedCommands
+        NamedCommands.registerCommand("ScoreL1", AutonomousCommands.getScoreInReefCommand(CoralPlacingCommands.ScoringLevel.L1));
+        NamedCommands.registerCommand("ScoreL2", AutonomousCommands.getScoreInReefCommand(CoralPlacingCommands.ScoringLevel.L2));
+        NamedCommands.registerCommand("ScoreL3", AutonomousCommands.getScoreInReefCommand(CoralPlacingCommands.ScoringLevel.L3));
+        NamedCommands.registerCommand("ScoreL4", AutonomousCommands.getScoreInReefCommand(CoralPlacingCommands.ScoringLevel.L4));
+        NamedCommands.registerCommand("RestElevator", ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
+        NamedCommands.registerCommand("RestCoralIntake", CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
+        NamedCommands.registerCommand("RestGripper", GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST));
+        NamedCommands.registerCommand("FeedCoral", GripperCommands.getScoreInReefCommand().withTimeout(0.1));
+        NamedCommands.registerCommand("CollectCoral", AutonomousCommands.getCollectCoralCommand());
+        NamedCommands.registerCommand("LoadCoral", CollectionCommands.getLoadCoralCommand().until(RobotContainer.GRIPPER::hasGamePiece));
+        NamedCommands.registerCommand("AlignToCoral", AutonomousCommands.getAlignToCoralCommand());
+        NamedCommands.registerCommand("ScoreL4Wait", AutonomousCommands.getScoreInReefCommand(CoralPlacingCommands.ScoringLevel.L4).until(() -> RobotContainer.ELEVATOR.atTargetState() && RobotContainer.GRIPPER.atTargetAngle()));
     }
 }
