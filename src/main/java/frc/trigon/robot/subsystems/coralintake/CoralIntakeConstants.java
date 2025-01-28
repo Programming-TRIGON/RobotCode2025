@@ -76,7 +76,7 @@ public class CoralIntakeConstants {
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
     private static final Rotation2d
-            ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(-0.12),
+            ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(-0.128662),
             ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(0.39);
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final double
@@ -160,14 +160,14 @@ public class CoralIntakeConstants {
     );
 
     public static final double COLLECTION_LEDS_BLINKING_SPEED = 0.5;
-    private static final double CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS = 0.1;
+    private static final double CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS = 1;
     static final BooleanEvent CORAL_COLLECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             BEAM_BREAK::getBinaryValue
     ).debounce(CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS);
     private static final double
-            CORAL_DETECTION_CURRENT = 50,
-            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.5;
+            CORAL_DETECTION_CURRENT = 27,
+            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.3;
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             () -> Math.abs(INTAKE_MOTOR.getSignal(TalonFXSignal.STATOR_CURRENT)) > CORAL_DETECTION_CURRENT
@@ -175,7 +175,7 @@ public class CoralIntakeConstants {
     public static final double
             COLLECTION_RUMBLE_DURATION_SECONDS = 0.1,
             COLLECTION_RUMBLE_POWER = 1;
-    static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(3);
+    static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(0.5);
 
     static {
         configureIntakeMotor();
@@ -291,10 +291,11 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD_CORAL(-3, -1, Rotation2d.fromRotations(0.38)),
-        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(3, 3, Rotation2d.fromRotations(0.38)),
-        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, Rotation2d.fromRotations(0.38)),
-        COLLECT(6, 2, Rotation2d.fromDegrees(-43)),
+        LOAD_CORAL(-3, -1, Rotation2d.fromDegrees(143)),
+        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(3, 3, LOAD_CORAL.targetAngle),
+        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, LOAD_CORAL.targetAngle),
+        COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-46)),
+        COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(95)),
         EJECT(-3, -3, Rotation2d.fromDegrees(90)),
         REST(0, 0, Rotation2d.fromDegrees(145));
 

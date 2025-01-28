@@ -50,7 +50,7 @@ public class AutonomousCommands {
 
     public static Command getCollectCoralCommand() {
         return new ParallelCommandGroup(
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST)
         ).until(() -> RobotContainer.CORAL_INTAKE.isEarlyCoralCollectionDetected() || RobotContainer.CORAL_INTAKE.hasGamePiece());

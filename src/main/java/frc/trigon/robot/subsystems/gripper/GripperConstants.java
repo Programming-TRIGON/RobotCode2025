@@ -44,7 +44,7 @@ public class GripperConstants {
     static final LaserCAN LASER_CAN = new LaserCAN(LASER_CAN_ID, LASER_CAN_NAME);
 
     private static final InvertedValue
-            GRIPPING_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive,
+            GRIPPING_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
     private static final NeutralModeValue
             GRIPPER_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Coast,
@@ -152,7 +152,7 @@ public class GripperConstants {
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(2);
     static final double SCORE_IN_REEF_VOLTAGE = -8;
     static final double MINIMUM_VOLTAGE_FOR_EJECTING = -3;
-    static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-55);
+    static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-36);
     static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
 
     static {
@@ -256,10 +256,11 @@ public class GripperConstants {
         PREPARE_L4(Rotation2d.fromDegrees(55), 0),
         PREPARE_L3_OR_L2(Rotation2d.fromDegrees(55), 0),
         PREPARE_L1(Rotation2d.fromDegrees(55), 0),
-        LOAD_CORAL(Rotation2d.fromDegrees(-50), 3),
+        LOAD_CORAL(Rotation2d.fromDegrees(-50), 7),
         PREPARE_FOR_LOADING_CORAL(Rotation2d.fromDegrees(-50), 0),
         COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3),
-        OPEN_FOR_ELEVATOR_MINIMUM(Rotation2d.fromDegrees(-54), 0);
+        OPEN_FOR_ELEVATOR_MINIMUM(Rotation2d.fromDegrees(-35), 0),
+        AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0);
 
         final Rotation2d targetAngle;
         final double targetGripperVoltage;

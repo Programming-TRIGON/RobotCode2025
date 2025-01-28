@@ -125,7 +125,7 @@ public class SimulationFieldHandler {
     }
 
     private static boolean isCollectingCoral() {
-        return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT);
+        return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR);
     }
 
     private static boolean isCollectingCoralFromSource() {

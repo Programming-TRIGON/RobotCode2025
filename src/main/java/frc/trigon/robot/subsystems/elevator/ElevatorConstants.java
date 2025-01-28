@@ -99,7 +99,7 @@ public class ElevatorConstants {
 
     static final double FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH_METERS = 0.6;
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
-    static final double POSITION_TOLERANCE_METERS = 0.01;
+    static final double POSITION_TOLERANCE_METERS = 0.02;
     static final double
             GRIPPER_HITTING_ELEVATOR_BASE_LOWER_BOUND_POSITION_ROTATIONS = 0.1,
             GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS = 0.4;
@@ -181,8 +181,8 @@ public class ElevatorConstants {
         REST(0),
         SCORE_L1(0),
         SCORE_L2(0.03),
-        SCORE_L3(0.45),
-        SCORE_L4(1.07);
+        SCORE_L3(0.43),
+        SCORE_L4(1.02);
 
         public final double targetPositionMeters;
 

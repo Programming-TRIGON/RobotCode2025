@@ -4,10 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
@@ -22,7 +19,7 @@ import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.utilities.flippable.FlippablePose2d;
 
 public class CoralPlacingCommands {
-    public static boolean SHOULD_SCORE_AUTONOMOUSLY = true;
+    public static boolean SHOULD_SCORE_AUTONOMOUSLY = false;
     public static ScoringLevel TARGET_SCORING_LEVEL = ScoringLevel.L4;
     public static FieldConstants.ReefClockPosition TARGET_REEF_SCORING_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_6_OCLOCK;
     public static FieldConstants.ReefSide TARGET_REEF_SCORING_SIDE = FieldConstants.ReefSide.LEFT;
@@ -32,6 +29,8 @@ public class CoralPlacingCommands {
                 getAutonomouslyScoreInReefCommand().asProxy(),
                 getManuallyScoreInReefCommand().asProxy(),
                 () -> SHOULD_SCORE_AUTONOMOUSLY
+        ).finallyDo(
+                () -> getMakeSureGripperDoesntHitReefCommand().schedule()
         );
     }
 
@@ -51,6 +50,13 @@ public class CoralPlacingCommands {
                         () -> getAutonomouslyScoreInReefCommand().onlyWhile(OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER).schedule()
                 )
         );
+    }
+
+    private static Command getMakeSureGripperDoesntHitReefCommand() {
+        return new ParallelCommandGroup(
+                GripperCommands.getSetTargetStateCommand(() -> GripperConstants.GripperState.AFTER_ELEVATOR_OPEN_POSITION),
+                Commands.idle(RobotContainer.ELEVATOR)
+        ).until(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.AFTER_ELEVATOR_OPEN_POSITION));
     }
 
     private static Command getOpenElevatorWhenCloseToReefCommand() {

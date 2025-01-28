@@ -138,12 +138,12 @@ public class Gripper extends MotorSubsystem {
     }
 
     private void setTargetAngle(Rotation2d targetAngle) {
-//        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations() - GripperConstants.POSITION_OFFSET_FROM_GRAVITY_OFFSET));
+        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations() - GripperConstants.POSITION_OFFSET_FROM_GRAVITY_OFFSET));
     }
 
     private void setTargetVoltage(double targetGrippingVoltage) {
         GripperConstants.GRIPPING_MECHANISM.setTargetVelocity(targetGrippingVoltage);
-//        grippingMotor.setControl(voltageRequest.withOutput(targetGrippingVoltage));
+        grippingMotor.setControl(voltageRequest.withOutput(targetGrippingVoltage));
     }
 
     private Pose3d calculateVisualizationPose() {
