@@ -49,34 +49,35 @@ public class CoralIntakeConstants {
             FUNNEL_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Coast,
             ANGLE_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
     private static final InvertedValue
-            INTAKE_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
+            INTAKE_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive,
             FUNNEL_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
-            ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
+            ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
     private static final double
-            ANGLE_P = RobotHardwareStats.isSimulation() ? 75 : 0,
+            ANGLE_P = RobotHardwareStats.isSimulation() ? 75 : 20,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_D = RobotHardwareStats.isSimulation() ? 1.6663 : 0,
-            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0.074947 : 0,
-            ANGLE_KV = RobotHardwareStats.isSimulation() ? 8.7544 : 0,
+            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.24187,
+            ANGLE_KV = RobotHardwareStats.isSimulation() ? 8.7544 : 9.2317,
             ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0.27712 : 0;
+            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.37196;
     private static final double
-            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 0,
-            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 6 : 0,
+            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 6,
+            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 6 : 6,
             ANGLE_MOTION_MAGIC_JERK = ANGLE_MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final double
+    private static final FeedbackSensorSourceValue FEEDBACK_SENSOR_SOURCE = FeedbackSensorSourceValue.FusedCANcoder;
+    static final double
             INTAKE_MOTOR_GEAR_RATIO = 1.3,
             FUNNEL_MOTOR_GEAR_RATIO = 4,
-            ANGLE_MOTOR_GEAR_RATIO = 72;
+            ANGLE_MOTOR_GEAR_RATIO = 73.121667;
     private static final ForwardLimitSourceValue FORWARD_LIMIT_SOURCE_VALUE = ForwardLimitSourceValue.LimitSwitchPin;
     private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final double
-            ANGLE_ENCODER_MAGNET_OFFSET_VALUE = 0,
+            ANGLE_ENCODER_MAGNET_OFFSET_VALUE = -0.32502,
             ANGLE_ENCODER_DISCONTINUITY_POINT = 0.5;
     static final boolean FOC_ENABLED = true;
 
@@ -120,8 +121,8 @@ public class CoralIntakeConstants {
     private static final DoubleSupplier BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> SimulationFieldHandler.isHoldingCoral() && !SimulationFieldHandler.isCoralInGripper() ? 1 : 0;
 
     static final SysIdRoutine.Config ANGLE_SYSID_CONFIG = new SysIdRoutine.Config(
-            Units.Volts.of(5).per(Units.Second),
-            Units.Volts.of(5),
+            Units.Volts.of(1).per(Units.Second),
+            Units.Volts.of(3),
             Units.Second.of(1000)
     );
 
@@ -223,7 +224,10 @@ public class CoralIntakeConstants {
 
         config.MotorOutput.NeutralMode = ANGLE_MOTOR_NEUTRAL_MODE_VALUE;
         config.MotorOutput.Inverted = ANGLE_MOTOR_INVERTED_VALUE;
+
         config.Feedback.RotorToSensorRatio = ANGLE_MOTOR_GEAR_RATIO;
+        config.Feedback.FeedbackRemoteSensorID = ANGLE_ENCODER_ID;
+        config.Feedback.FeedbackSensorSource = FEEDBACK_SENSOR_SOURCE;
 
         config.Slot0.kP = ANGLE_P;
         config.Slot0.kI = ANGLE_I;
@@ -239,13 +243,19 @@ public class CoralIntakeConstants {
         config.MotionMagic.MotionMagicAcceleration = ANGLE_MOTION_MAGIC_ACCELERATION;
         config.MotionMagic.MotionMagicJerk = ANGLE_MOTION_MAGIC_JERK;
 
-        config.HardwareLimitSwitch.ForwardLimitEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
-        config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
+//        config.HardwareLimitSwitch.ForwardLimitEnable = true;
+//        config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
+//        config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
+//
+//        config.HardwareLimitSwitch.ReverseLimitEnable = true;
+//        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
+//        config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
 
-        config.HardwareLimitSwitch.ReverseLimitEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
-        config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
+        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 0.39;
+
+        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.105;
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
@@ -254,6 +264,8 @@ public class CoralIntakeConstants {
         ANGLE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.POSITION, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.ROTOR_POSITION, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.ROTOR_VELOCITY, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
     }
 
@@ -276,10 +288,10 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD_CORAL(-3, -3, Rotation2d.fromDegrees(145)),
-        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(3, 3, Rotation2d.fromDegrees(145)),
-        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, Rotation2d.fromDegrees(145)),
-        COLLECT(3, 3, Rotation2d.fromDegrees(-35)),
+        LOAD_CORAL(-3, 0, Rotation2d.fromRotations(0.396973)),
+        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(3, 3, Rotation2d.fromRotations(0.396973)),
+        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, Rotation2d.fromRotations(0.396973)),
+        COLLECT(6, 2, Rotation2d.fromDegrees(-35)),
         EJECT(-3, -3, Rotation2d.fromDegrees(90)),
         REST(0, 0, Rotation2d.fromDegrees(145));
 

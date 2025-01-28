@@ -31,20 +31,19 @@ public class ElevatorConstants {
     private static final InvertedValue
             MASTER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             FOLLOWER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
-
-    private static final double GEAR_RATIO = 6.66666;
-    private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = false;
+    private static final double GEAR_RATIO = 7.222222;
+    private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = true;
     private static final double
-            P = RobotHardwareStats.isSimulation() ? 40 : 0,
+            P = RobotHardwareStats.isSimulation() ? 40 : 5,
             I = RobotHardwareStats.isSimulation() ? 0 : 0,
             D = RobotHardwareStats.isSimulation() ? 0.22774 : 0,
-            KS = RobotHardwareStats.isSimulation() ? 0.066659 : 0,
-            KV = RobotHardwareStats.isSimulation() ? 0.74502 : 0,
-            KG = RobotHardwareStats.isSimulation() ? 0.30539 : 0,
+            KS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.079427,
+            KV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.86273,
+            KG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.36373,
             KA = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final double
-            MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 80 : 0,
-            MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 80 : 0,
+            MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 80 : 80,
+            MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 80 : 40,
             MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
@@ -74,8 +73,8 @@ public class ElevatorConstants {
     );
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
-            Units.Volts.of(1).per(Units.Seconds),
-            Units.Volts.of(5),
+            Units.Volts.of(0.25).per(Units.Seconds),
+            Units.Volts.of(3),
             Units.Second.of(1000)
     );
 
@@ -127,16 +126,16 @@ public class ElevatorConstants {
         config.Slot0.GravityType = GRAVITY_TYPE_VALUE;
         config.Slot0.StaticFeedforwardSign = STATIC_FEEDFORWARD_SIGN_VALUE;
 
-        config.HardwareLimitSwitch.ReverseLimitEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
-        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_LIMIT_SWITCH_RESET_POSITION;
+//        config.HardwareLimitSwitch.ReverseLimitEnable = true;
+//        config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
+//        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
+//        config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+//        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_LIMIT_SWITCH_RESET_POSITION;
 
-        config.HardwareLimitSwitch.ForwardLimitEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
-        config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+//        config.HardwareLimitSwitch.ForwardLimitEnable = true;
+//        config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
+//        config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
+//        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
 
         config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
@@ -150,6 +149,8 @@ public class ElevatorConstants {
         MASTER_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
         MASTER_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
         MASTER_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
+
+        MASTER_MOTOR.setPosition(0);
     }
 
     private static void configureFollowerMotor() {

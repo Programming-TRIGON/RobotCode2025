@@ -66,6 +66,7 @@ public class Elevator extends MotorSubsystem {
     @Override
     public void updatePeriodically() {
         masterMotor.update();
+        Logger.recordOutput("Elevator/CurrentPositionMeters", getPositionMeters());
     }
 
     @Override

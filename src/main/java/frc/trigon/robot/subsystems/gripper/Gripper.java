@@ -63,7 +63,7 @@ public class Gripper extends MotorSubsystem {
     public void updateLog(SysIdRoutineLog log) {
         log.motor("GripperAngleMotor")
                 .angularPosition(Units.Rotations.of(angleEncoder.getSignal(CANcoderSignal.POSITION)))
-                .angularVelocity(Units.RotationsPerSecond.of(angleMotor.getSignal(TalonFXSignal.VELOCITY)))
+                .angularVelocity(Units.RotationsPerSecond.of(angleMotor.getSignal(TalonFXSignal.ROTOR_VELOCITY) / GripperConstants.ANGLE_MOTOR_GEAR_RATIO))
                 .voltage(Units.Volts.of(angleMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
@@ -72,7 +72,7 @@ public class Gripper extends MotorSubsystem {
         GripperConstants.GRIPPING_MECHANISM.update(grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
         GripperConstants.ANGLE_MECHANISM.update(
                 getCurrentEncoderAngle(),
-                Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
+                Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE) + GripperConstants.POSITION_OFFSET_FROM_GRAVITY_OFFSET)
         );
         Logger.recordOutput("Poses/Components/GripperPose", calculateVisualizationPose());
     }
@@ -98,14 +98,6 @@ public class Gripper extends MotorSubsystem {
         return currentToTargetStateDifference < GripperConstants.ANGLE_TOLERANCE.getDegrees();
     }
 
-    /**
-     * This will set the gripper to the score in reef state,
-     * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
-     */
-    void scoreInReef() {
-        setTargetState(targetState.targetAngle, GripperConstants.SCORE_IN_REEF_VOLTAGE);
-    }
-
     public Pose3d calculateCoralReleasePoint() {
         return calculateVisualizationPose()
                 .transformBy(getVisualizationToRealPitchTransform())
@@ -120,6 +112,14 @@ public class Gripper extends MotorSubsystem {
 
     public Translation3d getRobotRelativeExitVelocity() {
         return new Translation3d(getGrippingWheelVelocityMetersPerSecond(), new Rotation3d(0, -getCurrentEncoderAngle().getRadians(), 0));
+    }
+
+    /**
+     * This will set the gripper to the score in reef state,
+     * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
+     */
+    void scoreInReef() {
+        setTargetState(targetState.targetAngle, GripperConstants.SCORE_IN_REEF_VOLTAGE);
     }
 
     void setTargetState(GripperConstants.GripperState targetState) {
@@ -137,12 +137,12 @@ public class Gripper extends MotorSubsystem {
     }
 
     private void setTargetAngle(Rotation2d targetAngle) {
-        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
+//        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations() - GripperConstants.POSITION_OFFSET_FROM_GRAVITY_OFFSET));
     }
 
     private void setTargetVoltage(double targetGrippingVoltage) {
         GripperConstants.GRIPPING_MECHANISM.setTargetVelocity(targetGrippingVoltage);
-        grippingMotor.setControl(voltageRequest.withOutput(targetGrippingVoltage));
+//        grippingMotor.setControl(voltageRequest.withOutput(targetGrippingVoltage));
     }
 
     private Pose3d calculateVisualizationPose() {
@@ -164,7 +164,7 @@ public class Gripper extends MotorSubsystem {
     }
 
     private Rotation2d getCurrentEncoderAngle() {
-        return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
+        return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION) + GripperConstants.POSITION_OFFSET_FROM_GRAVITY_OFFSET);
     }
 
     @AutoLogOutput(key = "Gripper/GrippingWheelVelocityMeters")

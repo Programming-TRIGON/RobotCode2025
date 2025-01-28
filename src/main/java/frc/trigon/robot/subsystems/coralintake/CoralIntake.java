@@ -43,7 +43,7 @@ public class CoralIntake extends MotorSubsystem {
     public void updateLog(SysIdRoutineLog log) {
         log.motor("CoralAngleMotor")
                 .angularPosition(Units.Rotations.of(angleMotor.getSignal(TalonFXSignal.POSITION)))
-                .angularVelocity(Units.RotationsPerSecond.of(angleMotor.getSignal(TalonFXSignal.VELOCITY)))
+                .angularVelocity(Units.RotationsPerSecond.of(angleMotor.getSignal(TalonFXSignal.ROTOR_VELOCITY) / CoralIntakeConstants.ANGLE_MOTOR_GEAR_RATIO))
                 .voltage(Units.Volts.of(angleMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
@@ -66,6 +66,7 @@ public class CoralIntake extends MotorSubsystem {
         angleMotor.update();
         angleEncoder.update();
         beamBreak.updateSensor();
+        Logger.recordOutput("Gripper/CurrentAngleDegrees", getCurrentEncoderAngle().getDegrees());
     }
 
     @Override
