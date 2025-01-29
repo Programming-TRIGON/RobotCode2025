@@ -53,7 +53,7 @@ public class CoralIntake extends MotorSubsystem {
         CoralIntakeConstants.FUNNEL_MECHANISM.update(funnelMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
         CoralIntakeConstants.ANGLE_MECHANISM.update(
                 getCurrentEncoderAngle(),
-                Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
+                Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE) + CoralIntakeConstants.ANGLE_ENCODER_POSITION_OFFSET_VALUE)
         );
 
         Logger.recordOutput("Poses/Components/CoralIntakePose", calculateVisualizationPose());
@@ -130,6 +130,8 @@ public class CoralIntake extends MotorSubsystem {
     void setTargetState(CoralIntakeConstants.CoralIntakeState targetState) {
         this.targetState = targetState;
 
+        System.out.println(targetState);
+
         setTargetState(
                 targetState.targetIntakeVoltage,
                 targetState.targetFunnelVoltage,
@@ -158,7 +160,7 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     private void setTargetAngle(Rotation2d targetAngle) {
-        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
+        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations() - CoralIntakeConstants.ANGLE_ENCODER_POSITION_OFFSET_VALUE));
     }
 
     private Pose3d calculateVisualizationPose() {
@@ -178,6 +180,6 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     private Rotation2d getCurrentEncoderAngle() {
-        return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
+        return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION) + CoralIntakeConstants.ANGLE_ENCODER_POSITION_OFFSET_VALUE);
     }
 }

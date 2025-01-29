@@ -50,31 +50,30 @@ public class GripperConstants {
             GRIPPER_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Coast,
             ANGLE_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
     private static final double GRIPPING_MOTOR_GEAR_RATIO = 4;
-    static final double
-            ANGLE_MOTOR_GEAR_RATIO = 34.2857;
+    static final double ANGLE_MOTOR_GEAR_RATIO = 34.642351;
     private static final double
-            ANGLE_P = RobotHardwareStats.isSimulation() ? 100 : 20,
+            ANGLE_P = RobotHardwareStats.isSimulation() ? 100 : 8,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_D = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0 : 0.42701,
-            ANGLE_KV = RobotHardwareStats.isSimulation() ? 0 : 2.3896,
-            ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0.34116,
-            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0 : 0.20883;
+            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0 : 0.1579,
+            ANGLE_KV = RobotHardwareStats.isSimulation() ? 0 : 4.0791,
+            ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
+            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0 : 0.23721;
     private static final double
-            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 5 : 5,
-            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 5 : 5,
+            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 5 : 6,
+            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 5 : 6,
             ANGLE_MOTION_MAGIC_JERK = ANGLE_MOTION_MAGIC_ACCELERATION * 10;
-    private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseVelocitySign;
+    private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
+    private static final double
+            ANGLE_ENCODER_GRAVITY_OFFSET = -0.36379,//0.43 + 0.25 - 0.14092,
+            ANGLE_ENCODER_DISCONTINUITY_POINT = 0.5;
+    static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = -0.32 - ANGLE_ENCODER_GRAVITY_OFFSET; //0.14092;
     private static final Rotation2d
-            ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(-0.28),
-            ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromDegrees(55).minus(Rotation2d.fromRotations(0.14092));
+            ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD = Rotation2d.fromDegrees(-59.645756).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET)),
+            ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromDegrees(110).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET));
     private static final FeedbackSensorSourceValue ANGLE_ENCODER_TYPE = FeedbackSensorSourceValue.FusedCANcoder;
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
-    private static final double
-            ANGLE_ENCODER_GRAVITY_OFFSET = 0.43 + 0.25 - 0.14092,
-            ANGLE_ENCODER_DISCONTINUITY_POINT = 0.5;
-    static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = 0.14092;
     private static final int
             LASER_CAN_DETECTION_REGION_START_X_COORDINATE = 6,
             LASER_CAN_DETECTION_REGION_START_Y_COORDINATE = 6,
@@ -149,7 +148,7 @@ public class GripperConstants {
             );
 
     static final double WHEEL_DIAMETER_METERS = edu.wpi.first.math.util.Units.inchesToMeters(2.5);
-    static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(2);
+    static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
     static final double SCORE_IN_REEF_VOLTAGE = -8;
     static final double MINIMUM_VOLTAGE_FOR_EJECTING = -3;
     static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-36);
@@ -251,8 +250,8 @@ public class GripperConstants {
 
     public enum GripperState {
         REST(Rotation2d.fromDegrees(-60), 0),
-        PREPARE_FOR_EJECTING(Rotation2d.fromDegrees(45), 0),
-        EJECT(Rotation2d.fromDegrees(45), -5),
+        EJECT(Rotation2d.fromDegrees(55), -5),
+        PREPARE_FOR_EJECTING(EJECT.targetAngle, 0),
         PREPARE_L4(Rotation2d.fromDegrees(55), 0),
         PREPARE_L3_OR_L2(Rotation2d.fromDegrees(55), 0),
         PREPARE_L1(Rotation2d.fromDegrees(55), 0),

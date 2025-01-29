@@ -51,8 +51,8 @@ public class CollectionCommands {
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR)
         ).until(() -> RobotContainer.CORAL_INTAKE.isEarlyCoralCollectionDetected() || RobotContainer.CORAL_INTAKE.hasGamePiece()).finallyDo(
                 (interrupted) -> {
-                    if (!interrupted)
-                        getLoadCoralCommand().schedule();
+//                    if (!interrupted)
+                    getLoadCoralCommand().schedule();
                 }
         );
     }
@@ -68,7 +68,7 @@ public class CollectionCommands {
     private static Command getCoralIntakeSequnceCommand() {
         return new SequentialCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED).until(RobotContainer.CORAL_INTAKE::hasGamePiece),
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED).alongWith(GeneralCommands.duplicate(CommandConstants.COLLECTION_RUMBLE_COMMAND)).until(RobotContainer.CORAL_INTAKE::atTargetAngle),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED).until(RobotContainer.CORAL_INTAKE::atTargetAngle),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL)
         );
     }

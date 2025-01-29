@@ -53,16 +53,16 @@ public class CoralIntakeConstants {
             FUNNEL_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
     private static final double
-            ANGLE_P = RobotHardwareStats.isSimulation() ? 75 : 20,
+            ANGLE_P = RobotHardwareStats.isSimulation() ? 75 : 25,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_D = RobotHardwareStats.isSimulation() ? 1.6663 : 0,
-            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.14215,
-            ANGLE_KV = RobotHardwareStats.isSimulation() ? 8.7544 : 9.0883,
+            ANGLE_D = RobotHardwareStats.isSimulation() ? 1.6663 : 2,
+            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.14,
+            ANGLE_KV = RobotHardwareStats.isSimulation() ? 8.7544 : 9.0,
             ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.41249;
+            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.38682;
     private static final double
-            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 1,
-            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 6 : 1,
+            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 5,
+            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 6 : 4,
             ANGLE_MOTION_MAGIC_JERK = ANGLE_MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
@@ -70,18 +70,19 @@ public class CoralIntakeConstants {
     static final double
             INTAKE_MOTOR_GEAR_RATIO = 1.3,
             FUNNEL_MOTOR_GEAR_RATIO = 4,
-            ANGLE_MOTOR_GEAR_RATIO = 72;
+            ANGLE_MOTOR_GEAR_RATIO = 73;
     private static final ForwardLimitSourceValue FORWARD_LIMIT_SOURCE_VALUE = ForwardLimitSourceValue.LimitSwitchPin;
     private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
     private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
-    private static final Rotation2d
-            ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(-0.128662),
-            ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(0.39);
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final double
-            ANGLE_ENCODER_MAGNET_OFFSET_VALUE = -0.32385778125, //-0.32502,
+            ANGLE_ENCODER_GRAVITY_OFFSET_VALUE = -0.30026 - 0.0076906,//-0.32502,
             ANGLE_ENCODER_DISCONTINUITY_POINT = 0.5;
+    static final double ANGLE_ENCODER_POSITION_OFFSET_VALUE = -0.32502 - ANGLE_ENCODER_GRAVITY_OFFSET_VALUE;
+    private static final Rotation2d
+            ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(-0.128662 - ANGLE_ENCODER_POSITION_OFFSET_VALUE),
+            ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(0.39 - ANGLE_ENCODER_POSITION_OFFSET_VALUE);
     static final boolean FOC_ENABLED = true;
 
     private static final int
@@ -160,17 +161,17 @@ public class CoralIntakeConstants {
     );
 
     public static final double COLLECTION_LEDS_BLINKING_SPEED = 0.5;
-    private static final double CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS = 1;
+    private static final double CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS = 0.7;
     static final BooleanEvent CORAL_COLLECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             BEAM_BREAK::getBinaryValue
     ).debounce(CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS);
     private static final double
             CORAL_DETECTION_CURRENT = 27,
-            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.3;
+            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.2;
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
-            () -> Math.abs(INTAKE_MOTOR.getSignal(TalonFXSignal.STATOR_CURRENT)) > CORAL_DETECTION_CURRENT
+            () -> Math.abs(FUNNEL_MOTOR.getSignal(TalonFXSignal.STATOR_CURRENT)) > CORAL_DETECTION_CURRENT
     ).debounce(CORAL_DETECTION_TIME_THRESHOLD_SECONDS);
     public static final double
             COLLECTION_RUMBLE_DURATION_SECONDS = 0.1,
@@ -276,7 +277,7 @@ public class CoralIntakeConstants {
         final CANcoderConfiguration config = new CANcoderConfiguration();
 
         config.MagnetSensor.SensorDirection = ANGLE_ENCODER_SENSOR_DIRECTION_VALUE;
-        config.MagnetSensor.MagnetOffset = ANGLE_ENCODER_MAGNET_OFFSET_VALUE;
+        config.MagnetSensor.MagnetOffset = ANGLE_ENCODER_GRAVITY_OFFSET_VALUE;
         config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = ANGLE_ENCODER_DISCONTINUITY_POINT;
 
         ANGLE_ENCODER.applyConfiguration(config);
@@ -291,13 +292,13 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD_CORAL(-3, -1, Rotation2d.fromDegrees(143)),
-        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(3, 3, LOAD_CORAL.targetAngle),
+        LOAD_CORAL(-3, -1, Rotation2d.fromDegrees(141)),
+        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(6, 2, LOAD_CORAL.targetAngle),
         PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, LOAD_CORAL.targetAngle),
-        COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-46)),
+        COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-42.5)),
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(95)),
         EJECT(-3, -3, Rotation2d.fromDegrees(90)),
-        REST(0, 0, Rotation2d.fromDegrees(145));
+        REST(0, 0, Rotation2d.fromDegrees(142));
 
         public final double
                 targetIntakeVoltage,
