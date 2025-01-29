@@ -53,16 +53,16 @@ public class CoralIntakeConstants {
             FUNNEL_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
     private static final double
-            ANGLE_P = RobotHardwareStats.isSimulation() ? 75 : 20,
+            ANGLE_P = RobotHardwareStats.isSimulation() ? 75 : 0,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_D = RobotHardwareStats.isSimulation() ? 1.6663 : 0,
-            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.24187,
-            ANGLE_KV = RobotHardwareStats.isSimulation() ? 8.7544 : 9.2317,
+            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.39673,
+            ANGLE_KV = RobotHardwareStats.isSimulation() ? 8.7544 : 7.7718,
             ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.37196;
+            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.33626;
     private static final double
-            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 5,
-            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 6 : 4,
+            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 1,
+            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 6 : 1,
             ANGLE_MOTION_MAGIC_JERK = ANGLE_MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
@@ -80,7 +80,7 @@ public class CoralIntakeConstants {
             ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(0.39);
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final double
-            ANGLE_ENCODER_MAGNET_OFFSET_VALUE = -0.32502,
+            ANGLE_ENCODER_MAGNET_OFFSET_VALUE = -0.32385778125, //-0.32502,
             ANGLE_ENCODER_DISCONTINUITY_POINT = 0.5;
     static final boolean FOC_ENABLED = true;
 
