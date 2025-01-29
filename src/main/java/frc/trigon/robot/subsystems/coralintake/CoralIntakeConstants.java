@@ -53,13 +53,13 @@ public class CoralIntakeConstants {
             FUNNEL_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
     private static final double
-            ANGLE_P = RobotHardwareStats.isSimulation() ? 75 : 0,
+            ANGLE_P = RobotHardwareStats.isSimulation() ? 75 : 20,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_D = RobotHardwareStats.isSimulation() ? 1.6663 : 0,
-            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.39673,
-            ANGLE_KV = RobotHardwareStats.isSimulation() ? 8.7544 : 7.7718,
+            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.14215,
+            ANGLE_KV = RobotHardwareStats.isSimulation() ? 8.7544 : 9.0883,
             ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.33626;
+            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.41249;
     private static final double
             ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 1,
             ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 6 : 1,
