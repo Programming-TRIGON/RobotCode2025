@@ -1,7 +1,8 @@
 package frc.trigon.robot.misc.objectdetectioncamera;
 
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.misc.objectdetectioncamera.io.PhotonObjectDetectionCameraIO;
 import frc.trigon.robot.misc.objectdetectioncamera.io.SimulationObjectDetectionCameraIO;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
@@ -15,15 +16,14 @@ public class ObjectDetectionCamera extends SubsystemBase {
     private final ObjectDetectionCameraInputsAutoLogged objectDetectionCameraInputs = new ObjectDetectionCameraInputsAutoLogged();
     private final ObjectDetectionCameraIO objectDetectionCameraIO;
     private final String hostname;
-    private final Rotation2d cameraMountYaw;
-    private Rotation2d trackedObjectYaw = new Rotation2d();
+    private final Transform3d robotCenterToCamera;
+    private Rotation3d trackedObjectRotation = new Rotation3d();
     private boolean trackedTargetWasVisible = false;
-    private int currentTrackedObjectId;
 
-    public ObjectDetectionCamera(String hostname, Rotation2d cameraMountYaw) {
+    public ObjectDetectionCamera(String hostname, Transform3d robotCenterToCamera) {
         this.hostname = hostname;
-        this.cameraMountYaw = cameraMountYaw;
-        this.objectDetectionCameraIO = generateIO(hostname, cameraMountYaw);
+        this.robotCenterToCamera = robotCenterToCamera;
+        this.objectDetectionCameraIO = generateIO(hostname, robotCenterToCamera);
     }
 
     @Override
@@ -32,8 +32,57 @@ public class ObjectDetectionCamera extends SubsystemBase {
         Logger.processInputs(hostname, objectDetectionCameraInputs);
     }
 
-    public int getCurrentTrackedObjectId() {
-        return currentTrackedObjectId;
+    /**
+     * Calculates the position of the tracked object on the field from the rotation of the object.
+     * This assumes the object is on the ground.
+     * Once it is known that the object is on the ground,
+     * one can simply find the transform from the camera to the ground and apply it to the object's rotation.
+     *
+     * @return the tracked object's 2d position on the field (z can be assumed to be 0)
+     */
+    public Translation2d calculateTrackedObjectPositionOnField() {
+        if (trackedObjectRotation == null)
+            return null;
+        Logger.recordOutput("TrackedObjectPosition", new Translation3d(calculateObjectPositionFromRotation(trackedObjectRotation)));
+        return calculateObjectPositionFromRotation(trackedObjectRotation);
+    }
+
+    /**
+     * Calculates the position of the best object on the field from the rotation of the object.
+     * This assumes the object is on the ground.
+     * Once it is known that the object is on the ground,
+     * one can simply find the transform from the camera to the ground and apply it to the object's rotation.
+     *
+     * @return the best object's 2d position on the field (z can be assumed to be 0)
+     */
+    public Translation2d calculateBestObjectPositionOnField(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
+        return calculateObjectPositionFromRotation(calculateBestObjectRotation(targetGamePiece));
+    }
+
+    /**
+     * Calculates the position of the object on the field from the rotation of the object.
+     * This assumes the object is on the ground.
+     * Once it is known that the object is on the ground,
+     * one can simply find the transform from the camera to the ground and apply it to the object's rotation.
+     *
+     * @param objectRotation the object's 3d rotation relative to the camera
+     * @return the object's 2d position on the field (z can be assumed to be 0)
+     */
+    public Translation2d calculateObjectPositionFromRotation(Rotation3d objectRotation) {
+        final Pose3d cameraPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose()).plus(robotCenterToCamera);
+        objectRotation = new Rotation3d(objectRotation.getX(), -objectRotation.getY(), objectRotation.getZ());
+        final Pose3d objectRotationStart = cameraPose.plus(new Transform3d(0, 0, 0, objectRotation));
+
+        final double cameraZ = cameraPose.getTranslation().getZ();
+        final double objectPitchSin = Math.sin(objectRotationStart.getRotation().getY());
+        final double transformX = cameraZ / objectPitchSin;
+        final Transform3d objectRotationStartToGround = new Transform3d(transformX, 0, 0, new Rotation3d());
+
+        return objectRotationStart.transformBy(objectRotationStartToGround).getTranslation().toTranslation2d();
+    }
+
+    public void initializeTracking() {
+        trackedTargetWasVisible = false;
     }
 
     /**
@@ -46,73 +95,86 @@ public class ObjectDetectionCamera extends SubsystemBase {
      * @param targetGamePiece the type of game piece to track
      */
     public void trackObject(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
-        this.currentTrackedObjectId = targetGamePiece.id;
-        final boolean hasTargets = hasTargets();
+        final boolean hasTargets = hasTargets(targetGamePiece);
         if (hasTargets && !trackedTargetWasVisible) {
             trackedTargetWasVisible = true;
-            trackedObjectYaw = getBestObjectYaw();
+            trackedObjectRotation = calculateBestObjectRotation(targetGamePiece);
             return;
         }
 
         if (!hasTargets) {
+            trackedObjectRotation = null;
             trackedTargetWasVisible = false;
             return;
         }
 
-        trackedObjectYaw = calculateTrackedObjectYaw();
+        trackedObjectRotation = calculateTrackedObjectYaw(targetGamePiece);
     }
 
-    public boolean hasTargets() {
-        return getTargetObjectYaws().length > 0;
+    public boolean hasTargets(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
+        return objectDetectionCameraInputs.hasTarget[targetGamePiece.id];
     }
 
     /**
      * @return the yaw (x-axis position) of the target object
      */
-    public Rotation2d getBestObjectYaw() {
-        return getTargetObjectYaws()[0].plus(cameraMountYaw);
-    }
+    public Rotation3d calculateBestObjectRotation(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
+        final Rotation3d[] targetObjectsRotations = getTargetObjectsRotations(targetGamePiece.id);
+        Rotation3d bestObjectRotation = targetObjectsRotations[0];
 
-    /**
-     * @return the yaw (x-axis position) of the current tracked object
-     */
-    public Rotation2d getTrackedObjectYaw() {
-        return trackedObjectYaw;
-    }
+        for (int i = 1; i < targetObjectsRotations.length; i++) {
+            final Rotation3d currentObjectRotation = targetObjectsRotations[i];
+            final double bestObjectDifference = Math.abs(bestObjectRotation.getY() - ObjectDetectionCameraConstants.BEST_PITCH.getRadians());
+            final double currentObjectDifference = Math.abs(currentObjectRotation.getY() - ObjectDetectionCameraConstants.BEST_PITCH.getRadians());
 
-    /**
-     * Calculates the yaw (x-axis position) of the object that the camera is currently tracking by finding the target with the least yaw deviation and assuming that it is the same target.
-     *
-     * @return the yaw of the tracked object
-     */
-    private Rotation2d calculateTrackedObjectYaw() {
-        double closestTargetToTrackedTargetYawDifference = Double.POSITIVE_INFINITY;
-        Rotation2d closestToTrackedTargetYaw = new Rotation2d();
-
-        for (Rotation2d currentObjectYaw : getTargetObjectYaws()) {
-            final Rotation2d currentFieldRelativeYaw = currentObjectYaw.plus(cameraMountYaw);
-            final double currentObjectToTrackedTargetYawDifference = Math.abs(currentFieldRelativeYaw.getRadians() - trackedObjectYaw.getRadians());
-
-            if (currentObjectToTrackedTargetYawDifference < closestTargetToTrackedTargetYawDifference) {
-                closestTargetToTrackedTargetYawDifference = currentObjectToTrackedTargetYawDifference;
-                closestToTrackedTargetYaw = currentFieldRelativeYaw;
-            }
+            if (currentObjectDifference < bestObjectDifference)
+                bestObjectRotation = currentObjectRotation;
         }
 
-        return closestToTrackedTargetYaw;
+        return bestObjectRotation;
     }
 
-    private Rotation2d[] getTargetObjectYaws() {
-        if (currentTrackedObjectId >= objectDetectionCameraInputs.visibleObjectYaws.length)
-            return new Rotation2d[0];
-        return objectDetectionCameraInputs.visibleObjectYaws[currentTrackedObjectId];
+    /**
+     * @return the 3d rotation of the object that the camera is currently tracking, relative to the camera
+     */
+    public Rotation3d getTrackedObjectRotation() {
+        return trackedObjectRotation;
     }
 
-    private ObjectDetectionCameraIO generateIO(String hostname, Rotation2d cameraMountYaw) {
+    private double calculateDistance(Rotation3d from, Rotation3d to) {
+        return from.minus(to).getAngle();
+    }
+
+    /**
+     * Calculates the 3d rotation of the object that the camera is currently tracking by finding the target with the least rotation deviation and assuming that it is the same target.
+     *
+     * @return the 3d rotation of the tracked object
+     */
+    private Rotation3d calculateTrackedObjectYaw(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
+        final Rotation3d[] targetObjectsRotations = getTargetObjectsRotations(targetGamePiece.id);
+        Rotation3d closestObjectRotation = targetObjectsRotations[0];
+
+        for (int i = 1; i < targetObjectsRotations.length; i++) {
+            final Rotation3d currentObjectRotation = targetObjectsRotations[i];
+            final double closestObjectDistance = calculateDistance(closestObjectRotation, trackedObjectRotation);
+            final double currentObjectDistance = calculateDistance(currentObjectRotation, trackedObjectRotation);
+
+            if (currentObjectDistance < closestObjectDistance)
+                closestObjectRotation = currentObjectRotation;
+        }
+
+        return closestObjectRotation;
+    }
+
+    private Rotation3d[] getTargetObjectsRotations(int objectID) {
+        return objectDetectionCameraInputs.visibleObjectRotations[objectID];
+    }
+
+    private ObjectDetectionCameraIO generateIO(String hostname, Transform3d robotCenterToCamera) {
         if (RobotHardwareStats.isReplay())
             return new ObjectDetectionCameraIO();
         if (RobotHardwareStats.isSimulation())
-            return new SimulationObjectDetectionCameraIO(hostname, cameraMountYaw);
+            return new SimulationObjectDetectionCameraIO(hostname, robotCenterToCamera);
         return new PhotonObjectDetectionCameraIO(hostname);
     }
 }
