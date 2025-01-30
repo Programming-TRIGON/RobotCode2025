@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.trigon.robot.RobotContainer;
-import frc.trigon.robot.commands.commandfactories.CollectionCommands;
+import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.FieldConstants;
@@ -66,8 +66,8 @@ public class CommandConstants {
             COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER));
 
     public static final Command
-            ENABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = true).ignoringDisable(true),
-            DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = false).ignoringDisable(true),
+            ENABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_ALIGN_TO_CORAL = true).ignoringDisable(true),
+            DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_ALIGN_TO_CORAL = false).ignoringDisable(true),
             ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = true).ignoringDisable(true),
             DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = false).ignoringDisable(true),
             SET_TARGET_SCORING_REEF_LEVEL_L1_ELEVATOR_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L1_ELEVATOR).ignoringDisable(true),

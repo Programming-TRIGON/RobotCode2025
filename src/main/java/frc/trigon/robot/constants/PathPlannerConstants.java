@@ -9,7 +9,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.AutonomousCommands;
-import frc.trigon.robot.commands.commandfactories.CollectionCommands;
+import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
@@ -84,7 +84,7 @@ public class PathPlannerConstants {
         NamedCommands.registerCommand("RestGripper", GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST));
         NamedCommands.registerCommand("FeedCoral", GripperCommands.getScoreInReefForAutoCommand().withTimeout(0.1));
         NamedCommands.registerCommand("CollectCoral", AutonomousCommands.getCollectCoralCommand());
-        NamedCommands.registerCommand("LoadCoral", CollectionCommands.getLoadCoralCommand().until(RobotContainer.GRIPPER::hasGamePiece));
+        NamedCommands.registerCommand("LoadCoral", CoralCollectionCommands.getLoadCoralCommand().until(RobotContainer.GRIPPER::hasGamePiece));
         NamedCommands.registerCommand("AlignToCoral", AutonomousCommands.getAlignToCoralCommand());
         NamedCommands.registerCommand("ScoreL4Wait", AutonomousCommands.getScoreInReefFromElevatorCommand(CoralPlacingCommands.ScoringLevel.L4).until(() -> RobotContainer.ELEVATOR.atTargetState() && RobotContainer.GRIPPER.atTargetAngle()));
     }

@@ -17,10 +17,7 @@ import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import org.trigon.hardware.misc.leds.LEDCommands;
 
-/**
- * A class that contains commands for collecting game pieces.
- */
-public class CollectionCommands {
+public class CoralCollectionCommands {
     public static boolean SHOULD_ALIGN_TO_CORAL = true;
 
     public static Command getFloorCoralCollectionCommand() {
@@ -50,7 +47,7 @@ public class CollectionCommands {
     }
 
     private static Command getScheduleCoralLoadingWhenCollectedCommand() {
-        return GeneralCommands.runWhen(getScheduleCoralLoadingCommand(), CollectionCommands::didCollectCoral);
+        return GeneralCommands.runWhen(getScheduleCoralLoadingCommand(), CoralCollectionCommands::didCollectCoral);
     }
 
     private static boolean didCollectCoral() {
@@ -77,7 +74,7 @@ public class CollectionCommands {
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.LOAD_CORAL),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
                 getCoralIntakeLoadingSequnceCommand()
-        ).until(CollectionCommands::shouldStopLoadingCoral).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
+        ).until(CoralCollectionCommands::shouldStopLoadingCoral).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
     }
 
     private static boolean shouldStopLoadingCoral() {
