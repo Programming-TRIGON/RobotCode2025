@@ -85,7 +85,6 @@ public class SimulationFieldHandler {
         if (isCollectingCoral() && HELD_CORAL_INDEX == null)
             HELD_CORAL_INDEX = getIndexOfCollectedGamePiece(coralCollectionPose, CORAL_ON_FIELD, SimulatedGamePieceConstants.CORAL_INTAKE_TOLERANCE_METERS);
 
-
         if (isCollectingAlgae() && HELD_ALGAE_INDEX == null)
             HELD_ALGAE_INDEX = getIndexOfCollectedGamePiece(algaeCollectionPose, ALGAE_ON_FIELD, SimulatedGamePieceConstants.ALGAE_INTAKE_TOLERANCE_METERS);
     }

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandfactories.CollectionCommands;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
+import frc.trigon.robot.commands.commandfactories.EjectionCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
@@ -71,7 +72,7 @@ public class RobotContainer {
     }
 
     private void bindDefaultCommands() {
-//        SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
+        SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
         CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         GRIPPER.setDefaultCommand(GripperCommands.getDefaultCommand());
@@ -85,8 +86,9 @@ public class RobotContainer {
 
         OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CoralIntakeCommands.getDebuggingCommand());
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CollectionCommands.getFloorCoralCollectionCommand());
+        OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CollectionCommands.getFeederCoralCollectionCommand());
         OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
-        OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(GeneralCommands.getEjectCoralCommand());
+        OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
     }
 
     private void bindSetters() {

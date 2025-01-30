@@ -98,8 +98,8 @@ public class CoralIntakeConstants {
             INTAKE_LENGTH_METERS = 0.44,
             INTAKE_MASS_KILOGRAMS = 8;
     private static final Rotation2d
-            MAXIMUM_ANGLE = Rotation2d.fromDegrees(180),
-            MINIMUM_ANGLE = Rotation2d.fromDegrees(-35.31);
+            MAXIMUM_ANGLE = Rotation2d.fromDegrees(142),
+            MINIMUM_ANGLE = Rotation2d.fromDegrees(-48);
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final SimpleMotorSimulation
             INTAKE_SIMULATION = new SimpleMotorSimulation(
@@ -167,7 +167,7 @@ public class CoralIntakeConstants {
             BEAM_BREAK::getBinaryValue
     ).debounce(CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS);
     private static final double
-            CORAL_DETECTION_CURRENT = 21,
+            CORAL_DETECTION_CURRENT = RobotHardwareStats.isSimulation() ? 100 : 21,
             CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.25;
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
@@ -295,10 +295,14 @@ public class CoralIntakeConstants {
         LOAD_CORAL(-3, -1, Rotation2d.fromDegrees(141)),
         PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(6, 2, LOAD_CORAL.targetAngle),
         PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, LOAD_CORAL.targetAngle),
+        CENTER_CORAL(6, 2, Rotation2d.fromDegrees(141)),
         COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-42.5)),
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(95)),
-        EJECT(-3, -3, Rotation2d.fromDegrees(90)),
-        REST(0, 0, Rotation2d.fromDegrees(141));
+        EJECT(-3, -1, Rotation2d.fromDegrees(45)),
+        PREPARE_FOR_EJECTING(0, 0, EJECT.targetAngle),
+        REST(0, 0, Rotation2d.fromDegrees(141)),
+        SCORE_IN_L1(-3, -1, Rotation2d.fromDegrees(45)),
+        PREPARE_FOR_SCORING_IN_L1(0, 0, SCORE_IN_L1.targetAngle);
 
         public final double
                 targetIntakeVoltage,

@@ -26,7 +26,7 @@ import java.util.function.Supplier;
  * A class that contains command factories for preparation commands and commands used during the 15-second autonomous period at the start of each match.
  */
 public class AutonomousCommands {
-    public static Command getScoreInReefCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
+    public static Command getScoreInReefFromElevatorCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(() -> scoringLevel.elevatorState),
                 GripperCommands.getSetTargetStateCommand(() -> scoringLevel.gripperState)

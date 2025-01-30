@@ -57,7 +57,18 @@ public class CollectionCommands {
     }
 
     private static Command getScheduleCoralLoadingCommand() {
-        return new InstantCommand(() -> getLoadCoralCommand().schedule());
+        return new InstantCommand(() -> {
+            if (CoralPlacingCommands.TARGET_SCORING_LEVEL == CoralPlacingCommands.ScoringLevel.L1)
+                getCenterCoralInIntakeCommand().schedule();
+            else
+                getLoadCoralCommand().schedule();
+        });
+    }
+
+    private static Command getCenterCoralInIntakeCommand() {
+        return CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.CENTER_CORAL)
+                .until(RobotContainer.CORAL_INTAKE::hasGamePiece)
+                .withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
     }
 
     public static Command getLoadCoralCommand() {

@@ -254,7 +254,6 @@ public class GripperConstants {
         PREPARE_FOR_EJECTING(EJECT.targetAngle, 0),
         PREPARE_L4(Rotation2d.fromDegrees(55), 0),
         PREPARE_L3_OR_L2(Rotation2d.fromDegrees(55), 0),
-        PREPARE_L1(Rotation2d.fromDegrees(55), 0),
         LOAD_CORAL(Rotation2d.fromDegrees(-50), 7),
         PREPARE_FOR_LOADING_CORAL(Rotation2d.fromDegrees(-50), 0),
         COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3),
