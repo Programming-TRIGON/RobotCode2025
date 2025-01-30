@@ -21,9 +21,9 @@ public class SwerveConstants {
     private static final int PIGEON_ID = 0;
     static final Pigeon2Gyro GYRO = new Pigeon2Gyro(PIGEON_ID, "SwerveGyro", RobotConstants.CANIVORE_NAME);
     private static final double
-            GYRO_MOUNT_POSITION_YAW = 0,
-            GYRO_MOUNT_POSITION_PITCH = 0,
-            GYRO_MOUNT_POSITION_ROLL = 0;
+            GYRO_MOUNT_POSITION_YAW = -1.5493969917297363,
+            GYRO_MOUNT_POSITION_PITCH = -0.31632718443870544,
+            GYRO_MOUNT_POSITION_ROLL = -0.9108231067657471;
     private static final double
             FRONT_LEFT_STEER_ENCODER_OFFSET = -0.00048828125,
             FRONT_RIGHT_STEER_ENCODER_OFFSET = 0.242919921875,
