@@ -34,7 +34,7 @@ public class ElevatorConstants {
     private static final double GEAR_RATIO = 7.222222;
     private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = true;
     private static final double
-            P = RobotHardwareStats.isSimulation() ? 40 : 5,
+            P = RobotHardwareStats.isSimulation() ? 40 : 0.07,
             I = RobotHardwareStats.isSimulation() ? 0 : 0,
             D = RobotHardwareStats.isSimulation() ? 0.22774 : 0,
             KS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.079427,
@@ -42,7 +42,7 @@ public class ElevatorConstants {
             KG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.36373,
             KA = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final double
-            MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 80 : 80,
+            MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 80 : 10,
             MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 80 : 40,
             MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
@@ -76,7 +76,7 @@ public class ElevatorConstants {
     );
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
-            Units.Volts.of(0.25).per(Units.Seconds),
+            Units.Volts.of(1.25).per(Units.Seconds),
             Units.Volts.of(3),
             Units.Second.of(1000)
     );
