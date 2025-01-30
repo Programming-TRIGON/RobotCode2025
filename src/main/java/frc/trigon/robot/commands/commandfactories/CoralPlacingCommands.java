@@ -83,7 +83,7 @@ public class CoralPlacingCommands {
     public static Command getUnloadCoralCommand() {
         return new ParallelCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.UNLOAD_CORAL),
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.UNLOAD_CORAL)
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.UNLOAD_CORAL_FROM_GRIPPER)
         ).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
     }
 

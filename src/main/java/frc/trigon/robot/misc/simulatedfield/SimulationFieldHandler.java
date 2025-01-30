@@ -103,7 +103,7 @@ public class SimulationFieldHandler {
     }
 
     private static void updateCoralLoading() {
-        if (!RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL))
+        if (!RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER))
             return;
 
         IS_CORAL_IN_GRIPPER = true;

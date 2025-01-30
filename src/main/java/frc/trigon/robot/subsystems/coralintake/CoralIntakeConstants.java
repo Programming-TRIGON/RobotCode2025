@@ -292,9 +292,9 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD_CORAL(-3, -1, Rotation2d.fromDegrees(141)),
-        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(6, 2, LOAD_CORAL.targetAngle),
-        UNLOAD_CORAL(6, 2, Rotation2d.fromDegrees(141)),
+        LOAD_CORAL_TO_GRIPPER(-3, -1, Rotation2d.fromDegrees(141)),
+        PREPARE_FOR_LOADING_TO_GRIPPER_WHILE_GAME_PIECE_NOT_DETECTED(6, 2, LOAD_CORAL_TO_GRIPPER.targetAngle),
+        UNLOAD_CORAL_FROM_GRIPPER(6, 2, Rotation2d.fromDegrees(141)),
         CENTER_CORAL(6, 2, Rotation2d.fromDegrees(141)),
         COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-42.5)),
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(95)),
