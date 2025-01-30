@@ -153,6 +153,8 @@ public class GripperConstants {
     static final double MINIMUM_VOLTAGE_FOR_EJECTING = -3;
     static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-36);
     static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
+    public static final Rotation2d TARGET_ALGAE_COLLECTION_ANGLE = Rotation2d.fromDegrees(35);
+    public static final double TARGET_ALGAE_COLLECTION_CURRENT = -30;
 
     static {
         configureGrippingMotor();

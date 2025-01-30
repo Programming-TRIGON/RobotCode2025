@@ -27,6 +27,7 @@ import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.Gripper;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
+import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.Swerve;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
@@ -89,7 +90,8 @@ public class RobotContainer {
         OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionCommand());
         OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacementCommands.getScoreInReefCommand());
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
-        OperatorConstants.UNLOAD_CORAL.whileTrue(CoralPlacementCommands.getUnloadCoralCommand());
+        OperatorConstants.UNLOAD_CORAL_TRIGGER.whileTrue(CoralPlacementCommands.getUnloadCoralCommand());
+        OperatorConstants.COLLECT_ALGAE_TRIGGER.whileTrue(GripperCommands.getCollectAlgaeCommand(GripperConstants.TARGET_ALGAE_COLLECTION_ANGLE, GripperConstants.TARGET_ALGAE_COLLECTION_CURRENT));
     }
 
     private void bindSetters() {

@@ -40,6 +40,14 @@ public class GripperCommands {
         );
     }
 
+    public static Command getCollectAlgaeCommand(Rotation2d targetAngle, double targetCurrent) {
+        return new StartEndCommand(
+                () -> RobotContainer.GRIPPER.setTargetStateWithCurrent(targetAngle, targetCurrent),
+                RobotContainer.GRIPPER::stop,
+                RobotContainer.GRIPPER
+        );
+    }
+
     /**
      * Creates a command that will set the gripper to the score in reef state,
      * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
