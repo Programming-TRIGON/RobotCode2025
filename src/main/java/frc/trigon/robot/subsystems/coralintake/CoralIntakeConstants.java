@@ -161,17 +161,17 @@ public class CoralIntakeConstants {
     );
 
     public static final double COLLECTION_LEDS_BLINKING_SPEED = 0.5;
-    private static final double CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS = 0.7;
+    private static final double CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS = 0.5;
     static final BooleanEvent CORAL_COLLECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             BEAM_BREAK::getBinaryValue
     ).debounce(CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS);
     private static final double
-            CORAL_DETECTION_CURRENT = 27,
-            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.2;
+            CORAL_DETECTION_CURRENT = 23,
+            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.13;
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
-            () -> Math.abs(FUNNEL_MOTOR.getSignal(TalonFXSignal.STATOR_CURRENT)) > CORAL_DETECTION_CURRENT
+            () -> Math.abs(INTAKE_MOTOR.getSignal(TalonFXSignal.STATOR_CURRENT)) > CORAL_DETECTION_CURRENT
     ).debounce(CORAL_DETECTION_TIME_THRESHOLD_SECONDS);
     public static final double
             COLLECTION_RUMBLE_DURATION_SECONDS = 0.1,
