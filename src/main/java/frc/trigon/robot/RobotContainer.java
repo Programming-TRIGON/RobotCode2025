@@ -11,7 +11,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
-import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
+import frc.trigon.robot.commands.commandfactories.CoralPlacementCommands;
 import frc.trigon.robot.commands.commandfactories.EjectionCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.LEDConstants;
@@ -87,9 +87,9 @@ public class RobotContainer {
         OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CoralIntakeCommands.getDebuggingCommand());
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
         OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionCommand());
-        OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
+        OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacementCommands.getScoreInReefCommand());
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
-        OperatorConstants.UNLOAD_CORAL.whileTrue(CoralPlacingCommands.getUnloadCoralCommand());
+        OperatorConstants.UNLOAD_CORAL.whileTrue(CoralPlacementCommands.getUnloadCoralCommand());
     }
 
     private void bindSetters() {
