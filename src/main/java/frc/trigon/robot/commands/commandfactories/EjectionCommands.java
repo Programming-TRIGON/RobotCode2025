@@ -20,14 +20,14 @@ public class EjectionCommands {
 
     private static Command getEjectCoralFromGripperCommand() {
         return new SequentialCommandGroup(
-                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.PREPARE_FOR_EJECTING).until(RobotContainer.GRIPPER::atTargetAngle),
+                GripperCommands.getPrepareForStateCommand(GripperConstants.GripperState.EJECT).until(RobotContainer.GRIPPER::atTargetAngle),
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.EJECT)
         );
     }
 
     private static Command getEjectCoralFromCoralIntakeCommand() {
         return new SequentialCommandGroup(
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_EJECTING).until(RobotContainer.CORAL_INTAKE::atTargetAngle),
+                CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.EJECT).until(RobotContainer.CORAL_INTAKE::atTargetAngle),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.EJECT)
         );
     }

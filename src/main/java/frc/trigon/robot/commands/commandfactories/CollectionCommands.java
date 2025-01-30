@@ -58,7 +58,7 @@ public class CollectionCommands {
 
     private static Command getScheduleCoralLoadingCommand() {
         return new InstantCommand(() -> {
-            if (CoralPlacingCommands.TARGET_SCORING_LEVEL == CoralPlacingCommands.ScoringLevel.L1)
+            if (CoralPlacingCommands.TARGET_SCORING_LEVEL == CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE)
                 getCenterCoralInIntakeCommand().schedule();
             else
                 getLoadCoralCommand().schedule();
@@ -82,7 +82,7 @@ public class CollectionCommands {
     private static Command getCoralIntakeLoadingSequnceCommand() {
         return new SequentialCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED).until(RobotContainer.CORAL_INTAKE::hasGamePiece),
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED).until(RobotContainer.CORAL_INTAKE::atTargetAngle),
+                CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL).until(RobotContainer.CORAL_INTAKE::atTargetAngle),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL)
         );
     }

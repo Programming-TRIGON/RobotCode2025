@@ -82,7 +82,7 @@ public class PathPlannerConstants {
         NamedCommands.registerCommand("RestElevator", ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         NamedCommands.registerCommand("RestCoralIntake", CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         NamedCommands.registerCommand("RestGripper", GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST));
-        NamedCommands.registerCommand("FeedCoral", GripperCommands.getScoreInReefCommand().withTimeout(0.1));
+        NamedCommands.registerCommand("FeedCoral", GripperCommands.getScoreInReefForAutoCommand().withTimeout(0.1));
         NamedCommands.registerCommand("CollectCoral", AutonomousCommands.getCollectCoralCommand());
         NamedCommands.registerCommand("LoadCoral", CollectionCommands.getLoadCoralCommand().until(RobotContainer.GRIPPER::hasGamePiece));
         NamedCommands.registerCommand("AlignToCoral", AutonomousCommands.getAlignToCoralCommand());

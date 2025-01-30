@@ -294,16 +294,13 @@ public class CoralIntakeConstants {
     public enum CoralIntakeState {
         LOAD_CORAL(-3, -1, Rotation2d.fromDegrees(141)),
         PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(6, 2, LOAD_CORAL.targetAngle),
-        PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, LOAD_CORAL.targetAngle),
         UNLOAD_CORAL(6, 2, Rotation2d.fromDegrees(141)),
         CENTER_CORAL(6, 2, Rotation2d.fromDegrees(141)),
         COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-42.5)),
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(95)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
-        PREPARE_FOR_EJECTING(0, 0, EJECT.targetAngle),
         REST(0, 0, Rotation2d.fromDegrees(141)),
-        SCORE_IN_L1(-3, -1, Rotation2d.fromDegrees(45)),
-        PREPARE_FOR_SCORING_IN_L1(0, 0, SCORE_IN_L1.targetAngle);
+        SCORE_IN_L1(-3, -1, Rotation2d.fromDegrees(45));
 
         public final double
                 targetIntakeVoltage,

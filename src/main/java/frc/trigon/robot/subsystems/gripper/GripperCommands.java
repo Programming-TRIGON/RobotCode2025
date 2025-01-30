@@ -46,9 +46,9 @@ public class GripperCommands {
      *
      * @return the command
      */
-    public static Command getScoreInReefCommand() {
+    public static Command getScoreInReefForAutoCommand() {
         return new StartEndCommand(
-                RobotContainer.GRIPPER::scoreInReef,
+                RobotContainer.GRIPPER::scoreInReefForAuto,
                 RobotContainer.GRIPPER::stop,
                 RobotContainer.GRIPPER
         );
@@ -57,6 +57,22 @@ public class GripperCommands {
     public static Command getSetTargetStateCommand(Supplier<GripperConstants.GripperState> targetStateSupplier) {
         return new StartEndCommand(
                 () -> RobotContainer.GRIPPER.setTargetState(targetStateSupplier.get()),
+                RobotContainer.GRIPPER::stop,
+                RobotContainer.GRIPPER
+        );
+    }
+
+    public static Command getPrepareForStateCommand(Supplier<GripperConstants.GripperState> targetStateSupplier) {
+        return new StartEndCommand(
+                () -> RobotContainer.GRIPPER.setTargetState(targetStateSupplier.get().targetAngle, 0),
+                RobotContainer.GRIPPER::stop,
+                RobotContainer.GRIPPER
+        );
+    }
+
+    public static Command getPrepareForStateCommand(GripperConstants.GripperState targetState) {
+        return new StartEndCommand(
+                () -> RobotContainer.GRIPPER.setTargetState(targetState.targetAngle, 0),
                 RobotContainer.GRIPPER::stop,
                 RobotContainer.GRIPPER
         );

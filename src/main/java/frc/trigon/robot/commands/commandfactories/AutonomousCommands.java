@@ -29,7 +29,7 @@ public class AutonomousCommands {
     public static Command getScoreInReefFromElevatorCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(() -> scoringLevel.elevatorState),
-                GripperCommands.getSetTargetStateCommand(() -> scoringLevel.gripperState)
+                GripperCommands.getPrepareForStateCommand(() -> scoringLevel.gripperState)
         );
     }
 

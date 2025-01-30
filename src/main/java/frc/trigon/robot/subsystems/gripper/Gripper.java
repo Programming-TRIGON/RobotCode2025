@@ -119,8 +119,8 @@ public class Gripper extends MotorSubsystem {
      * This will set the gripper to the score in reef state,
      * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
      */
-    void scoreInReef() {
-        setTargetState(targetState.targetAngle, GripperConstants.SCORE_IN_REEF_VOLTAGE);
+    void scoreInReefForAuto() {
+        setTargetState(targetState.targetAngle, GripperConstants.SCORE_IN_REEF_FOR_AUTO_VOLTAGE);
     }
 
     void setTargetState(GripperConstants.GripperState targetState) {

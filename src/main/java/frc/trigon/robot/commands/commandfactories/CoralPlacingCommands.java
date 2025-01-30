@@ -30,7 +30,7 @@ public class CoralPlacingCommands {
         return new ConditionalCommand(
                 getScoreInReefFromCoralIntakeCommand().asProxy(),
                 getScoreInReefFromElevatorCommand().asProxy(),
-                () -> TARGET_SCORING_LEVEL == ScoringLevel.L1
+                () -> TARGET_SCORING_LEVEL == ScoringLevel.L1_CORAL_INTAKE
         ).alongWith(
                 getWaitUntilScoringTargetChangesCommand().andThen(
                         () -> getScoreInReefCommand().onlyWhile(OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER).schedule()
@@ -75,7 +75,7 @@ public class CoralPlacingCommands {
     private static Command getCoralIntakeScoringSequnceCommand() {
         return new SequentialCommandGroup(
                 getUnloadCoralCommand(),
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_SCORING_IN_L1).until(CoralPlacingCommands::canContinueScoringFromCoralIntake),
+                CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_IN_L1).until(CoralPlacingCommands::canContinueScoringFromCoralIntake),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_IN_L1)
         );
     }
@@ -111,8 +111,8 @@ public class CoralPlacingCommands {
 
     private static Command getGripperScoringSequenceCommand() {
         return new SequentialCommandGroup(
-                GripperCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoringFromElevator),
-                GripperCommands.getScoreInReefCommand()
+                GripperCommands.getPrepareForStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoringFromElevator),
+                GripperCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.gripperState)
         );
     }
 
@@ -161,7 +161,8 @@ public class CoralPlacingCommands {
      * The x and y transform are used to calculate the target placing position from the middle of the reef.
      */
     public enum ScoringLevel {
-        L1(1.3, 0.17, Rotation2d.fromDegrees(180)),
+        L1_CORAL_INTAKE(1.3, 0.17, Rotation2d.fromDegrees(180)),
+        L1_ELEVATOR(1.3, 0.17, Rotation2d.fromDegrees(0)),
         L2(1.3, 0.17, Rotation2d.fromDegrees(0)),
         L3(1.3, 0.17, Rotation2d.fromDegrees(0)),
         L4(1.3, 0.17, Rotation2d.fromDegrees(0));
@@ -210,9 +211,10 @@ public class CoralPlacingCommands {
         private ElevatorConstants.ElevatorState determineElevatorState() {
             return switch (ordinal()) {
                 case 0 -> null;
-                case 1 -> ElevatorConstants.ElevatorState.SCORE_L2;
-                case 2 -> ElevatorConstants.ElevatorState.SCORE_L3;
-                case 3 -> ElevatorConstants.ElevatorState.SCORE_L4;
+                case 1 -> ElevatorConstants.ElevatorState.SCORE_L1;
+                case 2 -> ElevatorConstants.ElevatorState.SCORE_L2;
+                case 3 -> ElevatorConstants.ElevatorState.SCORE_L3;
+                case 4 -> ElevatorConstants.ElevatorState.SCORE_L4;
                 default -> throw new IllegalStateException("Unexpected value: " + ordinal());
             };
         }
@@ -220,8 +222,9 @@ public class CoralPlacingCommands {
         private GripperConstants.GripperState determineGripperState() {
             return switch (ordinal()) {
                 case 0 -> null;
-                case 1, 2 -> GripperConstants.GripperState.PREPARE_L3_OR_L2;
-                case 3 -> GripperConstants.GripperState.PREPARE_L4;
+                case 1 -> GripperConstants.GripperState.SCORE_L1;
+                case 2, 3 -> GripperConstants.GripperState.SCORE_L3_OR_L2;
+                case 4 -> GripperConstants.GripperState.SCORE_L4;
                 default -> throw new IllegalStateException("Unexpected value: " + ordinal());
             };
         }

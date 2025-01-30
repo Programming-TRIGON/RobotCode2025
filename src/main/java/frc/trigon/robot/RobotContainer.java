@@ -72,7 +72,7 @@ public class RobotContainer {
     }
 
     private void bindDefaultCommands() {
-        SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
+//        SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
         CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         GRIPPER.setDefaultCommand(GripperCommands.getDefaultCommand());
@@ -98,7 +98,8 @@ public class RobotContainer {
         OperatorConstants.ENABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
         OperatorConstants.DISABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
 
-        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L1_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_LEVEL_L1_COMMAND);
+        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L1_ELEVATOR_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_LEVEL_L1_ELEVATOR_COMMAND);
+        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L1_CORAL_INTAKE_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_LEVEL_L1_CORAL_INTAKE_COMMAND);
         OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L2_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_LEVEL_L2_COMMAND);
         OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L3_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_LEVEL_L3_COMMAND);
         OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L4_TRIGGER.onTrue(CommandConstants.SET_TARGET_SCORING_REEF_LEVEL_L4_COMMAND);
