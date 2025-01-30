@@ -130,8 +130,6 @@ public class CoralIntake extends MotorSubsystem {
     void setTargetState(CoralIntakeConstants.CoralIntakeState targetState) {
         this.targetState = targetState;
 
-        System.out.println(targetState);
-
         setTargetState(
                 targetState.targetIntakeVoltage,
                 targetState.targetFunnelVoltage,

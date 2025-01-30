@@ -20,9 +20,10 @@ public class SwerveModuleConstants {
     private static final double
             DRIVE_MOTOR_OPEN_LOOP_RAMP_RATE = RobotHardwareStats.isSimulation() ? 0.1 : 0.1,
             DRIVE_MOTOR_CLOSED_LOOP_RAMP_RATE = RobotHardwareStats.isSimulation() ? 0.1 : 0.1;
-    private static final InvertedValue
+    static final InvertedValue
             DRIVE_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive,
-            STEER_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
+            FRONT_STEER_MOTOR_INVERT_VALUE = InvertedValue.Clockwise_Positive,
+            REAR_STEER_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
     private static final SensorDirectionValue STEER_ENCODER_DIRECTION = SensorDirectionValue.CounterClockwise_Positive;
     private static final double STEER_ENCODER_DISCONTINUITY_POINT = 0.5;
     private static final NeutralModeValue
@@ -32,7 +33,7 @@ public class SwerveModuleConstants {
             DRIVE_MOTOR_SLIP_CURRENT = PathPlannerConstants.ROBOT_CONFIG.moduleConfig.driveCurrentLimit, // TODO: calibrate right before competition
             STEER_MOTOR_CURRENT_LIMIT = RobotHardwareStats.isSimulation() ? 200 : 30;
     private static final double
-            STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 0,
+            STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 50,
             STEER_MOTOR_I = 0,
             STEER_MOTOR_D = 0;
     private static final double
@@ -121,7 +122,6 @@ public class SwerveModuleConstants {
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
 
-        config.MotorOutput.Inverted = STEER_MOTOR_INVERTED_VALUE;
         config.MotorOutput.NeutralMode = STEER_MOTOR_NEUTRAL_MODE_VALUE;
 
         config.CurrentLimits.StatorCurrentLimit = STEER_MOTOR_CURRENT_LIMIT;

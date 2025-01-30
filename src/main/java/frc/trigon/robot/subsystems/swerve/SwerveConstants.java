@@ -25,11 +25,11 @@ public class SwerveConstants {
             GYRO_MOUNT_POSITION_PITCH = 0,
             GYRO_MOUNT_POSITION_ROLL = 0;
     private static final double
-            FRONT_LEFT_STEER_ENCODER_OFFSET = 0,
-            FRONT_RIGHT_STEER_ENCODER_OFFSET = 0,
-            REAR_LEFT_STEER_ENCODER_OFFSET = 0,
-            REAR_RIGHT_STEER_ENCODER_OFFSET = 0;
-    private static final int
+            FRONT_LEFT_STEER_ENCODER_OFFSET = -0.00048828125,
+            FRONT_RIGHT_STEER_ENCODER_OFFSET = 0.242919921875,
+            REAR_LEFT_STEER_ENCODER_OFFSET = 0.2158203125,
+            REAR_RIGHT_STEER_ENCODER_OFFSET = -0.0546875;
+    public static final int
             FRONT_LEFT_ID = 1,
             FRONT_RIGHT_ID = 2,
             REAR_LEFT_ID = 3,

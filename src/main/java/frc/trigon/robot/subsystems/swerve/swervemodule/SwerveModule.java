@@ -4,6 +4,7 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -196,12 +197,21 @@ public class SwerveModule {
 
     private void configureSteerMotor() {
         SwerveModuleConstants.STEER_MOTOR_CONFIGURATION.Feedback.FeedbackRemoteSensorID = steerEncoder.getID();
+        SwerveModuleConstants.STEER_MOTOR_CONFIGURATION.MotorOutput.Inverted = getSteerMotorInvertedValue();
+
         steerMotor.applyConfiguration(SwerveModuleConstants.STEER_MOTOR_CONFIGURATION);
         steerMotor.setPhysicsSimulation(SwerveModuleConstants.createSteerMotorSimulation());
 
         steerMotor.registerSignal(TalonFXSignal.VELOCITY, 100);
         steerMotor.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
         steerMotor.registerThreadedSignal(TalonFXSignal.POSITION, PoseEstimatorConstants.ODOMETRY_FREQUENCY_HERTZ);
+    }
+
+    private InvertedValue getSteerMotorInvertedValue() {
+        if (steerEncoder.getID() - SwerveConstants.REAR_RIGHT_ID >= SwerveConstants.REAR_LEFT_ID)
+            return SwerveModuleConstants.REAR_STEER_MOTOR_INVERTED_VALUE;
+
+        return SwerveModuleConstants.FRONT_STEER_MOTOR_INVERT_VALUE;
     }
 
     private void configureSteerEncoder(double offsetRotations) {
