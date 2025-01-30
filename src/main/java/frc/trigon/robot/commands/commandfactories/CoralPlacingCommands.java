@@ -80,7 +80,7 @@ public class CoralPlacingCommands {
         );
     }
 
-    private static Command getUnloadCoralCommand() {
+    public static Command getUnloadCoralCommand() {
         return new ParallelCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.UNLOAD_CORAL),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.UNLOAD_CORAL)
