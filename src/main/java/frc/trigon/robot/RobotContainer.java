@@ -67,6 +67,7 @@ public class RobotContainer {
         bindDefaultCommands();
         bindControllerCommands();
         bindSetters();
+//        configureSysIdBindings(CORAL_INTAKE);
     }
 
     private void bindDefaultCommands() {

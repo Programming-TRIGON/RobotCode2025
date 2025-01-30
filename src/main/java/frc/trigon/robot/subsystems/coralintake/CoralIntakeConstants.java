@@ -53,16 +53,16 @@ public class CoralIntakeConstants {
             FUNNEL_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
             ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
     private static final double
-            ANGLE_P = RobotHardwareStats.isSimulation() ? 75 : 25,
+            ANGLE_P = RobotHardwareStats.isSimulation() ? 75 : 20,
             ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_D = RobotHardwareStats.isSimulation() ? 1.6663 : 2,
-            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.14,
-            ANGLE_KV = RobotHardwareStats.isSimulation() ? 8.7544 : 9.0,
+            ANGLE_D = RobotHardwareStats.isSimulation() ? 1.6663 : 0.5,
+            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.12,
+            ANGLE_KV = RobotHardwareStats.isSimulation() ? 8.7544 : 8.55,
             ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.38682;
+            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.41506;
     private static final double
-            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 5,
-            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 6 : 4,
+            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 1.1,
+            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 6 : 10,
             ANGLE_MOTION_MAGIC_JERK = ANGLE_MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
@@ -77,7 +77,7 @@ public class CoralIntakeConstants {
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final double
-            ANGLE_ENCODER_GRAVITY_OFFSET_VALUE = -0.30026 - 0.0076906,//-0.32502,
+            ANGLE_ENCODER_GRAVITY_OFFSET_VALUE = -0.31585,//-0.32502,
             ANGLE_ENCODER_DISCONTINUITY_POINT = 0.5;
     static final double ANGLE_ENCODER_POSITION_OFFSET_VALUE = -0.32502 - ANGLE_ENCODER_GRAVITY_OFFSET_VALUE;
     private static final Rotation2d
@@ -167,8 +167,8 @@ public class CoralIntakeConstants {
             BEAM_BREAK::getBinaryValue
     ).debounce(CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS);
     private static final double
-            CORAL_DETECTION_CURRENT = 23,
-            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.13;
+            CORAL_DETECTION_CURRENT = 21,
+            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.25;
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             () -> Math.abs(INTAKE_MOTOR.getSignal(TalonFXSignal.STATOR_CURRENT)) > CORAL_DETECTION_CURRENT
@@ -298,7 +298,7 @@ public class CoralIntakeConstants {
         COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-42.5)),
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(95)),
         EJECT(-3, -3, Rotation2d.fromDegrees(90)),
-        REST(0, 0, Rotation2d.fromDegrees(142));
+        REST(0, 0, Rotation2d.fromDegrees(141));
 
         public final double
                 targetIntakeVoltage,
