@@ -167,8 +167,8 @@ public class CoralIntakeConstants {
             BEAM_BREAK::getBinaryValue
     ).debounce(CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS);
     private static final double
-            CORAL_DETECTION_CURRENT = RobotHardwareStats.isSimulation() ? 100 : 21,
-            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.25;
+            CORAL_DETECTION_CURRENT = RobotHardwareStats.isSimulation() ? 100 : 23,
+            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.26;
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             () -> Math.abs(INTAKE_MOTOR.getSignal(TalonFXSignal.STATOR_CURRENT)) > CORAL_DETECTION_CURRENT

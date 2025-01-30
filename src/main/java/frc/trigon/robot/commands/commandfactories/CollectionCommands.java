@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandclasses.CoralAlignmentCommand;
+import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
@@ -76,7 +77,11 @@ public class CollectionCommands {
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.LOAD_CORAL),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
                 getCoralIntakeLoadingSequnceCommand()
-        ).until(RobotContainer.GRIPPER::hasGamePiece).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
+        ).until(CollectionCommands::shouldStopLoadingCoral).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
+    }
+
+    private static boolean shouldStopLoadingCoral() {
+        return RobotContainer.GRIPPER.hasGamePiece() || OperatorConstants.CONTINUE_SCORING_TRIGGER.getAsBoolean();
     }
 
     private static Command getCoralIntakeLoadingSequnceCommand() {
