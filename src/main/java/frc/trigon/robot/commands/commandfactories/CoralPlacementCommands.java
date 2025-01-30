@@ -29,7 +29,7 @@ public class CoralPlacementCommands {
     public static Command getScoreInReefCommand() {
         return new ConditionalCommand(
                 getScoreInReefFromCoralIntakeCommand().asProxy(),
-                getScoreInReefFromElevatorCommand().asProxy(),
+                getScoreInReefFromGripperCommand().asProxy(),
                 () -> TARGET_SCORING_LEVEL == ScoringLevel.L1_CORAL_INTAKE
         ).alongWith(
                 getWaitUntilScoringTargetChangesCommand().andThen(
@@ -52,10 +52,10 @@ public class CoralPlacementCommands {
         );
     }
 
-    private static Command getScoreInReefFromElevatorCommand() {
+    private static Command getScoreInReefFromGripperCommand() {
         return new ConditionalCommand(
-                getAutonomouslyScoreInReefFromElevatorCommand().asProxy(),
-                getManuallyScoreInReefFromElevatorCommand().asProxy(),
+                getAutonomouslyScoreInReefFromGripperCommand().asProxy(),
+                getManuallyScoreInReefFromGripperCommand().asProxy(),
                 () -> SHOULD_SCORE_AUTONOMOUSLY
         ).finallyDo(
                 (interrupted) -> {
@@ -75,8 +75,8 @@ public class CoralPlacementCommands {
     private static Command getCoralIntakeScoringSequnceCommand() {
         return new SequentialCommandGroup(
                 getUnloadCoralCommand(),
-                CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_IN_L1).until(CoralPlacementCommands::canContinueScoringFromCoralIntake),
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_IN_L1)
+                CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1).until(CoralPlacementCommands::canContinueScoringFromCoralIntake),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1)
         );
     }
 
@@ -87,14 +87,14 @@ public class CoralPlacementCommands {
         ).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
     }
 
-    private static Command getManuallyScoreInReefFromElevatorCommand() {
+    private static Command getManuallyScoreInReefFromGripperCommand() {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
                 getGripperScoringSequenceCommand()
         );
     }
 
-    private static Command getAutonomouslyScoreInReefFromElevatorCommand() {
+    private static Command getAutonomouslyScoreInReefFromGripperCommand() {
         return new ParallelCommandGroup(
                 getOpenElevatorWhenCloseToReefCommand(),
                 getAutonomousDriveToReefThenManualDriveCommand(),
@@ -162,7 +162,7 @@ public class CoralPlacementCommands {
      */
     public enum ScoringLevel {
         L1_CORAL_INTAKE(1.3, 0.17, Rotation2d.fromDegrees(180)),
-        L1_ELEVATOR(1.3, 0.17, Rotation2d.fromDegrees(0)),
+        L1_GRIPPER(1.3, 0.17, Rotation2d.fromDegrees(0)),
         L2(1.3, 0.17, Rotation2d.fromDegrees(0)),
         L3(1.3, 0.17, Rotation2d.fromDegrees(0)),
         L4(1.3, 0.17, Rotation2d.fromDegrees(0));

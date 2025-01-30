@@ -300,7 +300,7 @@ public class CoralIntakeConstants {
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(95)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
         REST(0, 0, Rotation2d.fromDegrees(141)),
-        SCORE_IN_L1(-3, -1, Rotation2d.fromDegrees(45));
+        SCORE_L1(-3, -1, Rotation2d.fromDegrees(45));
 
         public final double
                 targetIntakeVoltage,
