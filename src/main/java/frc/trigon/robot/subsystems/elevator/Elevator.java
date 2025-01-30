@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.subsystems.MotorSubsystem;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
@@ -86,6 +87,7 @@ public class Elevator extends MotorSubsystem {
         return targetState == this.targetState && atTargetState();
     }
 
+    @AutoLogOutput(key = "Elevator/AtTargetState")
     public boolean atTargetState() {
         final double currentToTargetStateDifference = Math.abs(targetState.targetPositionMeters - getPositionMeters());
         return currentToTargetStateDifference < ElevatorConstants.POSITION_TOLERANCE_METERS;

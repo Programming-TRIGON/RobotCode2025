@@ -54,17 +54,9 @@ public class GripperCommands {
         );
     }
 
-    public static Command getSetTargetStateCommand(Supplier<GripperConstants.GripperState> targetStateSupplier) {
-        return new StartEndCommand(
-                () -> RobotContainer.GRIPPER.setTargetState(targetStateSupplier.get()),
-                RobotContainer.GRIPPER::stop,
-                RobotContainer.GRIPPER
-        );
-    }
-
     public static Command getPrepareForStateCommand(Supplier<GripperConstants.GripperState> targetStateSupplier) {
         return new StartEndCommand(
-                () -> RobotContainer.GRIPPER.setTargetState(targetStateSupplier.get().targetAngle, 0),
+                () -> RobotContainer.GRIPPER.prepareForState(targetStateSupplier.get()),
                 RobotContainer.GRIPPER::stop,
                 RobotContainer.GRIPPER
         );
@@ -72,7 +64,15 @@ public class GripperCommands {
 
     public static Command getPrepareForStateCommand(GripperConstants.GripperState targetState) {
         return new StartEndCommand(
-                () -> RobotContainer.GRIPPER.setTargetState(targetState.targetAngle, 0),
+                () -> RobotContainer.GRIPPER.prepareForState(targetState),
+                RobotContainer.GRIPPER::stop,
+                RobotContainer.GRIPPER
+        );
+    }
+
+    public static Command getSetTargetStateCommand(Supplier<GripperConstants.GripperState> targetStateSupplier) {
+        return new StartEndCommand(
+                () -> RobotContainer.GRIPPER.setTargetState(targetStateSupplier.get()),
                 RobotContainer.GRIPPER::stop,
                 RobotContainer.GRIPPER
         );

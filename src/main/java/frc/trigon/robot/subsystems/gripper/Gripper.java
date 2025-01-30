@@ -94,6 +94,7 @@ public class Gripper extends MotorSubsystem {
         return targetState == this.targetState && atTargetAngle();
     }
 
+    @AutoLogOutput(key = "Gripper/AtTargetAngle")
     public boolean atTargetAngle() {
         final double currentToTargetStateDifference = Math.abs(getCurrentEncoderAngle().getDegrees() - targetState.targetAngle.getDegrees());
         return currentToTargetStateDifference < GripperConstants.ANGLE_TOLERANCE.getDegrees();
@@ -121,6 +122,15 @@ public class Gripper extends MotorSubsystem {
      */
     void scoreInReefForAuto() {
         setTargetState(targetState.targetAngle, GripperConstants.SCORE_IN_REEF_FOR_AUTO_VOLTAGE);
+    }
+
+    void prepareForState(GripperConstants.GripperState targetState) {
+        this.targetState = targetState;
+
+        setTargetState(
+                targetState.targetAngle,
+                0
+        );
     }
 
     void setTargetState(GripperConstants.GripperState targetState) {

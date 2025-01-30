@@ -7,6 +7,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.subsystems.MotorSubsystem;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.misc.simplesensor.SimpleSensor;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
@@ -85,6 +86,7 @@ public class CoralIntake extends MotorSubsystem {
         return targetState == this.targetState && atTargetAngle();
     }
 
+    @AutoLogOutput(key = "CoralIntake/AtTargetAngle")
     public boolean atTargetAngle() {
         final double angleDifferenceFromTargetAngleDegrees = Math.abs(getCurrentEncoderAngle().minus(targetState.targetAngle).getDegrees());
         return angleDifferenceFromTargetAngleDegrees < CoralIntakeConstants.ANGLE_TOLERANCE.getDegrees();
@@ -125,6 +127,16 @@ public class CoralIntake extends MotorSubsystem {
         return calculateVisualizationPose()
                 .transformBy(getVisualizationToRealPitchTransform())
                 .transformBy(CoralIntakeConstants.CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_VISUALIZATION_TRANSFORM);
+    }
+
+    void prepareForState(CoralIntakeConstants.CoralIntakeState targetState) {
+        this.targetState = targetState;
+
+        setTargetState(
+                0,
+                0,
+                targetState.targetAngle
+        );
     }
 
     void setTargetState(CoralIntakeConstants.CoralIntakeState targetState) {
