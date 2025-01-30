@@ -255,7 +255,8 @@ public class GripperConstants {
         PREPARE_L4(Rotation2d.fromDegrees(55), 0),
         PREPARE_L3_OR_L2(Rotation2d.fromDegrees(55), 0),
         LOAD_CORAL(Rotation2d.fromDegrees(-50), 7),
-        PREPARE_FOR_LOADING_CORAL(Rotation2d.fromDegrees(-50), 0),
+        PREPARE_FOR_LOADING_CORAL(LOAD_CORAL.targetAngle, 0),
+        UNLOAD_CORAL(Rotation2d.fromDegrees(-50), -7),
         COLLECT_FROM_FEEDER(Rotation2d.fromDegrees(90), -3),
         OPEN_FOR_ELEVATOR_MINIMUM(Rotation2d.fromDegrees(-35), 0),
         AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0);

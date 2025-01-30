@@ -74,9 +74,17 @@ public class CoralPlacingCommands {
 
     private static Command getCoralIntakeScoringSequnceCommand() {
         return new SequentialCommandGroup(
+                getUnloadCoralCommand(),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_SCORING_IN_L1).until(CoralPlacingCommands::canContinueScoringFromCoralIntake),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_IN_L1)
         );
+    }
+
+    private static Command getUnloadCoralCommand() {
+        return new ParallelCommandGroup(
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.UNLOAD_CORAL),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.UNLOAD_CORAL)
+        ).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
     }
 
     private static Command getManuallyScoreInReefFromElevatorCommand() {

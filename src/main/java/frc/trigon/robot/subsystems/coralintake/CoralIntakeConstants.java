@@ -295,6 +295,7 @@ public class CoralIntakeConstants {
         LOAD_CORAL(-3, -1, Rotation2d.fromDegrees(141)),
         PREPARE_FOR_LOADING_WHILE_GAME_PIECE_NOT_DETECTED(6, 2, LOAD_CORAL.targetAngle),
         PREPARE_FOR_LOADING_WHILE_GAME_PIECE_DETECTED(0, 0, LOAD_CORAL.targetAngle),
+        UNLOAD_CORAL(6, 2, Rotation2d.fromDegrees(141)),
         CENTER_CORAL(6, 2, Rotation2d.fromDegrees(141)),
         COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-42.5)),
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(95)),
