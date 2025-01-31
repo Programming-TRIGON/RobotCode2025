@@ -12,7 +12,6 @@ import java.util.function.BooleanSupplier;
  * These are different from {@link CommandConstants} because they create new commands that use some form of logic instead of only constructing an existing command with parameters.
  */
 public class GeneralCommands {
-
     public static Command withoutRequirements(Command command) {
         return new FunctionalCommand(
                 command::initialize,

@@ -30,19 +30,23 @@ public class CoralIntakeConstants {
             FUNNEL_MOTOR_ID = 10,
             ANGLE_MOTOR_ID = 11,
             ANGLE_ENCODER_ID = 11,
-            BEAM_BREAK_PORT = 0;
+            BEAM_BREAK_PORT = 0,
+            DISTANCE_SENSOR_PORT = 0;
     private static final String
             INTAKE_MOTOR_NAME = "CoralIntakeMotor",
             FUNNEL_MOTOR_NAME = "CoralFunnelMotor",
             ANGLE_MOTOR_NAME = "CoralAngleMotor",
             ANGLE_ENCODER_NAME = "CoralAngleEncoder",
-            BEAM_BREAK_NAME = "CoralBeamBreak";
+            BEAM_BREAK_NAME = "CoralBeamBreak",
+            DISTANCE_SENSOR_NAME = "CoralDistanceSensor";
     static final TalonFXMotor
             INTAKE_MOTOR = new TalonFXMotor(INTAKE_MOTOR_ID, INTAKE_MOTOR_NAME),
             FUNNEL_MOTOR = new TalonFXMotor(FUNNEL_MOTOR_ID, FUNNEL_MOTOR_NAME),
             ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
     static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
-    static final SimpleSensor BEAM_BREAK = SimpleSensor.createDigitalSensor(BEAM_BREAK_PORT, BEAM_BREAK_NAME);
+    static final SimpleSensor
+            BEAM_BREAK = SimpleSensor.createDigitalSensor(BEAM_BREAK_PORT, BEAM_BREAK_NAME),
+            DISTANCE_SENSOR = SimpleSensor.createAnalogSensor(DISTANCE_SENSOR_PORT, DISTANCE_SENSOR_NAME);
 
     private static final NeutralModeValue
             INTAKE_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Coast,
@@ -83,6 +87,9 @@ public class CoralIntakeConstants {
     private static final Rotation2d
             ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(-0.128662 - ANGLE_ENCODER_POSITION_OFFSET_VALUE),
             ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(0.39 - ANGLE_ENCODER_POSITION_OFFSET_VALUE);
+    private static final double
+            DISTANCE_SENSOR_SCALING_SLOPE = 0.0002,
+            DISTANCE_SENSOR_SCALING_INTERCEPT_POINT = -200;
     static final boolean FOC_ENABLED = true;
 
     private static final int
@@ -161,18 +168,18 @@ public class CoralIntakeConstants {
     );
 
     public static final double COLLECTION_LEDS_BLINKING_SPEED = 0.5;
-    private static final double CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS = 0.5;
+    private static final double CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS = 0.65;
     static final BooleanEvent CORAL_COLLECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             BEAM_BREAK::getBinaryValue
     ).debounce(CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS);
     private static final double
-            CORAL_DETECTION_CURRENT = RobotHardwareStats.isSimulation() ? 100 : 23,
-            CORAL_DETECTION_TIME_THRESHOLD_SECONDS = 0.26;
+            EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETERS = RobotHardwareStats.isSimulation() ? 100 : 23,
+            EARLY_COLLECTION_DETECTION_TIME_THRESHOLD_SECONDS = 0.26;
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
-            () -> Math.abs(INTAKE_MOTOR.getSignal(TalonFXSignal.STATOR_CURRENT)) > CORAL_DETECTION_CURRENT
-    ).debounce(CORAL_DETECTION_TIME_THRESHOLD_SECONDS);
+            () -> DISTANCE_SENSOR.getScaledValue() < EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETERS
+    ).debounce(EARLY_COLLECTION_DETECTION_TIME_THRESHOLD_SECONDS);
     public static final double
             COLLECTION_RUMBLE_DURATION_SECONDS = 0.1,
             COLLECTION_RUMBLE_POWER = 1;
@@ -184,6 +191,7 @@ public class CoralIntakeConstants {
         configureAngleMotor();
         configureAngleEncoder();
         configureBeamBreak();
+        configureDistanceSensor();
     }
 
     private static void configureIntakeMotor() {
@@ -291,13 +299,18 @@ public class CoralIntakeConstants {
         BEAM_BREAK.setSimulationSupplier(BEAM_BREAK_SIMULATION_VALUE_SUPPLIER);
     }
 
+    private static void configureDistanceSensor() {
+        DISTANCE_SENSOR.setScalingConstants(DISTANCE_SENSOR_SCALING_SLOPE, DISTANCE_SENSOR_SCALING_INTERCEPT_POINT);
+        DISTANCE_SENSOR.setSimulationSupplier(() -> 1000);
+    }
+
     public enum CoralIntakeState {
         LOAD_CORAL_TO_GRIPPER(-3, -1, Rotation2d.fromDegrees(141)),
         PREPARE_FOR_LOADING_TO_GRIPPER_WHILE_GAME_PIECE_NOT_DETECTED(6, 2, LOAD_CORAL_TO_GRIPPER.targetAngle),
         UNLOAD_CORAL_FROM_GRIPPER(6, 2, Rotation2d.fromDegrees(141)),
         CENTER_CORAL(6, 2, Rotation2d.fromDegrees(141)),
-        COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-42.5)),
-        COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(95)),
+        COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-45.5)),
+        COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(90)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
         REST(0, 0, Rotation2d.fromDegrees(141)),
         SCORE_L1(-3, -1, Rotation2d.fromDegrees(45));

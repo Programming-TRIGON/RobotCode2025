@@ -10,10 +10,8 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
-import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
-import frc.trigon.robot.commands.commandfactories.CoralPlacementCommands;
-import frc.trigon.robot.commands.commandfactories.EjectionCommands;
-import frc.trigon.robot.commands.commandfactories.GeneralCommands;
+import frc.trigon.robot.commands.commandfactories.*;
+import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
@@ -27,13 +25,15 @@ import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.Gripper;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
-import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.Swerve;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
 
 public class RobotContainer {
-    public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator();
+    public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator(
+            CameraConstants.LEFT_REEF_TAG_CAMERA,
+            CameraConstants.RIGHT_REEF_TAG_CAMERA
+    );
     public static final Swerve SWERVE = new Swerve();
     public static final CoralIntake CORAL_INTAKE = new CoralIntake();
     public static final Elevator ELEVATOR = new Elevator();
@@ -73,7 +73,7 @@ public class RobotContainer {
     }
 
     private void bindDefaultCommands() {
-//        SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
+        SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
         CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         GRIPPER.setDefaultCommand(GripperCommands.getDefaultCommand());
@@ -88,10 +88,10 @@ public class RobotContainer {
         OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CoralIntakeCommands.getDebuggingCommand());
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
         OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionCommand());
-        OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacementCommands.getScoreInReefCommand());
+        OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
-        OperatorConstants.UNLOAD_CORAL_TRIGGER.whileTrue(CoralPlacementCommands.getUnloadCoralCommand());
-        OperatorConstants.COLLECT_ALGAE_TRIGGER.whileTrue(GripperCommands.getCollectAlgaeCommand(GripperConstants.TARGET_ALGAE_COLLECTION_ANGLE, GripperConstants.TARGET_ALGAE_COLLECTION_CURRENT));
+        OperatorConstants.UNLOAD_CORAL_TRIGGER.whileTrue(CoralPlacingCommands.getUnloadCoralCommand());
+        OperatorConstants.COLLECT_ALGAE_TRIGGER.whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
     }
 
     private void bindSetters() {

@@ -20,7 +20,7 @@ import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.utilities.flippable.FlippablePose2d;
 
-public class CoralPlacementCommands {
+public class CoralPlacingCommands {
     public static boolean SHOULD_SCORE_AUTONOMOUSLY = false;
     public static ScoringLevel TARGET_SCORING_LEVEL = ScoringLevel.L4;
     public static FieldConstants.ReefClockPosition TARGET_REEF_SCORING_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_6_OCLOCK;
@@ -75,7 +75,7 @@ public class CoralPlacementCommands {
     private static Command getCoralIntakeScoringSequnceCommand() {
         return new SequentialCommandGroup(
                 getUnloadCoralCommand(),
-                CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1).until(CoralPlacementCommands::canContinueScoringFromCoralIntake),
+                CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1).until(CoralPlacingCommands::canContinueScoringFromCoralIntake),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1)
         );
     }
@@ -111,7 +111,7 @@ public class CoralPlacementCommands {
 
     private static Command getGripperScoringSequenceCommand() {
         return new SequentialCommandGroup(
-                GripperCommands.getPrepareForStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacementCommands::canContinueScoringFromElevator),
+                GripperCommands.getPrepareForStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoringFromElevator),
                 GripperCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.gripperState)
         );
     }
@@ -126,7 +126,7 @@ public class CoralPlacementCommands {
     private static Command getAutonomousDriveToReefThenManualDriveCommand() {
         return new SequentialCommandGroup(
                 SwerveCommands.getDriveToPoseCommand(
-                        CoralPlacementCommands::calculateTargetScoringPose,
+                        CoralPlacingCommands::calculateTargetScoringPose,
                         PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
                 ),
                 GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND)

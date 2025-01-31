@@ -10,7 +10,7 @@ import com.pathplanner.lib.pathfinding.Pathfinding;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.AutonomousCommands;
 import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
-import frc.trigon.robot.commands.commandfactories.CoralPlacementCommands;
+import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
@@ -76,9 +76,9 @@ public class PathPlannerConstants {
     }
 
     private static void registerCommands() {
-        NamedCommands.registerCommand("ScoreL2", AutonomousCommands.getScoreInReefFromGripperCommand(CoralPlacementCommands.ScoringLevel.L2));
-        NamedCommands.registerCommand("ScoreL3", AutonomousCommands.getScoreInReefFromGripperCommand(CoralPlacementCommands.ScoringLevel.L3));
-        NamedCommands.registerCommand("ScoreL4", AutonomousCommands.getScoreInReefFromGripperCommand(CoralPlacementCommands.ScoringLevel.L4));
+        NamedCommands.registerCommand("ScoreL2", AutonomousCommands.getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel.L2));
+        NamedCommands.registerCommand("ScoreL3", AutonomousCommands.getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel.L3));
+        NamedCommands.registerCommand("ScoreL4", AutonomousCommands.getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel.L4));
         NamedCommands.registerCommand("RestElevator", ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         NamedCommands.registerCommand("RestCoralIntake", CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         NamedCommands.registerCommand("RestGripper", GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST));
@@ -87,6 +87,6 @@ public class PathPlannerConstants {
         NamedCommands.registerCommand("CollectCoralFromFeeder", AutonomousCommands.getCollectCoralFromFeederCommand());
         NamedCommands.registerCommand("LoadCoral", CoralCollectionCommands.getLoadCoralCommand().until(RobotContainer.GRIPPER::hasGamePiece));
         NamedCommands.registerCommand("AlignToCoral", AutonomousCommands.getAlignToCoralCommand());
-        NamedCommands.registerCommand("ScoreL4Wait", AutonomousCommands.getScoreInReefFromGripperCommand(CoralPlacementCommands.ScoringLevel.L4).until(() -> RobotContainer.ELEVATOR.atTargetState() && RobotContainer.GRIPPER.atTargetAngle()));
+        NamedCommands.registerCommand("ScoreL4Wait", AutonomousCommands.getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel.L4).until(() -> RobotContainer.ELEVATOR.atTargetState() && RobotContainer.GRIPPER.atTargetAngle()));
     }
 }

@@ -40,7 +40,7 @@ public class GripperCommands {
         );
     }
 
-    public static Command getCollectAlgaeCommand(Rotation2d targetAngle, double targetCurrent) {
+    public static Command getSetTargetStateWithCurrentCommand(Rotation2d targetAngle, double targetCurrent) {
         return new StartEndCommand(
                 () -> RobotContainer.GRIPPER.setTargetStateWithCurrent(targetAngle, targetCurrent),
                 RobotContainer.GRIPPER::stop,

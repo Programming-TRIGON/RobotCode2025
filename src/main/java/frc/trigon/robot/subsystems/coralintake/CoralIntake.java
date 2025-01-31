@@ -21,7 +21,9 @@ public class CoralIntake extends MotorSubsystem {
             funnelMotor = CoralIntakeConstants.FUNNEL_MOTOR,
             angleMotor = CoralIntakeConstants.ANGLE_MOTOR;
     private final CANcoderEncoder angleEncoder = CoralIntakeConstants.ANGLE_ENCODER;
-    private final SimpleSensor beamBreak = CoralIntakeConstants.BEAM_BREAK;
+    private final SimpleSensor
+            beamBreak = CoralIntakeConstants.BEAM_BREAK,
+            distanceSensor = CoralIntakeConstants.DISTANCE_SENSOR;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private CoralIntakeConstants.CoralIntakeState targetState = CoralIntakeConstants.CoralIntakeState.REST;
@@ -67,6 +69,7 @@ public class CoralIntake extends MotorSubsystem {
         angleMotor.update();
         angleEncoder.update();
         beamBreak.updateSensor();
+        distanceSensor.updateSensor();
         Logger.recordOutput("CoralIntake/CurrentAngleDegrees", getCurrentEncoderAngle().getDegrees());
     }
 
@@ -96,13 +99,6 @@ public class CoralIntake extends MotorSubsystem {
         return CoralIntakeConstants.CORAL_COLLECTION_BOOLEAN_EVENT.getAsBoolean();
     }
 
-    /**
-     * Checks if a coral has been collected early using the motor's current.
-     * This is quicker than {@linkplain CoralIntake#hasGamePiece()} since it updates from the change in current (which happens right when we hit the coral),
-     * instead of the beam break which is positioned later on the system.
-     *
-     * @return whether an early coral collection has been detected
-     */
     public boolean isEarlyCoralCollectionDetected() {
         return CoralIntakeConstants.EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean();
     }
