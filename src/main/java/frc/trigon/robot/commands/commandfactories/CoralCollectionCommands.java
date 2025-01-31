@@ -18,7 +18,7 @@ import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import org.trigon.hardware.misc.leds.LEDCommands;
 
 public class CoralCollectionCommands {
-    public static boolean SHOULD_ALIGN_TO_CORAL = true;
+    public static boolean SHOULD_ALIGN_TO_CORAL = false;
 
     public static Command getFloorCoralCollectionCommand() {
         return getInitiateFloorCoralCollectionCommand().unless(RobotContainer.GRIPPER::hasGamePiece);

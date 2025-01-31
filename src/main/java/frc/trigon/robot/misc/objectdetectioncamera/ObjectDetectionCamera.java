@@ -1,6 +1,7 @@
 package frc.trigon.robot.misc.objectdetectioncamera;
 
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.misc.objectdetectioncamera.io.PhotonObjectDetectionCameraIO;
@@ -17,6 +18,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
     private final ObjectDetectionCameraIO objectDetectionCameraIO;
     private final String hostname;
     private final Transform3d robotCenterToCamera;
+    private final Timer switchToNewTargetTimer = new Timer();
     private Rotation3d trackedObjectRotation = new Rotation3d();
     private boolean trackedTargetWasVisible = false;
 
@@ -30,6 +32,10 @@ public class ObjectDetectionCamera extends SubsystemBase {
     public void periodic() {
         objectDetectionCameraIO.updateInputs(objectDetectionCameraInputs);
         Logger.processInputs(hostname, objectDetectionCameraInputs);
+    }
+
+    public boolean isCurrentTrackedGamePieceVisibleWithinTimout() {
+        return !switchToNewTargetTimer.hasElapsed(ObjectDetectionCameraConstants.SWITCH_TO_NEW_TARGET_TIMEOUT_SECONDS);
     }
 
     /**
@@ -97,17 +103,24 @@ public class ObjectDetectionCamera extends SubsystemBase {
     public void trackObject(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
         final boolean hasTargets = hasTargets(targetGamePiece);
         if (hasTargets && !trackedTargetWasVisible) {
+            switchToNewTargetTimer.reset();
             trackedTargetWasVisible = true;
             trackedObjectRotation = calculateBestObjectRotation(targetGamePiece);
             return;
         }
 
-        if (!hasTargets) {
+        if (!isCurrentTrackedGamePieceVisibleWithinTimout()) {
             trackedObjectRotation = null;
             trackedTargetWasVisible = false;
             return;
         }
 
+        if (!hasTargets) {
+            switchToNewTargetTimer.start();
+            return;
+        }
+
+        switchToNewTargetTimer.reset();
         trackedObjectRotation = calculateTrackedObjectYaw(targetGamePiece);
     }
 

@@ -71,6 +71,7 @@ public class CoralIntake extends MotorSubsystem {
         beamBreak.updateSensor();
         distanceSensor.updateSensor();
         Logger.recordOutput("CoralIntake/CurrentAngleDegrees", getCurrentEncoderAngle().getDegrees());
+        Logger.recordOutput("CoralIntake/DistanceSensorDetectedDistanceCentimeters", distanceSensor.getScaledValue());
     }
 
     @Override

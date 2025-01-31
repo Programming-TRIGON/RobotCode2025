@@ -31,7 +31,7 @@ public class CoralIntakeConstants {
             ANGLE_MOTOR_ID = 11,
             ANGLE_ENCODER_ID = 11,
             BEAM_BREAK_PORT = 0,
-            DISTANCE_SENSOR_PORT = 0;
+            DISTANCE_SENSOR_PORT = 1;
     private static final String
             INTAKE_MOTOR_NAME = "CoralIntakeMotor",
             FUNNEL_MOTOR_NAME = "CoralFunnelMotor",
@@ -46,7 +46,7 @@ public class CoralIntakeConstants {
     static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
     static final SimpleSensor
             BEAM_BREAK = SimpleSensor.createDigitalSensor(BEAM_BREAK_PORT, BEAM_BREAK_NAME),
-            DISTANCE_SENSOR = SimpleSensor.createAnalogSensor(DISTANCE_SENSOR_PORT, DISTANCE_SENSOR_NAME);
+            DISTANCE_SENSOR = SimpleSensor.createDutyCycleSensor(DISTANCE_SENSOR_PORT, DISTANCE_SENSOR_NAME);
 
     private static final NeutralModeValue
             INTAKE_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Coast,
@@ -174,8 +174,8 @@ public class CoralIntakeConstants {
             BEAM_BREAK::getBinaryValue
     ).debounce(CORAL_COLLECTION_CONFIRMATION_TIME_THRESHOLD_SECONDS);
     private static final double
-            EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETERS = RobotHardwareStats.isSimulation() ? 100 : 23,
-            EARLY_COLLECTION_DETECTION_TIME_THRESHOLD_SECONDS = 0.26;
+            EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETERS = RobotHardwareStats.isSimulation() ? 100 : 17,
+            EARLY_COLLECTION_DETECTION_TIME_THRESHOLD_SECONDS = 0.06;
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             () -> DISTANCE_SENSOR.getScaledValue() < EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETERS
