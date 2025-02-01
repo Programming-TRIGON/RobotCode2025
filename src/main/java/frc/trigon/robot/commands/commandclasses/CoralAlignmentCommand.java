@@ -36,7 +36,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
                 GeneralCommands.getContinuousConditionalCommand(
                         getDriveWhileAligningToCoralCommand(),
                         GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND),
-                        CAMERA::isCurrentTrackedGamePieceVisibleWithinTimout
+                        CAMERA::isCurrentTrackedGamePieceVisibleWithinTimeout
                 ),
                 getTrackCoralCommand()
         );
