@@ -140,15 +140,6 @@ public class Swerve extends MotorSubsystem {
     }
 
     /**
-     * Drives the swerve to a certain angular velocity. Used for Wheel Radius Characterization.
-     *
-     * @param omegaRadiansPerSecond the target angular velocity in radians per second
-     */
-    public void runWheelRadiusCharacterization(double omegaRadiansPerSecond) {
-        selfRelativeDrive(new ChassisSpeeds(0, 0, omegaRadiansPerSecond));
-    }
-
-    /**
      * Drives the swerve with robot-relative targetSpeeds without using setpoint generation.
      * Used for PathPlanner because it generates setpoints automatically.
      *

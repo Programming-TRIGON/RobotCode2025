@@ -1,6 +1,9 @@
 package frc.trigon.robot.misc.objectdetectioncamera;
 
-import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.trigon.robot.RobotContainer;
@@ -32,6 +35,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
     public void periodic() {
         objectDetectionCameraIO.updateInputs(objectDetectionCameraInputs);
         Logger.processInputs(hostname, objectDetectionCameraInputs);
+//        for (Rotation3d currentCoral : getTargetObjectsRotations(SimulatedGamePieceConstants.GamePieceType.CORAL.id))
     }
 
     public boolean isCurrentTrackedGamePieceVisibleWithinTimout() {
@@ -49,8 +53,10 @@ public class ObjectDetectionCamera extends SubsystemBase {
     public Translation2d calculateTrackedObjectPositionOnField() {
         if (trackedObjectRotation == null)
             return null;
-        Logger.recordOutput("TrackedObjectPosition", new Translation3d(calculateObjectPositionFromRotation(trackedObjectRotation)));
-        return calculateObjectPositionFromRotation(trackedObjectRotation);
+
+        final Translation2d trackedObjectPosition = calculateObjectPositionFromRotation(trackedObjectRotation);
+//        Logger.recordOutput("TrackedObjectPosition", new Translation3d(trackedObjectPosition));
+        return trackedObjectPosition;
     }
 
     /**

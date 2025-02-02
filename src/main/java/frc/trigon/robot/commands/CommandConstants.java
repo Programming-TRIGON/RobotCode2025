@@ -63,7 +63,7 @@ public class CommandConstants {
                     PathPlannerConstants.ROBOT_CONFIG.moduleLocations,
                     RobotContainer.SWERVE::getDriveWheelPositionsRadians,
                     () -> RobotContainer.SWERVE.getHeading().getRadians(),
-                    RobotContainer.SWERVE::runWheelRadiusCharacterization,
+                    (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond)),
                     RobotContainer.SWERVE
             ),
             CALCULATE_CAMERA_POSITION_COMMAND = new CameraPositionCalculationCommand(

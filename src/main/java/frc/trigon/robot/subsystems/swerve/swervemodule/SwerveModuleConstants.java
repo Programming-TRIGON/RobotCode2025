@@ -33,18 +33,17 @@ public class SwerveModuleConstants {
             DRIVE_MOTOR_SLIP_CURRENT = PathPlannerConstants.ROBOT_CONFIG.moduleConfig.driveCurrentLimit, // TODO: calibrate right before competition
             STEER_MOTOR_CURRENT_LIMIT = RobotHardwareStats.isSimulation() ? 200 : 30;
     private static final double
-            STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 50,
+            STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 55,
             STEER_MOTOR_I = 0,
             STEER_MOTOR_D = 0;
     private static final double
-            DRIVE_MOTOR_P = RobotHardwareStats.isSimulation() ? 50 : 50,
+            DRIVE_MOTOR_P = RobotHardwareStats.isSimulation() ? 50 : 20,
             DRIVE_MOTOR_I = 0,
             DRIVE_MOTOR_D = 0,
-            DRIVE_MOTOR_KS = RobotHardwareStats.isSimulation() ? 0.4708 : 0,
+            DRIVE_MOTOR_KS = RobotHardwareStats.isSimulation() ? 0.4708 : 6.8,
             DRIVE_MOTOR_KV = RobotHardwareStats.isSimulation() ? 0 : 0,
             DRIVE_MOTOR_KA = RobotHardwareStats.isSimulation() ? 0.48818 : 0;
     static final boolean ENABLE_FOC = true;
-    static final double WHEEL_DIAMETER_METERS = PathPlannerConstants.ROBOT_CONFIG.moduleConfig.wheelRadiusMeters * 2;
     static final TalonFXConfiguration
             DRIVE_MOTOR_CONFIGURATION = generateDriveMotorConfiguration(),
             STEER_MOTOR_CONFIGURATION = generateSteerMotorConfiguration();
@@ -60,11 +59,11 @@ public class SwerveModuleConstants {
             DRIVE_MOTOR_GEARBOX = DCMotor.getKrakenX60Foc(DRIVE_MOTOR_AMOUNT),
             STEER_MOTOR_GEARBOX = DCMotor.getFalcon500Foc(STEER_MOTOR_AMOUNT);
 
-    public static final double MAXIMUM_MODULE_ROTATIONAL_SPEED_RADIANS_PER_SECOND = edu.wpi.first.math.util.Units.rotationsToRadians(10); //TODO: calibrate
+    public static final double MAXIMUM_MODULE_ROTATIONAL_SPEED_RADIANS_PER_SECOND = edu.wpi.first.math.util.Units.rotationsToRadians(7); //TODO: calibrate
     static final double VOLTAGE_COMPENSATION_SATURATION = 12;
     public static final SysIdRoutine.Config DRIVE_MOTOR_SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(1).per(Units.Second),
-            Units.Volts.of(3),
+            Units.Volts.of(5),
             Units.Second.of(1000)
     );
 
@@ -112,6 +111,8 @@ public class SwerveModuleConstants {
         config.Slot0.kS = DRIVE_MOTOR_KS;
         config.Slot0.kV = DRIVE_MOTOR_KV;
         config.Slot0.kA = DRIVE_MOTOR_KA;
+
+        config.Feedback.VelocityFilterTimeConstant = 0.03;
 
         return config;
     }

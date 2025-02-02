@@ -27,16 +27,17 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
             new PIDController(0.5, 0, 0) :
             new PIDController(0.6, 0, 0);
     private static final ObjectDetectionCamera CAMERA = CameraConstants.OBJECT_DETECTION_CAMERA;
-    private Translation2d targetCoralTranslation = new Translation2d(0, 0);
+    private Translation2d targetCoralTranslation = null;
 
     public CoralAlignmentCommand() {
         addCommands(
                 new InstantCommand(CAMERA::initializeTracking),
+                new InstantCommand(() -> targetCoralTranslation = null),
                 getSetLEDColorsCommand(),
                 GeneralCommands.getContinuousConditionalCommand(
                         getDriveWhileAligningToCoralCommand(),
                         GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND),
-                        CAMERA::isCurrentTrackedGamePieceVisibleWithinTimout
+                        () -> targetCoralTranslation != null
                 ),
                 getTrackCoralCommand()
         );
@@ -45,7 +46,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
     private Command getTrackCoralCommand() {
         return new RunCommand(() -> {
             CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL);
-            if (CAMERA.getTrackedObjectRotation() != null)
+            if (CAMERA.getTrackedObjectRotation() != null && targetCoralTranslation == null)
                 targetCoralTranslation = CAMERA.calculateTrackedObjectPositionOnField();
         });
     }

@@ -22,14 +22,14 @@ import org.trigon.utilities.flippable.FlippablePose2d;
 
 public class CoralPlacingCommands {
     public static boolean SHOULD_SCORE_AUTONOMOUSLY = false;
-    public static ScoringLevel TARGET_SCORING_LEVEL = ScoringLevel.L4;
+    public static ScoringLevel TARGET_SCORING_LEVEL = ScoringLevel.L1_GRIPPER;
     public static FieldConstants.ReefClockPosition TARGET_REEF_SCORING_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_6_OCLOCK;
     public static FieldConstants.ReefSide TARGET_REEF_SCORING_SIDE = FieldConstants.ReefSide.LEFT;
 
     public static Command getScoreInReefCommand() {
         return new ConditionalCommand(
-                getScoreInReefFromCoralIntakeCommand().asProxy(),
-                getScoreInReefFromGripperCommand().asProxy(),
+                getScoreInReefFromCoralIntakeCommand(),
+                getScoreInReefFromGripperCommand(),
                 () -> TARGET_SCORING_LEVEL == ScoringLevel.L1_CORAL_INTAKE
         ).alongWith(
                 getWaitUntilScoringTargetChangesCommand().andThen(
@@ -39,9 +39,11 @@ public class CoralPlacingCommands {
     }
 
     private static Command getWaitUntilScoringTargetChangesCommand() {
-        return new WaitUntilChangeCommand<>(() -> TARGET_SCORING_LEVEL)
-                .raceWith(new WaitUntilChangeCommand<>(() -> TARGET_REEF_SCORING_CLOCK_POSITION))
-                .raceWith(new WaitUntilChangeCommand<>(() -> TARGET_REEF_SCORING_SIDE));
+        return new ParallelRaceGroup(
+                new WaitUntilChangeCommand<>(() -> TARGET_SCORING_LEVEL),
+                new WaitUntilChangeCommand<>(() -> TARGET_REEF_SCORING_CLOCK_POSITION),
+                new WaitUntilChangeCommand<>(() -> TARGET_REEF_SCORING_SIDE)
+        );
     }
 
     private static Command getScoreInReefFromCoralIntakeCommand() {
@@ -59,7 +61,7 @@ public class CoralPlacingCommands {
                 () -> SHOULD_SCORE_AUTONOMOUSLY
         ).finallyDo(
                 (interrupted) -> {
-                    if (interrupted)
+                    if (interrupted && TARGET_SCORING_LEVEL.ordinal() > ScoringLevel.L2.ordinal())
                         getMakeSureGripperDoesntHitReefCommand().schedule();
                 }
         );
@@ -161,11 +163,11 @@ public class CoralPlacingCommands {
      * The x and y transform are used to calculate the target placing position from the middle of the reef.
      */
     public enum ScoringLevel {
-        L1_CORAL_INTAKE(1.3, 0.17, Rotation2d.fromDegrees(180)),
-        L1_GRIPPER(1.3, 0.17, Rotation2d.fromDegrees(0)),
-        L2(1.3, 0.17, Rotation2d.fromDegrees(0)),
-        L3(1.3, 0.17, Rotation2d.fromDegrees(0)),
-        L4(1.3, 0.17, Rotation2d.fromDegrees(0));
+        L1_CORAL_INTAKE(1.38, 0.14, Rotation2d.fromDegrees(180)),
+        L1_GRIPPER(1.38, 0.14, Rotation2d.fromDegrees(0)),
+        L2(1.5, 0.14, Rotation2d.fromDegrees(0)),
+        L3(L2.xTransformMeters, 0.14, Rotation2d.fromDegrees(0)),
+        L4(L2.xTransformMeters, 0.14, Rotation2d.fromDegrees(0));
 
         final double xTransformMeters, positiveYTransformMeters;
         final Rotation2d rotationTransform;

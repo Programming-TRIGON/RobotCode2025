@@ -25,8 +25,9 @@ public class SwerveModule {
             steerMotor;
     private final CANcoderEncoder steerEncoder;
     private final PositionVoltage steerPositionRequest = new PositionVoltage(0).withEnableFOC(SwerveModuleConstants.ENABLE_FOC);
+    private final double wheelDiameter;
     private final VelocityTorqueCurrentFOC driveVelocityRequest = new VelocityTorqueCurrentFOC(0);
-    private final VoltageOut driveVoltageRequest = new VoltageOut(0);
+    private final VoltageOut driveVoltageRequest = new VoltageOut(0).withEnableFOC(SwerveModuleConstants.ENABLE_FOC);
     private final TorqueCurrentFOC driveTorqueCurrentFOCRequest = new TorqueCurrentFOC(0);
     private boolean shouldDriveMotorUseClosedLoop = false;
     private SwerveModuleState targetState = new SwerveModuleState();
@@ -39,11 +40,13 @@ public class SwerveModule {
      *
      * @param moduleID        the ID of the module
      * @param offsetRotations the module's encoder offset in rotations
+     * @param wheelDiameter   the diameter of the wheel
      */
-    public SwerveModule(int moduleID, double offsetRotations) {
+    public SwerveModule(int moduleID, double offsetRotations, double wheelDiameter) {
         driveMotor = new TalonFXMotor(moduleID, "Module" + moduleID + "Drive", RobotConstants.CANIVORE_NAME);
         steerMotor = new TalonFXMotor(moduleID + 4, "Module" + moduleID + "Steer", RobotConstants.CANIVORE_NAME);
         steerEncoder = new CANcoderEncoder(moduleID + 4, "Module" + moduleID + "SteerEncoder", RobotConstants.CANIVORE_NAME);
+        this.wheelDiameter = wheelDiameter;
 
         configureHardware(offsetRotations);
     }
@@ -64,7 +67,7 @@ public class SwerveModule {
         log.motor("Module" + driveMotor.getID() + "Drive")
                 .angularPosition(Units.Rotations.of(driveMotor.getSignal(TalonFXSignal.POSITION)))
                 .angularVelocity(Units.RotationsPerSecond.of(driveMotor.getSignal(TalonFXSignal.VELOCITY)))
-                .voltage(Units.Volts.of(driveMotor.getSignal(TalonFXSignal.TORQUE_CURRENT)));
+                .voltage(Units.Volts.of(driveMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
     /**
@@ -166,7 +169,7 @@ public class SwerveModule {
      * @return the distance the drive wheel has traveled in meters
      */
     private double driveWheelRotationsToMeters(double rotations) {
-        return Conversions.rotationsToDistance(rotations, SwerveModuleConstants.WHEEL_DIAMETER_METERS);
+        return Conversions.rotationsToDistance(rotations, wheelDiameter);
     }
 
     /**
@@ -176,7 +179,7 @@ public class SwerveModule {
      * @return the distance the drive wheel has traveled in drive wheel rotations
      */
     private double metersToDriveWheelRotations(double meters) {
-        return Conversions.distanceToRotations(meters, SwerveModuleConstants.WHEEL_DIAMETER_METERS);
+        return Conversions.distanceToRotations(meters, wheelDiameter);
     }
 
     private void configureHardware(double offsetRotations) {

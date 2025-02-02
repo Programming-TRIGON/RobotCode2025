@@ -7,6 +7,7 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import edu.wpi.first.math.util.Units;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.AutonomousCommands;
 import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
@@ -28,7 +29,7 @@ import java.io.IOException;
  * A class that contains the constants and configurations for everything related to PathPlanner.
  */
 public class PathPlannerConstants {
-    public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(4, 4, 6, 6);
+    public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(4, 3.5, Units.degreesToRadians(400), Units.degreesToRadians(250.000));
     public static final double MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR = 1.5;
     public static final RobotConfig ROBOT_CONFIG = getRobotConfig();
 

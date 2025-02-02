@@ -29,7 +29,8 @@ public class AprilTagCameraIO {
     public static class AprilTagCameraInputs {
         public boolean hasResult = false;
         public double latestResultTimestampSeconds = 0;
-        public Pose3d cameraSolvePNPPose = new Pose3d();
+        public Pose3d bestCameraSolvePNPPose = new Pose3d();
+        public Pose3d alternateCameraSolvePNPPose = new Pose3d();
         public int[] visibleTagIDs = new int[0];
         public double poseAmbiguity = 0;
         public double[] distancesFromTags = new double[0];
