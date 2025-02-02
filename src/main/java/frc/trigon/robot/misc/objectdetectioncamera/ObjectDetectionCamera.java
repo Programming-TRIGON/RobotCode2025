@@ -35,10 +35,11 @@ public class ObjectDetectionCamera extends SubsystemBase {
     public void periodic() {
         objectDetectionCameraIO.updateInputs(objectDetectionCameraInputs);
         Logger.processInputs(hostname, objectDetectionCameraInputs);
-//        for (Rotation3d currentCoral : getTargetObjectsRotations(SimulatedGamePieceConstants.GamePieceType.CORAL.id))
+
+        logVisibleObjects();
     }
 
-    public boolean isCurrentTrackedGamePieceVisibleWithinTimout() {
+    public boolean isCurrentTrackedGamePieceVisibleWithinTimeout() {
         return !switchToNewTargetTimer.hasElapsed(ObjectDetectionCameraConstants.SWITCH_TO_NEW_TARGET_TIMEOUT_SECONDS);
     }
 
@@ -115,7 +116,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
             return;
         }
 
-        if (!isCurrentTrackedGamePieceVisibleWithinTimout()) {
+        if (!isCurrentTrackedGamePieceVisibleWithinTimeout()) {
             trackedObjectRotation = null;
             trackedTargetWasVisible = false;
             return;
@@ -187,6 +188,22 @@ public class ObjectDetectionCamera extends SubsystemBase {
 
     private Rotation3d[] getTargetObjectsRotations(int objectID) {
         return objectDetectionCameraInputs.visibleObjectRotations[objectID];
+    }
+
+    private void logVisibleObjects() {
+        for (int i = 0; i < SimulatedGamePieceConstants.GamePieceType.values().length; i++)
+            logVisibleTargetObject(i);
+    }
+
+    private void logVisibleTargetObject(int targetID) {
+        final Rotation3d[] visibleTargetObjectRotations = getTargetObjectsRotations(targetID);
+        final Pose2d[] visibleTargetObjectPoses = new Pose2d[visibleTargetObjectRotations.length];
+        for (int i = 0; i < visibleTargetObjectPoses.length; i++) {
+            final Rotation3d objectRotation = visibleTargetObjectRotations[i];
+            final Translation2d objectPose = calculateObjectPositionFromRotation(objectRotation);
+            visibleTargetObjectPoses[i] = new Pose2d(objectPose, objectRotation.toRotation2d());
+        }
+        Logger.recordOutput("Visible" + SimulatedGamePieceConstants.GamePieceType.getNameFromID(targetID), visibleTargetObjectPoses);
     }
 
     private ObjectDetectionCameraIO generateIO(String hostname, Transform3d robotCenterToCamera) {
