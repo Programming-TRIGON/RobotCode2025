@@ -74,7 +74,14 @@ public class CoralCollectionCommands {
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.LOAD_CORAL),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
                 getCoralIntakeLoadingSequnceCommand()
-        ).until(CoralCollectionCommands::shouldStopLoadingCoral).withInterruptBehavior(Command.InterruptionBehavior.kCancelIncoming);
+        ).unless(CoralCollectionCommands::shouldStopLoadingCoral).until(CoralCollectionCommands::shouldStopLoadingCoral);
+    }
+
+    public static Command getUnloadCoralCommand() {
+        return new ParallelCommandGroup(
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.UNLOAD_CORAL),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.UNLOAD_CORAL_FROM_GRIPPER)
+        ).unless(RobotContainer.CORAL_INTAKE::hasGamePiece).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
     }
 
     private static boolean shouldStopLoadingCoral() {

@@ -35,7 +35,7 @@ def turn_off_keys_with_delay():
             lock.release()
 
 def on_action(event: keyboard.KeyboardEvent):
-    if event.name == "/":
+    if event == None or event.name == None or event.name == "/":
         return
 
     key = ""

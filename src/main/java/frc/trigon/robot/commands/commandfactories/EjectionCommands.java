@@ -12,9 +12,9 @@ import frc.trigon.robot.subsystems.gripper.GripperConstants;
 public class EjectionCommands {
     public static Command getEjectCoralCommand() {
         return new ConditionalCommand(
-                getEjectCoralFromCoralIntakeCommand(),
                 getEjectCoralFromGripperCommand(),
-                RobotContainer.CORAL_INTAKE::hasGamePiece
+                getEjectCoralFromCoralIntakeCommand(),
+                RobotContainer.GRIPPER::hasGamePiece
         );
     }
 

@@ -137,15 +137,16 @@ public class SwerveCommands {
     private static Command getCurrentDriveToPoseCommand(FlippablePose2d targetPose, PathConstraints constraints) {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> RobotContainer.SWERVE.initializeDrive(true)),
-                getPathfindToPoseCommand(targetPose, constraints)
+                getPathfindToPoseCommand(targetPose, constraints),
+                getPIDToPoseCommand(targetPose)
         );
     }
 
     private static Command getPathfindToPoseCommand(FlippablePose2d targetPose, PathConstraints pathConstraints) {
         final Pose2d targetFlippedPose = targetPose.get();
-        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
-        if (currentPose.getTranslation().getDistance(targetFlippedPose.getTranslation()) < 0.35)
-            return createOnTheFlyPathCommand(targetPose, pathConstraints);
+//        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+//        if (currentPose.getTranslation().getDistance(targetFlippedPose.getTranslation()) < 0.35)
+//            return createOnTheFlyPathCommand(targetPose, pathConstraints);
         return AutoBuilder.pathfindToPose(targetFlippedPose, pathConstraints);
     }
 

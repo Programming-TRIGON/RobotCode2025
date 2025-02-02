@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import frc.trigon.robot.constants.RobotConstants;
 import frc.trigon.robot.poseestimation.poseestimator.PoseEstimatorConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveConstants;
+import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
@@ -29,7 +30,7 @@ public class SwerveModule {
     private final VelocityTorqueCurrentFOC driveVelocityRequest = new VelocityTorqueCurrentFOC(0);
     private final VoltageOut driveVoltageRequest = new VoltageOut(0).withEnableFOC(SwerveModuleConstants.ENABLE_FOC);
     private final TorqueCurrentFOC driveTorqueCurrentFOCRequest = new TorqueCurrentFOC(0);
-    private boolean shouldDriveMotorUseClosedLoop = false;
+    private boolean shouldDriveMotorUseClosedLoop = true;
     private SwerveModuleState targetState = new SwerveModuleState();
     private double[]
             latestOdometryDrivePositions,
@@ -51,11 +52,15 @@ public class SwerveModule {
         configureHardware(offsetRotations);
     }
 
-    public void setTargetState(SwerveModuleState targetState) {
+    public void setTargetState(SwerveModuleState targetState, double t) {
+        var delta = targetState.angle.minus(getCurrentAngle());
+        if (Math.abs(delta.getDegrees()) > 90.0) {
+            t *= -1;
+        }
         targetState.optimize(getCurrentAngle());
         this.targetState = targetState;
         setTargetAngle(targetState.angle);
-        setTargetVelocity(targetState.speedMetersPerSecond);
+        setTargetVelocity(targetState.speedMetersPerSecond, t);
     }
 
     public void setBrake(boolean brake) {
@@ -138,18 +143,19 @@ public class SwerveModule {
      *
      * @param targetVelocityMetersPerSecond the target velocity, in meters per second
      */
-    private void setTargetVelocity(double targetVelocityMetersPerSecond) {
+    private void setTargetVelocity(double targetVelocityMetersPerSecond, double t) {
         if (shouldDriveMotorUseClosedLoop) {
-            setTargetClosedLoopVelocity(targetVelocityMetersPerSecond);
+            setTargetClosedLoopVelocity(targetVelocityMetersPerSecond, t);
             return;
         }
 
         setTargetOpenLoopVelocity(targetVelocityMetersPerSecond);
     }
 
-    private void setTargetClosedLoopVelocity(double targetVelocityMetersPerSecond) {
+    private void setTargetClosedLoopVelocity(double targetVelocityMetersPerSecond, double t) {
         final double targetVelocityRotationsPerSecond = metersToDriveWheelRotations(targetVelocityMetersPerSecond);
-        driveMotor.setControl(driveVelocityRequest.withVelocity(targetVelocityRotationsPerSecond));
+        driveMotor.setControl(driveVelocityRequest.withVelocity(targetVelocityRotationsPerSecond).withFeedForward((metersToDriveWheelRotations(t) * 1.1) + 6.8));
+        Logger.recordOutput("TEST" + steerEncoder.getID(), driveVelocityRequest.FeedForward);
     }
 
     private void setTargetOpenLoopVelocity(double targetVelocityMetersPerSecond) {

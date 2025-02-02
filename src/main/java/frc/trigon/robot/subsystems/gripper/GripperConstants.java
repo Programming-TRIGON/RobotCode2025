@@ -8,7 +8,9 @@ import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.event.BooleanEvent;
 import edu.wpi.first.wpilibj.util.Color;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.misc.simulatedfield.SimulationFieldHandler;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
@@ -152,9 +154,14 @@ public class GripperConstants {
     static final double SCORE_IN_REEF_FOR_AUTO_VOLTAGE = -5;
     static final double MINIMUM_VOLTAGE_FOR_EJECTING = -3;
     static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-36);
-    static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
     public static final Rotation2d ALGAE_COLLECTION_ANGLE = Rotation2d.fromDegrees(35);
     public static final double ALGAE_COLLECTION_CURRENT = -30;
+    private static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
+    private static final double COLLECTION_DETECTION_TIME_THRESHOLD_SECONDS = 0.14;
+    static final BooleanEvent COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
+            CommandScheduler.getInstance().getActiveButtonLoop(),
+            () -> LASER_CAN.hasResult() && LASER_CAN.getDistanceMillimeters() < GripperConstants.GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS
+    ).debounce(COLLECTION_DETECTION_TIME_THRESHOLD_SECONDS);
 
     static {
         configureGrippingMotor();

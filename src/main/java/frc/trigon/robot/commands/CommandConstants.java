@@ -53,23 +53,24 @@ public class CommandConstants {
                     () -> calculateRotationStickAxisValue(DRIVER_CONTROLLER.getRightX())
             ),
             RESET_HEADING_COMMAND = new InstantCommand(() -> RobotContainer.POSE_ESTIMATOR.resetPose(changeRotation(new FlippablePose2d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose(), false), new Rotation2d()).get())),
-            SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND = SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                    () -> getXPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
-                    () -> getYPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
-                    () -> 0
-            ),
+    //    RESET_HEADING_COMMAND = new InstantCommand(() -> RobotContainer.POSE_ESTIMATOR.resetPose(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose())),
+    SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND = SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+            () -> getXPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
+            () -> getYPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
+            () -> 0
+    ),
             STATIC_WHITE_LED_COLOR_COMMAND = LEDCommands.getStaticColorCommand(Color.kWhite, LEDStrip.LED_STRIPS),
             WHEEL_RADIUS_CHARACTERIZATION_COMMAND = new WheelRadiusCharacterizationCommand(
                     PathPlannerConstants.ROBOT_CONFIG.moduleLocations,
                     RobotContainer.SWERVE::getDriveWheelPositionsRadians,
                     () -> RobotContainer.SWERVE.getHeading().getRadians(),
-                    (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond)),
+                    (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),
                     RobotContainer.SWERVE
             ),
             CALCULATE_CAMERA_POSITION_COMMAND = new CameraPositionCalculationCommand(
                     CameraConstants.RIGHT_REEF_TAG_CAMERA::getEstimatedRobotPose,
                     Rotation2d.fromDegrees(160),
-                    (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond)),
+                    (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),
                     RobotContainer.SWERVE
             ),
             COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER));

@@ -89,7 +89,7 @@ public class Gripper extends MotorSubsystem {
     }
 
     public boolean hasGamePiece() {
-        return laserCAN.hasResult() && laserCAN.getDistanceMillimeters() < GripperConstants.GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS;
+        return GripperConstants.COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean();
     }
 
     public boolean atState(GripperConstants.GripperState targetState) {

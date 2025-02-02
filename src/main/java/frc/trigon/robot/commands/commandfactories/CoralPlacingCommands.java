@@ -76,31 +76,30 @@ public class CoralPlacingCommands {
 
     private static Command getCoralIntakeScoringSequnceCommand() {
         return new SequentialCommandGroup(
-                getUnloadCoralCommand(),
+                CoralCollectionCommands.getUnloadCoralCommand(),
                 CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1).until(CoralPlacingCommands::canContinueScoringFromCoralIntake),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1)
         );
     }
 
-    public static Command getUnloadCoralCommand() {
-        return new ParallelCommandGroup(
-                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.UNLOAD_CORAL),
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.UNLOAD_CORAL_FROM_GRIPPER)
-        ).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
-    }
-
     private static Command getManuallyScoreInReefFromGripperCommand() {
-        return new ParallelCommandGroup(
-                ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
-                getGripperScoringSequenceCommand()
+        return CoralCollectionCommands.getLoadCoralCommand().andThen(
+                new ParallelCommandGroup(
+                        ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
+                        getGripperScoringSequenceCommand()
+                )
         );
     }
 
     private static Command getAutonomouslyScoreInReefFromGripperCommand() {
         return new ParallelCommandGroup(
-                getOpenElevatorWhenCloseToReefCommand(),
-                getAutonomousDriveToReefThenManualDriveCommand(),
-                getGripperScoringSequenceCommand()
+                CoralCollectionCommands.getLoadCoralCommand().andThen(
+                        new ParallelCommandGroup(
+                                getOpenElevatorWhenCloseToReefCommand(),
+                                getGripperScoringSequenceCommand()
+                        )
+                ),
+                getAutonomousDriveToReefThenManualDriveCommand()
         );
     }
 
@@ -165,9 +164,9 @@ public class CoralPlacingCommands {
     public enum ScoringLevel {
         L1_CORAL_INTAKE(1.38, 0.14, Rotation2d.fromDegrees(180)),
         L1_GRIPPER(1.38, 0.14, Rotation2d.fromDegrees(0)),
-        L2(1.5, 0.14, Rotation2d.fromDegrees(0)),
-        L3(L2.xTransformMeters, 0.14, Rotation2d.fromDegrees(0)),
-        L4(L2.xTransformMeters, 0.14, Rotation2d.fromDegrees(0));
+        L2(1.38, 0.15, Rotation2d.fromDegrees(0)),
+        L3(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0)),
+        L4(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0));
 
         final double xTransformMeters, positiveYTransformMeters;
         final Rotation2d rotationTransform;
