@@ -19,6 +19,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
     private final String hostname;
     private final Transform3d robotCenterToCamera;
     private final Timer switchToNewTargetTimer = new Timer();
+    private Pose2d trackedObjectFieldRelativePose = new Pose2d();
     private Rotation3d trackedObjectRotation = new Rotation3d();
     private boolean trackedTargetWasVisible = false;
 
@@ -53,7 +54,6 @@ public class ObjectDetectionCamera extends SubsystemBase {
             return null;
 
         final Translation2d trackedObjectPosition = calculateObjectPositionFromRotation(trackedObjectRotation);
-//        Logger.recordOutput("TrackedObjectPosition", new Translation3d(trackedObjectPosition));
         return trackedObjectPosition;
     }
 
@@ -158,6 +158,36 @@ public class ObjectDetectionCamera extends SubsystemBase {
         return trackedObjectRotation;
     }
 
+    private void updateTrackedObjectPose(int targetID) {
+        final Pose2d[] targetObjectFieldRelativePoses = getTargetObjectFieldRelativePoses(targetID);
+        final Translation2d previousTrackedObjectTranslation = trackedObjectFieldRelativePose.getTranslation();
+        Pose2d closestObjectToTrackedObjectPose = new Pose2d();
+        double closestObjectToTrackedObjectDistanceMeters = Double.POSITIVE_INFINITY;
+
+        for (Pose2d targetObjectPose : targetObjectFieldRelativePoses) {
+            final double currentToTrackedObjectDistanceMeters = targetObjectPose.getTranslation().getDistance(previousTrackedObjectTranslation);
+            if (currentToTrackedObjectDistanceMeters < closestObjectToTrackedObjectDistanceMeters) {
+                closestObjectToTrackedObjectDistanceMeters = currentToTrackedObjectDistanceMeters;
+                closestObjectToTrackedObjectPose = targetObjectPose;
+            }
+        }
+
+        if (closestObjectToTrackedObjectDistanceMeters <= ObjectDetectionCameraConstants.TRACKED_OBJECT_TOLERANCE_METERS)
+            trackedObjectFieldRelativePose = closestObjectToTrackedObjectPose;
+    }
+
+    private Pose2d[] getTargetObjectFieldRelativePoses(int targetID) {
+        final Rotation3d[] visibleTargetObjectRotations = objectDetectionCameraInputs.visibleObjectRotations[targetID];
+        final Pose2d[] visibleTargetObjectFieldRelativePoses = new Pose2d[visibleTargetObjectRotations.length];
+
+        for (int i = 0; i < visibleTargetObjectRotations.length; i++) {
+            final Translation2d fieldRelativePosition = calculateObjectPositionFromRotation(visibleTargetObjectRotations[i]);
+            visibleTargetObjectFieldRelativePoses[i] = new Pose2d(fieldRelativePosition, visibleTargetObjectRotations[i].toRotation2d());
+        }
+
+        return visibleTargetObjectFieldRelativePoses;
+    }
+
     private double calculateDistance(Rotation3d from, Rotation3d to) {
         return from.minus(to).getAngle();
     }
@@ -189,10 +219,10 @@ public class ObjectDetectionCamera extends SubsystemBase {
 
     private void logVisibleObjects() {
         for (int i = 0; i < SimulatedGamePieceConstants.GamePieceType.values().length; i++)
-            logVisibleTargetObject(i);
+            logVisibleTargetObjects(i);
     }
 
-    private void logVisibleTargetObject(int targetID) {
+    private void logVisibleTargetObjects(int targetID) {
         final Rotation3d[] visibleTargetObjectRotations = getTargetObjectsRotations(targetID);
         final Pose2d[] visibleTargetObjectPoses = new Pose2d[visibleTargetObjectRotations.length];
         for (int i = 0; i < visibleTargetObjectPoses.length; i++) {
