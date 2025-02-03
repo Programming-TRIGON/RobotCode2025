@@ -52,15 +52,15 @@ public class SwerveModule {
         configureHardware(offsetRotations);
     }
 
-    public void setTargetState(SwerveModuleState targetState, double t) {
+    public void setTargetState(SwerveModuleState targetState, double targetAccelerationMetersPerSecondSquared) {
         var delta = targetState.angle.minus(getCurrentAngle());
-        if (Math.abs(delta.getDegrees()) > 90.0) {
-            t *= -1;
-        }
+        if (Math.abs(delta.getDegrees()) > 90.0)
+            targetAccelerationMetersPerSecondSquared *= -1;
+
         targetState.optimize(getCurrentAngle());
         this.targetState = targetState;
         setTargetAngle(targetState.angle);
-        setTargetVelocity(targetState.speedMetersPerSecond, t);
+        setTargetVelocity(targetState.speedMetersPerSecond, targetAccelerationMetersPerSecondSquared);
     }
 
     public void setBrake(boolean brake) {
@@ -141,20 +141,21 @@ public class SwerveModule {
      * Sets the target velocity for the module.
      * The target velocity is set using either closed loop or open loop depending on {@link this#shouldDriveMotorUseClosedLoop}.
      *
-     * @param targetVelocityMetersPerSecond the target velocity, in meters per second
+     * @param targetVelocityMetersPerSecond            the target velocity, in meters per second
+     * @param targetAccelerationMetersPerSecondSquared the target acceleration of the module in meters per second squared
      */
-    private void setTargetVelocity(double targetVelocityMetersPerSecond, double t) {
+    private void setTargetVelocity(double targetVelocityMetersPerSecond, double targetAccelerationMetersPerSecondSquared) {
         if (shouldDriveMotorUseClosedLoop) {
-            setTargetClosedLoopVelocity(targetVelocityMetersPerSecond, t);
+            setTargetClosedLoopVelocity(targetVelocityMetersPerSecond, targetAccelerationMetersPerSecondSquared);
             return;
         }
 
         setTargetOpenLoopVelocity(targetVelocityMetersPerSecond);
     }
 
-    private void setTargetClosedLoopVelocity(double targetVelocityMetersPerSecond, double t) {
+    private void setTargetClosedLoopVelocity(double targetVelocityMetersPerSecond, double targetAccelerationMetersPerSecondSquared) {
         final double targetVelocityRotationsPerSecond = metersToDriveWheelRotations(targetVelocityMetersPerSecond);
-        driveMotor.setControl(driveVelocityRequest.withVelocity(targetVelocityRotationsPerSecond).withFeedForward((metersToDriveWheelRotations(t) * 1.1) + 6.8));
+        driveMotor.setControl(driveVelocityRequest.withVelocity(targetVelocityRotationsPerSecond).withFeedForward((metersToDriveWheelRotations(targetAccelerationMetersPerSecondSquared) * 1.1) + 6.8));
         Logger.recordOutput("TEST" + steerEncoder.getID(), driveVelocityRequest.FeedForward);
     }
 
