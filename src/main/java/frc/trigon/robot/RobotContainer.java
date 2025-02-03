@@ -70,7 +70,6 @@ public class RobotContainer {
         bindDefaultCommands();
         bindControllerCommands();
         bindSetters();
-//        configureSysIdBindings(SWERVE);
     }
 
     private void bindDefaultCommands() {
