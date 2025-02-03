@@ -46,8 +46,8 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
     private Command getTrackCoralCommand() {
         return new RunCommand(() -> {
             CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL);
-            if (CAMERA.getTrackedObjectRotation() != null && targetCoralTranslation == null)
-                targetCoralTranslation = CAMERA.calculateTrackedObjectPositionOnField();
+            if (CAMERA.getTrackedObjectPositionOnField() != null && targetCoralTranslation == null)
+                targetCoralTranslation = CAMERA.getTrackedObjectPositionOnField();
         });
     }
 
