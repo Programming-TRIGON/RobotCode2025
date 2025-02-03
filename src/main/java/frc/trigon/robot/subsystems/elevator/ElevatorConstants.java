@@ -34,12 +34,12 @@ public class ElevatorConstants {
     private static final double GEAR_RATIO = 7.222222;
     private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = true;
     private static final double
-            P = RobotHardwareStats.isSimulation() ? 40 : 0.07,
+            P = RobotHardwareStats.isSimulation() ? 40 : 0.3,
             I = RobotHardwareStats.isSimulation() ? 0 : 0,
             D = RobotHardwareStats.isSimulation() ? 0.22774 : 0,
             KS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.079427,
-            KV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.86273,
-            KG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.36373,
+            KV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.88,
+            KG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.4,
             KA = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final double
             MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 80 : 10,

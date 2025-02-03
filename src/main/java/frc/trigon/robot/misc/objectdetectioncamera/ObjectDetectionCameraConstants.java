@@ -5,7 +5,6 @@ import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 
 public class ObjectDetectionCameraConstants {
     public static final int NUMBER_OF_GAME_PIECE_TYPES = SimulatedGamePieceConstants.GamePieceType.values().length;
-    public static final Rotation2d BEST_PITCH = Rotation2d.fromDegrees(-38);
-    public static final double SWITCH_TO_NEW_TARGET_TIMEOUT_SECONDS = 0.5;
+    public static final Rotation2d BEST_PITCH = Rotation2d.fromDegrees(-20);
     static final double TRACKED_OBJECT_TOLERANCE_METERS = 0.1;
 }

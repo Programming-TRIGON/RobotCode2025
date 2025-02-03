@@ -153,7 +153,7 @@ public class GripperConstants {
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(2);
     static final double SCORE_IN_REEF_FOR_AUTO_VOLTAGE = -5;
     static final double MINIMUM_VOLTAGE_FOR_EJECTING = -3;
-    static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-36);
+    static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-34);
     public static final Rotation2d ALGAE_COLLECTION_ANGLE = Rotation2d.fromDegrees(35);
     public static final double ALGAE_COLLECTION_CURRENT = -30;
     private static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
@@ -258,14 +258,14 @@ public class GripperConstants {
     }
 
     public enum GripperState {
-        REST(Rotation2d.fromDegrees(-50), 0),
+        REST(Rotation2d.fromDegrees(-56), 0),
         EJECT(Rotation2d.fromDegrees(55), -3),
         SCORE_L4(Rotation2d.fromDegrees(55), -5),
         SCORE_L3_OR_L2(Rotation2d.fromDegrees(55), -5),
         SCORE_L1(Rotation2d.fromDegrees(93), -5),
-        LOAD_CORAL(Rotation2d.fromDegrees(-50), 7),
+        LOAD_CORAL(Rotation2d.fromDegrees(-56), 8),
         UNLOAD_CORAL(Rotation2d.fromDegrees(-50), -3),
-        OPEN_FOR_ELEVATOR_MINIMUM(Rotation2d.fromDegrees(-35), 0),
+        OPEN_FOR_ELEVATOR_MINIMUM(Rotation2d.fromDegrees(-33), 0),
         AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0);
 
         final Rotation2d targetAngle;

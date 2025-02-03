@@ -152,13 +152,13 @@ public class Swerve extends MotorSubsystem {
         }
 
         final SwerveModuleState[] swerveModuleStates = SwerveConstants.KINEMATICS.toSwerveModuleStates(targetSpeeds);
-        final double[] accelerations;
+        final double[] targetAccelerationsMetersPerSecondSquared;
         if (feedforwards == null)
-            accelerations = new double[]{0, 0, 0, 0};
+            targetAccelerationsMetersPerSecondSquared = new double[]{0, 0, 0, 0};
         else
-            accelerations = feedforwards.accelerationsMPSSq();
+            targetAccelerationsMetersPerSecondSquared = feedforwards.accelerationsMPSSq();
 
-        setTargetModuleStates(swerveModuleStates, accelerations);
+        setTargetModuleStates(swerveModuleStates, targetAccelerationsMetersPerSecondSquared);
     }
 
     public Rotation2d getDriveRelativeAngle() {
@@ -267,9 +267,9 @@ public class Swerve extends MotorSubsystem {
         setTargetModuleStates(previousSetpoint.moduleStates(), previousSetpoint.feedforwards().accelerationsMPSSq());
     }
 
-    private void setTargetModuleStates(SwerveModuleState[] swerveModuleStates, double[] t) {
+    private void setTargetModuleStates(SwerveModuleState[] swerveModuleStates, double[] targetAccelerationsMetersPerSecondSquared) {
         for (int i = 0; i < swerveModules.length; i++)
-            swerveModules[i].setTargetState(swerveModuleStates[i], t[i]);
+            swerveModules[i].setTargetState(swerveModuleStates[i], targetAccelerationsMetersPerSecondSquared[i]);
     }
 
     private void setClosedLoop(boolean shouldUseClosedLoop) {
