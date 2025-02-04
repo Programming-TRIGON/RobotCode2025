@@ -35,7 +35,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
                 GeneralCommands.getContinuousConditionalCommand(
                         getDriveWhileAligningToCoralCommand(),
                         GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND),
-                        () -> CAMERA.getTrackedObjectPositionOnField() != null
+                        () -> CAMERA.getTrackedObjectFieldRelativePosition() != null
                 ),
                 getTrackCoralCommand()
         );
@@ -71,7 +71,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
 
     private double calculateYControllerOutput() {
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
-        final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectPositionOnField();
+        final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
         if (trackedObjectPositionOnField == null)
             return 0;
 
@@ -82,7 +82,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
 
     private FlippableRotation2d calculateTargetAngle() {
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
-        final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectPositionOnField();
+        final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
         if (trackedObjectPositionOnField == null)
             return null;
 
