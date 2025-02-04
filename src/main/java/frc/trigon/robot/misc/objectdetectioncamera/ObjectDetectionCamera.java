@@ -92,7 +92,10 @@ public class ObjectDetectionCamera extends SubsystemBase {
      */
     public void trackObject(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
         final boolean hasTargets = hasTargets(targetGamePiece);
-        if (trackedObjectPositionOnField == null && hasTargets) {
+        if (!hasTargets)
+            return;
+
+        if (trackedObjectPositionOnField == null) {
             trackedObjectPositionOnField = calculateBestObjectPositionOnField(targetGamePiece);
             return;
         }

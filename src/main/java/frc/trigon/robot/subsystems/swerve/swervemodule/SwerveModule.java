@@ -57,7 +57,6 @@ public class SwerveModule {
             targetAccelerationMetersPerSecondSquared *= -1;
         }
 
-        targetState.optimize(getCurrentAngle());
         this.targetState = targetState;
         setTargetAngle(targetState.angle);
         setTargetVelocity(targetState.speedMetersPerSecond, targetAccelerationMetersPerSecondSquared);
@@ -147,11 +146,7 @@ public class SwerveModule {
      * The target velocity is set using either closed loop or open loop depending on {@link this#shouldDriveMotorUseClosedLoop}.
      *
      * @param targetVelocityMetersPerSecond            the target velocity, in meters per second
-     *                                                 <<<<<<< HEAD
-     * @param targetAccelerationMetersPerSecondSquared the target acceleration, in meters per second squared
-     *                                                 =======
      * @param targetAccelerationMetersPerSecondSquared the target acceleration of the module in meters per second squared
-     *                                                 >>>>>>> e46e27a110f177a2b1a03c8aa19957fe5e6036a7
      */
     private void setTargetVelocity(double targetVelocityMetersPerSecond, double targetAccelerationMetersPerSecondSquared) {
         if (shouldDriveMotorUseClosedLoop) {

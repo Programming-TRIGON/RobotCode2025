@@ -49,7 +49,8 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
 
     private void updateHasNewResultInputs(ObjectDetectionCameraInputsAutoLogged inputs, PhotonPipelineResult result) {
         final List<Rotation3d>[] visibleObjectsRotations = new List[ObjectDetectionCameraConstants.NUMBER_OF_GAME_PIECE_TYPES];
-        Arrays.fill(visibleObjectsRotations, new ArrayList<>());
+        for (int i = 0; i < ObjectDetectionCameraConstants.NUMBER_OF_GAME_PIECE_TYPES; i++)
+            visibleObjectsRotations[i] = new ArrayList<>();
         Arrays.fill(inputs.hasTarget, false);
 
         for (PhotonTrackedTarget currentTarget : result.getTargets()) {
@@ -57,7 +58,7 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
             visibleObjectsRotations[currentTarget.getDetectedObjectClassID()].add(extractRotation3d(currentTarget));
         }
 
-        for (int i = 0; i < visibleObjectsRotations.length; i++)
+        for (int i = 0; i < ObjectDetectionCameraConstants.NUMBER_OF_GAME_PIECE_TYPES; i++)
             inputs.visibleObjectRotations[i] = toArray(visibleObjectsRotations[i]);
     }
 

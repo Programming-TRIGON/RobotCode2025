@@ -181,7 +181,7 @@ public class CoralIntakeConstants {
             () -> DISTANCE_SENSOR.getScaledValue() < EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETERS
     ).debounce(EARLY_COLLECTION_DETECTION_TIME_THRESHOLD_SECONDS);
     public static final double
-            COLLECTION_RUMBLE_DURATION_SECONDS = 0.1,
+            COLLECTION_RUMBLE_DURATION_SECONDS = 0.7,
             COLLECTION_RUMBLE_POWER = 1;
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(0.5);
 

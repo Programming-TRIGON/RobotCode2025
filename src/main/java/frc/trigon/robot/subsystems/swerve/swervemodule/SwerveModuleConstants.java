@@ -37,12 +37,12 @@ public class SwerveModuleConstants {
             STEER_MOTOR_I = 0,
             STEER_MOTOR_D = 0;
     private static final double
-            DRIVE_MOTOR_P = RobotHardwareStats.isSimulation() ? 50 : 50,
+            DRIVE_MOTOR_P = RobotHardwareStats.isSimulation() ? 50 : 23,
             DRIVE_MOTOR_I = 0,
             DRIVE_MOTOR_D = 0,
             DRIVE_MOTOR_KS = RobotHardwareStats.isSimulation() ? 0.4708 : 6.8,
             DRIVE_MOTOR_KV = RobotHardwareStats.isSimulation() ? 0 : 0,
-            DRIVE_MOTOR_KA = RobotHardwareStats.isSimulation() ? 0.48818 : 0.9;
+            DRIVE_MOTOR_KA = RobotHardwareStats.isSimulation() ? 0.48818 : 2;
     static final boolean ENABLE_FOC = true;
     static final TalonFXConfiguration
             DRIVE_MOTOR_CONFIGURATION = generateDriveMotorConfiguration(),

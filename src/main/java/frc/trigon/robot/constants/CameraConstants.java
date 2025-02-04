@@ -23,7 +23,7 @@ public class CameraConstants {
     private static final Transform3d
             ROBOT_CENTER_TO_OBJECT_DETECTION_CAMERA = new Transform3d(
             new Translation3d(0.046, 0, 0.9),
-            new Rotation3d(0, Units.degreesToRadians(18), 0)
+            new Rotation3d(0, Units.degreesToRadians(12), 0)
     ),
             ROBOT_CENTER_TO_LEFT_REEF_TAG_CAMERA = new Transform3d(
                     new Translation3d(-0.224, 0.276, 0.369),
