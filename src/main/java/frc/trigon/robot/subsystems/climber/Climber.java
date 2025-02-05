@@ -2,12 +2,12 @@ package frc.trigon.robot.subsystems.climber;
 
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
@@ -33,7 +33,7 @@ public class Climber extends MotorSubsystem {
 
     public Climber() {
         setName("Climber");
-//        GeneralCommands.getDelayedCommand(3, this::configureChangingDefaultCommand).schedule();
+        GeneralCommands.getDelayedCommand(3, this::configureChangingDefaultCommand).schedule();
     }
 
     @Override
@@ -66,11 +66,10 @@ public class Climber extends MotorSubsystem {
 
     @Override
     public void updateMechanism() {
-        ClimberConstants.CLIMBER_MECHANISM.update(
-                Rotation2d.fromRotations(motor.getSignal(TalonFXSignal.POSITION)),
-                Rotation2d.fromRotations(motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
+        ClimberConstants.CLIMBER_VISUALIZATION.update(
+                motor.getSignal(TalonFXSignal.POSITION),
+                motor.getSignal(TalonFXSignal.POSITION)
         );
-//        Logger.recordOutput("Poses/Components/ClimberPose", calculateClimberPose());
     }
 
     @Override

@@ -4,15 +4,13 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.ReverseLimitTypeValue;
-import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.trigon.robot.subsystems.climber.climbervisualization.ClimberVisualization;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.hardware.simulation.SimpleMotorSimulation;
-import org.trigon.utilities.mechanisms.SingleJointedArmMechanism2d;
 
 public class ClimberConstants {
     private static final int MOTOR_ID = 15;
@@ -61,8 +59,7 @@ public class ClimberConstants {
             Units.Second.of(1000)
     );
 
-    static final Translation3d CLIMBER_ORIGIN_POINT = new Translation3d();
-    static final SingleJointedArmMechanism2d CLIMBER_MECHANISM = new SingleJointedArmMechanism2d("ClimberMechanism", Color.kViolet);
+    static final ClimberVisualization CLIMBER_VISUALIZATION = new ClimberVisualization();
 
     static final double CLIMBER_TOLERANCE_METERS = 0.01;
 
