@@ -85,6 +85,7 @@ public class RobotContainer {
         OperatorConstants.DRIVE_FROM_DPAD_TRIGGER.whileTrue(CommandConstants.SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND);
         OperatorConstants.TOGGLE_ROTATION_MODE_TRIGGER.onTrue(GeneralCommands.getToggleRotationModeCommand());
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
+        OperatorConstants.RESET_TRACKED_GAME_PIECE_TRIGGER.onTrue(CommandConstants.RESET_TRACKED_GAME_PIECE_COMMAND);
 
         OperatorConstants.DEBUGGING_TRIGGER.whileTrue(SwerveCommands.getClosedLoopFieldRelativeDriveCommand(() -> 0.0, () -> 0.0, () -> FlippableRotation2d.fromDegrees(0, false)));
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
@@ -93,7 +94,6 @@ public class RobotContainer {
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
         OperatorConstants.UNLOAD_CORAL_TRIGGER.whileTrue(CoralCollectionCommands.getUnloadCoralCommand());
         OperatorConstants.COLLECT_ALGAE_TRIGGER.whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
-        OperatorConstants.RESET_TRACKED_GAME_PIECE_TRIGGER.whileTrue(CommandConstants.RESET_TRACKED_GAME_PIECE_COMMAND);
     }
 
     private void bindSetters() {
