@@ -57,7 +57,7 @@ public class CameraConstants {
             );
 //            FEEDER_TAG_CAMERA = new AprilTagCamera(
 //                    AprilTagCameraConstants.AprilTagCameraType.PHOTON_CAMERA,
-//                    "FeederTagCamera",
+//                    "CoralStationTagCamera",
 //                    ROBOT_CENTER_TO_FEEDER_TAG_CAMERA,
 //                    FEEDER_TAG_CAMERA_STANDARD_DEVIATIONS
 //            );

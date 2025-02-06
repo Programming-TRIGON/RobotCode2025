@@ -36,7 +36,7 @@ public class GeneralCommands {
                 RobotContainer.SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
 
             RobotContainer.SWERVE.getDefaultCommand().schedule();
-        });
+        }).ignoringDisable(true);
     }
 
     public static Command getToggleBrakeCommand() {
