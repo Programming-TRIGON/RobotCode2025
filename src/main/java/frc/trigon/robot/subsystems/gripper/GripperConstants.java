@@ -73,7 +73,7 @@ public class GripperConstants {
     static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = -0.32 - ANGLE_ENCODER_GRAVITY_OFFSET; //0.14092;
     private static final Rotation2d
             ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD = Rotation2d.fromDegrees(-59.645756).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET)),
-            ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromDegrees(110).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET));
+            ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromDegrees(120).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET));
     private static final FeedbackSensorSourceValue ANGLE_ENCODER_TYPE = FeedbackSensorSourceValue.FusedCANcoder;
     private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
     private static final int
@@ -154,8 +154,6 @@ public class GripperConstants {
     static final double SCORE_IN_REEF_FOR_AUTO_VOLTAGE = -5;
     static final double MINIMUM_VOLTAGE_FOR_EJECTING = -3;
     static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-34);
-    public static final Rotation2d ALGAE_COLLECTION_ANGLE = Rotation2d.fromDegrees(35);
-    public static final double ALGAE_COLLECTION_CURRENT = -30;
     private static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
     private static final double COLLECTION_DETECTION_TIME_THRESHOLD_SECONDS = 0.14;
     static final BooleanEvent COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
@@ -266,6 +264,9 @@ public class GripperConstants {
         LOAD_CORAL(Rotation2d.fromDegrees(-56), 8),
         UNLOAD_CORAL(Rotation2d.fromDegrees(-50), -3),
         OPEN_FOR_ELEVATOR_MINIMUM(Rotation2d.fromDegrees(-33), 0),
+        COLLECT_ALGAE_FROM_REEF(Rotation2d.fromDegrees(32), -35),
+        SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(110), 11),
+        PREPARE_FOR_SCORING_ALGAE_IN_NET(SCORE_ALGAE_IN_NET.targetAngle, COLLECT_ALGAE_FROM_REEF.targetGripperVoltage),
         AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0);
 
         final Rotation2d targetAngle;

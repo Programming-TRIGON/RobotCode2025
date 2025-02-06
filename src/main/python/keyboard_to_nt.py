@@ -19,7 +19,7 @@ table = ntcoreinst.getTable("/SmartDashboard/keyboard")
 
 print("Connected!")
 
-minimum_press_time = 0.3
+minimum_press_time = 0.45
 keys_dict = {}
 lock = threading.Lock()
 

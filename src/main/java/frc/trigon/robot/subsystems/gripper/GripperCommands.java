@@ -40,9 +40,9 @@ public class GripperCommands {
         );
     }
 
-    public static Command getSetTargetStateWithCurrentCommand(Rotation2d targetAngle, double targetCurrent) {
+    public static Command getSetTargetStateWithCurrentCommand(GripperConstants.GripperState targetState) {
         return new StartEndCommand(
-                () -> RobotContainer.GRIPPER.setTargetStateWithCurrent(targetAngle, targetCurrent),
+                () -> RobotContainer.GRIPPER.setTargetStateWithCurrent(targetState.targetAngle, targetState.targetGripperVoltage),
                 RobotContainer.GRIPPER::stop,
                 RobotContainer.GRIPPER
         );

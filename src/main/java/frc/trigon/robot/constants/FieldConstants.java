@@ -37,8 +37,11 @@ public class FieldConstants {
 
     private static HashMap<Integer, Pose3d> fieldLayoutToTagIdToPoseMap() {
         final HashMap<Integer, Pose3d> tagIdToPose = new HashMap<>();
-        for (AprilTag aprilTag : APRIL_TAG_FIELD_LAYOUT.getTags())
+        for (AprilTag aprilTag : APRIL_TAG_FIELD_LAYOUT.getTags()) {
+            if (aprilTag.ID == 12 || aprilTag.ID == 20 || aprilTag.ID == 13)
+                continue;
             tagIdToPose.put(aprilTag.ID, aprilTag.pose.transformBy(TAG_OFFSET));
+        }
         return tagIdToPose;
     }
 
@@ -58,12 +61,12 @@ public class FieldConstants {
     }
 
     public enum ReefClockPosition {
-        REEF_12_OCLOCK(false),
-        REEF_2_OCLOCK(false),
+        REEF_12_OCLOCK(true),
+        REEF_2_OCLOCK(true),
         REEF_4_OCLOCK(true),
         REEF_6_OCLOCK(true),
         REEF_8_OCLOCK(true),
-        REEF_10_OCLOCK(false);
+        REEF_10_OCLOCK(true);
 
         public final Rotation2d clockAngle;
         public final boolean isFacingDriverStation;

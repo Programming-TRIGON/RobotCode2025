@@ -29,14 +29,14 @@ import java.io.IOException;
  * A class that contains the constants and configurations for everything related to PathPlanner.
  */
 public class PathPlannerConstants {
-    public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(4, 3.5, Units.degreesToRadians(400), Units.degreesToRadians(250.000));
-    public static final double MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR = 1.5;
+    public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(3.5, 3, Units.degreesToRadians(400), Units.degreesToRadians(250.000));
+    public static final double MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR = 2.2;
     public static final RobotConfig ROBOT_CONFIG = getRobotConfig();
 
     private static final PIDConstants
             AUTO_TRANSLATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
             new PIDConstants(6, 0, 0) :
-            new PIDConstants(6.3, 0, 0),
+            new PIDConstants(5, 0, 0),
             AUTO_ROTATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
                     new PIDConstants(5, 0, 0) :
                     new PIDConstants(5, 0, 0);

@@ -1,8 +1,7 @@
 package frc.trigon.robot.commands.commandfactories;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.*;
+import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
@@ -14,7 +13,18 @@ public class AlgaeManipulationCommands {
                 getCollectAlgaeFromL2Command(),
                 getCollectAlgaeFromL3Command(),
                 () -> CoralPlacingCommands.TARGET_SCORING_LEVEL == CoralPlacingCommands.ScoringLevel.L2
+        ).alongWith(
+                new WaitUntilCommand(OperatorConstants.OPERATOR_CONTROLLER.n()).andThen(new InstantCommand(() -> getNetCommand().schedule()))
         );
+    }
+
+    private static Command getNetCommand() {
+        return new ParallelCommandGroup(
+                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_NET),
+                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_NET).until(OperatorConstants.CONTINUE_SCORING_TRIGGER).andThen(
+                        GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_ALGAE_IN_NET)
+                )
+        ).onlyWhile(OperatorConstants.COLLECT_ALGAE_TRIGGER);
     }
 
     private static Command getCollectAlgaeFromL3Command() {
@@ -32,6 +42,6 @@ public class AlgaeManipulationCommands {
     }
 
     private static Command getGripAlgaeCommand() {
-        return GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.ALGAE_COLLECTION_ANGLE, GripperConstants.ALGAE_COLLECTION_CURRENT);
+        return GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF);
     }
 }

@@ -144,9 +144,9 @@ public class SwerveCommands {
 
     private static Command getPathfindToPoseCommand(FlippablePose2d targetPose, PathConstraints pathConstraints) {
         final Pose2d targetFlippedPose = targetPose.get();
-//        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
-//        if (currentPose.getTranslation().getDistance(targetFlippedPose.getTranslation()) < 0.35)
-//            return createOnTheFlyPathCommand(targetPose, pathConstraints);
+        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+        if (currentPose.getTranslation().getDistance(targetFlippedPose.getTranslation()) < 0.55)
+            return createOnTheFlyPathCommand(targetPose, pathConstraints);
         return AutoBuilder.pathfindToPose(targetFlippedPose, pathConstraints);
     }
 
@@ -157,15 +157,16 @@ public class SwerveCommands {
     }
 
     private static Command createOnTheFlyPathCommand(FlippablePose2d targetPose, PathConstraints constraints) {
+        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
         final List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
-                RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose(),
+                currentPose,
                 targetPose.get()
         );
 
         final PathPlannerPath path = new PathPlannerPath(
                 waypoints,
                 constraints,
-                new IdealStartingState(0, RobotContainer.SWERVE.getHeading()),
+                new IdealStartingState(0, currentPose.getRotation()),
                 new GoalEndState(0, targetPose.get().getRotation())
         );
 

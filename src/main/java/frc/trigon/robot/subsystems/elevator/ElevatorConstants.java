@@ -34,16 +34,16 @@ public class ElevatorConstants {
     private static final double GEAR_RATIO = 7.222222;
     private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = true;
     private static final double
-            P = RobotHardwareStats.isSimulation() ? 40 : 0.3,
+            P = RobotHardwareStats.isSimulation() ? 40 : 0.6,
             I = RobotHardwareStats.isSimulation() ? 0 : 0,
             D = RobotHardwareStats.isSimulation() ? 0.22774 : 0,
             KS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.079427,
             KV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.88,
-            KG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.4,
+            KG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.42,
             KA = RobotHardwareStats.isSimulation() ? 0 : 0;
     private static final double
             MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 80 : 10,
-            MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 80 : 40,
+            MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 80 : 50,
             MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
     private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
@@ -183,7 +183,8 @@ public class ElevatorConstants {
         SCORE_L2(0),
         SCORE_L3(0.43),
         SCORE_L4(1.02),
-        COLLECT_ALGAE_FROM_L3(0.43);
+        COLLECT_ALGAE_FROM_L3(0.365),
+        SCORE_NET(1.04);
 
         public final double targetPositionMeters;
 

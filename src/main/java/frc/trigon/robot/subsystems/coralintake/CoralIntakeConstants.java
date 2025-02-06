@@ -65,7 +65,7 @@ public class CoralIntakeConstants {
             ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
             ANGLE_KG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.41506;
     private static final double
-            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 1.1,
+            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 12 / ANGLE_KV : 1,
             ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 6 : 10,
             ANGLE_MOTION_MAGIC_JERK = ANGLE_MOTION_MAGIC_ACCELERATION * 10;
     private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
@@ -309,7 +309,7 @@ public class CoralIntakeConstants {
         PREPARE_FOR_LOADING_TO_GRIPPER_WHILE_GAME_PIECE_NOT_DETECTED(6, 2, LOAD_CORAL_TO_GRIPPER.targetAngle),
         UNLOAD_CORAL_FROM_GRIPPER(6, 2, Rotation2d.fromDegrees(141)),
         CENTER_CORAL(6, 2, Rotation2d.fromDegrees(141)),
-        COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-45.5)),
+        COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-46)),
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(90)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
         REST(0, 0, Rotation2d.fromDegrees(141)),
