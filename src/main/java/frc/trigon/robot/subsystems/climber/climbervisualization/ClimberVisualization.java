@@ -82,7 +82,8 @@ public class ClimberVisualization {
                         (ClimberVisualizationConstants.JOINT_TO_DRUM_LENGTH_METERS * ClimberVisualizationConstants.JOINT_TO_DRUM_LENGTH_METERS) -
                         (stringLengthMeters * stringLengthMeters);
         final double denominator = 2 * ClimberVisualizationConstants.JOINT_TO_STRING_CONNECTION_LENGTH_METERS * ClimberVisualizationConstants.JOINT_TO_DRUM_LENGTH_METERS;
-        final double armAngleRadians = Math.acos(numerator / denominator);
+        final double division = numerator / denominator;
+        final double armAngleRadians = Math.acos(division);
         return Rotation2d.fromRadians(armAngleRadians);
     }
 
