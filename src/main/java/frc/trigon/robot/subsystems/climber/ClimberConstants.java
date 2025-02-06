@@ -43,10 +43,10 @@ public class ClimberConstants {
     static final int
             GROUNDED_SLOT = 0,
             ON_CAGE_SLOT = 1;
-    private static final double FORWARD_SOFT_LIMIT_POSITION_ROTATIONS = 0;
+    private static final double FORWARD_SOFT_LIMIT_POSITION_ROTATIONS = 3;
     private static final double REVERSE_LIMIT_SWITCH_RESET_POSITION = 0;
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE = ReverseLimitTypeValue.NormallyOpen;
-    static final double GEAR_RATIO = 68.57;
+    static final double GEAR_RATIO = 33.75;
 
     private static final int MOTOR_AMOUNT = 1;
     private static final DCMotor GEARBOX = DCMotor.getKrakenX60(MOTOR_AMOUNT);

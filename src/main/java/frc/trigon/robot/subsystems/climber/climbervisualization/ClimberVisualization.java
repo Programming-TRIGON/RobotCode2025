@@ -1,6 +1,8 @@
 package frc.trigon.robot.subsystems.climber.climbervisualization;
 
+import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Rotation3d;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.utilities.Conversions;
 
@@ -15,23 +17,31 @@ public class ClimberVisualization {
 
         setCurrentMechanism2dState(currentArmAngle, currentStringAngle, currentStringLengthMeters);
         setTargetMechanism2dState(targetArmAngle, targetStringAngle, targetStringLengthMeters);
-        log();
+        log(currentArmAngle);
     }
 
     private void setCurrentMechanism2dState(Rotation2d armAngle, Rotation2d stringAngle, double stringLengthMeters) {
-        ClimberVisualizationConstants.CURRENT_ARM_POSITION_LIGAMENT.setAngle(armAngle.getDegrees());
+        ClimberVisualizationConstants.CURRENT_ARM_POSITION_LIGAMENT.setAngle(flipAngle(armAngle).getDegrees());
         ClimberVisualizationConstants.CURRENT_STRING_POSITION_LIGAMENT.setAngle(stringAngle.getDegrees());
         ClimberVisualizationConstants.CURRENT_STRING_POSITION_LIGAMENT.setLength(stringLengthMeters);
     }
 
     private void setTargetMechanism2dState(Rotation2d targetArmAngle, Rotation2d targetStringAngle, double targetStringLengthMeters) {
-        ClimberVisualizationConstants.TARGET_ARM_POSITION_LIGAMENT.setAngle(targetArmAngle.getDegrees());
+        ClimberVisualizationConstants.TARGET_ARM_POSITION_LIGAMENT.setAngle(flipAngle(targetArmAngle).getDegrees());
         ClimberVisualizationConstants.TARGET_STRING_POSITION_LIGAMENT.setAngle(targetStringAngle.getDegrees());
         ClimberVisualizationConstants.TARGET_STRING_POSITION_LIGAMENT.setLength(targetStringLengthMeters);
     }
 
-    private void log() {
-        Logger.recordOutput(ClimberVisualizationConstants.MECHANISM_KEY, ClimberVisualizationConstants.MECHANISM);
+    private void log(Rotation2d currentArmAngle) {
+        Logger.recordOutput("Mechanisms/Climber", ClimberVisualizationConstants.MECHANISM);
+        Logger.recordOutput("Poses/Components/Climber", calculateArmPose(currentArmAngle));
+    }
+
+    private Pose3d calculateArmPose(Rotation2d currentArmAngle) {
+        return new Pose3d(
+                ClimberVisualizationConstants.CLIMBER_ORIGIN_POINT,
+                new Rotation3d(0, currentArmAngle.getRadians(), 0)
+        );
     }
 
     private Rotation2d calculateStringAngle(Rotation2d armAngle, double stringLengthMeters) {

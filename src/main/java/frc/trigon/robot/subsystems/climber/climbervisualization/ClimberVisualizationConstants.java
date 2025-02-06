@@ -9,23 +9,20 @@ import org.littletonrobotics.junction.mechanism.LoggedMechanismLigament2d;
 import org.littletonrobotics.junction.mechanism.LoggedMechanismRoot2d;
 
 public class ClimberVisualizationConstants {
-    static final Translation3d CLIMBER_ORIGIN_POINT = new Translation3d(); //TODO: Set this to the actual origin point
-    static final double DRUM_DIAMETER_METERS = 0.1016;
+    static final Translation3d CLIMBER_ORIGIN_POINT = new Translation3d(0.2228, 0.0389, 0.0101);
+    static final double DRUM_DIAMETER_METERS = 0.04;
     static final double JOINT_TO_STRING_CONNECTION_LENGTH_METERS = 0.227;
     static final double JOINT_TO_DRUM_LENGTH_METERS = 0.534;
     static final double RETRACTED_STRING_LENGTH_METERS = 0.3145;
     static final Rotation2d
             RETRACTED_ARM_ANGLE = Rotation2d.fromDegrees(14),
             RETRACTED_STRING_ANGLE = Rotation2d.fromDegrees(9.34);
-    static final String
-            NAME = "Climber",
-            MECHANISM_KEY = "Mechanisms/" + NAME;
     static final double MECHANISM_LINE_WIDTH = 5;
     static final LoggedMechanism2d MECHANISM = new LoggedMechanism2d(
             JOINT_TO_DRUM_LENGTH_METERS * 2,
             JOINT_TO_DRUM_LENGTH_METERS * 2
     );
-    static final LoggedMechanismRoot2d
+    private static final LoggedMechanismRoot2d
             STRING_LIGAMENT_ROOT = MECHANISM.getRoot("StringLigament", JOINT_TO_DRUM_LENGTH_METERS / 2, 0),
             ARM_LIGAMENT_ROOT = MECHANISM.getRoot("DrumLigament", (JOINT_TO_DRUM_LENGTH_METERS / 2) + JOINT_TO_DRUM_LENGTH_METERS, 0);
     static final LoggedMechanismLigament2d
