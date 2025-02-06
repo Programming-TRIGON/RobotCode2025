@@ -16,7 +16,8 @@ import org.trigon.hardware.simulation.SimpleMotorSimulation;
 public class SwerveModuleConstants {
     private static final double
             DRIVE_MOTOR_GEAR_RATIO = 5.36,
-            STEER_MOTOR_GEAR_RATIO = 12.8;
+            FRONT_STEER_MOTOR_GEAR_RATIO = 18.75,
+            REAR_STEER_MOTOR_GEAR_RATIO = 12.8;
     private static final double
             DRIVE_MOTOR_OPEN_LOOP_RAMP_RATE = RobotHardwareStats.isSimulation() ? 0.1 : 0.1,
             DRIVE_MOTOR_CLOSED_LOOP_RAMP_RATE = RobotHardwareStats.isSimulation() ? 0.1 : 0.1;
@@ -33,9 +34,13 @@ public class SwerveModuleConstants {
             DRIVE_MOTOR_SLIP_CURRENT = PathPlannerConstants.ROBOT_CONFIG.moduleConfig.driveCurrentLimit, // TODO: calibrate right before competition
             STEER_MOTOR_CURRENT_LIMIT = RobotHardwareStats.isSimulation() ? 200 : 30;
     private static final double
-            STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 55,
-            STEER_MOTOR_I = 0,
-            STEER_MOTOR_D = 0;
+            FRONT_STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 55,
+            FRONT_STEER_MOTOR_I = 0,
+            FRONT_STEER_MOTOR_D = 0;
+    private static final double
+            REAR_STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 55,
+            REAR_STEER_MOTOR_I = 0,
+            REAR_STEER_MOTOR_D = 0;
     private static final double
             DRIVE_MOTOR_P = RobotHardwareStats.isSimulation() ? 50 : 18,
             DRIVE_MOTOR_I = 0,
@@ -44,10 +49,6 @@ public class SwerveModuleConstants {
             DRIVE_MOTOR_KV = RobotHardwareStats.isSimulation() ? 0 : 0,
             DRIVE_MOTOR_KA = RobotHardwareStats.isSimulation() ? 0.48818 : 1;
     static final boolean ENABLE_FOC = true;
-    static final TalonFXConfiguration
-            DRIVE_MOTOR_CONFIGURATION = generateDriveMotorConfiguration(),
-            STEER_MOTOR_CONFIGURATION = generateSteerMotorConfiguration();
-    static final CANcoderConfiguration STEER_ENCODER_CONFIGURATION = generateSteerEncoderConfiguration();
 
     private static final double
             DRIVE_MOMENT_OF_INERTIA = 0.003,
@@ -83,11 +84,11 @@ public class SwerveModuleConstants {
      *
      * @return the steer motor simulation
      */
-    static SimpleMotorSimulation createSteerMotorSimulation() {
-        return new SimpleMotorSimulation(STEER_MOTOR_GEARBOX, STEER_MOTOR_GEAR_RATIO, STEER_MOMENT_OF_INERTIA);
+    static SimpleMotorSimulation createSteerMotorSimulation(boolean isFront) {
+        return new SimpleMotorSimulation(STEER_MOTOR_GEARBOX, isFront ? FRONT_STEER_MOTOR_GEAR_RATIO : REAR_STEER_MOTOR_GEAR_RATIO, STEER_MOMENT_OF_INERTIA);
     }
 
-    private static TalonFXConfiguration generateDriveMotorConfiguration() {
+    static TalonFXConfiguration generateDriveMotorConfiguration() {
         final TalonFXConfiguration config = new TalonFXConfiguration();
 
         config.Audio.BeepOnBoot = false;
@@ -117,33 +118,35 @@ public class SwerveModuleConstants {
         return config;
     }
 
-    private static TalonFXConfiguration generateSteerMotorConfiguration() {
+    static TalonFXConfiguration generateSteerMotorConfiguration(boolean isFront) {
         final TalonFXConfiguration config = new TalonFXConfiguration();
 
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
 
         config.MotorOutput.NeutralMode = STEER_MOTOR_NEUTRAL_MODE_VALUE;
+        config.MotorOutput.Inverted = isFront ? FRONT_STEER_MOTOR_INVERT_VALUE : REAR_STEER_MOTOR_INVERTED_VALUE;
 
         config.CurrentLimits.StatorCurrentLimit = STEER_MOTOR_CURRENT_LIMIT;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        config.Feedback.RotorToSensorRatio = STEER_MOTOR_GEAR_RATIO;
+        config.Feedback.RotorToSensorRatio = isFront ? FRONT_STEER_MOTOR_GEAR_RATIO : REAR_STEER_MOTOR_GEAR_RATIO;
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
 
-        config.Slot0.kP = STEER_MOTOR_P;
-        config.Slot0.kI = STEER_MOTOR_I;
-        config.Slot0.kD = STEER_MOTOR_D;
+        config.Slot0.kP = isFront ? FRONT_STEER_MOTOR_P : REAR_STEER_MOTOR_P;
+        config.Slot0.kI = isFront ? FRONT_STEER_MOTOR_I : REAR_STEER_MOTOR_I;
+        config.Slot0.kD = isFront ? FRONT_STEER_MOTOR_D : REAR_STEER_MOTOR_D;
         config.ClosedLoopGeneral.ContinuousWrap = true;
 
         return config;
     }
 
-    private static CANcoderConfiguration generateSteerEncoderConfiguration() {
+    static CANcoderConfiguration generateSteerEncoderConfiguration(double offsetRotations) {
         final CANcoderConfiguration config = new CANcoderConfiguration();
 
         config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = STEER_ENCODER_DISCONTINUITY_POINT;
         config.MagnetSensor.SensorDirection = STEER_ENCODER_DIRECTION;
+        config.MagnetSensor.MagnetOffset = offsetRotations;
 
         return config;
     }

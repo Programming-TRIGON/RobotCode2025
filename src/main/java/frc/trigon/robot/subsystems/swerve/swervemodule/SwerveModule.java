@@ -4,7 +4,6 @@ import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
-import com.ctre.phoenix6.signals.InvertedValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -200,7 +199,7 @@ public class SwerveModule {
     }
 
     private void configureDriveMotor() {
-        driveMotor.applyConfiguration(SwerveModuleConstants.DRIVE_MOTOR_CONFIGURATION);
+        driveMotor.applyConfiguration(SwerveModuleConstants.generateDriveMotorConfiguration());
         driveMotor.setPhysicsSimulation(SwerveModuleConstants.createDriveMotorSimulation());
 
         driveMotor.registerSignal(TalonFXSignal.VELOCITY, 100);
@@ -210,27 +209,18 @@ public class SwerveModule {
     }
 
     private void configureSteerMotor() {
-        SwerveModuleConstants.STEER_MOTOR_CONFIGURATION.Feedback.FeedbackRemoteSensorID = steerEncoder.getID();
-        SwerveModuleConstants.STEER_MOTOR_CONFIGURATION.MotorOutput.Inverted = getSteerMotorInvertedValue();
+        final boolean isFront = driveMotor.getID() == SwerveConstants.FRONT_LEFT_ID || driveMotor.getID() == SwerveConstants.FRONT_RIGHT_ID;
 
-        steerMotor.applyConfiguration(SwerveModuleConstants.STEER_MOTOR_CONFIGURATION);
-        steerMotor.setPhysicsSimulation(SwerveModuleConstants.createSteerMotorSimulation());
+        steerMotor.applyConfiguration(SwerveModuleConstants.generateSteerMotorConfiguration(isFront));
+        steerMotor.setPhysicsSimulation(SwerveModuleConstants.createSteerMotorSimulation(isFront));
 
         steerMotor.registerSignal(TalonFXSignal.VELOCITY, 100);
         steerMotor.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
         steerMotor.registerThreadedSignal(TalonFXSignal.POSITION, PoseEstimatorConstants.ODOMETRY_FREQUENCY_HERTZ);
     }
 
-    private InvertedValue getSteerMotorInvertedValue() {
-        if (steerEncoder.getID() - SwerveConstants.REAR_RIGHT_ID >= SwerveConstants.REAR_LEFT_ID)
-            return SwerveModuleConstants.REAR_STEER_MOTOR_INVERTED_VALUE;
-
-        return SwerveModuleConstants.FRONT_STEER_MOTOR_INVERT_VALUE;
-    }
-
     private void configureSteerEncoder(double offsetRotations) {
-        SwerveModuleConstants.STEER_ENCODER_CONFIGURATION.MagnetSensor.MagnetOffset = offsetRotations;
-        steerEncoder.applyConfiguration(SwerveModuleConstants.STEER_ENCODER_CONFIGURATION);
+        steerEncoder.applyConfiguration(SwerveModuleConstants.generateSteerEncoderConfiguration(offsetRotations));
         steerEncoder.setSimulationInputsFromTalonFX(steerMotor);
 
         steerEncoder.registerSignal(CANcoderSignal.POSITION, 100);
