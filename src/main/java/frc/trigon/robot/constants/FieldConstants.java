@@ -22,7 +22,8 @@ public class FieldConstants {
     public static final HashMap<Integer, Pose3d> TAG_ID_TO_POSE = fieldLayoutToTagIdToPoseMap();
 
     public static final int REEF_CLOCK_POSITIONS = 6;
-    public static final Rotation2d CLOCK_POSITION_DIFFERENCE = Rotation2d.fromDegrees(Conversions.DEGREES_PER_ROTATIONS / REEF_CLOCK_POSITIONS);
+    public static final Rotation2d REEF_CLOCK_POSITION_DIFFERENCE = Rotation2d.fromDegrees(Conversions.DEGREES_PER_ROTATIONS / REEF_CLOCK_POSITIONS);
+    public static final Rotation2d[] REEF_CLOCK_ANGLES = ReefClockPosition.getClockAngles();
     public static final Translation2d BLUE_REEF_CENTER_TRANSLATION = new Translation2d(4.48945, FIELD_WIDTH_METERS / 2);
 
     private static AprilTagFieldLayout createAprilTagFieldLayout() {
@@ -76,8 +77,16 @@ public class FieldConstants {
             this.isFacingDriverStation = isFacingDriverStation;
         }
 
+        public static Rotation2d[] getClockAngles() {
+            final Rotation2d[] clockAngles = new Rotation2d[ReefClockPosition.values().length];
+            for (int i = 0; i < clockAngles.length; i++)
+                clockAngles[i] = ReefClockPosition.values()[i].clockAngle;
+
+            return clockAngles;
+        }
+
         private Rotation2d calculateClockAngle() {
-            return CLOCK_POSITION_DIFFERENCE.times(-ordinal());
+            return REEF_CLOCK_POSITION_DIFFERENCE.times(-ordinal());
         }
     }
 }

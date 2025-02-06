@@ -42,10 +42,10 @@ public class CommandConstants {
             () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftX()),
             () -> calculateRotationStickAxisValue(DRIVER_CONTROLLER.getRightX())
     ),
-            FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
+            FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_TO_REEF_SECTIONS_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
                     () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftY()),
                     () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftX()),
-                    CommandConstants::calculateJoystickOrientedTargetAngle
+                    CommandConstants::calculateJoystickOrientedToReefSectionsTargetAngle
             ),
             SELF_RELATIVE_DRIVE_COMMAND = SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                     () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftY()),
@@ -135,13 +135,32 @@ public class CommandConstants {
      *
      * @return the rotation value
      */
-    private static FlippableRotation2d calculateJoystickOrientedTargetAngle() {
-        final double joystickPower = Math.hypot(DRIVER_CONTROLLER.getRightX(), DRIVER_CONTROLLER.getRightY());
+    private static FlippableRotation2d calculateJoystickOrientedToReefSectionsTargetAngle() {
+        final double
+                xPower = DRIVER_CONTROLLER.getRightX(),
+                yPower = DRIVER_CONTROLLER.getRightY();
+
+        final double joystickPower = Math.hypot(xPower, yPower);
         if (joystickPower < JOYSTICK_ORIENTED_ROTATION_DEADBAND)
             return null;
 
-        final double targetAngleRadians = Math.atan2(DRIVER_CONTROLLER.getRightX(), DRIVER_CONTROLLER.getRightY());
-        return FlippableRotation2d.fromRadians(targetAngleRadians, true);
+        final double targetAngleRadians = Math.atan2(xPower, yPower) + Math.PI;
+        return roundAngleToClosestReefAngle(Rotation2d.fromRadians(targetAngleRadians));
+    }
+
+    private static FlippableRotation2d roundAngleToClosestReefAngle(Rotation2d targetAngle) {
+        Rotation2d closestReefAngle = new Rotation2d();
+        double closestReefAngleOffsetDegrees = Double.POSITIVE_INFINITY;
+
+        for (Rotation2d reefClockAngle : FieldConstants.REEF_CLOCK_ANGLES) {
+            double angleOffsetDegrees = Math.abs(targetAngle.minus(reefClockAngle).getDegrees());
+            if (angleOffsetDegrees < closestReefAngleOffsetDegrees) {
+                closestReefAngleOffsetDegrees = angleOffsetDegrees;
+                closestReefAngle = reefClockAngle;
+            }
+        }
+
+        return new FlippableRotation2d(closestReefAngle, true);
     }
 
     private static double getXPowerFromPov(double pov) {
