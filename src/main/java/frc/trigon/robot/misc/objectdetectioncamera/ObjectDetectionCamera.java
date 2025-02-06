@@ -117,6 +117,13 @@ public class ObjectDetectionCamera extends SubsystemBase {
         Logger.recordOutput("TrackedObject", trackedObjectFieldRelativePosition);
     }
 
+    /**
+     * Resets the tracked object to allow for reselection of the best object.
+     */
+    public void resetTrackedObject() {
+        trackedObjectFieldRelativePosition = null;
+    }
+
     public boolean hasTargets(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
         return objectDetectionCameraInputs.hasTarget[targetGamePiece.id];
     }

@@ -73,7 +73,8 @@ public class CommandConstants {
                     (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),
                     RobotContainer.SWERVE
             ),
-            COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER));
+            COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER)),
+            RESET_TRACKED_GAME_PIECE_COMMAND = new InstantCommand(CameraConstants.OBJECT_DETECTION_CAMERA::resetTrackedObject);
 
     public static final Command
             ENABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_ALIGN_TO_CORAL = true).ignoringDisable(true),
