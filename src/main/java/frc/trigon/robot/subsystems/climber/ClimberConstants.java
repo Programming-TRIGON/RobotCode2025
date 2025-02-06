@@ -8,6 +8,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.subsystems.climber.climbervisualization.ClimberVisualization;
+import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.hardware.simulation.SimpleMotorSimulation;
@@ -21,19 +22,19 @@ public class ClimberConstants {
     private static final NeutralModeValue NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
     static final boolean ENABLE_FOC = true;
     private static final double
-            GROUNDED_P = 1,
-            GROUNDED_I = 0,
-            GROUNDED_D = 0,
-            GROUNDED_KS = 0,
-            GROUNDED_KV = 0,
-            GROUNDED_KA = 0;
+            GROUNDED_P = RobotHardwareStats.isSimulation() ? 100 : 0,
+            GROUNDED_I = RobotHardwareStats.isSimulation() ? 0 : 0,
+            GROUNDED_D = RobotHardwareStats.isSimulation() ? 0 : 0,
+            GROUNDED_KS = RobotHardwareStats.isSimulation() ? 0.016805 : 0,
+            GROUNDED_KV = RobotHardwareStats.isSimulation() ? 4.0291 : 0,
+            GROUNDED_KA = RobotHardwareStats.isSimulation() ? 0.014829 : 0;
     private static final double
-            ON_CAGE_P = 1,
-            ON_CAGE_I = 0,
-            ON_CAGE_D = 0,
-            ON_CAGE_KS = 0,
-            ON_CAGE_KV = 0,
-            ON_CAGE_KA = 0;
+            ON_CAGE_P = RobotHardwareStats.isSimulation() ? GROUNDED_P : 0,
+            ON_CAGE_I = RobotHardwareStats.isSimulation() ? GROUNDED_I : 0,
+            ON_CAGE_D = RobotHardwareStats.isSimulation() ? GROUNDED_D : 0,
+            ON_CAGE_KS = RobotHardwareStats.isSimulation() ? GROUNDED_KS : 0,
+            ON_CAGE_KV = RobotHardwareStats.isSimulation() ? GROUNDED_KV : 0,
+            ON_CAGE_KA = RobotHardwareStats.isSimulation() ? GROUNDED_KA : 0;
     static final double ON_CAGE_KG = 0;
     static final double
             MAX_GROUNDED_VELOCITY = 100,
@@ -54,8 +55,8 @@ public class ClimberConstants {
     private static final SimpleMotorSimulation MOTOR_SIMULATION = new SimpleMotorSimulation(GEARBOX, GEAR_RATIO, MOMENT_OF_INERTIA);
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
-            Units.Volts.of(0.5).per(Units.Seconds),
-            Units.Volts.of(1),
+            Units.Volts.of(1).per(Units.Seconds),
+            Units.Volts.of(3),
             Units.Second.of(1000)
     );
 
