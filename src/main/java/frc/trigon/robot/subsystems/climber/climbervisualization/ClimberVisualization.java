@@ -6,6 +6,9 @@ import edu.wpi.first.math.geometry.Rotation3d;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.utilities.Conversions;
 
+/**
+ * A class that visualizes the climber mechanism, using a Mechanism2d, and calculating the 3d pose of the climber for advantage scope.
+ */
 public class ClimberVisualization {
     /**
      * Updates the 2d mechanism's current climber arm angle, string angle, and string length. Then calculates the 3d Advantage Scope poses, and logs 2d mechanism and 3d poses.
