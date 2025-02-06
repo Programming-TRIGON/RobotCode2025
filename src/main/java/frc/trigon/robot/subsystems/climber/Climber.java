@@ -68,7 +68,7 @@ public class Climber extends MotorSubsystem {
     public void updateMechanism() {
         ClimberConstants.CLIMBER_VISUALIZATION.update(
                 motor.getSignal(TalonFXSignal.POSITION),
-                motor.getSignal(TalonFXSignal.POSITION)
+                motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE)
         );
     }
 

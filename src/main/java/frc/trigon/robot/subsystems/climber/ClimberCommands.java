@@ -5,11 +5,14 @@ import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
 import org.trigon.commands.NetworkTablesCommand;
 
+import java.util.Set;
+
 public class ClimberCommands {
     public static Command getDebuggingCommand() {
         return new NetworkTablesCommand(
-                (targetPositionRotations, isAffectedByRobotWeight) -> getSetTargetPositionCommand(targetPositionRotations, isAffectedByRobotWeight == 1),
+                (targetPositionRotations, isAffectedByRobotWeight) -> RobotContainer.CLIMBER.setTargetPosition(targetPositionRotations, isAffectedByRobotWeight == 1),
                 true,
+                Set.of(RobotContainer.CLIMBER),
                 "Debugging/ClimberTargetPositionRotations",
                 "Debugging/ClimberIsAffectedByRobotWeight"
         );
