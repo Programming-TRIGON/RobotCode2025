@@ -96,7 +96,7 @@ public class CoralPlacingCommands {
     private static boolean canContinueScoring() {
         return RobotContainer.ELEVATOR.atTargetState() &&
                 RobotContainer.GRIPPER.atTargetAngle() &&
-                OperatorConstants.CONTINUE_SCORING_TRIGGER.getAsBoolean();
+                OperatorConstants.CONTINUE_TRIGGER.getAsBoolean();
     }
 
     /**

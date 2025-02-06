@@ -89,6 +89,11 @@ public class RobotContainer {
         OperatorConstants.CORAL_COLLECTION_TRIGGER.whileTrue(CollectionCommands.getCoralCollectionCommand());
         OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(GeneralCommands.getEjectCoralCommand());
+
+        OperatorConstants.CLIMB_TRIGGER.whileTrue(GeneralCommands.getClimbCommand());
+        OperatorConstants.RESET_CLIMBER_TRIGGER.onTrue(CommandConstants.RESET_CLIMBING_COMMAND);
+        OperatorConstants.MANUALLY_RAISE_CLIMBER_TRIGGER.whileTrue(CommandConstants.MANUALLY_RAISE_CLIMBER_COMMAND);
+        OperatorConstants.MANUALLY_LOWER_CLIMBER_TRIGGER.whileTrue(CommandConstants.MANUALLY_LOWER_CLIMBER_COMMAND);
     }
 
     private void bindSetters() {

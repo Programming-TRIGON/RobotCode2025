@@ -63,6 +63,9 @@ public class ClimberConstants {
     static final ClimberVisualization CLIMBER_VISUALIZATION = new ClimberVisualization();
 
     static final double CLIMBER_TOLERANCE_METERS = 0.01;
+    public static final double
+            MANUALLY_RAISE_CLIMBER_VOLTAGE = 2,
+            MANUALLY_LOWER_CLIMBER_VOLTAGE = -2;
 
     static {
         configureMotor();
