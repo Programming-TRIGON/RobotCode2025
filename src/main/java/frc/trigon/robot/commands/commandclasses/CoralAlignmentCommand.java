@@ -56,7 +56,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
     private Command getDriveWhileAligningToCoralCommand() {
         return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                 () -> fieldRelativePowersToSelfRelativeXPower(OperatorConstants.DRIVER_CONTROLLER.getLeftY(), OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
-                this::calculateYControllerOutput,
+                this::calculateSwerveYPowerOutput,
                 this::calculateTargetAngle
         );
     }
@@ -69,7 +69,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
         return (xValue * robotHeading.getCos()) + (yValue * robotHeading.getSin());
     }
 
-    private double calculateYControllerOutput() {
+    private double calculateSwerveYPowerOutput() {
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
         final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
         if (trackedObjectPositionOnField == null)
@@ -82,12 +82,12 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
 
     private FlippableRotation2d calculateTargetAngle() {
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
-        final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
-        if (trackedObjectPositionOnField == null)
+        final Translation2d trackedObjectFieldRelativePosition = CAMERA.getTrackedObjectFieldRelativePosition();
+        if (trackedObjectFieldRelativePosition == null)
             return null;
 
-        final Translation2d difference = trackedObjectPositionOnField.minus(robotPose.getTranslation());
-        final Rotation2d differenceAngle = new Rotation2d(Math.atan2(difference.getY(), difference.getX()));
-        return new FlippableRotation2d(differenceAngle, false);
+        final Translation2d objectDistanceToRobot = trackedObjectFieldRelativePosition.minus(robotPose.getTranslation());
+        final Rotation2d angularDistanceToObject = new Rotation2d(Math.atan2(objectDistanceToRobot.getY(), objectDistanceToRobot.getX()));
+        return new FlippableRotation2d(angularDistanceToObject, false);
     }
 }
