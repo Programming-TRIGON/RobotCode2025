@@ -72,7 +72,7 @@ public class ClimberVisualization {
      * @return the flipped angle
      */
     private Rotation2d flipAngle(Rotation2d angle) {
-        return Rotation2d.fromDegrees(180).minus(angle);
+        return Rotation2d.fromDegrees(180 - angle.getDegrees());
     }
 
     private double toMeters(double rotations) {

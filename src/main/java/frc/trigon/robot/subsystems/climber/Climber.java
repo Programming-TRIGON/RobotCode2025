@@ -109,11 +109,11 @@ public class Climber extends MotorSubsystem {
     private void configureChangingDefaultCommand() {
         final Trigger climbingTrigger = new Trigger(() -> isClimbing);
         climbingTrigger.onTrue(new InstantCommand(this::defaultToClimbing));
-        climbingTrigger.onFalse(new InstantCommand(this::defaultToBraking));
+        climbingTrigger.onFalse(new InstantCommand(this::defaultToResting));
     }
 
-    private void defaultToBraking() {
-        changeDefaultCommand(ClimberCommands.getStopCommand());
+    private void defaultToResting() {
+        changeDefaultCommand(ClimberCommands.getSetTargetStateCommand(ClimberConstants.ClimberState.REST));
     }
 
     private void defaultToClimbing() {

@@ -54,8 +54,8 @@ public class ClimberConstants {
     private static final SimpleMotorSimulation MOTOR_SIMULATION = new SimpleMotorSimulation(GEARBOX, GEAR_RATIO, MOMENT_OF_INERTIA);
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
-            Units.Volts.of(1.5).per(Units.Seconds),
-            Units.Volts.of(2),
+            Units.Volts.of(0.5).per(Units.Seconds),
+            Units.Volts.of(1),
             Units.Second.of(1000)
     );
 
@@ -91,12 +91,12 @@ public class ClimberConstants {
         config.Slot1.kV = ON_CAGE_KV;
         config.Slot1.kA = ON_CAGE_KA;
 
-        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = FORWARD_SOFT_LIMIT_POSITION_ROTATIONS;
+        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = FORWARD_SOFT_LIMIT_POSITION_ROTATIONS;
 
-        config.HardwareLimitSwitch.ForwardLimitEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = REVERSE_LIMIT_SWITCH_RESET_POSITION;
+        config.HardwareLimitSwitch.ReverseLimitEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_LIMIT_SWITCH_RESET_POSITION;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE;
 
         config.MotionMagic.MotionMagicCruiseVelocity = MAX_GROUNDED_VELOCITY;
