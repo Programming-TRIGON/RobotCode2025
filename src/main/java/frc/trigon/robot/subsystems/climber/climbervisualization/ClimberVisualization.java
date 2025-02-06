@@ -7,6 +7,12 @@ import org.littletonrobotics.junction.Logger;
 import org.trigon.utilities.Conversions;
 
 public class ClimberVisualization {
+    /**
+     * Updates the 2d mechanism's current climber arm angle, string angle, and string length. Then calculates the 3d Advantage Scope poses, and logs 2d mechanism and 3d poses.
+     *
+     * @param currentPositionRotations the current position of the climber
+     * @param targetPositionRotations  the target position of the climber
+     */
     public void update(double currentPositionRotations, double targetPositionRotations) {
         final double currentStringLengthMeters = calculateStringLengthMeters(currentPositionRotations);
         final double targetStringLengthMeters = calculateStringLengthMeters(targetPositionRotations);
@@ -20,18 +26,37 @@ public class ClimberVisualization {
         log(currentArmAngle);
     }
 
-    private void setCurrentMechanism2dState(Rotation2d armAngle, Rotation2d stringAngle, double stringLengthMeters) {
-        ClimberVisualizationConstants.CURRENT_ARM_POSITION_LIGAMENT.setAngle(flipAngle(armAngle).getDegrees());
-        ClimberVisualizationConstants.CURRENT_STRING_POSITION_LIGAMENT.setAngle(stringAngle.getDegrees());
-        ClimberVisualizationConstants.CURRENT_STRING_POSITION_LIGAMENT.setLength(stringLengthMeters);
+    /**
+     * Sets the current state of the 2d mechanism.
+     *
+     * @param currentArmAngle           the current arm angle
+     * @param currentStringAngle        the current string angle
+     * @param currentStringLengthMeters the current string length
+     */
+    private void setCurrentMechanism2dState(Rotation2d currentArmAngle, Rotation2d currentStringAngle, double currentStringLengthMeters) {
+        ClimberVisualizationConstants.CURRENT_ARM_POSITION_LIGAMENT.setAngle(flipAngle(currentArmAngle).getDegrees());
+        ClimberVisualizationConstants.CURRENT_STRING_POSITION_LIGAMENT.setAngle(currentStringAngle.getDegrees());
+        ClimberVisualizationConstants.CURRENT_STRING_POSITION_LIGAMENT.setLength(currentStringLengthMeters);
     }
 
+    /**
+     * Sets the target state of the 2d mechanism.
+     *
+     * @param targetArmAngle           the target arm angle
+     * @param targetStringAngle        the target string angle
+     * @param targetStringLengthMeters the target string length
+     */
     private void setTargetMechanism2dState(Rotation2d targetArmAngle, Rotation2d targetStringAngle, double targetStringLengthMeters) {
         ClimberVisualizationConstants.TARGET_ARM_POSITION_LIGAMENT.setAngle(flipAngle(targetArmAngle).getDegrees());
         ClimberVisualizationConstants.TARGET_STRING_POSITION_LIGAMENT.setAngle(targetStringAngle.getDegrees());
         ClimberVisualizationConstants.TARGET_STRING_POSITION_LIGAMENT.setLength(targetStringLengthMeters);
     }
 
+    /**
+     * Logs the 2d mechanism and 3d advantage scope poses.
+     *
+     * @param currentArmAngle the current arm angle
+     */
     private void log(Rotation2d currentArmAngle) {
         Logger.recordOutput("Mechanisms/Climber", ClimberVisualizationConstants.MECHANISM);
         Logger.recordOutput("Poses/Components/Climber", calculateArmPose(currentArmAngle));
