@@ -14,7 +14,6 @@ import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
-import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.commands.CameraPositionCalculationCommand;
 import org.trigon.commands.WheelRadiusCharacterizationCommand;
@@ -37,16 +36,11 @@ public class CommandConstants {
     private static final double JOYSTICK_ORIENTED_ROTATION_DEADBAND = 0.4;
 
     public static final Command
-            FIELD_RELATIVE_DRIVE_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
+            FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_TO_REEF_SECTIONS_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
             () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftY()),
             () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftX()),
-            () -> calculateRotationStickAxisValue(DRIVER_CONTROLLER.getRightX())
+            CommandConstants::calculateJoystickOrientedToReefSectionsTargetAngle
     ),
-            FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_TO_REEF_SECTIONS_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
-                    () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftY()),
-                    () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftX()),
-                    CommandConstants::calculateJoystickOrientedToReefSectionsTargetAngle
-            ),
             SELF_RELATIVE_DRIVE_COMMAND = SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                     () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftY()),
                     () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftX()),
@@ -73,7 +67,6 @@ public class CommandConstants {
                     (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),
                     RobotContainer.SWERVE
             ),
-            COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER)),
             RESET_TRACKED_GAME_PIECE_COMMAND = new InstantCommand(CameraConstants.OBJECT_DETECTION_CAMERA::resetTrackedObject);
 
     public static final Command

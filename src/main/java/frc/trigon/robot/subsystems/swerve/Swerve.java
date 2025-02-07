@@ -147,10 +147,10 @@ public class Swerve extends MotorSubsystem {
      * @param feedforwards the feedforwards to use
      */
     public void selfRelativeDriveWithoutSetpointGeneration(ChassisSpeeds targetSpeeds, DriveFeedforwards feedforwards) {
-        if (isStill(targetSpeeds)) {
-            stop();
-            return;
-        }
+//        if (isStill(targetSpeeds)) {
+//            stop();
+//            return;
+//        }
 
         final SwerveModuleState[] swerveModuleStates = SwerveConstants.KINEMATICS.toSwerveModuleStates(targetSpeeds);
         final double[] targetAccelerationsMetersPerSecondSquared;
@@ -249,7 +249,7 @@ public class Swerve extends MotorSubsystem {
 
     /**
      * This method will take in desired robot-relative chassis targetSpeeds,
-     * generate a swerve setpoint, then set the target state for each module
+     * generate a swerve setpoint, then set the target state for each module.
      *
      * @param targetSpeeds the desired robot-relative targetSpeeds
      */
@@ -260,10 +260,10 @@ public class Swerve extends MotorSubsystem {
                 RobotHardwareStats.getPeriodicTimeSeconds()
         );
 
-        if (isStill(previousSetpoint.robotRelativeSpeeds())) {
-            stop();
-            return;
-        }
+//        if (isStill(previousSetpoint.robotRelativeSpeeds())) {
+//            stop();
+//            return;
+//        }
 
         setTargetModuleStates(previousSetpoint.moduleStates(), previousSetpoint.feedforwards().accelerationsMPSSq());
     }

@@ -1,10 +1,14 @@
 package frc.trigon.robot.misc.objectdetectioncamera.io;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.math.util.Units;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraIO;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraInputsAutoLogged;
+import org.opencv.core.Point;
 import org.photonvision.PhotonCamera;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
@@ -54,6 +58,9 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         Arrays.fill(inputs.hasTarget, false);
 
         for (PhotonTrackedTarget currentTarget : result.getTargets()) {
+            if (currentTarget.getDetectedObjectClassID() == -1)
+                continue;
+
             inputs.hasTarget[currentTarget.getDetectedObjectClassID()] = true;
             visibleObjectsRotations[currentTarget.getDetectedObjectClassID()].add(extractRotation3d(currentTarget));
         }
@@ -72,10 +79,31 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     }
 
     private Rotation3d extractRotation3d(PhotonTrackedTarget target) {
+//        final TargetCorner lowerCorner1 = target.getDetectedCorners().get(0);
+//        final TargetCorner lowerCorner2 = target.getDetectedCorners().get(1);
+//        if (target.getDetectedCorners().get(3).y < )
+//        final Rotation3d correctedPixelRot = getCorrectedPixelRot(target.getDetectedCorners().get())
+
         return new Rotation3d(
                 0,
                 Units.degreesToRadians(target.getPitch()),
                 Units.degreesToRadians(-target.getYaw())
         );
+    }
+
+    private Rotation3d getCorrectedPixelRot(Point point) {
+        final Matrix<N3, N3> cameraIntrinsics = photonCamera.getCameraMatrix().orElse(null);
+        if (cameraIntrinsics == null)
+            return null;
+
+        double fx = cameraIntrinsics.get(0, 0);
+        double cx = cameraIntrinsics.get(0, 2);
+        double xOffset = cx - point.x;
+        double fy = cameraIntrinsics.get(1, 1);
+        double cy = cameraIntrinsics.get(1, 2);
+        double yOffset = cy - point.y;
+        Rotation2d yaw = new Rotation2d(fx, xOffset);
+        Rotation2d pitch = new Rotation2d(fy / Math.cos(Math.atan(xOffset / fx)), -yOffset);
+        return new Rotation3d(0.0, pitch.getRadians(), yaw.getRadians());
     }
 }

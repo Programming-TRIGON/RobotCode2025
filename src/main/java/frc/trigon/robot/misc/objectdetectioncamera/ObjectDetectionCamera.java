@@ -52,26 +52,20 @@ public class ObjectDetectionCamera extends SubsystemBase {
      * @return the best object's 2D position on the field (z is assumed to be 0)
      */
     public Translation2d calculateBestObjectPositionOnField(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
-        return calculateObjectPositionFromRotation(calculateBestObjectRotation(targetGamePiece));
-    }
+        final Translation2d[] targetObjectsTranslation = getObjectPositionsOnField(targetGamePiece);
+        final Translation2d currentRobotTranslation = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getTranslation();
+        Translation2d bestObjectTranslation = targetObjectsTranslation[0];
 
-    /**
-     * @return the 3D rotation of the best visible object relative to the camera
-     */
-    public Rotation3d calculateBestObjectRotation(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
-        final Rotation3d[] targetObjectsRotations = getTargetObjectsRotations(targetGamePiece);
-        Rotation3d bestObjectRotation = targetObjectsRotations[0];
-
-        for (int i = 1; i < targetObjectsRotations.length; i++) {
-            final Rotation3d currentObjectRotation = targetObjectsRotations[i];
-            final double bestObjectDifference = Math.abs(bestObjectRotation.getY() - ObjectDetectionCameraConstants.BEST_PITCH.getRadians());
-            final double currentObjectDifference = Math.abs(currentObjectRotation.getY() - ObjectDetectionCameraConstants.BEST_PITCH.getRadians());
+        for (int i = 1; i < targetObjectsTranslation.length; i++) {
+            final Translation2d currentObjectTranslation = targetObjectsTranslation[i];
+            final double bestObjectDifference = currentRobotTranslation.getDistance(bestObjectTranslation);
+            final double currentObjectDifference = currentRobotTranslation.getDistance(currentObjectTranslation);
 
             if (currentObjectDifference < bestObjectDifference)
-                bestObjectRotation = currentObjectRotation;
+                bestObjectTranslation = currentObjectTranslation;
         }
 
-        return bestObjectRotation;
+        return bestObjectTranslation;
     }
 
     /**

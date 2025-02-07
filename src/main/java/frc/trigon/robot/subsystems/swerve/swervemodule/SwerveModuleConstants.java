@@ -42,12 +42,12 @@ public class SwerveModuleConstants {
             REAR_STEER_MOTOR_I = 0,
             REAR_STEER_MOTOR_D = 0;
     private static final double
-            DRIVE_MOTOR_P = RobotHardwareStats.isSimulation() ? 50 : 18,
+            DRIVE_MOTOR_P = RobotHardwareStats.isSimulation() ? 50 : 22,
             DRIVE_MOTOR_I = 0,
             DRIVE_MOTOR_D = 0,
-            DRIVE_MOTOR_KS = RobotHardwareStats.isSimulation() ? 0.4708 : 6.7,
+            DRIVE_MOTOR_KS = RobotHardwareStats.isSimulation() ? 0.4708 : 6.2,
             DRIVE_MOTOR_KV = RobotHardwareStats.isSimulation() ? 0 : 0,
-            DRIVE_MOTOR_KA = RobotHardwareStats.isSimulation() ? 0.48818 : 1;
+            DRIVE_MOTOR_KA = RobotHardwareStats.isSimulation() ? 0.48818 : 2.6;
     static final boolean ENABLE_FOC = true;
 
     private static final double
@@ -113,12 +113,12 @@ public class SwerveModuleConstants {
         config.Slot0.kV = DRIVE_MOTOR_KV;
         config.Slot0.kA = DRIVE_MOTOR_KA;
 
-        config.Feedback.VelocityFilterTimeConstant = 0.03;
+        config.Feedback.VelocityFilterTimeConstant = 0;
 
         return config;
     }
 
-    static TalonFXConfiguration generateSteerMotorConfiguration(boolean isFront) {
+    static TalonFXConfiguration generateSteerMotorConfiguration(boolean isFront, int feedbackRemoteSensorID) {
         final TalonFXConfiguration config = new TalonFXConfiguration();
 
         config.Audio.BeepOnBoot = false;
@@ -132,6 +132,7 @@ public class SwerveModuleConstants {
 
         config.Feedback.RotorToSensorRatio = isFront ? FRONT_STEER_MOTOR_GEAR_RATIO : REAR_STEER_MOTOR_GEAR_RATIO;
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+        config.Feedback.FeedbackRemoteSensorID = feedbackRemoteSensorID;
 
         config.Slot0.kP = isFront ? FRONT_STEER_MOTOR_P : REAR_STEER_MOTOR_P;
         config.Slot0.kI = isFront ? FRONT_STEER_MOTOR_I : REAR_STEER_MOTOR_I;

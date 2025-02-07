@@ -8,8 +8,8 @@ import org.trigon.hardware.misc.XboxController;
 public class OperatorConstants {
     private static final int
             DRIVER_CONTROLLER_PORT = 0;
-    private static final int DRIVER_CONTROLLER_EXPONENT = 1;
-    private static final double DRIVER_CONTROLLER_DEADBAND = 0.1;
+    private static final int DRIVER_CONTROLLER_EXPONENT = 2;
+    private static final double DRIVER_CONTROLLER_DEADBAND = 0.07;
     public static final XboxController DRIVER_CONTROLLER = new XboxController(
             DRIVER_CONTROLLER_PORT, DRIVER_CONTROLLER_EXPONENT, DRIVER_CONTROLLER_DEADBAND
     );

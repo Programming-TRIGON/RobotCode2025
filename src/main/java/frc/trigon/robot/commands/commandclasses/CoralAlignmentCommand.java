@@ -25,7 +25,7 @@ import org.trigon.utilities.flippable.FlippableRotation2d;
 public class CoralAlignmentCommand extends ParallelCommandGroup {
     public static final PIDController Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new PIDController(0.5, 0, 0) :
-            new PIDController(0.45, 0, 0);
+            new PIDController(0.4, 0, 0.03);
     private static final ObjectDetectionCamera CAMERA = CameraConstants.OBJECT_DETECTION_CAMERA;
 
     public CoralAlignmentCommand() {
@@ -34,7 +34,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
                 getSetLEDColorsCommand(),
                 GeneralCommands.getContinuousConditionalCommand(
                         getDriveWhileAligningToCoralCommand(),
-                        GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND),
+                        GeneralCommands.getFieldRelativeDriveCommand(),
                         () -> CAMERA.getTrackedObjectFieldRelativePosition() != null
                 ),
                 getTrackCoralCommand()

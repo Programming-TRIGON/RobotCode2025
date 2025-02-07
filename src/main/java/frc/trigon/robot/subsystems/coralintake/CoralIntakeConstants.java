@@ -86,7 +86,7 @@ public class CoralIntakeConstants {
     static final double ANGLE_ENCODER_POSITION_OFFSET_VALUE = -0.32502 - ANGLE_ENCODER_GRAVITY_OFFSET_VALUE;
     private static final Rotation2d
             ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(-0.128662 - ANGLE_ENCODER_POSITION_OFFSET_VALUE),
-            ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromRotations(0.39 - ANGLE_ENCODER_POSITION_OFFSET_VALUE);
+            ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromDegrees(143.8).minus(Rotation2d.fromRotations(ANGLE_ENCODER_POSITION_OFFSET_VALUE));
     private static final double
             DISTANCE_SENSOR_SCALING_SLOPE = 0.0002,
             DISTANCE_SENSOR_SCALING_INTERCEPT_POINT = -200;
@@ -305,15 +305,15 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE(-3, -1, Rotation2d.fromDegrees(141)),
+        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE(-3, -1, Rotation2d.fromDegrees(143.5)),
         LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE(-3, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE.targetAngle),
         PREPARE_FOR_LOADING_TO_GRIPPER_WHILE_GAME_PIECE_NOT_DETECTED(6, 2, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE.targetAngle),
         UNLOAD_CORAL_FROM_GRIPPER(6, 2, Rotation2d.fromDegrees(141)),
-        CENTER_CORAL(6, 2, Rotation2d.fromDegrees(141)),
+        CENTER_CORAL(6, 2, Rotation2d.fromDegrees(143.5)),
         COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-46)),
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(90)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
-        REST(0, 0, Rotation2d.fromDegrees(141)),
+        REST(0, 0, Rotation2d.fromDegrees(143.5)),
         SCORE_L1(-3, -1, Rotation2d.fromDegrees(45));
 
         public final double

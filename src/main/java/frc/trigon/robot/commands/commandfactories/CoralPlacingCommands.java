@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
-import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
@@ -112,7 +111,7 @@ public class CoralPlacingCommands {
 
     private static Command getGripperScoringSequenceCommand() {
         return new SequentialCommandGroup(
-                GripperCommands.getPrepareForStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoringFromElevator),
+                GripperCommands.getPrepareForStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
                 GripperCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.gripperState)
         );
     }
@@ -130,7 +129,7 @@ public class CoralPlacingCommands {
                         CoralPlacingCommands::calculateTargetScoringPose,
                         PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
                 ),
-                GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND)
+                GeneralCommands.getFieldRelativeDriveCommand()
         );
     }
 
@@ -140,7 +139,7 @@ public class CoralPlacingCommands {
         return currentTranslation.getDistance(targetTranslation);
     }
 
-    private static FlippablePose2d calculateTargetScoringPose() {
+    public static FlippablePose2d calculateTargetScoringPose() {
         return TARGET_SCORING_LEVEL.calculateTargetPlacingPosition(TARGET_REEF_SCORING_CLOCK_POSITION, TARGET_REEF_SCORING_SIDE);
     }
 
@@ -149,10 +148,11 @@ public class CoralPlacingCommands {
                 OperatorConstants.CONTINUE_SCORING_TRIGGER.getAsBoolean();
     }
 
-    private static boolean canContinueScoringFromElevator() {
+    private static boolean canContinueScoringFromGripper() {
         return RobotContainer.ELEVATOR.atTargetState() &&
                 RobotContainer.GRIPPER.atTargetAngle() &&
                 OperatorConstants.CONTINUE_SCORING_TRIGGER.getAsBoolean();
+//                RobotContainer.SWERVE.atPose(calculateTargetScoringPose());
     }
 
     /**
@@ -164,7 +164,7 @@ public class CoralPlacingCommands {
     public enum ScoringLevel {
         L1_CORAL_INTAKE(1.38, 0.14, Rotation2d.fromDegrees(180)),
         L1_GRIPPER(1.38, 0.14, Rotation2d.fromDegrees(0)),
-        L2(1.38, 0.15, Rotation2d.fromDegrees(0)),
+        L2(1.36, 0.15, Rotation2d.fromDegrees(0)),
         L3(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0)),
         L4(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0));
 

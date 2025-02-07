@@ -26,10 +26,8 @@ import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.Gripper;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.swerve.Swerve;
-import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
-import org.trigon.utilities.flippable.FlippableRotation2d;
 
 public class RobotContainer {
     public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator(
@@ -74,7 +72,7 @@ public class RobotContainer {
     }
 
     private void bindDefaultCommands() {
-        SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
+        SWERVE.setDefaultCommand(GeneralCommands.getFieldRelativeDriveCommand());
         CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         GRIPPER.setDefaultCommand(GripperCommands.getDefaultCommand());
@@ -87,7 +85,7 @@ public class RobotContainer {
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
         OperatorConstants.RESET_TRACKED_GAME_PIECE_TRIGGER.onTrue(CommandConstants.RESET_TRACKED_GAME_PIECE_COMMAND);
 
-        OperatorConstants.DEBUGGING_TRIGGER.whileTrue(SwerveCommands.getClosedLoopFieldRelativeDriveCommand(() -> 0.0, () -> 0.0, () -> FlippableRotation2d.fromDegrees(0, false)));
+        OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CommandConstants.WHEEL_RADIUS_CHARACTERIZATION_COMMAND);
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
         OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionCommand());
         OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
@@ -95,6 +93,8 @@ public class RobotContainer {
         OperatorConstants.UNLOAD_CORAL_TRIGGER.whileTrue(CoralCollectionCommands.getUnloadCoralCommand());
         OperatorConstants.COLLECT_ALGAE_TRIGGER.whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
         OperatorConstants.FEEDER_CORAL_COLLECTION_WITH_GRIPPER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionFromGripperCommand());
+
+        OperatorConstants.OPERATOR_CONTROLLER.x().whileTrue(CoralCollectionCommands.getCommand());
     }
 
     private void bindSetters() {

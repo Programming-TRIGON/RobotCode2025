@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import frc.trigon.robot.constants.RobotConstants;
 import frc.trigon.robot.poseestimation.poseestimator.PoseEstimatorConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveConstants;
+import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
@@ -211,7 +212,7 @@ public class SwerveModule {
     private void configureSteerMotor() {
         final boolean isFront = driveMotor.getID() == SwerveConstants.FRONT_LEFT_ID || driveMotor.getID() == SwerveConstants.FRONT_RIGHT_ID;
 
-        steerMotor.applyConfiguration(SwerveModuleConstants.generateSteerMotorConfiguration(isFront));
+        steerMotor.applyConfiguration(SwerveModuleConstants.generateSteerMotorConfiguration(isFront, steerMotor.getID()));
         steerMotor.setPhysicsSimulation(SwerveModuleConstants.createSteerMotorSimulation(isFront));
 
         steerMotor.registerSignal(TalonFXSignal.VELOCITY, 100);
