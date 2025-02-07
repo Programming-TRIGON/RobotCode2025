@@ -20,6 +20,14 @@ import org.trigon.hardware.misc.leds.LEDCommands;
 public class CoralCollectionCommands {
     public static boolean SHOULD_ALIGN_TO_CORAL = false;
 
+    public static Command getFeederCoralCollectionFromGripperCommand() {
+        return new ParallelCommandGroup(
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.COLLECT_CORAL_FROM_FEEDER),
+                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
+                GeneralCommands.duplicate(CommandConstants.COLLECTION_RUMBLE_COMMAND)
+        ).until(RobotContainer.GRIPPER::hasGamePiece);
+    }
+
     public static Command getFloorCoralCollectionCommand() {
         return getInitiateFloorCoralCollectionCommand().unless(RobotContainer.GRIPPER::hasGamePiece);
     }

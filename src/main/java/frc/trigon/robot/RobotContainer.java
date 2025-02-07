@@ -94,6 +94,7 @@ public class RobotContainer {
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
         OperatorConstants.UNLOAD_CORAL_TRIGGER.whileTrue(CoralCollectionCommands.getUnloadCoralCommand());
         OperatorConstants.COLLECT_ALGAE_TRIGGER.whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
+        OperatorConstants.FEEDER_CORAL_COLLECTION_WITH_GRIPPER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionFromGripperCommand());
     }
 
     private void bindSetters() {
