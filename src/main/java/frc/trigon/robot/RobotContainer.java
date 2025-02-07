@@ -91,7 +91,7 @@ public class RobotContainer {
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(GeneralCommands.getEjectCoralCommand());
 
         OperatorConstants.CLIMB_TRIGGER.whileTrue(GeneralCommands.getClimbCommand());
-        OperatorConstants.RESET_CLIMBER_TRIGGER.onTrue(CommandConstants.RESET_CLIMBING_COMMAND);
+        OperatorConstants.OVERRIDE_IS_CLIMBING_TRIGGER.onTrue(CommandConstants.OVERRIDE_IS_CLIMBING_TRIGGER);
         OperatorConstants.MANUALLY_RAISE_CLIMBER_TRIGGER.whileTrue(CommandConstants.MANUALLY_RAISE_CLIMBER_COMMAND);
         OperatorConstants.MANUALLY_LOWER_CLIMBER_TRIGGER.whileTrue(CommandConstants.MANUALLY_LOWER_CLIMBER_COMMAND);
     }

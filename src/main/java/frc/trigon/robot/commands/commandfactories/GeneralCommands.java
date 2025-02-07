@@ -9,7 +9,6 @@ import frc.trigon.robot.subsystems.climber.ClimberCommands;
 import frc.trigon.robot.subsystems.climber.ClimberConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
-import org.littletonrobotics.junction.Logger;
 
 import java.util.function.BooleanSupplier;
 
@@ -21,10 +20,7 @@ public class GeneralCommands {
     public static Command getClimbCommand() {
         return new SequentialCommandGroup(
                 new InstantCommand(
-                        () -> {
-                            RobotContainer.CLIMBER.setIsClimbing(true);
-                            Logger.recordOutput("IsClimbing", true);
-                        }
+                        () -> RobotContainer.CLIMBER.setIsClimbing(true)
                 ),
                 ClimberCommands.getSetTargetStateCommand(ClimberConstants.ClimberState.PREPARE_FOR_CLIMB).until(() -> OperatorConstants.CONTINUE_TRIGGER.getAsBoolean() && RobotContainer.CLIMBER.atTargetState()),
                 ClimberCommands.getSetTargetStateCommand(ClimberConstants.ClimberState.CLIMB)

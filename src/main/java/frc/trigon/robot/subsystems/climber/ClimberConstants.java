@@ -37,15 +37,15 @@ public class ClimberConstants {
             ON_CAGE_KA = RobotHardwareStats.isSimulation() ? GROUNDED_KA : 0;
     static final double ON_CAGE_KG = 0;
     static final double
-            MAX_GROUNDED_VELOCITY = 100,
-            MAX_GROUNDED_ACCELERATION = 100,
-            MAX_ON_CAGE_VELOCITY = 100,
-            MAX_ON_CAGE_ACCELERATION = 100;
+            MAXIMUM_GROUNDED_VELOCITY = 100,
+            MAXIMUM_GROUNDED_ACCELERATION = 100,
+            MAXIMUM_ON_CAGE_VELOCITY = 100,
+            MAXIMUM_ON_CAGE_ACCELERATION = 100;
     static final int
-            GROUNDED_SLOT = 0,
-            ON_CAGE_SLOT = 1;
+            GROUNDED_PID_SLOT = 0,
+            ON_CAGE_PID_SLOT = 1;
     private static final double FORWARD_SOFT_LIMIT_POSITION_ROTATIONS = 3;
-    private static final double REVERSE_LIMIT_SWITCH_RESET_POSITION = 0;
+    private static final double REVERSE_LIMIT_SWITCH_PRESSED_POSITION_ROTATIONS = 0;
     private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE = ReverseLimitTypeValue.NormallyOpen;
     static final double GEAR_RATIO = 33.75;
 
@@ -100,11 +100,11 @@ public class ClimberConstants {
 
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_LIMIT_SWITCH_RESET_POSITION;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_LIMIT_SWITCH_PRESSED_POSITION_ROTATIONS;
         config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = MAX_GROUNDED_VELOCITY;
-        config.MotionMagic.MotionMagicAcceleration = MAX_GROUNDED_ACCELERATION;
+        config.MotionMagic.MotionMagicCruiseVelocity = MAXIMUM_GROUNDED_VELOCITY;
+        config.MotionMagic.MotionMagicAcceleration = MAXIMUM_GROUNDED_ACCELERATION;
 
         MOTOR.applyConfiguration(config);
         MOTOR.setPhysicsSimulation(MOTOR_SIMULATION);

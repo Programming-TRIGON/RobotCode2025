@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.subsystems.MotorSubsystem;
+import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 
@@ -17,16 +18,16 @@ public class Climber extends MotorSubsystem {
     private final DynamicMotionMagicVoltage
             groundedPositionRequest = new DynamicMotionMagicVoltage(
             0,
-            ClimberConstants.MAX_GROUNDED_VELOCITY,
-            ClimberConstants.MAX_GROUNDED_ACCELERATION,
+            ClimberConstants.MAXIMUM_GROUNDED_VELOCITY,
+            ClimberConstants.MAXIMUM_GROUNDED_ACCELERATION,
             0
-    ).withSlot(ClimberConstants.GROUNDED_SLOT).withEnableFOC(ClimberConstants.ENABLE_FOC),
+    ).withSlot(ClimberConstants.GROUNDED_PID_SLOT).withEnableFOC(ClimberConstants.ENABLE_FOC),
             onCagePositionRequest = new DynamicMotionMagicVoltage(
                     0,
-                    ClimberConstants.MAX_ON_CAGE_VELOCITY,
-                    ClimberConstants.MAX_ON_CAGE_ACCELERATION,
+                    ClimberConstants.MAXIMUM_ON_CAGE_VELOCITY,
+                    ClimberConstants.MAXIMUM_ON_CAGE_ACCELERATION,
                     0
-            ).withSlot(ClimberConstants.ON_CAGE_SLOT).withEnableFOC(ClimberConstants.ENABLE_FOC);
+            ).withSlot(ClimberConstants.ON_CAGE_PID_SLOT).withEnableFOC(ClimberConstants.ENABLE_FOC);
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(ClimberConstants.ENABLE_FOC);
     private ClimberConstants.ClimberState targetState = ClimberConstants.ClimberState.REST;
     private boolean isClimbing = false;
@@ -87,6 +88,7 @@ public class Climber extends MotorSubsystem {
 
     public void setIsClimbing(boolean isClimbing) {
         this.isClimbing = isClimbing;
+        Logger.recordOutput("IsClimbing", isClimbing);
     }
 
     public boolean isClimbing() {
@@ -107,9 +109,9 @@ public class Climber extends MotorSubsystem {
     }
 
     private void configureChangingDefaultCommand() {
-        final Trigger climbingTrigger = new Trigger(() -> isClimbing);
-        climbingTrigger.onTrue(new InstantCommand(this::defaultToClimbing));
-        climbingTrigger.onFalse(new InstantCommand(this::defaultToBraking));
+        final Trigger climberDefaultCommandTrigger = new Trigger(() -> isClimbing);
+        climberDefaultCommandTrigger.onTrue(new InstantCommand(this::defaultToClimbing));
+        climberDefaultCommandTrigger.onFalse(new InstantCommand(this::defaultToBraking));
     }
 
     private void defaultToBraking() {

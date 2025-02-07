@@ -16,7 +16,6 @@ import frc.trigon.robot.subsystems.climber.ClimberCommands;
 import frc.trigon.robot.subsystems.climber.ClimberConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
-import org.littletonrobotics.junction.Logger;
 import org.trigon.commands.WheelRadiusCharacterizationCommand;
 import org.trigon.hardware.misc.XboxController;
 import org.trigon.hardware.misc.leds.LEDCommands;
@@ -67,12 +66,7 @@ public class CommandConstants {
                     RobotContainer.SWERVE
             ),
             COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER)),
-            RESET_CLIMBING_COMMAND = new InstantCommand(
-                    () -> {
-                        RobotContainer.CLIMBER.setIsClimbing(false);
-                        Logger.recordOutput("IsClimbing", false);
-                    }
-            ),
+            OVERRIDE_IS_CLIMBING_TRIGGER = new InstantCommand(() -> RobotContainer.CLIMBER.setIsClimbing(false)),
             MANUALLY_RAISE_CLIMBER_COMMAND = ClimberCommands.getSetTargetVoltageCommand(ClimberConstants.MANUALLY_RAISE_CLIMBER_VOLTAGE),
             MANUALLY_LOWER_CLIMBER_COMMAND = ClimberCommands.getSetTargetVoltageCommand(ClimberConstants.MANUALLY_LOWER_CLIMBER_VOLTAGE);
 
