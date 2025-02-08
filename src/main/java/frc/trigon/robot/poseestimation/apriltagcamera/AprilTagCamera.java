@@ -1,6 +1,7 @@
 package frc.trigon.robot.poseestimation.apriltagcamera;
 
 import edu.wpi.first.math.geometry.*;
+import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.poseestimation.poseestimator.StandardDeviations;
 import org.littletonrobotics.junction.Logger;
@@ -110,7 +111,21 @@ public class AprilTagCamera {
         if (!hasValidResult())
             return null;
 
-        return cameraPoseToRobotPose(inputs.cameraSolvePNPPose.toPose2d());
+        return chooseBestRobotPose();
+    }
+
+    private Pose2d chooseBestRobotPose() {
+        if (inputs.bestCameraSolvePNPPose.equals(inputs.alternateCameraSolvePNPPose))
+            return cameraPoseToRobotPose(inputs.bestCameraSolvePNPPose.toPose2d());
+
+        final Pose2d bestPose = cameraPoseToRobotPose(inputs.bestCameraSolvePNPPose.toPose2d());
+        final Pose2d alternatePose = cameraPoseToRobotPose(inputs.alternateCameraSolvePNPPose.toPose2d());
+        final Rotation2d robotAngleAtResultTime = RobotContainer.POSE_ESTIMATOR.getEstimatedPoseAtTimestamp(inputs.latestResultTimestampSeconds).getRotation();
+
+        final double bestAngleDifference = Math.abs(bestPose.getRotation().minus(robotAngleAtResultTime).getRadians());
+        final double alternateAngleDifference = Math.abs(alternatePose.getRotation().minus(robotAngleAtResultTime).getRadians());
+
+        return bestAngleDifference > alternateAngleDifference ? alternatePose : bestPose;
     }
 
     private Pose2d cameraPoseToRobotPose(Pose2d cameraPose) {
@@ -120,7 +135,7 @@ public class AprilTagCamera {
     private double calculateAverageDistanceFromTags() {
         double totalDistance = 0;
         for (int visibleTagID : inputs.visibleTagIDs)
-            totalDistance += FieldConstants.TAG_ID_TO_POSE.get(visibleTagID).getTranslation().getDistance(inputs.cameraSolvePNPPose.getTranslation());
+            totalDistance += FieldConstants.TAG_ID_TO_POSE.get(visibleTagID).getTranslation().getDistance(inputs.bestCameraSolvePNPPose.getTranslation());
         return totalDistance / inputs.visibleTagIDs.length;
     }
 

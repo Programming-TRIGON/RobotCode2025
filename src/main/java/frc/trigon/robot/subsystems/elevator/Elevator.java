@@ -11,13 +11,16 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.subsystems.MotorSubsystem;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.utilities.Conversions;
 
 public class Elevator extends MotorSubsystem {
-    private final TalonFXMotor motor = ElevatorConstants.MASTER_MOTOR;
+    private final TalonFXMotor
+            masterMotor = ElevatorConstants.MASTER_MOTOR,
+            followerMotor = ElevatorConstants.FOLLOWER_MOTOR;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(ElevatorConstants.FOC_ENABLED);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(ElevatorConstants.FOC_ENABLED);
     private ElevatorConstants.ElevatorState targetState = ElevatorConstants.ElevatorState.REST;
@@ -33,20 +36,21 @@ public class Elevator extends MotorSubsystem {
 
     @Override
     public void setBrake(boolean brake) {
-        motor.setBrake(brake);
+        masterMotor.setBrake(brake);
+        followerMotor.setBrake(brake);
     }
 
     @Override
     public void stop() {
-        motor.stopMotor();
+        masterMotor.stopMotor();
     }
 
     @Override
     public void updateLog(SysIdRoutineLog log) {
         log.motor("Elevator")
                 .linearPosition(Units.Meters.of(getPositionRotations()))
-                .linearVelocity(Units.MetersPerSecond.of(motor.getSignal(TalonFXSignal.VELOCITY)))
-                .voltage(Units.Volts.of(motor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
+                .linearVelocity(Units.MetersPerSecond.of(masterMotor.getSignal(TalonFXSignal.VELOCITY)))
+                .voltage(Units.Volts.of(masterMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
     @Override
@@ -56,18 +60,19 @@ public class Elevator extends MotorSubsystem {
 
         ElevatorConstants.MECHANISM.update(
                 getPositionMeters(),
-                rotationsToMeters(motor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
+                rotationsToMeters(masterMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
         );
     }
 
     @Override
     public void updatePeriodically() {
-        motor.update();
+        masterMotor.update();
+        Logger.recordOutput("Elevator/CurrentPositionMeters", getPositionMeters());
     }
 
     @Override
     public void sysIdDrive(double targetVoltage) {
-        motor.setControl(voltageRequest.withOutput(targetVoltage));
+        masterMotor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
     public boolean willCurrentMovementMoveThroughHitRange() {
@@ -82,6 +87,7 @@ public class Elevator extends MotorSubsystem {
         return targetState == this.targetState && atTargetState();
     }
 
+    @AutoLogOutput(key = "Elevator/AtTargetState")
     public boolean atTargetState() {
         final double currentToTargetStateDifference = Math.abs(targetState.targetPositionMeters - getPositionMeters());
         return currentToTargetStateDifference < ElevatorConstants.POSITION_TOLERANCE_METERS;
@@ -97,7 +103,7 @@ public class Elevator extends MotorSubsystem {
     }
 
     void setTargetPositionRotations(double targetPositionRotations) {
-        motor.setControl(positionRequest.withPosition(targetPositionRotations));
+        masterMotor.setControl(positionRequest.withPosition(targetPositionRotations));
     }
 
     boolean isAllowedToMoveToPosition(double targetPositionRotations) {
@@ -108,7 +114,7 @@ public class Elevator extends MotorSubsystem {
     }
 
     private boolean willMovementMoveThroughHitRange(double targetPositionRotations) {
-        final double currentPositionRotations = motor.getSignal(TalonFXSignal.POSITION);
+        final double currentPositionRotations = masterMotor.getSignal(TalonFXSignal.POSITION);
         if (isInGripperHitRange(currentPositionRotations) || isInGripperHitRange(targetPositionRotations))
             return true;
 
@@ -149,7 +155,7 @@ public class Elevator extends MotorSubsystem {
     }
 
     private double getPositionRotations() {
-        return motor.getSignal(TalonFXSignal.POSITION);
+        return masterMotor.getSignal(TalonFXSignal.POSITION);
     }
 
     private double getPositionMeters() {

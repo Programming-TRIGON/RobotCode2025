@@ -140,28 +140,26 @@ public class Swerve extends MotorSubsystem {
     }
 
     /**
-     * Drives the swerve to a certain angular velocity. Used for Wheel Radius Characterization.
-     *
-     * @param omegaRadiansPerSecond the target angular velocity in radians per second
-     */
-    public void runWheelRadiusCharacterization(double omegaRadiansPerSecond) {
-        selfRelativeDrive(new ChassisSpeeds(0, 0, omegaRadiansPerSecond));
-    }
-
-    /**
      * Drives the swerve with robot-relative targetSpeeds without using setpoint generation.
      * Used for PathPlanner because it generates setpoints automatically.
      *
      * @param targetSpeeds the pre generated robot relative target speeds
+     * @param feedforwards the feedforwards to use
      */
-    public void selfRelativeDriveWithoutSetpointGeneration(ChassisSpeeds targetSpeeds) {
-        if (isStill(targetSpeeds)) {
-            stop();
-            return;
-        }
+    public void selfRelativeDriveWithoutSetpointGeneration(ChassisSpeeds targetSpeeds, DriveFeedforwards feedforwards) {
+//        if (isStill(targetSpeeds)) {
+//            stop();
+//            return;
+//        }
 
         final SwerveModuleState[] swerveModuleStates = SwerveConstants.KINEMATICS.toSwerveModuleStates(targetSpeeds);
-        setTargetModuleStates(swerveModuleStates);
+        final double[] targetAccelerationsMetersPerSecondSquared;
+        if (feedforwards == null)
+            targetAccelerationsMetersPerSecondSquared = new double[]{0, 0, 0, 0};
+        else
+            targetAccelerationsMetersPerSecondSquared = feedforwards.accelerationsMPSSq();
+
+        setTargetModuleStates(swerveModuleStates, targetAccelerationsMetersPerSecondSquared);
     }
 
     public Rotation2d getDriveRelativeAngle() {
@@ -251,7 +249,7 @@ public class Swerve extends MotorSubsystem {
 
     /**
      * This method will take in desired robot-relative chassis targetSpeeds,
-     * generate a swerve setpoint, then set the target state for each module
+     * generate a swerve setpoint, then set the target state for each module.
      *
      * @param targetSpeeds the desired robot-relative targetSpeeds
      */
@@ -262,17 +260,17 @@ public class Swerve extends MotorSubsystem {
                 RobotHardwareStats.getPeriodicTimeSeconds()
         );
 
-        if (isStill(previousSetpoint.robotRelativeSpeeds())) {
-            stop();
-            return;
-        }
+//        if (isStill(previousSetpoint.robotRelativeSpeeds())) {
+//            stop();
+//            return;
+//        }
 
-        setTargetModuleStates(previousSetpoint.moduleStates());
+        setTargetModuleStates(previousSetpoint.moduleStates(), previousSetpoint.feedforwards().accelerationsMPSSq());
     }
 
-    private void setTargetModuleStates(SwerveModuleState[] swerveModuleStates) {
+    private void setTargetModuleStates(SwerveModuleState[] swerveModuleStates, double[] targetAccelerationsMetersPerSecondSquared) {
         for (int i = 0; i < swerveModules.length; i++)
-            swerveModules[i].setTargetState(swerveModuleStates[i]);
+            swerveModules[i].setTargetState(swerveModuleStates[i], targetAccelerationsMetersPerSecondSquared[i]);
     }
 
     private void setClosedLoop(boolean shouldUseClosedLoop) {
@@ -296,7 +294,7 @@ public class Swerve extends MotorSubsystem {
         return new ChassisSpeeds(
                 xPower * SwerveConstants.MAXIMUM_SPEED_METERS_PER_SECOND,
                 yPower * SwerveConstants.MAXIMUM_SPEED_METERS_PER_SECOND,
-                Math.pow(thetaPower, 2) * Math.signum(thetaPower) * SwerveConstants.MAXIMUM_ROTATIONAL_SPEED_RADIANS_PER_SECOND
+                thetaPower * SwerveConstants.MAXIMUM_ROTATIONAL_SPEED_RADIANS_PER_SECOND
         );
     }
 

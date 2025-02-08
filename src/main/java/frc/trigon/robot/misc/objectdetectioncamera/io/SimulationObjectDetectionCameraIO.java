@@ -77,7 +77,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
      * @return the placements of the visible objects, as a pair of the object and the rotation of the object relative to the camera
      */
     private ArrayList<Pair<SimulatedGamePiece, Rotation3d>> calculateVisibleGamePieces(Pose3d cameraPose, int objectID) {
-        final ArrayList<SimulatedGamePiece> gamePiecesOnField = objectID == 0 ? SimulationFieldHandler.getSimulatedCoral() : SimulationFieldHandler.getSimulatedAlgae();
+        final ArrayList<SimulatedGamePiece> gamePiecesOnField = objectID == SimulatedGamePieceConstants.GamePieceType.CORAL.id ? SimulationFieldHandler.getSimulatedCoral() : SimulationFieldHandler.getSimulatedAlgae();
         final ArrayList<Pair<SimulatedGamePiece, Rotation3d>> visibleTargetObjects = new ArrayList<>();
         for (SimulatedGamePiece currentObject : gamePiecesOnField) {
             final Rotation3d cameraAngleToObject = calculateCameraAngleToObject(currentObject.getPose(), cameraPose);

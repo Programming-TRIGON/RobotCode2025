@@ -37,7 +37,13 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
     }
 
     private void updateHasResultInputs(AprilTagCameraInputsAutoLogged inputs, PhotonPipelineResult latestResult) {
-        inputs.cameraSolvePNPPose = getSolvePNPPose(latestResult);
+        updateSolvePNPPoses(inputs, latestResult);
+        if (inputs.bestCameraSolvePNPPose == null) {
+            updateNoResultInputs(inputs);
+            inputs.hasResult = false;
+            return;
+        }
+
         inputs.latestResultTimestampSeconds = latestResult.getTimestampSeconds();
         inputs.visibleTagIDs = getVisibleTagIDs(latestResult);
         inputs.poseAmbiguity = latestResult.getMultiTagResult().isPresent() ? 0 : latestResult.getBestTarget().getPoseAmbiguity();
@@ -45,25 +51,30 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
     }
 
     private void updateNoResultInputs(AprilTagCameraInputsAutoLogged inputs) {
-        inputs.cameraSolvePNPPose = new Pose3d();
+        inputs.bestCameraSolvePNPPose = new Pose3d();
+        inputs.alternateCameraSolvePNPPose = new Pose3d();
         inputs.visibleTagIDs = new int[0];
     }
 
-    /**
-     * Estimates the camera's pose using Solve PNP using as many tags as possible.
-     *
-     * @param result the camera's pipeline result
-     * @return the estimated pose
-     */
-    private Pose3d getSolvePNPPose(PhotonPipelineResult result) {
-        if (result.getMultiTagResult().isPresent()) {
-            final Transform3d cameraPoseTransform = result.getMultiTagResult().get().estimatedPose.best;
-            return new Pose3d().plus(cameraPoseTransform).relativeTo(FieldConstants.APRIL_TAG_FIELD_LAYOUT.getOrigin());
+    private void updateSolvePNPPoses(AprilTagCameraInputsAutoLogged inputs, PhotonPipelineResult latestResult) {
+        if (latestResult.getMultiTagResult().isPresent()) {
+            final Transform3d cameraPoseTransform = latestResult.getMultiTagResult().get().estimatedPose.best;
+            inputs.bestCameraSolvePNPPose = new Pose3d().plus(cameraPoseTransform).relativeTo(FieldConstants.APRIL_TAG_FIELD_LAYOUT.getOrigin());
+            inputs.alternateCameraSolvePNPPose = inputs.bestCameraSolvePNPPose;
+            return;
         }
 
-        final Pose3d tagPose = FieldConstants.TAG_ID_TO_POSE.get(result.getBestTarget().getFiducialId());
-        final Transform3d targetToCamera = result.getBestTarget().getBestCameraToTarget().inverse();
-        return tagPose.transformBy(targetToCamera);
+        final Pose3d tagPose = FieldConstants.TAG_ID_TO_POSE.get(latestResult.getBestTarget().getFiducialId());
+        if (tagPose == null) {
+            inputs.bestCameraSolvePNPPose = null;
+            return;
+        }
+
+        final Transform3d bestTargetToCamera = latestResult.getBestTarget().getBestCameraToTarget().inverse();
+        final Transform3d alternateTargetToCamera = latestResult.getBestTarget().getBestCameraToTarget().inverse();
+
+        inputs.bestCameraSolvePNPPose = tagPose.transformBy(bestTargetToCamera);
+        inputs.alternateCameraSolvePNPPose = tagPose.transformBy(alternateTargetToCamera);
     }
 
     private int[] getVisibleTagIDs(PhotonPipelineResult result) {

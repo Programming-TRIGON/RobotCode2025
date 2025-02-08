@@ -7,9 +7,10 @@ import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
+import edu.wpi.first.math.util.Units;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.AutonomousCommands;
-import frc.trigon.robot.commands.commandfactories.CollectionCommands;
+import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
@@ -28,8 +29,8 @@ import java.io.IOException;
  * A class that contains the constants and configurations for everything related to PathPlanner.
  */
 public class PathPlannerConstants {
-    public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(4, 4, 6, 6);
-    public static final double MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR = 1.5;
+    public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(4, 3.1, Units.degreesToRadians(400), Units.degreesToRadians(250.000));
+    public static final double MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR = 2.2;
     public static final RobotConfig ROBOT_CONFIG = getRobotConfig();
 
     private static final PIDConstants
@@ -76,17 +77,17 @@ public class PathPlannerConstants {
     }
 
     private static void registerCommands() {
-        NamedCommands.registerCommand("ScoreL1", AutonomousCommands.getScoreInReefCommand(CoralPlacingCommands.ScoringLevel.L1));
-        NamedCommands.registerCommand("ScoreL2", AutonomousCommands.getScoreInReefCommand(CoralPlacingCommands.ScoringLevel.L2));
-        NamedCommands.registerCommand("ScoreL3", AutonomousCommands.getScoreInReefCommand(CoralPlacingCommands.ScoringLevel.L3));
-        NamedCommands.registerCommand("ScoreL4", AutonomousCommands.getScoreInReefCommand(CoralPlacingCommands.ScoringLevel.L4));
+        NamedCommands.registerCommand("ScoreL2", AutonomousCommands.getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel.L2));
+        NamedCommands.registerCommand("ScoreL3", AutonomousCommands.getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel.L3));
+        NamedCommands.registerCommand("ScoreL4", AutonomousCommands.getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel.L4));
         NamedCommands.registerCommand("RestElevator", ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         NamedCommands.registerCommand("RestCoralIntake", CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         NamedCommands.registerCommand("RestGripper", GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST));
-        NamedCommands.registerCommand("FeedCoral", GripperCommands.getScoreInReefCommand().withTimeout(0.1));
-        NamedCommands.registerCommand("CollectCoral", AutonomousCommands.getCollectCoralCommand());
-        NamedCommands.registerCommand("LoadCoral", CollectionCommands.getLoadCoralCommand().until(RobotContainer.GRIPPER::hasGamePiece));
+        NamedCommands.registerCommand("FeedCoral", GripperCommands.getScoreInReefForAutoCommand().withTimeout(0.1));
+        NamedCommands.registerCommand("CollectCoralFromFloor", AutonomousCommands.getCollectCoralFromFloorCommand());
+        NamedCommands.registerCommand("CollectCoralFromFeeder", AutonomousCommands.getCollectCoralFromFeederCommand());
+        NamedCommands.registerCommand("LoadCoral", CoralCollectionCommands.getLoadCoralCommand().until(RobotContainer.GRIPPER::hasGamePiece));
         NamedCommands.registerCommand("AlignToCoral", AutonomousCommands.getAlignToCoralCommand());
-        NamedCommands.registerCommand("ScoreL4Wait", AutonomousCommands.getScoreInReefCommand(CoralPlacingCommands.ScoringLevel.L4).until(() -> RobotContainer.ELEVATOR.atTargetState() && RobotContainer.GRIPPER.atTargetAngle()));
+        NamedCommands.registerCommand("ScoreL4Wait", AutonomousCommands.getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel.L4).until(() -> RobotContainer.ELEVATOR.atTargetState() && RobotContainer.GRIPPER.atTargetAngle()));
     }
 }

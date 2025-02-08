@@ -71,16 +71,16 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 4.2,
-    "maxAcceleration": 5.5,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
     "maxAngularVelocity": 400.0,
-    "maxAngularAcceleration": 400.0,
+    "maxAngularAcceleration": 250.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -179.27477570094078
+    "rotation": -179.16917375667248
   },
   "reversed": false,
   "folder": "ScoreFourL4Corals",

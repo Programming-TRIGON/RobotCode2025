@@ -27,13 +27,13 @@ public class AprilTagLimelightIO extends AprilTagCameraIO {
     }
 
     private void updateHasResultInputs(AprilTagCameraInputsAutoLogged inputs, LimelightHelpers.LimelightResults results) {
-        inputs.cameraSolvePNPPose = results.getBotPose3d_wpiBlue();
+        inputs.bestCameraSolvePNPPose = results.getBotPose3d_wpiBlue();
         inputs.latestResultTimestampSeconds = results.timestamp_RIOFPGA_capture;
         inputs.visibleTagIDs = getVisibleTagIDs(results);
     }
 
     private void updateNoResultInputs(AprilTagCameraInputsAutoLogged inputs) {
-        inputs.cameraSolvePNPPose = new Pose3d();
+        inputs.bestCameraSolvePNPPose = new Pose3d();
         inputs.visibleTagIDs = new int[0];
     }
 
