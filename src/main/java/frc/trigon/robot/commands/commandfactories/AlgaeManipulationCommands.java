@@ -14,11 +14,11 @@ public class AlgaeManipulationCommands {
                 getCollectAlgaeFromL3Command(),
                 () -> CoralPlacingCommands.TARGET_SCORING_LEVEL == CoralPlacingCommands.ScoringLevel.L2
         ).alongWith(
-                new WaitUntilCommand(OperatorConstants.NET_TRIGGER).andThen(new InstantCommand(() -> getNetCommand().schedule()))
+                new WaitUntilCommand(OperatorConstants.NET_TRIGGER).andThen(new InstantCommand(() -> getScoreInNetCommand().schedule()))
         );
     }
 
-    private static Command getNetCommand() {
+    private static Command getScoreInNetCommand() {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_NET),
                 GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_NET).until(OperatorConstants.CONTINUE_SCORING_TRIGGER).andThen(
