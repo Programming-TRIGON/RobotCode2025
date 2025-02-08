@@ -21,9 +21,9 @@ import org.trigon.utilities.flippable.FlippablePose2d;
 
 public class CoralPlacingCommands {
     public static boolean SHOULD_SCORE_AUTONOMOUSLY = false;
-    public static ScoringLevel TARGET_SCORING_LEVEL = ScoringLevel.L1_GRIPPER;
+    public static ScoringLevel TARGET_SCORING_LEVEL = ScoringLevel.L4;
     public static FieldConstants.ReefClockPosition TARGET_REEF_SCORING_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_6_OCLOCK;
-    public static FieldConstants.ReefSide TARGET_REEF_SCORING_SIDE = FieldConstants.ReefSide.LEFT;
+    public static FieldConstants.ReefSide TARGET_REEF_SCORING_SIDE = FieldConstants.ReefSide.RIGHT;
 
     public static Command getScoreInReefCommand() {
         return new ConditionalCommand(
