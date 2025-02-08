@@ -6,6 +6,7 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.misc.objectdetectioncamera.io.PhotonObjectDetectionCameraIO;
 import frc.trigon.robot.misc.objectdetectioncamera.io.SimulationObjectDetectionCameraIO;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
+import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.RobotHardwareStats;
 
@@ -30,7 +31,8 @@ public class ObjectDetectionCamera extends SubsystemBase {
         objectDetectionCameraIO.updateInputs(objectDetectionCameraInputs);
         Logger.processInputs(hostname, objectDetectionCameraInputs);
 
-        logAllVisibleGamePieces();
+        if (MotorSubsystem.isExtensiveLoggingEnabled())
+            logAllVisibleGamePieces();
     }
 
     /**
