@@ -16,6 +16,7 @@ import frc.trigon.robot.subsystems.swerve.SwerveConstants;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.utilities.QuickSortHandler;
+import org.trigon.utilities.flippable.Flippable;
 
 import java.util.Arrays;
 import java.util.Map;
@@ -84,6 +85,13 @@ public class PoseEstimator implements AutoCloseable {
             updateFromAprilTagCameras();
 
         field.setRobotPose(getCurrentEstimatedPose());
+    }
+
+    public void resetHeading() {
+        final Rotation2d resetRotation = Flippable.isRedAlliance() ? Rotation2d.k180deg : Rotation2d.kZero;
+        final Pose2d resetPose = new Pose2d(estimatedPose.getTranslation(), resetRotation);
+
+        resetPose(resetPose);
     }
 
     /**
