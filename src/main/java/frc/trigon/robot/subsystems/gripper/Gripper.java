@@ -24,7 +24,7 @@ public class Gripper extends MotorSubsystem {
     private final CANcoderEncoder angleEncoder = GripperConstants.ANGLE_ENCODER;
     private final LaserCAN laserCAN = GripperConstants.LASER_CAN;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(GripperConstants.FOC_ENABLED);
-    private final TorqueCurrentFOC velocityRequest = new TorqueCurrentFOC(0);
+    private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(0);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(GripperConstants.FOC_ENABLED);
     private GripperConstants.GripperState targetState = GripperConstants.GripperState.REST;
 
@@ -151,7 +151,7 @@ public class Gripper extends MotorSubsystem {
 
     void setTargetStateWithCurrent(Rotation2d targetAngle, double targetGrippingCurrent) {
         setTargetAngle(targetAngle);
-        grippingMotor.setControl(velocityRequest.withOutput(targetGrippingCurrent));
+        grippingMotor.setControl(torqueCurrentRequest.withOutput(targetGrippingCurrent));
     }
 
     private void setTargetAngle(Rotation2d targetAngle) {
