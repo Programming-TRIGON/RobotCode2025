@@ -1,6 +1,9 @@
 package frc.trigon.robot.misc.objectdetectioncamera;
 
-import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.math.geometry.Pose3d;
+import edu.wpi.first.math.geometry.Rotation3d;
+import edu.wpi.first.math.geometry.Transform3d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.misc.objectdetectioncamera.io.PhotonObjectDetectionCameraIO;
@@ -110,7 +113,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
             return;
 
         updateTrackedObjectPose(targetGamePiece);
-        Logger.recordOutput("TrackedObject", trackedObjectFieldRelativePosition);
+        Logger.recordOutput("ObjectDetectionCamera/TrackedObject", trackedObjectFieldRelativePosition);
     }
 
     /**
@@ -155,23 +158,9 @@ public class ObjectDetectionCamera extends SubsystemBase {
 
         for (int i = 0; i < visibleObjectsRotations.length; i++)
             objectsPositionsOnField[i] = calculateObjectPositionFromRotation(visibleObjectsRotations[i]);
+
+        Logger.recordOutput("ObjectDetectionCamera/Visible" + targetGamePiece.name(), objectsPositionsOnField);
         return objectsPositionsOnField;
-    }
-
-    private void logAllVisibleGamePieces() {
-        for (SimulatedGamePieceConstants.GamePieceType targetGamePiece : SimulatedGamePieceConstants.GamePieceType.values())
-            logVisibleTargetObjects(targetGamePiece);
-    }
-
-    private void logVisibleTargetObjects(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
-        final Rotation3d[] visibleTargetObjectRotations = getTargetObjectsRotations(targetGamePiece);
-        final Pose2d[] visibleTargetObjectPoses = new Pose2d[visibleTargetObjectRotations.length];
-        for (int i = 0; i < visibleTargetObjectPoses.length; i++) {
-            final Rotation3d objectRotation = visibleTargetObjectRotations[i];
-            final Translation2d objectPose = calculateObjectPositionFromRotation(objectRotation);
-            visibleTargetObjectPoses[i] = new Pose2d(objectPose, objectRotation.toRotation2d());
-        }
-        Logger.recordOutput("Visible" + targetGamePiece.name(), visibleTargetObjectPoses);
     }
 
     private ObjectDetectionCameraIO generateIO(String hostname, Transform3d robotCenterToCamera) {
