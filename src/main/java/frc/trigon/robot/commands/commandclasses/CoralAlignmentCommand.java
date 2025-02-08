@@ -49,7 +49,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
         return GeneralCommands.getContinuousConditionalCommand(
                 LEDCommands.getStaticColorCommand(Color.kGreen, LEDStrip.LED_STRIPS),
                 LEDCommands.getStaticColorCommand(Color.kRed, LEDStrip.LED_STRIPS),
-                () -> CAMERA.hasTargets(SimulatedGamePieceConstants.GamePieceType.CORAL)
+                () -> CAMERA.getTrackedObjectFieldRelativePosition() != null
         );
     }
 
