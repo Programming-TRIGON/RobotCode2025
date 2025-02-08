@@ -14,7 +14,7 @@ public class AlgaeManipulationCommands {
                 getCollectAlgaeFromL3Command(),
                 () -> CoralPlacingCommands.TARGET_SCORING_LEVEL == CoralPlacingCommands.ScoringLevel.L2
         ).alongWith(
-                new WaitUntilCommand(OperatorConstants.OPERATOR_CONTROLLER.n()).andThen(new InstantCommand(() -> getNetCommand().schedule()))
+                new WaitUntilCommand(OperatorConstants.NET_TRIGGER).andThen(new InstantCommand(() -> getNetCommand().schedule()))
         );
     }
 
