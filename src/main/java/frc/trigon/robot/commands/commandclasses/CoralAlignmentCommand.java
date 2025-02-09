@@ -1,9 +1,12 @@
 package frc.trigon.robot.commands.commandclasses;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.trigon.robot.RobotContainer;
@@ -21,17 +24,18 @@ import org.trigon.utilities.flippable.FlippableRotation2d;
 
 public class CoralAlignmentCommand extends ParallelCommandGroup {
     public static final PIDController Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
-            new PIDController(0.0075, 0, 0) :
-            new PIDController(0.0002, 0, 0);
-    private static final ObjectDetectionCamera CAMERA = CameraConstants.CORAL_DETECTION_CAMERA;
+            new PIDController(0.5, 0, 0) :
+            new PIDController(0.4, 0, 0.03);
+    private static final ObjectDetectionCamera CAMERA = CameraConstants.OBJECT_DETECTION_CAMERA;
 
     public CoralAlignmentCommand() {
         addCommands(
+                new InstantCommand(CAMERA::initializeTracking),
                 getSetLEDColorsCommand(),
                 GeneralCommands.getContinuousConditionalCommand(
                         getDriveWhileAligningToCoralCommand(),
-                        GeneralCommands.duplicate(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND),
-                        CAMERA::hasTargets
+                        GeneralCommands.getFieldRelativeDriveCommand(),
+                        () -> CAMERA.getTrackedObjectFieldRelativePosition() != null
                 ),
                 getTrackCoralCommand()
         );
@@ -45,15 +49,15 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
         return GeneralCommands.getContinuousConditionalCommand(
                 LEDCommands.getStaticColorCommand(Color.kGreen, LEDStrip.LED_STRIPS),
                 LEDCommands.getStaticColorCommand(Color.kRed, LEDStrip.LED_STRIPS),
-                CAMERA::hasTargets
+                () -> CAMERA.getTrackedObjectFieldRelativePosition() != null
         );
     }
 
     private Command getDriveWhileAligningToCoralCommand() {
         return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                 () -> fieldRelativePowersToSelfRelativeXPower(OperatorConstants.DRIVER_CONTROLLER.getLeftY(), OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
-                () -> -Y_PID_CONTROLLER.calculate(CAMERA.getTrackedObjectYaw().getDegrees()),
-                this::getTargetAngle
+                this::calculateSwerveYPowerOutput,
+                this::calculateTargetAngle
         );
     }
 
@@ -65,8 +69,25 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
         return (xValue * robotHeading.getCos()) + (yValue * robotHeading.getSin());
     }
 
-    private FlippableRotation2d getTargetAngle() {
-        final Rotation2d currentRotation = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getRotation();
-        return new FlippableRotation2d(currentRotation.plus(CAMERA.getTrackedObjectYaw()), false);
+    private double calculateSwerveYPowerOutput() {
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+        final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
+        if (trackedObjectPositionOnField == null)
+            return 0;
+
+        final Translation2d difference = robotPose.getTranslation().minus(trackedObjectPositionOnField);
+        final Translation2d selfRelativeDifference = difference.rotateBy(robotPose.getRotation().unaryMinus());
+        return Y_PID_CONTROLLER.calculate(selfRelativeDifference.getY());
+    }
+
+    private FlippableRotation2d calculateTargetAngle() {
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+        final Translation2d trackedObjectFieldRelativePosition = CAMERA.getTrackedObjectFieldRelativePosition();
+        if (trackedObjectFieldRelativePosition == null)
+            return null;
+
+        final Translation2d objectDistanceToRobot = trackedObjectFieldRelativePosition.minus(robotPose.getTranslation());
+        final Rotation2d angularDistanceToObject = new Rotation2d(Math.atan2(objectDistanceToRobot.getY(), objectDistanceToRobot.getX()));
+        return new FlippableRotation2d(angularDistanceToObject, false);
     }
 }

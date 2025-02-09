@@ -17,6 +17,7 @@ import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.trigon.hardware.RobotHardwareStats;
+import org.trigon.hardware.phoenix6.Phoenix6Inputs;
 
 public class Robot extends LoggedRobot {
     public static final boolean IS_REAL = Robot.isReal();
@@ -32,6 +33,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void robotPeriodic() {
+        Phoenix6Inputs.refreshAllInputs();
         commandScheduler.run();
     }
 

@@ -7,6 +7,7 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.subsystems.MotorSubsystem;
+import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.misc.simplesensor.SimpleSensor;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
@@ -20,7 +21,9 @@ public class CoralIntake extends MotorSubsystem {
             funnelMotor = CoralIntakeConstants.FUNNEL_MOTOR,
             angleMotor = CoralIntakeConstants.ANGLE_MOTOR;
     private final CANcoderEncoder angleEncoder = CoralIntakeConstants.ANGLE_ENCODER;
-    private final SimpleSensor beamBreak = CoralIntakeConstants.BEAM_BREAK;
+    private final SimpleSensor
+            beamBreak = CoralIntakeConstants.BEAM_BREAK,
+            distanceSensor = CoralIntakeConstants.DISTANCE_SENSOR;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private CoralIntakeConstants.CoralIntakeState targetState = CoralIntakeConstants.CoralIntakeState.REST;
@@ -43,7 +46,7 @@ public class CoralIntake extends MotorSubsystem {
     public void updateLog(SysIdRoutineLog log) {
         log.motor("CoralAngleMotor")
                 .angularPosition(Units.Rotations.of(angleMotor.getSignal(TalonFXSignal.POSITION)))
-                .angularVelocity(Units.RotationsPerSecond.of(angleMotor.getSignal(TalonFXSignal.VELOCITY)))
+                .angularVelocity(Units.RotationsPerSecond.of(angleMotor.getSignal(TalonFXSignal.ROTOR_VELOCITY) / CoralIntakeConstants.ANGLE_MOTOR_GEAR_RATIO))
                 .voltage(Units.Volts.of(angleMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
@@ -53,7 +56,7 @@ public class CoralIntake extends MotorSubsystem {
         CoralIntakeConstants.FUNNEL_MECHANISM.update(funnelMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
         CoralIntakeConstants.ANGLE_MECHANISM.update(
                 getCurrentEncoderAngle(),
-                Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
+                Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE) + CoralIntakeConstants.ANGLE_ENCODER_POSITION_OFFSET_VALUE)
         );
 
         Logger.recordOutput("Poses/Components/CoralIntakePose", calculateVisualizationPose());
@@ -66,6 +69,9 @@ public class CoralIntake extends MotorSubsystem {
         angleMotor.update();
         angleEncoder.update();
         beamBreak.updateSensor();
+        distanceSensor.updateSensor();
+        Logger.recordOutput("CoralIntake/CurrentAngleDegrees", getCurrentEncoderAngle().getDegrees());
+        Logger.recordOutput("CoralIntake/DistanceSensorDetectedDistanceCentimeters", distanceSensor.getScaledValue());
     }
 
     @Override
@@ -84,6 +90,7 @@ public class CoralIntake extends MotorSubsystem {
         return targetState == this.targetState && atTargetAngle();
     }
 
+    @AutoLogOutput(key = "CoralIntake/AtTargetAngle")
     public boolean atTargetAngle() {
         final double angleDifferenceFromTargetAngleDegrees = Math.abs(getCurrentEncoderAngle().minus(targetState.targetAngle).getDegrees());
         return angleDifferenceFromTargetAngleDegrees < CoralIntakeConstants.ANGLE_TOLERANCE.getDegrees();
@@ -93,13 +100,10 @@ public class CoralIntake extends MotorSubsystem {
         return CoralIntakeConstants.CORAL_COLLECTION_BOOLEAN_EVENT.getAsBoolean();
     }
 
-    /**
-     * Checks if a coral has been collected early using the motor's current.
-     * This is quicker than {@linkplain CoralIntake#hasGamePiece()} since it updates from the change in current (which happens right when we hit the coral),
-     * instead of the beam break which is positioned later on the system.
-     *
-     * @return whether an early coral collection has been detected
-     */
+    public boolean hasGamePieceQuickCheck() {
+        return beamBreak.getBinaryValue();
+    }
+
     public boolean isEarlyCoralCollectionDetected() {
         return CoralIntakeConstants.EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean();
     }
@@ -124,6 +128,16 @@ public class CoralIntake extends MotorSubsystem {
         return calculateVisualizationPose()
                 .transformBy(getVisualizationToRealPitchTransform())
                 .transformBy(CoralIntakeConstants.CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_VISUALIZATION_TRANSFORM);
+    }
+
+    void prepareForState(CoralIntakeConstants.CoralIntakeState targetState) {
+        this.targetState = targetState;
+
+        setTargetState(
+                0,
+                0,
+                targetState.targetAngle
+        );
     }
 
     void setTargetState(CoralIntakeConstants.CoralIntakeState targetState) {
@@ -157,7 +171,7 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     private void setTargetAngle(Rotation2d targetAngle) {
-        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
+        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations() - CoralIntakeConstants.ANGLE_ENCODER_POSITION_OFFSET_VALUE));
     }
 
     private Pose3d calculateVisualizationPose() {
@@ -177,6 +191,6 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     private Rotation2d getCurrentEncoderAngle() {
-        return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
+        return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION) + CoralIntakeConstants.ANGLE_ENCODER_POSITION_OFFSET_VALUE);
     }
 }

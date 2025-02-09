@@ -85,7 +85,6 @@ public class SimulationFieldHandler {
         if (isCollectingCoral() && HELD_CORAL_INDEX == null)
             HELD_CORAL_INDEX = getIndexOfCollectedGamePiece(coralCollectionPose, CORAL_ON_FIELD, SimulatedGamePieceConstants.CORAL_INTAKE_TOLERANCE_METERS);
 
-
         if (isCollectingAlgae() && HELD_ALGAE_INDEX == null)
             HELD_ALGAE_INDEX = getIndexOfCollectedGamePiece(algaeCollectionPose, ALGAE_ON_FIELD, SimulatedGamePieceConstants.ALGAE_INTAKE_TOLERANCE_METERS);
     }
@@ -96,7 +95,7 @@ public class SimulationFieldHandler {
                 distanceFromRightFeeder = robotPose.toPose2d().getTranslation().getDistance(SimulatedGamePieceConstants.RIGHT_FEEDER_POSITION.get());
         final double distanceFromBestFeederMeters = Math.min(distanceFromLeftFeeder, distanceFromRightFeeder);
 
-        if (isCollectingCoral() && HELD_CORAL_INDEX == null &&
+        if (isCollectingCoralFromFeeder() && HELD_CORAL_INDEX == null &&
                 distanceFromBestFeederMeters < SimulatedGamePieceConstants.CORAL_FEEDER_INTAKE_TOLERANCE_METERS) {
             CORAL_ON_FIELD.add(new SimulatedGamePiece(new Pose3d(), SimulatedGamePieceConstants.GamePieceType.CORAL));
             HELD_CORAL_INDEX = CORAL_ON_FIELD.size() - 1;
@@ -104,7 +103,8 @@ public class SimulationFieldHandler {
     }
 
     private static void updateCoralLoading() {
-        if (!RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL))
+        if (!RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE) ||
+                !RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE))
             return;
 
         IS_CORAL_IN_GRIPPER = true;
@@ -125,11 +125,11 @@ public class SimulationFieldHandler {
     }
 
     private static boolean isCollectingCoral() {
-        return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT);
+        return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR);
     }
 
-    private static boolean isCollectingCoralFromSource() {
-        return false;//TODO: Implement
+    private static boolean isCollectingCoralFromFeeder() {
+        return RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FEEDER);
     }
 
     private static boolean isCollectingAlgae() {

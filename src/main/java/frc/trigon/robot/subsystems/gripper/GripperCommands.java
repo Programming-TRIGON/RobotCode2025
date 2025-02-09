@@ -27,6 +27,7 @@ public class GripperCommands {
         return new GearRatioCalculationCommand(
                 GripperConstants.ANGLE_MOTOR,
                 GripperConstants.ANGLE_ENCODER,
+                0.5,
                 RobotContainer.GRIPPER
         );
     }
@@ -39,15 +40,39 @@ public class GripperCommands {
         );
     }
 
+    public static Command getSetTargetStateWithCurrentCommand(GripperConstants.GripperState targetState) {
+        return new StartEndCommand(
+                () -> RobotContainer.GRIPPER.setTargetStateWithCurrent(targetState.targetAngle, targetState.targetGripperVoltage),
+                RobotContainer.GRIPPER::stop,
+                RobotContainer.GRIPPER
+        );
+    }
+
     /**
      * Creates a command that will set the gripper to the score in reef state,
      * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
      *
      * @return the command
      */
-    public static Command getScoreInReefCommand() {
+    public static Command getScoreInReefForAutoCommand() {
         return new StartEndCommand(
-                RobotContainer.GRIPPER::scoreInReef,
+                RobotContainer.GRIPPER::scoreInReefForAuto,
+                RobotContainer.GRIPPER::stop,
+                RobotContainer.GRIPPER
+        );
+    }
+
+    public static Command getPrepareForStateCommand(Supplier<GripperConstants.GripperState> targetStateSupplier) {
+        return new StartEndCommand(
+                () -> RobotContainer.GRIPPER.prepareForState(targetStateSupplier.get()),
+                RobotContainer.GRIPPER::stop,
+                RobotContainer.GRIPPER
+        );
+    }
+
+    public static Command getPrepareForStateCommand(GripperConstants.GripperState targetState) {
+        return new StartEndCommand(
+                () -> RobotContainer.GRIPPER.prepareForState(targetState),
                 RobotContainer.GRIPPER::stop,
                 RobotContainer.GRIPPER
         );

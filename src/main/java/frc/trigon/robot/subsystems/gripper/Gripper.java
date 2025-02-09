@@ -1,6 +1,7 @@
 package frc.trigon.robot.subsystems.gripper;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
@@ -23,6 +24,7 @@ public class Gripper extends MotorSubsystem {
     private final CANcoderEncoder angleEncoder = GripperConstants.ANGLE_ENCODER;
     private final LaserCAN laserCAN = GripperConstants.LASER_CAN;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(GripperConstants.FOC_ENABLED);
+    private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(0);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(GripperConstants.FOC_ENABLED);
     private GripperConstants.GripperState targetState = GripperConstants.GripperState.REST;
 
@@ -51,6 +53,7 @@ public class Gripper extends MotorSubsystem {
         angleMotor.update();
         angleEncoder.update();
         laserCAN.update();
+        Logger.recordOutput("Gripper/CurrentAngleDegrees", getCurrentEncoderAngle().getDegrees());
     }
 
     @Override
@@ -63,7 +66,7 @@ public class Gripper extends MotorSubsystem {
     public void updateLog(SysIdRoutineLog log) {
         log.motor("GripperAngleMotor")
                 .angularPosition(Units.Rotations.of(angleEncoder.getSignal(CANcoderSignal.POSITION)))
-                .angularVelocity(Units.RotationsPerSecond.of(angleMotor.getSignal(TalonFXSignal.VELOCITY)))
+                .angularVelocity(Units.RotationsPerSecond.of(angleMotor.getSignal(TalonFXSignal.ROTOR_VELOCITY) / GripperConstants.ANGLE_MOTOR_GEAR_RATIO))
                 .voltage(Units.Volts.of(angleMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
@@ -72,7 +75,7 @@ public class Gripper extends MotorSubsystem {
         GripperConstants.GRIPPING_MECHANISM.update(grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE));
         GripperConstants.ANGLE_MECHANISM.update(
                 getCurrentEncoderAngle(),
-                Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
+                Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE) + GripperConstants.POSITION_OFFSET_FROM_GRAVITY_OFFSET)
         );
         Logger.recordOutput("Poses/Components/GripperPose", calculateVisualizationPose());
     }
@@ -86,24 +89,17 @@ public class Gripper extends MotorSubsystem {
     }
 
     public boolean hasGamePiece() {
-        return laserCAN.hasResult() && laserCAN.getDistanceMillimeters() < GripperConstants.GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS;
+        return GripperConstants.COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean();
     }
 
     public boolean atState(GripperConstants.GripperState targetState) {
         return targetState == this.targetState && atTargetAngle();
     }
 
+    @AutoLogOutput(key = "Gripper/AtTargetAngle")
     public boolean atTargetAngle() {
         final double currentToTargetStateDifference = Math.abs(getCurrentEncoderAngle().getDegrees() - targetState.targetAngle.getDegrees());
         return currentToTargetStateDifference < GripperConstants.ANGLE_TOLERANCE.getDegrees();
-    }
-
-    /**
-     * This will set the gripper to the score in reef state,
-     * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
-     */
-    void scoreInReef() {
-        setTargetState(targetState.targetAngle, GripperConstants.SCORE_IN_REEF_VOLTAGE);
     }
 
     public Pose3d calculateCoralReleasePoint() {
@@ -122,6 +118,23 @@ public class Gripper extends MotorSubsystem {
         return new Translation3d(getGrippingWheelVelocityMetersPerSecond(), new Rotation3d(0, -getCurrentEncoderAngle().getRadians(), 0));
     }
 
+    /**
+     * This will set the gripper to the score in reef state,
+     * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
+     */
+    void scoreInReefForAuto() {
+        setTargetState(targetState.targetAngle, GripperConstants.SCORE_IN_REEF_FOR_AUTO_VOLTAGE);
+    }
+
+    void prepareForState(GripperConstants.GripperState targetState) {
+        this.targetState = targetState;
+
+        setTargetState(
+                targetState.targetAngle,
+                0
+        );
+    }
+
     void setTargetState(GripperConstants.GripperState targetState) {
         this.targetState = targetState;
 
@@ -136,8 +149,13 @@ public class Gripper extends MotorSubsystem {
         setTargetVoltage(targetGrippingVoltage);
     }
 
+    void setTargetStateWithCurrent(Rotation2d targetAngle, double targetGrippingCurrent) {
+        setTargetAngle(targetAngle);
+        grippingMotor.setControl(torqueCurrentRequest.withOutput(targetGrippingCurrent));
+    }
+
     private void setTargetAngle(Rotation2d targetAngle) {
-        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
+        angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations() - GripperConstants.POSITION_OFFSET_FROM_GRAVITY_OFFSET));
     }
 
     private void setTargetVoltage(double targetGrippingVoltage) {
@@ -164,7 +182,7 @@ public class Gripper extends MotorSubsystem {
     }
 
     private Rotation2d getCurrentEncoderAngle() {
-        return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION));
+        return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION) + GripperConstants.POSITION_OFFSET_FROM_GRAVITY_OFFSET);
     }
 
     @AutoLogOutput(key = "Gripper/GrippingWheelVelocityMeters")

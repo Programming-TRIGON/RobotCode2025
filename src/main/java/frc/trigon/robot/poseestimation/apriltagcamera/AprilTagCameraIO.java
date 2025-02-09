@@ -20,16 +20,17 @@ public class AprilTagCameraIO {
     /**
      * Adds the simulated camera to the pose estimation simulation.
      *
-     * @param robotToCamera the transform of the robot's origin point to the camera
+     * @param robotCenterToCamera the transform of the robot's origin point to the camera
      */
-    protected void addSimulatedCameraToVisionSimulation(Transform3d robotToCamera) {
+    protected void addSimulatedCameraToVisionSimulation(Transform3d robotCenterToCamera) {
     }
 
     @AutoLog
     public static class AprilTagCameraInputs {
         public boolean hasResult = false;
         public double latestResultTimestampSeconds = 0;
-        public Pose3d cameraSolvePNPPose = new Pose3d();
+        public Pose3d bestCameraSolvePNPPose = new Pose3d();
+        public Pose3d alternateCameraSolvePNPPose = new Pose3d();
         public int[] visibleTagIDs = new int[0];
         public double poseAmbiguity = 0;
         public double[] distancesFromTags = new double[0];

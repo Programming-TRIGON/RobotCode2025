@@ -27,7 +27,7 @@ deploy {
                 // getTargetTypeClass is a shortcut to get the class type using a string
 
                 frcJava(getArtifactTypeClass('FRCJavaArtifact')) {
-                    // https://www.chiefdelphi.com/t/2024-wpilib-feedback/464322/141
+//                  https://www.chiefdelphi.com/t/2024-wpilib-feedback/464322/141
                     final MAX_JAVA_HEAP_SIZE_MB = 100;
                     jvmArgs.add("-XX:+UnlockExperimentalVMOptions")
 
@@ -37,6 +37,13 @@ deploy {
                     jvmArgs.add("-XX:GCTimeRatio=5")
                     jvmArgs.add("-XX:+UseSerialGC")
                     jvmArgs.add("-XX:MaxGCPauseMillis=50")
+
+//                    jvmArgs.add("-Dcom.sun.management.jmxremote=true")
+//                    jvmArgs.add("-Dcom.sun.management.jmxremote.port=1198")
+//                    jvmArgs.add("-Dcom.sun.management.jmxremote.local.only=false")
+//                    jvmArgs.add("-Dcom.sun.management.jmxremote.ssl=false")
+//                    jvmArgs.add("-Dcom.sun.management.jmxremote.authenticate=false")
+//                    jvmArgs.add("-Djava.rmi.server.hostname=10.59.90.2")
                 }
 
                 // Static files artifact
@@ -45,7 +52,7 @@ deploy {
                     directory = '/home/lvuser/deploy'
                     // Change to true to delete files on roboRIO that no
                     // longer exist in deploy directory on roboRIO
-                    deleteOldFiles = false
+                    deleteOldFiles = true
                 }
             }
         }
@@ -100,7 +107,7 @@ dependencies {
     simulationRelease wpi.sim.enableRelease()
 
     implementation 'com.google.code.gson:gson:2.10.1'
-    implementation 'com.github.Programming-TRIGON:TRIGONLib:v2025.0.18'
+    implementation 'com.github.Programming-TRIGON:TRIGONLib:2025.0.25'
 
     def akitJson = new groovy.json.JsonSlurper().parseText(new File(projectDir.getAbsolutePath() + "/vendordeps/AdvantageKit.json").text)
     annotationProcessor "org.littletonrobotics.akit:akit-autolog:$akitJson.version"
