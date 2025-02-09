@@ -17,24 +17,8 @@ public class ClimberConstants {
     private static final int MOTOR_ID = 16;
     private static final String MOTOR_NAME = "ClimberMotor";
     static final TalonFXMotor MOTOR = new TalonFXMotor(MOTOR_ID, MOTOR_NAME);
-
-    private static final InvertedValue INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
-    private static final NeutralModeValue NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
+    
     static final boolean ENABLE_FOC = true;
-    private static final double
-            GROUNDED_P = RobotHardwareStats.isSimulation() ? 100 : 0,
-            GROUNDED_I = RobotHardwareStats.isSimulation() ? 0 : 0,
-            GROUNDED_D = RobotHardwareStats.isSimulation() ? 0 : 0,
-            GROUNDED_KS = RobotHardwareStats.isSimulation() ? 0.016805 : 0,
-            GROUNDED_KV = RobotHardwareStats.isSimulation() ? 4.0291 : 0,
-            GROUNDED_KA = RobotHardwareStats.isSimulation() ? 0.014829 : 0;
-    private static final double
-            ON_CAGE_P = RobotHardwareStats.isSimulation() ? GROUNDED_P : 0,
-            ON_CAGE_I = RobotHardwareStats.isSimulation() ? GROUNDED_I : 0,
-            ON_CAGE_D = RobotHardwareStats.isSimulation() ? GROUNDED_D : 0,
-            ON_CAGE_KS = RobotHardwareStats.isSimulation() ? GROUNDED_KS : 0,
-            ON_CAGE_KV = RobotHardwareStats.isSimulation() ? GROUNDED_KV : 0,
-            ON_CAGE_KA = RobotHardwareStats.isSimulation() ? GROUNDED_KA : 0;
     static final double ON_CAGE_KG = 0;
     static final double
             MAXIMUM_GROUNDED_VELOCITY = 100,
@@ -44,10 +28,7 @@ public class ClimberConstants {
     static final int
             GROUNDED_PID_SLOT = 0,
             ON_CAGE_PID_SLOT = 1;
-    private static final double FORWARD_SOFT_LIMIT_POSITION_ROTATIONS = 3;
-    private static final double REVERSE_LIMIT_SWITCH_PRESSED_POSITION_ROTATIONS = 0;
-    private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE = ReverseLimitTypeValue.NormallyOpen;
-    static final double GEAR_RATIO = 33.75;
+    private static final double GEAR_RATIO = 33.75;
 
     private static final int MOTOR_AMOUNT = 1;
     private static final DCMotor GEARBOX = DCMotor.getKrakenX60(MOTOR_AMOUNT);
@@ -77,31 +58,31 @@ public class ClimberConstants {
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
 
-        config.MotorOutput.Inverted = INVERTED_VALUE;
-        config.MotorOutput.NeutralMode = NEUTRAL_MODE_VALUE;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
-        config.Slot0.kP = GROUNDED_P;
-        config.Slot0.kI = GROUNDED_I;
-        config.Slot0.kD = GROUNDED_D;
-        config.Slot0.kS = GROUNDED_KS;
-        config.Slot0.kV = GROUNDED_KV;
-        config.Slot0.kA = GROUNDED_KA;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 0;
+        config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.016805 : 0;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 4.0291 : 0;
+        config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0.014829 : 0;
 
-        config.Slot1.kP = ON_CAGE_P;
-        config.Slot1.kI = ON_CAGE_I;
-        config.Slot1.kD = ON_CAGE_D;
-        config.Slot1.kS = ON_CAGE_KS;
-        config.Slot1.kV = ON_CAGE_KV;
-        config.Slot1.kA = ON_CAGE_KA;
+        config.Slot1.kP = RobotHardwareStats.isSimulation() ? config.Slot0.kP : 0;
+        config.Slot1.kI = RobotHardwareStats.isSimulation() ? config.Slot0.kI : 0;
+        config.Slot1.kD = RobotHardwareStats.isSimulation() ? config.Slot0.kD : 0;
+        config.Slot1.kS = RobotHardwareStats.isSimulation() ? config.Slot0.kS : 0;
+        config.Slot1.kV = RobotHardwareStats.isSimulation() ? config.Slot0.kV : 0;
+        config.Slot1.kA = RobotHardwareStats.isSimulation() ? config.Slot0.kA : 0;
 
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = FORWARD_SOFT_LIMIT_POSITION_ROTATIONS;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 3;
 
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_LIMIT_SWITCH_PRESSED_POSITION_ROTATIONS;
-        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = 0;
+        config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyClosed;
 
         config.MotionMagic.MotionMagicCruiseVelocity = MAXIMUM_GROUNDED_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = MAXIMUM_GROUNDED_ACCELERATION;
