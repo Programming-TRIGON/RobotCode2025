@@ -60,8 +60,8 @@ public class CoralIntakeConstants {
             ANGLE_MOTOR_GEAR_RATIO,
             0.44,
             8,
-            Rotation2d.fromDegrees(142),
             Rotation2d.fromDegrees(-48),
+            Rotation2d.fromDegrees(150),
             true
     );
     private static final DoubleSupplier BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> SimulationFieldHandler.isHoldingCoral() && !SimulationFieldHandler.isCoralInGripper() ? 1 : 0;
@@ -111,7 +111,7 @@ public class CoralIntakeConstants {
     ).debounce(0.65);
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
-            () -> DISTANCE_SENSOR.getScaledValue() < (RobotHardwareStats.isSimulation() ? 100 : 17)
+            () -> RobotHardwareStats.isSimulation() ? SimulationFieldHandler.isHoldingCoral() : DISTANCE_SENSOR.getScaledValue() < 17
     ).debounce(0.06);
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(0.5);

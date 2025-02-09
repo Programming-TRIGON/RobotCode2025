@@ -6,7 +6,7 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.trigon.robot.RobotContainer;
-import frc.trigon.robot.commands.commandclasses.CoralAlignmentCommand;
+import frc.trigon.robot.commands.commandclasses.CoralAutoIntakeCommand;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
@@ -14,7 +14,6 @@ import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
-import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.hardware.misc.leds.LEDCommands;
 
 public class CoralCollectionCommands {
@@ -45,17 +44,10 @@ public class CoralCollectionCommands {
 
     private static Command getInitiateFloorCoralCollectionCommand() {
         return new ParallelCommandGroup(
-                getAutonomousDriveToCoralCommand().onlyIf(() -> SHOULD_INTAKE_CORAL_AUTONOMOUSLY),
+                new CoralAutoIntakeCommand().asProxy().onlyIf(() -> SHOULD_INTAKE_CORAL_AUTONOMOUSLY).until(OperatorConstants.CONTINUE_SCORING_TRIGGER),
                 LEDCommands.getBlinkingCommand(Color.kAqua, CoralIntakeConstants.COLLECTION_LEDS_BLINKING_SPEED).unless(() -> SHOULD_INTAKE_CORAL_AUTONOMOUSLY),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
                 getScheduleCoralLoadingWhenCollectedCommand()
-        );
-    }
-
-    private static Command getAutonomousDriveToCoralCommand() {
-        return new ParallelCommandGroup(
-                new CoralAlignmentCommand().asProxy(),
-                GeneralCommands.getRunUntilJoystickMovementCommand(SwerveCommands.getClosedLoopSelfRelativeDriveCommand(() -> 1, () -> 0, () -> 0))
         );
     }
 
