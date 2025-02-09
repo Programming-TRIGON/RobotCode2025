@@ -160,6 +160,7 @@ public class GripperConstants {
             CommandScheduler.getInstance().getActiveButtonLoop(),
             () -> LASER_CAN.hasResult() && LASER_CAN.getDistanceMillimeters() < GripperConstants.GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS
     ).debounce(COLLECTION_DETECTION_TIME_THRESHOLD_SECONDS);
+    static final Rotation2d MAXIMUM_SAFE_ANGLE = Rotation2d.fromDegrees(120);
 
     static {
         configureGrippingMotor();

@@ -3,10 +3,7 @@ package frc.trigon.robot.commands.commandfactories;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.FunctionalCommand;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
@@ -30,6 +27,13 @@ public class AutonomousCommands {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(() -> scoringLevel.elevatorState),
                 GripperCommands.getPrepareForStateCommand(() -> scoringLevel.gripperState)
+        );
+    }
+
+    public static Command getFeedCoralCommand() {
+        return new SequentialCommandGroup(
+                GripperCommands.getScoreInReefForAutoCommand().withTimeout(0.1),
+                GeneralCommands.runWhen(GripperCommands.getDefaultCommand(), RobotContainer.GRIPPER::isBelowMaximumSafeAngle)
         );
     }
 
