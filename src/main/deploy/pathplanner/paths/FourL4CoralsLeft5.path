@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.636168032786885,
-        "y": 6.236731557377048
+        "x": 1.712928082191781,
+        "y": 0.6968107876712327
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.197643442622951,
-        "y": 5.829149590163934
+        "x": 2.4206347036551272,
+        "y": 1.5057551427547964
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "FourL4CoralsLeft4"
     },
     {
       "anchor": {
-        "x": 3.948795469796185,
-        "y": 5.277080568317988
+        "x": 3.7263698630136988,
+        "y": 2.8755351027397262
       },
       "prevControl": {
-        "x": 5.363344650124053,
-        "y": 5.912428928973726
+        "x": 3.327167215923213,
+        "y": 2.440318080531267
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScoreThreeL4Corals1"
+      "linkedName": "FourL4CoralsLeft5"
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "RestCoralIntake",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.10857142857142849,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -45,7 +45,7 @@
     },
     {
       "name": "ScoreL4",
-      "waypointRelativePos": 0.24,
+      "waypointRelativePos": 0.22857142857142873,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -56,22 +56,22 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 3.0,
-    "maxAngularVelocity": 100.0,
-    "maxAngularAcceleration": 100.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 400.0,
+    "maxAngularAcceleration": 250.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": -119.99999999999999
   },
   "reversed": false,
-  "folder": "ScoreThreeL3CoralsRight",
+  "folder": "FourL4CoralsLeft",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -125.00000000000001
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }

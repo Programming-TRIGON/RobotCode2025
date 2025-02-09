@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.636168032786885,
-        "y": 6.236731557377048
+        "x": 1.4424657534246574,
+        "y": 0.8771190068493149
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.197643442622951,
-        "y": 5.829149590163934
+        "x": 1.9064536151921638,
+        "y": 1.290156954274556
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "FourL4CoralsLeft6"
     },
     {
       "anchor": {
-        "x": 3.948795469796185,
-        "y": 5.277080568317988
+        "x": 3.110316780821918,
+        "y": 3.867230308219178
       },
       "prevControl": {
-        "x": 5.363344650124053,
-        "y": 5.912428928973726
+        "x": 2.9054932094397086,
+        "y": 3.7238869979244975
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScoreThreeL4Corals1"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -34,7 +34,7 @@
   "eventMarkers": [
     {
       "name": "RestCoralIntake",
-      "waypointRelativePos": 0,
+      "waypointRelativePos": 0.10571428571428572,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -45,7 +45,7 @@
     },
     {
       "name": "ScoreL4",
-      "waypointRelativePos": 0.24,
+      "waypointRelativePos": 0.21428571428571427,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -56,22 +56,22 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 3.0,
-    "maxAngularVelocity": 100.0,
-    "maxAngularAcceleration": 100.0,
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 400.0,
+    "maxAngularAcceleration": 250.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 180.0
   },
   "reversed": false,
-  "folder": "ScoreThreeL3CoralsRight",
+  "folder": "FourL4CoralsLeft",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": -125.00000000000001
   },
-  "useDefaultConstraints": false
+  "useDefaultConstraints": true
 }
