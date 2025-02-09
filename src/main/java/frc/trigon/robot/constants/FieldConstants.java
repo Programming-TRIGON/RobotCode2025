@@ -22,7 +22,8 @@ public class FieldConstants {
     public static final HashMap<Integer, Pose3d> TAG_ID_TO_POSE = fieldLayoutToTagIdToPoseMap();
 
     public static final int REEF_CLOCK_POSITIONS = 6;
-    public static final Rotation2d CLOCK_POSITION_DIFFERENCE = Rotation2d.fromDegrees(Conversions.DEGREES_PER_ROTATIONS / REEF_CLOCK_POSITIONS);
+    public static final Rotation2d REEF_CLOCK_POSITION_DIFFERENCE = Rotation2d.fromDegrees(Conversions.DEGREES_PER_ROTATIONS / REEF_CLOCK_POSITIONS);
+    public static final Rotation2d[] REEF_CLOCK_ANGLES = ReefClockPosition.getClockAngles();
     public static final Translation2d BLUE_REEF_CENTER_TRANSLATION = new Translation2d(4.48945, FIELD_WIDTH_METERS / 2);
 
     private static AprilTagFieldLayout createAprilTagFieldLayout() {
@@ -39,6 +40,7 @@ public class FieldConstants {
         final HashMap<Integer, Pose3d> tagIdToPose = new HashMap<>();
         for (AprilTag aprilTag : APRIL_TAG_FIELD_LAYOUT.getTags())
             tagIdToPose.put(aprilTag.ID, aprilTag.pose.transformBy(TAG_OFFSET));
+        
         return tagIdToPose;
     }
 
@@ -58,12 +60,12 @@ public class FieldConstants {
     }
 
     public enum ReefClockPosition {
-        REEF_12_OCLOCK(false),
-        REEF_2_OCLOCK(false),
+        REEF_12_OCLOCK(true),
+        REEF_2_OCLOCK(true),
         REEF_4_OCLOCK(true),
         REEF_6_OCLOCK(true),
         REEF_8_OCLOCK(true),
-        REEF_10_OCLOCK(false);
+        REEF_10_OCLOCK(true);
 
         public final Rotation2d clockAngle;
         public final boolean isFacingDriverStation;
@@ -75,8 +77,16 @@ public class FieldConstants {
             this.clockPosition = ordinal() == 0 ? 12 : ordinal() * 2;
         }
 
+        public static Rotation2d[] getClockAngles() {
+            final Rotation2d[] clockAngles = new Rotation2d[ReefClockPosition.values().length];
+            for (int i = 0; i < clockAngles.length; i++)
+                clockAngles[i] = ReefClockPosition.values()[i].clockAngle;
+
+            return clockAngles;
+        }
+
         private Rotation2d calculateClockAngle() {
-            return CLOCK_POSITION_DIFFERENCE.times(-ordinal());
+            return REEF_CLOCK_POSITION_DIFFERENCE.times(-ordinal());
         }
     }
 }

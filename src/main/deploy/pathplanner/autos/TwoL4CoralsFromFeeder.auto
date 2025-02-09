@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ScoreFourL4Corals1"
+            "pathName": "TwoL4CoralsFromFeeder1"
           }
         },
         {
@@ -29,13 +29,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ScoreFourL4Corals2"
+                  "pathName": "TwoL4CoralsFromFeeder2"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "CollectCoralFromFloor"
+                  "name": "CollectCoralFromFeeder"
                 }
               }
             ]
@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ScoreFourL4Corals3"
+            "pathName": "TwoL4CoralsFromFeeder3"
           }
         },
         {
@@ -66,13 +66,13 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ScoreFourL4Corals4"
+                  "pathName": "TwoL4CoralsFromFeeder4"
                 }
               },
               {
                 "type": "named",
                 "data": {
-                  "name": "CollectCoralFromFloor"
+                  "name": "CollectCoralFromFeeder"
                 }
               }
             ]
@@ -81,44 +81,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ScoreFourL4Corals5"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "ScoreL4Wait"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedCoral"
-          }
-        },
-        {
-          "type": "race",
-          "data": {
-            "commands": [
-              {
-                "type": "path",
-                "data": {
-                  "pathName": "ScoreFourL4Corals6"
-                }
-              },
-              {
-                "type": "named",
-                "data": {
-                  "name": "CollectCoralFromFloor"
-                }
-              }
-            ]
-          }
-        },
-        {
-          "type": "path",
-          "data": {
-            "pathName": "ScoreFourL4Corals7"
+            "pathName": "TwoL4CoralsFromFeeder5"
           }
         },
         {
@@ -136,7 +99,7 @@
       ]
     }
   },
-  "resetOdom": false,
+  "resetOdom": true,
   "folder": null,
   "choreoAuto": false
 }

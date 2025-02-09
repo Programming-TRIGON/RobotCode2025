@@ -118,8 +118,8 @@ public class SimulatedGamePieceConstants {
     }
 
     public enum GamePieceType {
-        CORAL(0.06, 0),
-        ALGAE(0.15, 1);
+        ALGAE(0.15, 0),
+        CORAL(0.06, 1);
 
         public final double originPointHeightOffGroundMeters;
         public final int id;

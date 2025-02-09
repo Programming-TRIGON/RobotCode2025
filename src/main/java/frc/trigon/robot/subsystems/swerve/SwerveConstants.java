@@ -21,24 +21,24 @@ public class SwerveConstants {
     private static final int PIGEON_ID = 0;
     static final Pigeon2Gyro GYRO = new Pigeon2Gyro(PIGEON_ID, "SwerveGyro", RobotConstants.CANIVORE_NAME);
     private static final double
-            GYRO_MOUNT_POSITION_YAW = 0,
-            GYRO_MOUNT_POSITION_PITCH = 0,
-            GYRO_MOUNT_POSITION_ROLL = 0;
+            GYRO_MOUNT_POSITION_YAW = -1.5493969917297363,
+            GYRO_MOUNT_POSITION_PITCH = -0.31632718443870544,
+            GYRO_MOUNT_POSITION_ROLL = -0.9108231067657471;
     private static final double
-            FRONT_LEFT_STEER_ENCODER_OFFSET = 0,
-            FRONT_RIGHT_STEER_ENCODER_OFFSET = 0,
-            REAR_LEFT_STEER_ENCODER_OFFSET = 0,
-            REAR_RIGHT_STEER_ENCODER_OFFSET = 0;
-    private static final int
+            FRONT_LEFT_STEER_ENCODER_OFFSET = -0.0009765625,
+            FRONT_RIGHT_STEER_ENCODER_OFFSET = 0.25341796875,
+            REAR_LEFT_STEER_ENCODER_OFFSET = 0.20751953125,
+            REAR_RIGHT_STEER_ENCODER_OFFSET = -0.05419921875;
+    public static final int
             FRONT_LEFT_ID = 1,
             FRONT_RIGHT_ID = 2,
             REAR_LEFT_ID = 3,
             REAR_RIGHT_ID = 4;
     static final SwerveModule[] SWERVE_MODULES = {
-            new SwerveModule(FRONT_LEFT_ID, FRONT_LEFT_STEER_ENCODER_OFFSET),
-            new SwerveModule(FRONT_RIGHT_ID, FRONT_RIGHT_STEER_ENCODER_OFFSET),
-            new SwerveModule(REAR_LEFT_ID, REAR_LEFT_STEER_ENCODER_OFFSET),
-            new SwerveModule(REAR_RIGHT_ID, REAR_RIGHT_STEER_ENCODER_OFFSET)
+            new SwerveModule(FRONT_LEFT_ID, FRONT_LEFT_STEER_ENCODER_OFFSET, 0.04765354077913865 * 2),
+            new SwerveModule(FRONT_RIGHT_ID, FRONT_RIGHT_STEER_ENCODER_OFFSET, 0.04745360122422504 * 2),
+            new SwerveModule(REAR_LEFT_ID, REAR_LEFT_STEER_ENCODER_OFFSET, 0.05136841212501805 * 2),
+            new SwerveModule(REAR_RIGHT_ID, REAR_RIGHT_STEER_ENCODER_OFFSET, 0.04905587215351095 * 2)
     };
 
     private static final DoubleSupplier SIMULATION_YAW_VELOCITY_SUPPLIER = () -> RobotContainer.SWERVE.getSelfRelativeVelocity().omegaRadiansPerSecond;
@@ -58,9 +58,9 @@ public class SwerveConstants {
             new PIDConstants(5, 0, 0),
             PROFILED_ROTATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
                     new PIDConstants(4, 0, 0) :
-                    new PIDConstants(3, 0, 0);
+                    new PIDConstants(4.4, 0, 0);
     private static final double
-            MAXIMUM_ROTATION_VELOCITY = RobotHardwareStats.isSimulation() ? 720 : 720,
+            MAXIMUM_ROTATION_VELOCITY = RobotHardwareStats.isSimulation() ? 720 : 600,
             MAXIMUM_ROTATION_ACCELERATION = RobotHardwareStats.isSimulation() ? 720 : 720;
     private static final TrapezoidProfile.Constraints ROTATION_CONSTRAINTS = new TrapezoidProfile.Constraints(
             MAXIMUM_ROTATION_VELOCITY,
@@ -80,7 +80,7 @@ public class SwerveConstants {
     );
     public static final double
             MAXIMUM_SPEED_METERS_PER_SECOND = PathPlannerConstants.ROBOT_CONFIG.moduleConfig.maxDriveVelocityMPS,
-            MAXIMUM_ROTATIONAL_SPEED_RADIANS_PER_SECOND = 12.03;
+            MAXIMUM_ROTATIONAL_SPEED_RADIANS_PER_SECOND = PathPlannerConstants.ROBOT_CONFIG.moduleConfig.maxDriveVelocityMPS / PathPlannerConstants.ROBOT_CONFIG.modulePivotDistance[0];
 
     static {
         configureGyro();
