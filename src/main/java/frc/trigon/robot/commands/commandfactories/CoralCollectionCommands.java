@@ -14,10 +14,11 @@ import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
+import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.hardware.misc.leds.LEDCommands;
 
 public class CoralCollectionCommands {
-    public static boolean SHOULD_ALIGN_TO_CORAL = true;
+    public static boolean SHOULD_INTAKE_CORAL_AUTONOMOUSLY = true;
 
     public static Command getFeederCoralCollectionFromGripperCommand() {
         return new ParallelCommandGroup(
@@ -44,10 +45,17 @@ public class CoralCollectionCommands {
 
     private static Command getInitiateFloorCoralCollectionCommand() {
         return new ParallelCommandGroup(
-                new CoralAlignmentCommand().onlyIf(() -> SHOULD_ALIGN_TO_CORAL).asProxy(),
-                LEDCommands.getBlinkingCommand(Color.kAqua, CoralIntakeConstants.COLLECTION_LEDS_BLINKING_SPEED).unless(() -> SHOULD_ALIGN_TO_CORAL),
+                getAutonomousDriveToCoralCommand().onlyIf(() -> SHOULD_INTAKE_CORAL_AUTONOMOUSLY),
+                LEDCommands.getBlinkingCommand(Color.kAqua, CoralIntakeConstants.COLLECTION_LEDS_BLINKING_SPEED).unless(() -> SHOULD_INTAKE_CORAL_AUTONOMOUSLY),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
                 getScheduleCoralLoadingWhenCollectedCommand()
+        );
+    }
+
+    private static Command getAutonomousDriveToCoralCommand() {
+        return new ParallelCommandGroup(
+                new CoralAlignmentCommand().asProxy(),
+                GeneralCommands.getRunUntilJoystickMovementCommand(SwerveCommands.getClosedLoopSelfRelativeDriveCommand(() -> 1, () -> 0, () -> 0))
         );
     }
 

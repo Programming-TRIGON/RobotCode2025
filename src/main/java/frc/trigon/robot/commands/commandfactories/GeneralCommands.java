@@ -52,6 +52,13 @@ public class GeneralCommands {
         }).ignoringDisable(true);
     }
 
+    public static Command getRunUntilJoystickMovementCommand(Command command) {
+        return command.until(
+                () -> Math.hypot(OperatorConstants.DRIVER_CONTROLLER.getLeftX(), OperatorConstants.DRIVER_CONTROLLER.getLeftY()) > 0.1 ||
+                        Math.hypot(OperatorConstants.DRIVER_CONTROLLER.getRightX(), OperatorConstants.DRIVER_CONTROLLER.getRightY()) > 0.1
+        );
+    }
+
     public static Command getDelayedCommand(double delaySeconds, Runnable toRun) {
         return new WaitCommand(delaySeconds).andThen(toRun).ignoringDisable(true);
     }
