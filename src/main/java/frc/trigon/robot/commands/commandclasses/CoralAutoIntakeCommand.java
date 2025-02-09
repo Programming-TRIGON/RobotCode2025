@@ -14,6 +14,7 @@ import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
+import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.misc.leds.LEDCommands;
@@ -53,7 +54,7 @@ public class CoralAutoIntakeCommand extends ParallelCommandGroup {
 
     private Command getDriveToCoralCommand() {
         return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                () -> 0.4,
+                () -> CoralIntakeConstants.AUTO_COLLECTION_SWERVE_POWER,
                 this::calculateSwerveYPowerOutput,
                 this::calculateTargetAngle
         );
