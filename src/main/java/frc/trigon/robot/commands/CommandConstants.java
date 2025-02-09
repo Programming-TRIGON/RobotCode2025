@@ -65,8 +65,7 @@ public class CommandConstants {
                     Rotation2d.fromDegrees(160),
                     (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),
                     RobotContainer.SWERVE
-            ),
-            RESET_TRACKED_GAME_PIECE_COMMAND = new InstantCommand(CameraConstants.OBJECT_DETECTION_CAMERA::resetTrackedObject);
+            );
 
     public static final Command
             ENABLE_AUTO_CORAL_INTAKE_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_INTAKE_CORAL_AUTONOMOUSLY = true).ignoringDisable(true),
