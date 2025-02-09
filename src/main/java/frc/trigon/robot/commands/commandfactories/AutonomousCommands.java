@@ -33,7 +33,7 @@ public class AutonomousCommands {
     public static Command getFeedCoralCommand() {
         return new SequentialCommandGroup(
                 GripperCommands.getScoreInReefForAutoCommand().withTimeout(0.1),
-                GeneralCommands.runWhen(GripperCommands.getDefaultCommand(), RobotContainer.GRIPPER::isBelowMaximumSafeAngle)
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST).until(RobotContainer.GRIPPER::isBelowMaximumSafeAngle)
         );
     }
 

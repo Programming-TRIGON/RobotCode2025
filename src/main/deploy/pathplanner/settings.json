@@ -3,9 +3,9 @@
   "robotLength": 0.9525,
   "holonomicMode": true,
   "pathFolders": [
-    "ThreeL4CoralsFromFeederLeft",
     "ScoreFourL4Corals",
     "ScoreThreeL3Corals",
+    "FourL4CoralsFromFeederLeft",
     "ThreeL4CoralsFromFeederRight"
   ],
   "autoFolders": [],

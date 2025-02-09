@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ThreeL4CoralsFromFeederLeft1"
+            "pathName": "FourL4CoralsFromFeederLeft1"
           }
         },
         {
@@ -29,7 +29,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ThreeL4CoralsFromFeederLeft2"
+                  "pathName": "FourL4CoralsFromFeederLeft2"
                 }
               },
               {
@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ThreeL4CoralsFromFeederLeft3"
+            "pathName": "FourL4CoralsFromFeederLeft3"
           }
         },
         {
@@ -66,7 +66,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "ThreeL4CoralsFromFeederLeft4"
+                  "pathName": "FourL4CoralsFromFeederLeft4"
                 }
               },
               {
@@ -81,7 +81,44 @@
         {
           "type": "path",
           "data": {
-            "pathName": "ThreeL4CoralsFromFeederLeft5"
+            "pathName": "FourL4CoralsFromFeederLeft5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4Wait"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedCoral"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "FourL4CoralsFromFeederLeft6"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "CollectCoralFromFeeder"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FourL4CoralsFromFeederLeft7"
           }
         },
         {
