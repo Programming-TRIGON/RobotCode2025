@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.function.Supplier;
 
 public class ElevatorCommands {
-    public static Command setDebuggingCommand() {
+    public static Command getDebuggingCommand() {
         return new NetworkTablesCommand(
                 RobotContainer.ELEVATOR::setTargetPositionRotations,
                 false,

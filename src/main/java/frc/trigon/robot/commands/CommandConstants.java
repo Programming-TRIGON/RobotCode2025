@@ -1,26 +1,27 @@
 package frc.trigon.robot.commands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.trigon.robot.RobotContainer;
-import frc.trigon.robot.commands.commandfactories.CollectionCommands;
+import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
+import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.subsystems.climber.ClimberCommands;
 import frc.trigon.robot.subsystems.climber.ClimberConstants;
-import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
+import org.trigon.commands.CameraPositionCalculationCommand;
 import org.trigon.commands.WheelRadiusCharacterizationCommand;
 import org.trigon.hardware.misc.XboxController;
 import org.trigon.hardware.misc.leds.LEDCommands;
 import org.trigon.hardware.misc.leds.LEDStrip;
-import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 
 /**
@@ -36,46 +37,49 @@ public class CommandConstants {
     private static final double JOYSTICK_ORIENTED_ROTATION_DEADBAND = 0.4;
 
     public static final Command
-            FIELD_RELATIVE_DRIVE_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
+            FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_TO_REEF_SECTIONS_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
             () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftY()),
             () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftX()),
-            () -> calculateRotationStickAxisValue(DRIVER_CONTROLLER.getRightX())
+            CommandConstants::calculateJoystickOrientedToReefSectionsTargetAngle
     ),
-            FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
-                    () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftY()),
-                    () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftX()),
-                    CommandConstants::calculateJoystickOrientedTargetAngle
-            ),
             SELF_RELATIVE_DRIVE_COMMAND = SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                     () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftY()),
                     () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftX()),
                     () -> calculateRotationStickAxisValue(DRIVER_CONTROLLER.getRightX())
             ),
-            RESET_HEADING_COMMAND = new InstantCommand(() -> RobotContainer.POSE_ESTIMATOR.resetPose(changeRotation(new FlippablePose2d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose(), false), new Rotation2d()).get())),
-            SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND = SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                    () -> getXPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
-                    () -> getYPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
-                    () -> 0
-            ),
+            RESET_HEADING_COMMAND = new InstantCommand(RobotContainer.POSE_ESTIMATOR::resetHeading),
+    //    RESET_HEADING_COMMAND = new InstantCommand(() -> RobotContainer.POSE_ESTIMATOR.resetPose(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose())),
+    SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND = SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+            () -> getXPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
+            () -> getYPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
+            () -> 0
+    ),
             STATIC_WHITE_LED_COLOR_COMMAND = LEDCommands.getStaticColorCommand(Color.kWhite, LEDStrip.LED_STRIPS),
             WHEEL_RADIUS_CHARACTERIZATION_COMMAND = new WheelRadiusCharacterizationCommand(
                     PathPlannerConstants.ROBOT_CONFIG.moduleLocations,
                     RobotContainer.SWERVE::getDriveWheelPositionsRadians,
                     () -> RobotContainer.SWERVE.getHeading().getRadians(),
-                    RobotContainer.SWERVE::runWheelRadiusCharacterization,
+                    (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),
                     RobotContainer.SWERVE
             ),
-            COLLECTION_RUMBLE_COMMAND = new InstantCommand(() -> DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER)),
             OVERRIDE_IS_CLIMBING_TRIGGER = new InstantCommand(() -> RobotContainer.CLIMBER.setIsClimbing(false)),
             MANUALLY_RAISE_CLIMBER_COMMAND = ClimberCommands.getSetTargetVoltageCommand(ClimberConstants.MANUALLY_RAISE_CLIMBER_VOLTAGE),
-            MANUALLY_LOWER_CLIMBER_COMMAND = ClimberCommands.getSetTargetVoltageCommand(ClimberConstants.MANUALLY_LOWER_CLIMBER_VOLTAGE);
+            MANUALLY_LOWER_CLIMBER_COMMAND = ClimberCommands.getSetTargetVoltageCommand(ClimberConstants.MANUALLY_LOWER_CLIMBER_VOLTAGE),
+            CALCULATE_CAMERA_POSITION_COMMAND = new CameraPositionCalculationCommand(
+                    CameraConstants.RIGHT_REEF_TAG_CAMERA::getEstimatedRobotPose,
+                    Rotation2d.fromDegrees(160),
+                    (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),
+                    RobotContainer.SWERVE
+            ),
+            RESET_TRACKED_GAME_PIECE_COMMAND = new InstantCommand(CameraConstants.OBJECT_DETECTION_CAMERA::resetTrackedObject);
 
     public static final Command
-            ENABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = true).ignoringDisable(true),
-            DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CollectionCommands.SHOULD_ALIGN_TO_CORAL = false).ignoringDisable(true),
+            ENABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_ALIGN_TO_CORAL = true).ignoringDisable(true),
+            DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_ALIGN_TO_CORAL = false).ignoringDisable(true),
             ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = true).ignoringDisable(true),
             DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = false).ignoringDisable(true),
-            SET_TARGET_SCORING_REEF_LEVEL_L1_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L1).ignoringDisable(true),
+            SET_TARGET_SCORING_REEF_LEVEL_L1_FROM_GRIPPER_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L1_GRIPPER).ignoringDisable(true),
+            SET_TARGET_SCORING_REEF_LEVEL_L1_FROM_CORAL_INTAKE_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE).ignoringDisable(true),
             SET_TARGET_SCORING_REEF_LEVEL_L2_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L2).ignoringDisable(true),
             SET_TARGET_SCORING_REEF_LEVEL_L3_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L3).ignoringDisable(true),
             SET_TARGET_SCORING_REEF_LEVEL_L4_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L4).ignoringDisable(true),
@@ -116,7 +120,7 @@ public class CommandConstants {
      * @return the power to apply to the robot
      */
     public static double calculateShiftModeValue(double minimumPower) {
-        final double squaredShiftModeValue = Math.pow(DRIVER_CONTROLLER.getRightTriggerAxis(), 2);
+        final double squaredShiftModeValue = Math.sqrt(DRIVER_CONTROLLER.getRightTriggerAxis());
         final double minimumShiftValueCoefficient = 1 - (1 / minimumPower);
 
         return 1 - squaredShiftModeValue * minimumShiftValueCoefficient;
@@ -128,13 +132,32 @@ public class CommandConstants {
      *
      * @return the rotation value
      */
-    private static FlippableRotation2d calculateJoystickOrientedTargetAngle() {
-        final double joystickPower = Math.hypot(DRIVER_CONTROLLER.getRightX(), DRIVER_CONTROLLER.getRightY());
+    private static FlippableRotation2d calculateJoystickOrientedToReefSectionsTargetAngle() {
+        final double
+                xPower = DRIVER_CONTROLLER.getRightX(),
+                yPower = DRIVER_CONTROLLER.getRightY();
+
+        final double joystickPower = Math.hypot(xPower, yPower);
         if (joystickPower < JOYSTICK_ORIENTED_ROTATION_DEADBAND)
             return null;
 
-        final double targetAngleRadians = Math.atan2(DRIVER_CONTROLLER.getRightX(), DRIVER_CONTROLLER.getRightY());
-        return FlippableRotation2d.fromRadians(targetAngleRadians, true);
+        final double targetAngleRadians = Math.atan2(xPower, yPower) + Math.PI;
+        return roundAngleToClosestReefAngle(Rotation2d.fromRadians(targetAngleRadians));
+    }
+
+    private static FlippableRotation2d roundAngleToClosestReefAngle(Rotation2d targetAngle) {
+        Rotation2d closestReefAngle = new Rotation2d();
+        double closestReefAngleOffsetDegrees = Double.POSITIVE_INFINITY;
+
+        for (Rotation2d reefClockAngle : FieldConstants.REEF_CLOCK_ANGLES) {
+            double angleOffsetDegrees = Math.abs(targetAngle.minus(reefClockAngle).getDegrees());
+            if (angleOffsetDegrees < closestReefAngleOffsetDegrees) {
+                closestReefAngleOffsetDegrees = angleOffsetDegrees;
+                closestReefAngle = reefClockAngle;
+            }
+        }
+
+        return new FlippableRotation2d(closestReefAngle, true);
     }
 
     private static double getXPowerFromPov(double pov) {
@@ -145,13 +168,5 @@ public class CommandConstants {
     private static double getYPowerFromPov(double pov) {
         final double povRadians = Units.degreesToRadians(pov);
         return Math.sin(-povRadians);
-    }
-
-    private static FlippablePose2d changeRotation(FlippablePose2d pose2d, Rotation2d newRotation) {
-        return new FlippablePose2d(
-                pose2d.get().getTranslation(),
-                newRotation.getRadians(),
-                false
-        );
     }
 }

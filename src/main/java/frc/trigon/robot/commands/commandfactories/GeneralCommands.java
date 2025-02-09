@@ -7,8 +7,7 @@ import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import frc.trigon.robot.subsystems.climber.ClimberCommands;
 import frc.trigon.robot.subsystems.climber.ClimberConstants;
-import frc.trigon.robot.subsystems.gripper.GripperCommands;
-import frc.trigon.robot.subsystems.gripper.GripperConstants;
+import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 
 import java.util.function.BooleanSupplier;
 
@@ -27,19 +26,11 @@ public class GeneralCommands {
         );
     }
 
-    public static Command getEjectCoralCommand() {
-        return new SequentialCommandGroup(
-                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.PREPARE_FOR_EJECTING).until(RobotContainer.GRIPPER::atTargetAngle),
-                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.EJECT)
-        );
-    }
-
-    public static Command withoutRequirements(Command command) {
-        return new FunctionalCommand(
-                command::initialize,
-                command::execute,
-                command::end,
-                command::isFinished
+    public static Command getFieldRelativeDriveCommand() {
+        return SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
+                () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftY()),
+                () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
+                () -> CommandConstants.calculateRotationStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getRightX())
         );
     }
 
@@ -52,13 +43,13 @@ public class GeneralCommands {
      */
     public static Command getToggleRotationModeCommand() {
         return new InstantCommand(() -> {
-            if (RobotContainer.SWERVE.getDefaultCommand().equals(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND))
-                RobotContainer.SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_COMMAND);
+            if (RobotContainer.SWERVE.getDefaultCommand().equals(getFieldRelativeDriveCommand()))
+                RobotContainer.SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_TO_REEF_SECTIONS_COMMAND);
             else
-                RobotContainer.SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_COMMAND);
+                RobotContainer.SWERVE.setDefaultCommand(getFieldRelativeDriveCommand());
 
             RobotContainer.SWERVE.getDefaultCommand().schedule();
-        });
+        }).ignoringDisable(true);
     }
 
     public static Command getToggleBrakeCommand() {
@@ -106,15 +97,5 @@ public class GeneralCommands {
      */
     public static Command runWhen(Command command, BooleanSupplier condition, double debounceTimeSeconds) {
         return runWhen(new WaitCommand(debounceTimeSeconds).andThen(command.onlyIf(condition)), condition);
-    }
-
-    public static Command duplicate(Command command) {
-        return new FunctionalCommand(
-                command::initialize,
-                command::execute,
-                command::end,
-                command::isFinished,
-                command.getRequirements().toArray(Subsystem[]::new)
-        );
     }
 }
