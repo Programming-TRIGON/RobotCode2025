@@ -65,13 +65,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 122.14583111534118
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": "ScoreFourL4CoralsRight",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }

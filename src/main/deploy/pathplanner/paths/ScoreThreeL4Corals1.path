@@ -71,7 +71,7 @@
   "folder": "ScoreThreeL3CoralsRight",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": false
 }

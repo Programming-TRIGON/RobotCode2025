@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 3.921703767123288,
-        "y": 5.249593321917807
+        "x": 5.093707191780822,
+        "y": 5.354773116438356
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.198763093010508,
-        "y": 5.986886263492964
+        "x": 4.3205280405941355,
+        "y": 5.893342589706236
       },
       "isLocked": false,
       "linkedName": "ThreeL4CoralsFromFeederRight1"
@@ -20,8 +20,8 @@
         "y": 7.278060787671233
       },
       "prevControl": {
-        "x": 2.4977763368158,
-        "y": 6.487499366932731
+        "x": 2.2273269866330034,
+        "y": 6.777202513021274
       },
       "nextControl": null,
       "isLocked": false,
@@ -48,7 +48,7 @@
   "folder": "ThreeL4CoralsFromFeederRight",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 119.99999999999999
+    "rotation": 59.99999999999999
   },
   "useDefaultConstraints": true
 }

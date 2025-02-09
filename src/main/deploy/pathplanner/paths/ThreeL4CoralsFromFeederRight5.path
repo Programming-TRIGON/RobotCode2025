@@ -8,20 +8,20 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.219366197183098,
-        "y": 6.547711267605633
+        "x": 2.853586193944082,
+        "y": 6.2766393391051585
       },
       "isLocked": false,
       "linkedName": "FourL4CoralsFromFeederRight4"
     },
     {
       "anchor": {
-        "x": 4.973501712328767,
-        "y": 5.279644691780822
+        "x": 3.7263698630136988,
+        "y": 5.174464897260274
       },
       "prevControl": {
-        "x": 4.083890845070422,
-        "y": 5.980809859154928
+        "x": 2.9141511646696054,
+        "y": 5.965773705243105
       },
       "nextControl": null,
       "isLocked": false,
@@ -65,7 +65,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": "ThreeL4CoralsFromFeederRight",
