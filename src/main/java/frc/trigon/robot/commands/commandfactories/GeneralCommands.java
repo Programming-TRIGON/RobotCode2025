@@ -6,7 +6,6 @@ import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
-import org.trigon.hardware.misc.XboxController;
 
 import java.util.function.BooleanSupplier;
 
@@ -51,15 +50,6 @@ public class GeneralCommands {
             else
                 CommandConstants.STATIC_WHITE_LED_COLOR_COMMAND.schedule();
         }).ignoringDisable(true);
-    }
-
-    public static Command getRunUntilJoystickMovementCommand(Command command) {
-        final XboxController controller = OperatorConstants.DRIVER_CONTROLLER;
-        final double deadband = OperatorConstants.DRIVER_CONTROLLER_DEADBAND;
-        return command.until(
-                () -> Math.hypot(controller.getLeftX(), controller.getLeftY()) > deadband ||
-                        Math.hypot(controller.getRightX(), controller.getRightY()) > deadband
-        );
     }
 
     public static Command getDelayedCommand(double delaySeconds, Runnable toRun) {
