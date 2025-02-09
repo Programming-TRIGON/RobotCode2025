@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.697902397260274,
-        "y": 7.353189212328767
+        "x": 1.6828767123287671,
+        "y": 7.278060787671233
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.275599315068493,
-        "y": 6.81226455479452
+        "x": 2.3779983027755858,
+        "y": 6.427681950702509
       },
       "isLocked": false,
-      "linkedName": "TwoL4CoralsFromFeeder4"
+      "linkedName": "ThreeL4CoralsFromFeederRight2"
     },
     {
       "anchor": {
-        "x": 4.973501712328767,
-        "y": 5.279644691780822
+        "x": 3.681292808219178,
+        "y": 5.144413527397259
       },
       "prevControl": {
-        "x": 4.192166095890411,
-        "y": 6.331442636986301
+        "x": 2.902460782133061,
+        "y": 6.018750931877369
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "ThreeL4CoralsFromFeederRight3"
     }
   ],
   "rotationTargets": [],
@@ -45,7 +45,7 @@
     },
     {
       "name": "ScoreL4",
-      "waypointRelativePos": 0.27118644067796616,
+      "waypointRelativePos": 0.22372881355932212,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -65,13 +65,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 119.99999999999999
   },
   "reversed": false,
-  "folder": "TwoL4CoralsFromFeeder",
+  "folder": "ThreeL4CoralsFromFeederRight",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 127.2348339815746
+    "rotation": 128.15722658736908
   },
   "useDefaultConstraints": true
 }

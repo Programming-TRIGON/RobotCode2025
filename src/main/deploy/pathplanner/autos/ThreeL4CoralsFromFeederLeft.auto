@@ -1,0 +1,105 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ThreeL4CoralsFromFeederLeft1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4Wait"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedCoral"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "ThreeL4CoralsFromFeederLeft2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "CollectCoralFromFeeder"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ThreeL4CoralsFromFeederLeft3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4Wait"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedCoral"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "ThreeL4CoralsFromFeederLeft4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "CollectCoralFromFeeder"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "ThreeL4CoralsFromFeederLeft5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4Wait"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedCoral"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}

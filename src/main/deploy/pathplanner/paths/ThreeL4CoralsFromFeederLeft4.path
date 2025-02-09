@@ -1,0 +1,54 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 3.9846830985915482,
+        "y": 2.7494718309859136
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.2262798385639053,
+        "y": 1.8941371050854192
+      },
+      "isLocked": false,
+      "linkedName": "ThreeL4CoralsFromFeederLeft3"
+    },
+    {
+      "anchor": {
+        "x": 1.8871478873239425,
+        "y": 0.5669014084507024
+      },
+      "prevControl": {
+        "x": 2.561966271029517,
+        "y": 1.3385507706741588
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "ThreeL4CoralsFromFeederLeft4"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 400.0,
+    "maxAngularAcceleration": 250.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": -126.86989764584409
+  },
+  "reversed": false,
+  "folder": "ThreeL4CoralsFromFeederLeft",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": -119.99999999999999
+  },
+  "useDefaultConstraints": true
+}

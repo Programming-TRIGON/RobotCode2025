@@ -1,0 +1,77 @@
+{
+  "version": "2025.0",
+  "waypoints": [
+    {
+      "anchor": {
+        "x": 8.083818493150686,
+        "y": 6.797238869863014
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.1419290602938945,
+        "y": 6.983590127665435
+      },
+      "isLocked": false,
+      "linkedName": null
+    },
+    {
+      "anchor": {
+        "x": 3.921703767123288,
+        "y": 5.249593321917807
+      },
+      "prevControl": {
+        "x": 4.857358837254763,
+        "y": 5.736127669710425
+      },
+      "nextControl": null,
+      "isLocked": false,
+      "linkedName": "ThreeL4CoralsFromFeederRight1"
+    }
+  ],
+  "rotationTargets": [],
+  "constraintZones": [],
+  "pointTowardsZones": [],
+  "eventMarkers": [
+    {
+      "name": "RestCoralIntake",
+      "waypointRelativePos": 0.0,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "RestCoralIntake"
+        }
+      }
+    },
+    {
+      "name": "ScoreL4",
+      "waypointRelativePos": 0.10169491525423731,
+      "endWaypointRelativePos": null,
+      "command": {
+        "type": "named",
+        "data": {
+          "name": "ScoreL4"
+        }
+      }
+    }
+  ],
+  "globalConstraints": {
+    "maxVelocity": 4.0,
+    "maxAcceleration": 3.5,
+    "maxAngularVelocity": 400.0,
+    "maxAngularAcceleration": 250.0,
+    "nominalVoltage": 12.0,
+    "unlimited": false
+  },
+  "goalEndState": {
+    "velocity": 0,
+    "rotation": 119.99999999999999
+  },
+  "reversed": false,
+  "folder": "ThreeL4CoralsFromFeederRight",
+  "idealStartingState": {
+    "velocity": 0,
+    "rotation": 90.34460366263106
+  },
+  "useDefaultConstraints": true
+}

@@ -7,7 +7,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TwoL4CoralsFromFeeder1"
+            "pathName": "ThreeL4CoralsFromFeederRight1"
           }
         },
         {
@@ -29,7 +29,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "TwoL4CoralsFromFeeder2"
+                  "pathName": "ThreeL4CoralsFromFeederRight2"
                 }
               },
               {
@@ -44,7 +44,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TwoL4CoralsFromFeeder3"
+            "pathName": "ThreeL4CoralsFromFeederRight3"
           }
         },
         {
@@ -66,7 +66,7 @@
               {
                 "type": "path",
                 "data": {
-                  "pathName": "TwoL4CoralsFromFeeder4"
+                  "pathName": "ThreeL4CoralsFromFeederRight4"
                 }
               },
               {
@@ -81,7 +81,7 @@
         {
           "type": "path",
           "data": {
-            "pathName": "TwoL4CoralsFromFeeder5"
+            "pathName": "ThreeL4CoralsFromFeederRight5"
           }
         },
         {
