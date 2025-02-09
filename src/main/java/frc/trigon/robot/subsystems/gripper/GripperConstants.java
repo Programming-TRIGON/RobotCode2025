@@ -1,7 +1,7 @@
 package frc.trigon.robot.subsystems.gripper;
 
 import au.grapplerobotics.ConfigurationFailedException;
-import au.grapplerobotics.LaserCan;
+import au.grapplerobotics.interfaces.LaserCanInterface;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.*;
@@ -25,94 +25,33 @@ import org.trigon.hardware.simulation.SingleJointedArmSimulation;
 import org.trigon.utilities.mechanisms.SingleJointedArmMechanism2d;
 import org.trigon.utilities.mechanisms.SpeedMechanism2d;
 
-import java.util.function.DoubleSupplier;
-
 
 public class GripperConstants {
-    private static final int
-            GRIPPING_MOTOR_ID = 14,
-            ANGLE_MOTOR_ID = 15,
-            ANGLE_ENCODER_ID = 15,
-            LASER_CAN_ID = 14;
-    private static final String
-            GRIPPING_MOTOR_NAME = "GripperGrippingMotor",
-            ANGLE_MOTOR_NAME = "GripperAngleMotor",
-            ANGLE_ENCODER_NAME = "GripperAngleEncoder",
-            LASER_CAN_NAME = "GripperLaserCAN";
     static final TalonFXMotor
-            GRIPPING_MOTOR = new TalonFXMotor(GRIPPING_MOTOR_ID, GRIPPING_MOTOR_NAME),
-            ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
-    static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
-    static final LaserCAN LASER_CAN = new LaserCAN(LASER_CAN_ID, LASER_CAN_NAME);
+            GRIPPING_MOTOR = new TalonFXMotor(14, "GripperGrippingMotor"),
+            ANGLE_MOTOR = new TalonFXMotor(15, "GripperAngleMotor");
+    static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(15, "GripperAngleEncoder");
+    static final LaserCAN LASER_CAN = new LaserCAN(14, "GripperLaserCAN");
 
-    private static final InvertedValue
-            GRIPPING_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
-            ANGLE_MOTOR_INVERTED_VALUE = InvertedValue.CounterClockwise_Positive;
-    private static final NeutralModeValue
-            GRIPPER_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Coast,
-            ANGLE_MOTOR_NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
-    private static final double GRIPPING_MOTOR_GEAR_RATIO = 4;
     static final double ANGLE_MOTOR_GEAR_RATIO = 34.642351;
-    private static final double
-            ANGLE_P = RobotHardwareStats.isSimulation() ? 100 : 8,
-            ANGLE_I = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_D = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_KS = RobotHardwareStats.isSimulation() ? 0 : 0.1579,
-            ANGLE_KV = RobotHardwareStats.isSimulation() ? 0 : 4.0791,
-            ANGLE_KA = RobotHardwareStats.isSimulation() ? 0 : 0,
-            ANGLE_KG = RobotHardwareStats.isSimulation() ? 0 : 0.23721;
-    private static final double
-            ANGLE_MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 5 : 3,
-            ANGLE_MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 5 : 8,
-            ANGLE_MOTION_MAGIC_JERK = ANGLE_MOTION_MAGIC_ACCELERATION * 10;
-    private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Arm_Cosine;
-    private static final double
-            ANGLE_ENCODER_GRAVITY_OFFSET = -0.36379,//0.43 + 0.25 - 0.14092,
-            ANGLE_ENCODER_DISCONTINUITY_POINT = 0.5;
-    static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = -0.32 - ANGLE_ENCODER_GRAVITY_OFFSET; //0.14092;
-    private static final Rotation2d
-            ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD = Rotation2d.fromDegrees(-59.645756).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET)),
-            ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD = Rotation2d.fromDegrees(120).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET));
-    private static final FeedbackSensorSourceValue ANGLE_ENCODER_TYPE = FeedbackSensorSourceValue.FusedCANcoder;
-    private static final SensorDirectionValue ANGLE_ENCODER_SENSOR_DIRECTION_VALUE = SensorDirectionValue.CounterClockwise_Positive;
-    private static final int
-            LASER_CAN_DETECTION_REGION_START_X_COORDINATE = 6,
-            LASER_CAN_DETECTION_REGION_START_Y_COORDINATE = 6,
-            LASER_CAN_DETECTION_REGION_END_X_COORDINATE = 12,
-            LASER_CAN_DETECTION_REGION_END_Y_COORDINATE = 12;
-    private static final LaserCan.RangingMode LASER_CAN_RANGING_MODE = LaserCan.RangingMode.SHORT;
-    private static final LaserCan.TimingBudget LASER_CAN_LOOP_TIME = LaserCan.TimingBudget.TIMING_BUDGET_33MS;
+
+    static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = 0.04379;
+
     static final boolean FOC_ENABLED = true;
 
-    private static final int
-            NUMBER_OF_GRIPPING_MOTORS = 1,
-            NUMBER_OF_ARM_MOTORS = 1;
-    private static final DCMotor
-            GRIPPING_GEARBOX = DCMotor.getFalcon500Foc(NUMBER_OF_GRIPPING_MOTORS),
-            ARM_GEARBOX = DCMotor.getKrakenX60(NUMBER_OF_ARM_MOTORS);
-    private static final double
-            ARM_LENGTH_METERS = 0.24,
-            ARM_MASS_KILOGRAMS = 3;
-    private static final Rotation2d
-            ARM_MINIMUM_ANGLE = Rotation2d.fromDegrees(-55),
-            ARM_MAXIMUM_ANGLE = Rotation2d.fromDegrees(120);
-    private static final double MOMENT_OF_INERTIA = 0.003;
-    private static final boolean SHOULD_SIMULATE_GRAVITY = true;
-    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> SimulationFieldHandler.isCoralInGripper() && SimulationFieldHandler.isHoldingCoral() ? 1 : 10000;
     private static final SimpleMotorSimulation GRIPPING_SIMULATION = new SimpleMotorSimulation(
-            GRIPPING_GEARBOX,
-            GRIPPING_MOTOR_GEAR_RATIO,
-            MOMENT_OF_INERTIA
+            DCMotor.getFalcon500Foc(1),
+            4,
+            0.003
     );
     private static final SingleJointedArmSimulation ARM_SIMULATION = new SingleJointedArmSimulation(
-            ARM_GEARBOX,
+            DCMotor.getKrakenX60Foc(1),
             ANGLE_MOTOR_GEAR_RATIO,
-            ARM_LENGTH_METERS,
-            ARM_MASS_KILOGRAMS,
-            ARM_MINIMUM_ANGLE,
-            ARM_MAXIMUM_ANGLE,
-            SHOULD_SIMULATE_GRAVITY
+            0.24,
+            3,
+            Rotation2d.fromDegrees(-55),
+            Rotation2d.fromDegrees(120),
+            true
     );
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
@@ -121,14 +60,13 @@ public class GripperConstants {
             Units.Second.of(1000)
     );
 
-    private static final double MAXIMUM_DISPLAYABLE_VELOCITY = 12;
     static final SpeedMechanism2d GRIPPING_MECHANISM = new SpeedMechanism2d(
             "GripperGrippingMechanism",
-            MAXIMUM_DISPLAYABLE_VELOCITY
+            12
     );
     static final SingleJointedArmMechanism2d ANGLE_MECHANISM = new SingleJointedArmMechanism2d(
             "GripperAngleMechanism",
-            ARM_LENGTH_METERS,
+            0.24,
             Color.kRed
     );
     private static final Pose3d GRIPPER_VISUALIZATION_ORIGIN_POINT = new Pose3d(
@@ -154,12 +92,10 @@ public class GripperConstants {
     static final double SCORE_IN_REEF_FOR_AUTO_VOLTAGE = -5;
     static final double MINIMUM_VOLTAGE_FOR_EJECTING = -3;
     static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-34);
-    private static final double GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS = 10;
-    private static final double COLLECTION_DETECTION_TIME_THRESHOLD_SECONDS = 0.14;
     static final BooleanEvent COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
-            () -> LASER_CAN.hasResult() && LASER_CAN.getDistanceMillimeters() < GripperConstants.GAME_PIECE_DETECTION_THRESHOLD_MILLIMETERS
-    ).debounce(COLLECTION_DETECTION_TIME_THRESHOLD_SECONDS);
+            () -> LASER_CAN.hasResult() && LASER_CAN.getDistanceMillimeters() < 10
+    ).debounce(0.14);
 
     static {
         configureGrippingMotor();
@@ -174,9 +110,9 @@ public class GripperConstants {
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
 
-        config.MotorOutput.Inverted = GRIPPING_MOTOR_INVERTED_VALUE;
-        config.MotorOutput.NeutralMode = GRIPPER_MOTOR_NEUTRAL_MODE_VALUE;
-        config.Feedback.RotorToSensorRatio = GRIPPING_MOTOR_GEAR_RATIO;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        config.Feedback.RotorToSensorRatio = 4;
 
         GRIPPING_MOTOR.applyConfiguration(config);
         GRIPPING_MOTOR.setPhysicsSimulation(GRIPPING_SIMULATION);
@@ -192,32 +128,33 @@ public class GripperConstants {
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
 
-        config.MotorOutput.Inverted = ANGLE_MOTOR_INVERTED_VALUE;
-        config.MotorOutput.NeutralMode = ANGLE_MOTOR_NEUTRAL_MODE_VALUE;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.Feedback.RotorToSensorRatio = ANGLE_MOTOR_GEAR_RATIO;
 
-        config.Feedback.FeedbackRemoteSensorID = ANGLE_ENCODER_ID;
-        config.Feedback.FeedbackSensorSource = ANGLE_ENCODER_TYPE;
+        config.Feedback.FeedbackRemoteSensorID = ANGLE_MOTOR.getID();
+        config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
 
-        config.Slot0.kP = ANGLE_P;
-        config.Slot0.kI = ANGLE_I;
-        config.Slot0.kD = ANGLE_D;
-        config.Slot0.kS = ANGLE_KS;
-        config.Slot0.kV = ANGLE_KV;
-        config.Slot0.kA = ANGLE_KA;
-        config.Slot0.kG = ANGLE_KG;
-        config.Slot0.GravityType = GRAVITY_TYPE_VALUE;
-        config.Slot0.StaticFeedforwardSign = STATIC_FEEDFORWARD_SIGN_VALUE;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 8;
+        config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.1579;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 4.0791;
+        config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0 : 0.23721;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = ANGLE_MOTION_MAGIC_CRUISE_VELOCITY;
-        config.MotionMagic.MotionMagicAcceleration = ANGLE_MOTION_MAGIC_ACCELERATION;
-        config.MotionMagic.MotionMagicJerk = ANGLE_MOTION_MAGIC_JERK;
+        config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
+        config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+
+        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 5 : 3;
+        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 5 : 8;
+        config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = ANGLE_REVERSE_SOFT_LIMIT_THRESHOLD.getRotations();
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Rotation2d.fromDegrees(-59.645756).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET)).getRotations();
 
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = ANGLE_FORWARD_SOFT_LIMIT_THRESHOLD.getRotations();
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Rotation2d.fromDegrees(120).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET)).getRotations();
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ARM_SIMULATION);
@@ -233,9 +170,9 @@ public class GripperConstants {
     private static void configureEncoder() {
         final CANcoderConfiguration config = new CANcoderConfiguration();
 
-        config.MagnetSensor.SensorDirection = ANGLE_ENCODER_SENSOR_DIRECTION_VALUE;
-        config.MagnetSensor.MagnetOffset = ANGLE_ENCODER_GRAVITY_OFFSET;
-        config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = ANGLE_ENCODER_DISCONTINUITY_POINT;
+        config.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
+        config.MagnetSensor.MagnetOffset = -0.36379;
+        config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
 
         ANGLE_ENCODER.applyConfiguration(config);
         ANGLE_ENCODER.setSimulationInputsFromTalonFX(ANGLE_MOTOR);
@@ -246,10 +183,13 @@ public class GripperConstants {
 
     private static void configureLaserCAN() {
         try {
-            LASER_CAN.setRegionOfInterest(LASER_CAN_DETECTION_REGION_START_X_COORDINATE, LASER_CAN_DETECTION_REGION_START_Y_COORDINATE, LASER_CAN_DETECTION_REGION_END_X_COORDINATE, LASER_CAN_DETECTION_REGION_END_Y_COORDINATE);
-            LASER_CAN.setRangingMode(LASER_CAN_RANGING_MODE);
-            LASER_CAN.setLoopTime(LASER_CAN_LOOP_TIME);
-            LASER_CAN.setSimulationSupplier(LASER_CAN_SIMULATION_SUPPLIER);
+            LASER_CAN.setRegionOfInterest(6, 6, 12, 12);
+            LASER_CAN.setRangingMode(LaserCanInterface.RangingMode.SHORT);
+            LASER_CAN.setLoopTime(LaserCanInterface.TimingBudget.TIMING_BUDGET_33MS);
+            LASER_CAN.setSimulationSupplier(
+                    () -> SimulationFieldHandler.isCoralInGripper() &&
+                            SimulationFieldHandler.isHoldingCoral() ? 1 : 1000
+            );
         } catch (ConfigurationFailedException e) {
             e.printStackTrace();
         }

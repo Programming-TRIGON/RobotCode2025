@@ -2,7 +2,10 @@ package frc.trigon.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.signals.*;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -17,62 +20,20 @@ import org.trigon.hardware.simulation.ElevatorSimulation;
 import org.trigon.utilities.mechanisms.ElevatorMechanism2d;
 
 public class ElevatorConstants {
-    private static final int
-            MASTER_MOTOR_ID = 12,
-            FOLLOWER_MOTOR_ID = 13;
-    private static final String
-            MASTER_MOTOR_NAME = "ElevatorMasterMotor",
-            FOLLOWER_MOTOR_NAME = "ElevatorFollowerMotor";
     static final TalonFXMotor
-            MASTER_MOTOR = new TalonFXMotor(MASTER_MOTOR_ID, MASTER_MOTOR_NAME),
-            FOLLOWER_MOTOR = new TalonFXMotor(FOLLOWER_MOTOR_ID, FOLLOWER_MOTOR_NAME);
+            MASTER_MOTOR = new TalonFXMotor(12, "ElevatorMasterMotor"),
+            FOLLOWER_MOTOR = new TalonFXMotor(13, "ElevatorFollowerMotor");
 
-    private static final NeutralModeValue NEUTRAL_MODE_VALUE = NeutralModeValue.Brake;
-    private static final InvertedValue
-            MASTER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive,
-            FOLLOWER_MOTOR_INVERTED_VALUE = InvertedValue.Clockwise_Positive;
-    private static final double GEAR_RATIO = 7.222222;
-    private static final boolean FOLLOWER_MOTOR_OPPOSES_MASTER = true;
-    private static final double
-            P = RobotHardwareStats.isSimulation() ? 40 : 0.6,
-            I = RobotHardwareStats.isSimulation() ? 0 : 0,
-            D = RobotHardwareStats.isSimulation() ? 0.22774 : 0,
-            KS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.079427,
-            KV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.88,
-            KG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.42,
-            KA = RobotHardwareStats.isSimulation() ? 0 : 0;
-    private static final double
-            MOTION_MAGIC_CRUISE_VELOCITY = RobotHardwareStats.isSimulation() ? 80 : 10,
-            MOTION_MAGIC_ACCELERATION = RobotHardwareStats.isSimulation() ? 80 : 50,
-            MOTION_MAGIC_JERK = MOTION_MAGIC_ACCELERATION * 10;
-    private static final GravityTypeValue GRAVITY_TYPE_VALUE = GravityTypeValue.Elevator_Static;
-    private static final StaticFeedforwardSignValue STATIC_FEEDFORWARD_SIGN_VALUE = StaticFeedforwardSignValue.UseClosedLoopSign;
-    private static final ReverseLimitSourceValue REVERSE_LIMIT_SOURCE_VALUE = ReverseLimitSourceValue.LimitSwitchPin;
-    private static final ForwardLimitSourceValue FORWARD_LIMIT_SOURCE_VALUE = ForwardLimitSourceValue.LimitSwitchPin;
-    private static final ReverseLimitTypeValue REVERSE_LIMIT_TYPE_VALUE = ReverseLimitTypeValue.NormallyOpen;
-    private static final ForwardLimitTypeValue FORWARD_LIMIT_TYPE_VALUE = ForwardLimitTypeValue.NormallyOpen;
-    private static final double REVERSE_LIMIT_SWITCH_RESET_POSITION = 0;
-    private static final double
-            REVERSE_SOFT_LIMIT_THRESHOLD_ROTATIONS = 0,
-            FORWARD_SOFT_LIMIT_THRESHOLD_ROTATIONS = 6.6;
     static final boolean FOC_ENABLED = true;
 
-    private static final int MOTOR_AMOUNT = 2;
-    private static final DCMotor GEARBOX = DCMotor.getFalcon500Foc(MOTOR_AMOUNT);
-    private static final double
-            ELEVATOR_MASS_KILOGRAMS = 8,
-            DRUM_RADIUS_METERS = 0.025,
-            RETRACTED_ELEVATOR_HEIGHT_METERS = 0.73, // AFTER SEASON TODO: remove the need for this
-            MAXIMUM_ELEVATOR_HEIGHT_METERS = 1.8;
-    private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
-            GEARBOX,
-            GEAR_RATIO,
-            ELEVATOR_MASS_KILOGRAMS,
-            DRUM_RADIUS_METERS,
-            RETRACTED_ELEVATOR_HEIGHT_METERS,
-            MAXIMUM_ELEVATOR_HEIGHT_METERS,
-            SHOULD_SIMULATE_GRAVITY
+            DCMotor.getFalcon500Foc(2),
+            7.222222,
+            8,
+            0.025,
+            0.73,//AFTER SEASON TODO: remove the need for this
+            1.8,
+            true
     );
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
@@ -89,16 +50,17 @@ public class ElevatorConstants {
             new Translation3d(-0.120, 0, 0.1111),
             new Rotation3d(0, 0, 0)
     );
-    static final double MECHANISM_EXTRA_VISUALIZATION_LENGTH_METERS = 0.1;
+
+
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
-            MAXIMUM_ELEVATOR_HEIGHT_METERS + MECHANISM_EXTRA_VISUALIZATION_LENGTH_METERS,
-            RETRACTED_ELEVATOR_HEIGHT_METERS,
+            1.8 + 0.1,
+            0.73,
             Color.kYellow
     );
 
     static final double FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH_METERS = 0.6;
-    static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
+    static final double DRUM_DIAMETER_METERS = 0.05;
     static final double POSITION_TOLERANCE_METERS = 0.02;
     static final double
             GRIPPER_HITTING_ELEVATOR_BASE_LOWER_BOUND_POSITION_ROTATIONS = 0.1,
@@ -115,40 +77,30 @@ public class ElevatorConstants {
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
 
-        config.MotorOutput.NeutralMode = NEUTRAL_MODE_VALUE;
-        config.MotorOutput.Inverted = MASTER_MOTOR_INVERTED_VALUE;
-        config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        config.Feedback.SensorToMechanismRatio = 7.222222;
 
-        config.Slot0.kP = P;
-        config.Slot0.kI = I;
-        config.Slot0.kD = D;
-        config.Slot0.kS = KS;
-        config.Slot0.kV = KV;
-        config.Slot0.kG = KG;
-        config.Slot0.kA = KA;
-        config.Slot0.GravityType = GRAVITY_TYPE_VALUE;
-        config.Slot0.StaticFeedforwardSign = STATIC_FEEDFORWARD_SIGN_VALUE;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 0.6;
+        config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0.22774 : 0;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.079427;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.88;
+        config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.42;
 
-//        config.HardwareLimitSwitch.ReverseLimitEnable = true;
-//        config.HardwareLimitSwitch.ReverseLimitSource = REVERSE_LIMIT_SOURCE_VALUE;
-//        config.HardwareLimitSwitch.ReverseLimitType = REVERSE_LIMIT_TYPE_VALUE;
-//        config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-//        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = REVERSE_LIMIT_SWITCH_RESET_POSITION;
-
-//        config.HardwareLimitSwitch.ForwardLimitEnable = true;
-//        config.HardwareLimitSwitch.ForwardLimitSource = FORWARD_LIMIT_SOURCE_VALUE;
-//        config.HardwareLimitSwitch.ForwardLimitType = FORWARD_LIMIT_TYPE_VALUE;
-//        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+        config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
+        config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = REVERSE_SOFT_LIMIT_THRESHOLD_ROTATIONS;
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = FORWARD_SOFT_LIMIT_THRESHOLD_ROTATIONS;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 6.6;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = MOTION_MAGIC_CRUISE_VELOCITY;
-        config.MotionMagic.MotionMagicAcceleration = MOTION_MAGIC_ACCELERATION;
-        config.MotionMagic.MotionMagicJerk = MOTION_MAGIC_JERK;
+        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 80 : 10;
+        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 80 : 50;
+        config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 
         MASTER_MOTOR.applyConfiguration(config);
         MASTER_MOTOR.setPhysicsSimulation(SIMULATION);
@@ -168,12 +120,12 @@ public class ElevatorConstants {
         config.Audio.BeepOnBoot = false;
         config.Audio.BeepOnConfig = false;
 
-        config.MotorOutput.NeutralMode = NEUTRAL_MODE_VALUE;
-        config.MotorOutput.Inverted = FOLLOWER_MOTOR_INVERTED_VALUE;
+        config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         FOLLOWER_MOTOR.applyConfiguration(config);
 
-        final Follower followerRequest = new Follower(MASTER_MOTOR_ID, FOLLOWER_MOTOR_OPPOSES_MASTER);
+        final Follower followerRequest = new Follower(MASTER_MOTOR.getID(), true);
         FOLLOWER_MOTOR.setControl(followerRequest);
     }
 
