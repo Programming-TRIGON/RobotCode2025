@@ -4,6 +4,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
@@ -197,16 +198,16 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     private void logTargetPlacementStates() {
-        Logger.recordOutput("TargetCoralPlacementStates/TargetClockPosition", CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition);
-        Logger.recordOutput("TargetCoralPlacementStates/TargetLevel", CoralPlacingCommands.TARGET_SCORING_LEVEL.level);
-        Logger.recordOutput("TargetCoralPlacementStates/IsTargetSideRight", CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation);
-//        Logger.recordOutput("TargetCoralPlacementStates/IsTargetSideLeft", !CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation);
-//        Logger.recordOutput("TargetCoralPlacementStates/TargetClockPositionForElastic", getClockPositionForElastic());
+        final boolean[] targetReefSideArray = new boolean[12];
+        final int targetReefPositionIndex = calculateTargetReefPositionQDashboardIndex();
+        targetReefSideArray[targetReefPositionIndex] = true;
+
+        SmartDashboard.putBooleanArray("TargetCoralPlacementStates/TargetReefSideArray", targetReefSideArray);
+        SmartDashboard.putNumber("TargetCoralPlacementStates/TargetLevel", CoralPlacingCommands.TARGET_SCORING_LEVEL.level);
     }
 
-//    private double getClockPositionForElastic() {
-//        if (CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation)
-//            return CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition;
-//        return CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition + 0.5;
-//    }
+    private int calculateTargetReefPositionQDashboardIndex() {
+        final int qDashboardIndexBeforeSideAccountability = CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.qDashboardOrder * 2;
+        return CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation ? qDashboardIndexBeforeSideAccountability + 1 : qDashboardIndexBeforeSideAccountability;
+    }
 }

@@ -168,7 +168,7 @@ public class CoralPlacingCommands {
         L3(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0)),
         L4(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0));
 
-        public final int level = ordinal() + 1;
+        public final int level = calculateLevel();
         final double xTransformMeters, positiveYTransformMeters;
         final Rotation2d rotationTransform;
         final ElevatorConstants.ElevatorState elevatorState;
@@ -229,6 +229,12 @@ public class CoralPlacingCommands {
                 case 4 -> GripperConstants.GripperState.SCORE_L4;
                 default -> throw new IllegalStateException("Unexpected value: " + ordinal());
             };
+        }
+
+        private int calculateLevel() {
+            if (ordinal() == 0)
+                return 1;
+            return ordinal();
         }
     }
 }

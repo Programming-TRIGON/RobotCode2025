@@ -40,7 +40,7 @@ public class FieldConstants {
         final HashMap<Integer, Pose3d> tagIdToPose = new HashMap<>();
         for (AprilTag aprilTag : APRIL_TAG_FIELD_LAYOUT.getTags())
             tagIdToPose.put(aprilTag.ID, aprilTag.pose.transformBy(TAG_OFFSET));
-        
+
         return tagIdToPose;
     }
 
@@ -60,18 +60,20 @@ public class FieldConstants {
     }
 
     public enum ReefClockPosition {
-        REEF_12_OCLOCK(true),
-        REEF_2_OCLOCK(true),
-        REEF_4_OCLOCK(true),
-        REEF_6_OCLOCK(true),
-        REEF_8_OCLOCK(true),
-        REEF_10_OCLOCK(true);
+        REEF_12_OCLOCK(true, 3),
+        REEF_2_OCLOCK(true, 2),
+        REEF_4_OCLOCK(true, 1),
+        REEF_6_OCLOCK(true, 0),
+        REEF_8_OCLOCK(true, 5),
+        REEF_10_OCLOCK(true, 4);
 
         public final Rotation2d clockAngle;
         public final boolean isFacingDriverStation;
         public final int clockPosition;
+        public int qDashboardOrder;
 
-        ReefClockPosition(boolean isFacingDriverStation) {
+        ReefClockPosition(boolean isFacingDriverStation, int qDashboardOrder) {
+            this.qDashboardOrder = qDashboardOrder;
             this.clockAngle = calculateClockAngle();
             this.isFacingDriverStation = isFacingDriverStation;
             this.clockPosition = ordinal() == 0 ? 12 : ordinal() * 2;
