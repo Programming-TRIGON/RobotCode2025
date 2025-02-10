@@ -81,7 +81,7 @@ public class Gripper extends MotorSubsystem {
     }
 
     public boolean isEjecting() {
-        return grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE) < GripperConstants.MINIMUM_VOLTAGE_FOR_EJECTING;
+        return grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE) <= GripperConstants.MINIMUM_VOLTAGE_FOR_EJECTING;
     }
 
     public boolean isOpenForElevator() {
