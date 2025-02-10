@@ -118,10 +118,11 @@ public class GripperConstants {
     static final double SCORE_IN_REEF_FOR_AUTO_VOLTAGE = -5;
     static final double MINIMUM_VOLTAGE_FOR_EJECTING = -3;
     static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-34);
+    private static final double COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.14;
     static final BooleanEvent COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             () -> LASER_CAN.hasResult() && LASER_CAN.getDistanceMillimeters() < 10
-    ).debounce(0.14);
+    ).debounce(COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
 
     static {
         configureGrippingMotor();
