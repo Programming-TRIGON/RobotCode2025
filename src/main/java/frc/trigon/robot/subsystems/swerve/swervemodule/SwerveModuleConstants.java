@@ -15,7 +15,7 @@ import org.trigon.hardware.simulation.SimpleMotorSimulation;
 
 public class SwerveModuleConstants {
     private static final double
-            DRIVE_MOTOR_GEAR_RATIO = 5.36,
+            DRIVE_MOTOR_GEAR_RATIO = 7.13,
             FRONT_STEER_MOTOR_GEAR_RATIO = 18.75,
             REAR_STEER_MOTOR_GEAR_RATIO = 12.8;
     private static final double
@@ -34,20 +34,20 @@ public class SwerveModuleConstants {
             DRIVE_MOTOR_SLIP_CURRENT = PathPlannerConstants.ROBOT_CONFIG.moduleConfig.driveCurrentLimit, // TODO: calibrate right before competition
             STEER_MOTOR_CURRENT_LIMIT = RobotHardwareStats.isSimulation() ? 200 : 30;
     private static final double
-            FRONT_STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 55,
+            FRONT_STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 75,
             FRONT_STEER_MOTOR_I = 0,
             FRONT_STEER_MOTOR_D = 0;
     private static final double
-            REAR_STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 55,
+            REAR_STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 75,
             REAR_STEER_MOTOR_I = 0,
             REAR_STEER_MOTOR_D = 0;
     private static final double
-            DRIVE_MOTOR_P = RobotHardwareStats.isSimulation() ? 50 : 22,
+            DRIVE_MOTOR_P = RobotHardwareStats.isSimulation() ? 50 : 55,
             DRIVE_MOTOR_I = 0,
             DRIVE_MOTOR_D = 0,
-            DRIVE_MOTOR_KS = RobotHardwareStats.isSimulation() ? 0.4708 : 6.2,
+            DRIVE_MOTOR_KS = RobotHardwareStats.isSimulation() ? 0.4708 : 5.1,
             DRIVE_MOTOR_KV = RobotHardwareStats.isSimulation() ? 0 : 0,
-            DRIVE_MOTOR_KA = RobotHardwareStats.isSimulation() ? 0.48818 : 2.6;
+            DRIVE_MOTOR_KA = RobotHardwareStats.isSimulation() ? 0.48818 : 2.4;
     static final boolean ENABLE_FOC = true;
 
     private static final double

@@ -47,9 +47,10 @@ public class Swerve extends MotorSubsystem {
 
     @Override
     public void sysIdDrive(double targetCurrent) {
-        for (SwerveModule swerveModule : swerveModules) {
-            swerveModule.setDriveMotorTargetCurrent(targetCurrent);
-            swerveModule.setTargetAngle(new Rotation2d());
+        SwerveModuleState[] a = SwerveConstants.KINEMATICS.toSwerveModuleStates(new ChassisSpeeds(0, 0, 2));
+        for (int i = 0; i < 4; i++) {
+            swerveModules[i].setDriveMotorTargetCurrent(targetCurrent);
+            swerveModules[i].setTargetAngle(a[i].angle);
         }
     }
 
@@ -253,17 +254,17 @@ public class Swerve extends MotorSubsystem {
      *
      * @param targetSpeeds the desired robot-relative targetSpeeds
      */
-    private void selfRelativeDrive(ChassisSpeeds targetSpeeds) {
+    public void selfRelativeDrive(ChassisSpeeds targetSpeeds) {
         previousSetpoint = setpointGenerator.generateSetpoint(
                 previousSetpoint,
                 targetSpeeds,
                 RobotHardwareStats.getPeriodicTimeSeconds()
         );
 
-//        if (isStill(previousSetpoint.robotRelativeSpeeds())) {
-//            stop();
-//            return;
-//        }
+        if (isStill(previousSetpoint.robotRelativeSpeeds())) {
+            stop();
+            return;
+        }
 
         setTargetModuleStates(previousSetpoint.moduleStates(), previousSetpoint.feedforwards().accelerationsMPSSq());
     }

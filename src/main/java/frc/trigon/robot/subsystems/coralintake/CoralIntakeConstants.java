@@ -305,12 +305,12 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE(-3, -1, Rotation2d.fromDegrees(143.5)),
-        LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE(-3, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE.targetAngle),
-        PREPARE_FOR_LOADING_TO_GRIPPER_WHILE_GAME_PIECE_NOT_DETECTED(6, 2, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE.targetAngle),
+        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE(-4.5, -1, Rotation2d.fromDegrees(143.5)),
+        LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE(-4.5, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE.targetAngle),
+        PREPARE_FOR_LOADING_TO_GRIPPER_WHILE_GAME_PIECE_NOT_DETECTED(8, 2, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE.targetAngle),
         UNLOAD_CORAL_FROM_GRIPPER(6, 2, Rotation2d.fromDegrees(141)),
-        CENTER_CORAL(6, 2, Rotation2d.fromDegrees(143.5)),
-        COLLECT_FROM_FLOOR(6, 2, Rotation2d.fromDegrees(-46)),
+        CENTER_CORAL(8, 2, Rotation2d.fromDegrees(143.5)),
+        COLLECT_FROM_FLOOR(8, 2, Rotation2d.fromDegrees(-46)),
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(90)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
         REST(0, 0, Rotation2d.fromDegrees(143.5)),

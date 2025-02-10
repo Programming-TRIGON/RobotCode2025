@@ -60,7 +60,7 @@ public class CoralPlacingCommands {
                 () -> SHOULD_SCORE_AUTONOMOUSLY
         ).finallyDo(
                 (interrupted) -> {
-                    if (interrupted && TARGET_SCORING_LEVEL.ordinal() > ScoringLevel.L2.ordinal())
+                    if (interrupted && TARGET_SCORING_LEVEL.ordinal() > ScoringLevel.L2.ordinal() && RobotContainer.ELEVATOR.willMovementMoveThroughHitRange(0))
                         getMakeSureGripperDoesntHitReefCommand().schedule();
                 }
         );
@@ -163,8 +163,8 @@ public class CoralPlacingCommands {
      */
     public enum ScoringLevel {
         L1_CORAL_INTAKE(1.38, 0.14, Rotation2d.fromDegrees(180)),
-        L1_GRIPPER(1.38, 0.14, Rotation2d.fromDegrees(0)),
-        L2(1.36, 0.15, Rotation2d.fromDegrees(0)),
+        L1_GRIPPER(1.38, 0.17, Rotation2d.fromDegrees(0)),
+        L2(1.3, 0.17, Rotation2d.fromDegrees(0)),
         L3(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0)),
         L4(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0));
 
