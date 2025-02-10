@@ -101,7 +101,6 @@ public class CoralIntakeConstants {
             Color.kRed
     );
 
-    public static final double AUTO_COLLECTION_SWERVE_POWER = 0.5;
     public static final double
             COLLECTION_LEDS_BLINKING_SPEED = 0.5,
             COLLECTION_RUMBLE_DURATION_SECONDS = 0.7,
@@ -112,7 +111,7 @@ public class CoralIntakeConstants {
     ).debounce(0.65);
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
-            () -> RobotHardwareStats.isSimulation() ? SimulationFieldHandler.isHoldingCoral() : DISTANCE_SENSOR.getScaledValue() < 17
+            () -> (RobotHardwareStats.isSimulation() ? DISTANCE_SENSOR.getValue() : DISTANCE_SENSOR.getScaledValue()) < 17
     ).debounce(0.06);
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(0.5);
@@ -226,7 +225,7 @@ public class CoralIntakeConstants {
 
     private static void configureDistanceSensor() {
         DISTANCE_SENSOR.setScalingConstants(0.0002, -200);
-        DISTANCE_SENSOR.setSimulationSupplier(() -> 1000);
+        DISTANCE_SENSOR.setSimulationSupplier(() -> SimulationFieldHandler.isHoldingCoral() ? 0 : 1000);
     }
 
     public enum CoralIntakeState {

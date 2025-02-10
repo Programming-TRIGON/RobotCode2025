@@ -14,20 +14,20 @@ import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
-import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.misc.leds.LEDCommands;
 import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 
-public class CoralAutoIntakeCommand extends ParallelCommandGroup {
-    public static final PIDController Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
+public class CoralAutoDriveCommand extends ParallelCommandGroup {
+    private static final double X_DRIVE_SWERVE_POWER = 0.5;
+    private static final PIDController Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new PIDController(0.5, 0, 0) :
             new PIDController(0.4, 0, 0.03);
     private static final ObjectDetectionCamera CAMERA = CameraConstants.OBJECT_DETECTION_CAMERA;
 
-    public CoralAutoIntakeCommand() {
+    public CoralAutoDriveCommand() {
         addCommands(
                 new InstantCommand(CAMERA::initializeTracking),
                 getSetLEDColorsCommand(),
@@ -54,7 +54,7 @@ public class CoralAutoIntakeCommand extends ParallelCommandGroup {
 
     private Command getDriveToCoralCommand() {
         return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                () -> CoralIntakeConstants.AUTO_COLLECTION_SWERVE_POWER,
+                () -> X_DRIVE_SWERVE_POWER,
                 this::calculateSwerveYPowerOutput,
                 this::calculateTargetAngle
         );
