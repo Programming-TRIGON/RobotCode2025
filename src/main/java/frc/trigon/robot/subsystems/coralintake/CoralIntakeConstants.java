@@ -25,14 +25,28 @@ import org.trigon.utilities.mechanisms.SpeedMechanism2d;
 import java.util.function.DoubleSupplier;
 
 public class CoralIntakeConstants {
+    private static final int
+            INTAKE_MOTOR_ID = 9,
+            FUNNEL_MOTOR_ID = 10,
+            ANGLE_MOTOR_ID = 11,
+            ANGLE_ENCODER_ID = 11,
+            BEAM_BREAK_CHANNEL = 0,
+            DISTANCE_SENSOR_CHANNEL = 1;
+    private static final String
+            INTAKE_MOTOR_NAME = "CoralIntakeMotor",
+            FUNNEL_MOTOR_NAME = "CoralFunnelMotor",
+            ANGLE_MOTOR_NAME = "CoralAngleMotor",
+            ANGLE_ENCODER_NAME = "CoralAngleEncoder",
+            BEAM_BREAK_NAME = "CoralBeamBreak",
+            DISTANCE_SENSOR_NAME = "CoralDistanceSensor";
     static final TalonFXMotor
-            INTAKE_MOTOR = new TalonFXMotor(9, "CoralIntakeMotor"),
-            FUNNEL_MOTOR = new TalonFXMotor(10, "CoralFunnelMotor"),
-            ANGLE_MOTOR = new TalonFXMotor(11, "CoralAngleMotor");
-    static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(11, "CoralAngleEncoder");
+            INTAKE_MOTOR = new TalonFXMotor(INTAKE_MOTOR_ID, INTAKE_MOTOR_NAME),
+            FUNNEL_MOTOR = new TalonFXMotor(FUNNEL_MOTOR_ID, FUNNEL_MOTOR_NAME),
+            ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
+    static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
     static final SimpleSensor
-            BEAM_BREAK = SimpleSensor.createDigitalSensor(0, "CoralBeamBreak"),
-            DISTANCE_SENSOR = SimpleSensor.createDutyCycleSensor(1, "CoralDistanceSensor");
+            BEAM_BREAK = SimpleSensor.createDigitalSensor(BEAM_BREAK_CHANNEL, BEAM_BREAK_NAME),
+            DISTANCE_SENSOR = SimpleSensor.createDutyCycleSensor(DISTANCE_SENSOR_CHANNEL, DISTANCE_SENSOR_NAME);
 
     private static final double
             INTAKE_MOTOR_GEAR_RATIO = 1.3,
@@ -43,26 +57,44 @@ public class CoralIntakeConstants {
 
     static final boolean FOC_ENABLED = true;
 
+    private static final int
+            INTAKE_MOTOR_AMOUNT = 1,
+            FUNNEL_MOTOR_AMOUNT = 1,
+            ANGLE_MOTOR_AMOUNT = 1;
+    private static final DCMotor
+            INTAKE_GEARBOX = DCMotor.getFalcon500(INTAKE_MOTOR_AMOUNT),
+            FUNNEL_GEARBOX = DCMotor.getFalcon500(FUNNEL_MOTOR_AMOUNT),
+            ANGLE_GEARBOX = DCMotor.getKrakenX60(ANGLE_MOTOR_AMOUNT);
+
+    private static final double
+            MOMENT_OF_INERTIA = 0.003;
+    private static final double
+            INTAKE_LENGTH_METERS = 0.44,
+            INTAKE_MASS_KILOGRAMS = 0.5;
+    private static final Rotation2d
+            MINIMUM_ANGLE = Rotation2d.fromDegrees(-48),
+            MAXIMUM_ANGLE = Rotation2d.fromDegrees(142);
+    private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final SimpleMotorSimulation
             INTAKE_SIMULATION = new SimpleMotorSimulation(
-            DCMotor.getFalcon500Foc(1),
+            INTAKE_GEARBOX,
             INTAKE_MOTOR_GEAR_RATIO,
-            0.003
+            MOMENT_OF_INERTIA
     ),
             FUNNEL_SIMULATION = new SimpleMotorSimulation(
-                    DCMotor.getFalcon500Foc(1),
+                    FUNNEL_GEARBOX,
                     FUNNEL_MOTOR_GEAR_RATIO,
-                    0.003
+                    MOMENT_OF_INERTIA
             );
     private static final SingleJointedArmSimulation
             ANGLE_MOTOR_SIMULATION = new SingleJointedArmSimulation(
-            DCMotor.getKrakenX60Foc(1),
+            ANGLE_GEARBOX,
             ANGLE_MOTOR_GEAR_RATIO,
-            0.44,
-            8,
-            Rotation2d.fromDegrees(142),
-            Rotation2d.fromDegrees(-48),
-            true
+            INTAKE_LENGTH_METERS,
+            INTAKE_MASS_KILOGRAMS,
+            MINIMUM_ANGLE,
+            MAXIMUM_ANGLE,
+            SHOULD_SIMULATE_GRAVITY
     );
     private static final DoubleSupplier BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> SimulationFieldHandler.isHoldingCoral() && !SimulationFieldHandler.isCoralInGripper() ? 1 : 0;
 
@@ -85,19 +117,20 @@ public class CoralIntakeConstants {
                     new Translation3d(0.33, 0, 0.015),
                     new Rotation3d(0, 0, 0)
             );
+    private static final double MAXIMUM_DISPLAYABLE_VELOCITY = 12;
     static final SpeedMechanism2d
             INTAKE_MECHANISM = new SpeedMechanism2d(
             "CoralIntakeMechanism",
-            12
+            MAXIMUM_DISPLAYABLE_VELOCITY
     ),
             FUNNEL_MECHANISM = new SpeedMechanism2d(
                     "CoralFunnelMechanism",
-                    12
+                    MAXIMUM_DISPLAYABLE_VELOCITY
             );
     static final SingleJointedArmMechanism2d
             ANGLE_MECHANISM = new SingleJointedArmMechanism2d(
             "CoralAngleMechanism",
-            0.44,
+            INTAKE_LENGTH_METERS,
             Color.kRed
     );
 
