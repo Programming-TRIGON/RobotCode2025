@@ -144,7 +144,7 @@ public class CoralIntakeConstants {
     ).debounce(0.65);
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
-            () -> (RobotHardwareStats.isSimulation() ? DISTANCE_SENSOR.getValue() : DISTANCE_SENSOR.getScaledValue()) < 17
+            () -> DISTANCE_SENSOR.getScaledValue() < 17
     ).debounce(0.06);
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(0.5);
