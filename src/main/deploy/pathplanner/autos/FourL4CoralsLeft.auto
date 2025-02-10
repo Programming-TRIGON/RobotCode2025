@@ -1,0 +1,142 @@
+{
+  "version": "2025.0",
+  "command": {
+    "type": "sequential",
+    "data": {
+      "commands": [
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FourL4CoralsLeft1"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4Wait"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedCoral"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "FourL4CoralsLeft2"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "CollectCoralFromFloor"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FourL4CoralsLeft3"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4Wait"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedCoral"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "FourL4CoralsLeft4"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "CollectCoralFromFloor"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FourL4CoralsLeft5"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4Wait"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedCoral"
+          }
+        },
+        {
+          "type": "race",
+          "data": {
+            "commands": [
+              {
+                "type": "path",
+                "data": {
+                  "pathName": "FourL4CoralsLeft6"
+                }
+              },
+              {
+                "type": "named",
+                "data": {
+                  "name": "CollectCoralFromFloor"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FourL4CoralsLeft7"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "ScoreL4Wait"
+          }
+        },
+        {
+          "type": "named",
+          "data": {
+            "name": "FeedCoral"
+          }
+        }
+      ]
+    }
+  },
+  "resetOdom": true,
+  "folder": null,
+  "choreoAuto": false
+}
