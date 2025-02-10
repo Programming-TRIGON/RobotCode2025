@@ -168,6 +168,7 @@ public class CoralPlacingCommands {
         L3(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0)),
         L4(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0));
 
+        public final int level = ordinal() + 1;
         final double xTransformMeters, positiveYTransformMeters;
         final Rotation2d rotationTransform;
         final ElevatorConstants.ElevatorState elevatorState;

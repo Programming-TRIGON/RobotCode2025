@@ -6,6 +6,7 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -70,6 +71,7 @@ public class CoralIntake extends MotorSubsystem {
         angleEncoder.update();
         beamBreak.updateSensor();
         distanceSensor.updateSensor();
+        logTargetPlacementStates();
         Logger.recordOutput("CoralIntake/CurrentAngleDegrees", getCurrentEncoderAngle().getDegrees());
         Logger.recordOutput("CoralIntake/DistanceSensorDetectedDistanceCentimeters", distanceSensor.getScaledValue());
     }
@@ -193,4 +195,18 @@ public class CoralIntake extends MotorSubsystem {
     private Rotation2d getCurrentEncoderAngle() {
         return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION) + CoralIntakeConstants.ANGLE_ENCODER_POSITION_OFFSET_VALUE);
     }
+
+    private void logTargetPlacementStates() {
+        Logger.recordOutput("TargetCoralPlacementStates/TargetClockPosition", CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition);
+        Logger.recordOutput("TargetCoralPlacementStates/TargetLevel", CoralPlacingCommands.TARGET_SCORING_LEVEL.level);
+        Logger.recordOutput("TargetCoralPlacementStates/IsTargetSideRight", CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation);
+//        Logger.recordOutput("TargetCoralPlacementStates/IsTargetSideLeft", !CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation);
+//        Logger.recordOutput("TargetCoralPlacementStates/TargetClockPositionForElastic", getClockPositionForElastic());
+    }
+
+//    private double getClockPositionForElastic() {
+//        if (CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation)
+//            return CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition;
+//        return CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition + 0.5;
+//    }
 }
