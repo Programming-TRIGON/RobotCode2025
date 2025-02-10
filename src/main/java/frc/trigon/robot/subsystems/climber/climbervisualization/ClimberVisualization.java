@@ -37,7 +37,7 @@ public class ClimberVisualization {
      * @param currentStringLengthMeters the current string length
      */
     private void setCurrentMechanism2dState(Rotation2d currentArmAngle, Rotation2d currentStringAngle, double currentStringLengthMeters) {
-        ClimberVisualizationConstants.CURRENT_ARM_POSITION_LIGAMENT.setAngle(flipAngle(currentArmAngle).getDegrees());
+        ClimberVisualizationConstants.CURRENT_ARM_POSITION_LIGAMENT.setAngle(mirrorAngle(currentArmAngle).getDegrees());
         ClimberVisualizationConstants.CURRENT_STRING_POSITION_LIGAMENT.setAngle(currentStringAngle.getDegrees());
         ClimberVisualizationConstants.CURRENT_STRING_POSITION_LIGAMENT.setLength(currentStringLengthMeters);
     }
@@ -50,7 +50,7 @@ public class ClimberVisualization {
      * @param targetStringLengthMeters the target string length
      */
     private void setTargetMechanism2dState(Rotation2d targetArmAngle, Rotation2d targetStringAngle, double targetStringLengthMeters) {
-        ClimberVisualizationConstants.TARGET_ARM_POSITION_LIGAMENT.setAngle(flipAngle(targetArmAngle).getDegrees());
+        ClimberVisualizationConstants.TARGET_ARM_POSITION_LIGAMENT.setAngle(mirrorAngle(targetArmAngle).getDegrees());
         ClimberVisualizationConstants.TARGET_STRING_POSITION_LIGAMENT.setAngle(targetStringAngle.getDegrees());
         ClimberVisualizationConstants.TARGET_STRING_POSITION_LIGAMENT.setLength(targetStringLengthMeters);
     }
@@ -95,12 +95,12 @@ public class ClimberVisualization {
     }
 
     /**
-     * Flips the angle.
+     * Mirrors the angle across the vertical axis.
      *
-     * @param angle the angle to flip
-     * @return the flipped angle
+     * @param angle the angle to mirror
+     * @return the mirrored angle
      */
-    private Rotation2d flipAngle(Rotation2d angle) {
+    private Rotation2d mirrorAngle(Rotation2d angle) {
         return Rotation2d.fromDegrees(180 - angle.getDegrees());
     }
 

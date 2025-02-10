@@ -62,7 +62,7 @@ public class CommandConstants {
                     (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),
                     RobotContainer.SWERVE
             ),
-            OVERRIDE_IS_CLIMBING_TRIGGER = new InstantCommand(() -> RobotContainer.CLIMBER.setIsClimbing(false)),
+            OVERRIDE_IS_CLIMBING_COMMAND = new InstantCommand(() -> RobotContainer.CLIMBER.setIsClimbing(false)),
             MANUALLY_RAISE_CLIMBER_COMMAND = ClimberCommands.getSetTargetVoltageCommand(ClimberConstants.MANUALLY_RAISE_CLIMBER_VOLTAGE),
             MANUALLY_LOWER_CLIMBER_COMMAND = ClimberCommands.getSetTargetVoltageCommand(ClimberConstants.MANUALLY_LOWER_CLIMBER_VOLTAGE),
             CALCULATE_CAMERA_POSITION_COMMAND = new CameraPositionCalculationCommand(
