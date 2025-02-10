@@ -21,7 +21,7 @@ public class AlgaeManipulationCommands {
     private static Command getScoreInNetCommand() {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_NET),
-                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_NET).until(OperatorConstants.CONTINUE_SCORING_TRIGGER).andThen(
+                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_NET).until(OperatorConstants.CONTINUE_TRIGGER).andThen(
                         GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_ALGAE_IN_NET)
                 )
         ).onlyWhile(OperatorConstants.COLLECT_ALGAE_TRIGGER);
