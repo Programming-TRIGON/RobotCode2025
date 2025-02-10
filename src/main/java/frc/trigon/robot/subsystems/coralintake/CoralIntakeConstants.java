@@ -70,7 +70,7 @@ public class CoralIntakeConstants {
             MOMENT_OF_INERTIA = 0.003;
     private static final double
             INTAKE_LENGTH_METERS = 0.44,
-            INTAKE_MASS_KILOGRAMS = 0.5;
+            INTAKE_MASS_KILOGRAMS = 8;
     private static final Rotation2d
             MINIMUM_ANGLE = Rotation2d.fromDegrees(-48),
             MAXIMUM_ANGLE = Rotation2d.fromDegrees(150);
@@ -138,14 +138,17 @@ public class CoralIntakeConstants {
             COLLECTION_LEDS_BLINKING_SPEED = 0.5,
             COLLECTION_RUMBLE_DURATION_SECONDS = 0.7,
             COLLECTION_RUMBLE_POWER = 1;
+    private static final double
+            CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.65,
+            EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.06;
     static final BooleanEvent CORAL_COLLECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             BEAM_BREAK::getBinaryValue
-    ).debounce(0.65);
+    ).debounce(CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
-            () -> DISTANCE_SENSOR.getScaledValue() < 17
-    ).debounce(0.06);
+            () -> DISTANCE_SENSOR.getScaledValue() < (RobotHardwareStats.isSimulation() ? 100 : 17)
+    ).debounce(EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(0.5);
 
