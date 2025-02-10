@@ -27,31 +27,56 @@ import org.trigon.utilities.mechanisms.SpeedMechanism2d;
 
 
 public class GripperConstants {
+    private static final int
+            GRIPPING_MOTOR_ID = 14,
+            ANGLE_MOTOR_ID = 15,
+            ANGLE_ENCODER_ID = 15,
+            LASER_CAN_ID = 14;
+    private static final String
+            GRIPPING_MOTOR_NAME = "GripperGrippingMotor",
+            ANGLE_MOTOR_NAME = "GripperAngleMotor",
+            ANGLE_ENCODER_NAME = "GripperAngleEncoder",
+            LASER_CAN_NAME = "GripperLaserCAN";
     static final TalonFXMotor
-            GRIPPING_MOTOR = new TalonFXMotor(14, "GripperGrippingMotor"),
-            ANGLE_MOTOR = new TalonFXMotor(15, "GripperAngleMotor");
-    static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(15, "GripperAngleEncoder");
-    static final LaserCAN LASER_CAN = new LaserCAN(14, "GripperLaserCAN");
+            GRIPPING_MOTOR = new TalonFXMotor(GRIPPING_MOTOR_ID, GRIPPING_MOTOR_NAME),
+            ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
+    static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
+    static final LaserCAN LASER_CAN = new LaserCAN(LASER_CAN_ID, LASER_CAN_NAME);
 
     static final double ANGLE_MOTOR_GEAR_RATIO = 34.642351;
+    private static final double GRIPPING_MOTOR_GEAR_RATIO = 4;
 
     static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = 0.04379;
 
     static final boolean FOC_ENABLED = true;
 
+    private static final int
+            GRIPPING_MOTOR_AMOUNT = 1,
+            ANGLE_MOTOR_AMOUNT = 1;
+    private static final DCMotor
+            GRIPPING_GEARBOX = DCMotor.getFalcon500Foc(GRIPPING_MOTOR_AMOUNT),
+            ANGLE_GEARBOX = DCMotor.getKrakenX60Foc(ANGLE_MOTOR_AMOUNT);
+    private static final double MOMENT_OF_INERTIA = 0.003;
+    private static final double
+            GRIPPER_LENGTH_METERS = 0.24,
+            GRIPPER_MASS_KILOGRAMS = 3;
+    private static final Rotation2d
+            MINIMUM_ANGLE = Rotation2d.fromDegrees(-55),
+            MAXIMUM_ANGLE = Rotation2d.fromDegrees(120);
+    private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final SimpleMotorSimulation GRIPPING_SIMULATION = new SimpleMotorSimulation(
-            DCMotor.getFalcon500Foc(1),
-            4,
-            0.003
+            GRIPPING_GEARBOX,
+            GRIPPING_MOTOR_GEAR_RATIO,
+            MOMENT_OF_INERTIA
     );
     private static final SingleJointedArmSimulation ARM_SIMULATION = new SingleJointedArmSimulation(
-            DCMotor.getKrakenX60Foc(1),
+            ANGLE_GEARBOX,
             ANGLE_MOTOR_GEAR_RATIO,
-            0.24,
-            3,
-            Rotation2d.fromDegrees(-55),
-            Rotation2d.fromDegrees(120),
-            true
+            GRIPPER_LENGTH_METERS,
+            GRIPPER_MASS_KILOGRAMS,
+            MINIMUM_ANGLE,
+            MAXIMUM_ANGLE,
+            SHOULD_SIMULATE_GRAVITY
     );
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
@@ -60,13 +85,14 @@ public class GripperConstants {
             Units.Second.of(1000)
     );
 
+    private static final double MAXIMUM_DISPLAYABLE_VELOCITY = 12;
     static final SpeedMechanism2d GRIPPING_MECHANISM = new SpeedMechanism2d(
             "GripperGrippingMechanism",
-            12
+            MAXIMUM_DISPLAYABLE_VELOCITY
     );
     static final SingleJointedArmMechanism2d ANGLE_MECHANISM = new SingleJointedArmMechanism2d(
             "GripperAngleMechanism",
-            0.24,
+            GRIPPER_LENGTH_METERS,
             Color.kRed
     );
     private static final Pose3d GRIPPER_VISUALIZATION_ORIGIN_POINT = new Pose3d(
@@ -112,7 +138,7 @@ public class GripperConstants {
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Coast;
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        config.Feedback.RotorToSensorRatio = 4;
+        config.Feedback.RotorToSensorRatio = GRIPPING_MOTOR_GEAR_RATIO;
 
         GRIPPING_MOTOR.applyConfiguration(config);
         GRIPPING_MOTOR.setPhysicsSimulation(GRIPPING_SIMULATION);

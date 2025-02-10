@@ -1,6 +1,7 @@
 package frc.trigon.robot.subsystems.swerve;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
+import com.pathplanner.lib.config.PIDConstants;
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
@@ -15,15 +16,31 @@ import org.trigon.hardware.phoenix6.pigeon2.Pigeon2Gyro;
 import org.trigon.hardware.phoenix6.pigeon2.Pigeon2Signal;
 
 public class SwerveConstants {
-    static final Pigeon2Gyro GYRO = new Pigeon2Gyro(0, "SwerveGyro", RobotConstants.CANIVORE_NAME);
+    private static final int GYRO_ID = 0;
+    private static final String GYRO_NAME = "SwerveGyro";
+    static final Pigeon2Gyro GYRO = new Pigeon2Gyro(GYRO_ID, GYRO_NAME, RobotConstants.CANIVORE_NAME);
+
     public static final int
             FRONT_LEFT_ID = 1,
             FRONT_RIGHT_ID = 2;
+    private static final int
+            REAR_LEFT_ID = 3,
+            REAR_RIGHT_ID = 4;
+    private static final double
+            FRONT_LEFT_STEER_ENCODER_OFFSET = -9.765625E-4,
+            FRONT_RIGHT_STEER_ENCODER_OFFSET = 0.25341796875,
+            REAR_LEFT_STEER_ENCODER_OFFSET = 0.20751953125,
+            REAR_RIGHT_STEER_ENCODER_OFFSET = -0.05419921875;
+    private static final double
+            FRONT_LEFT_WHEEL_DIAMETER = 0.04765354077913865 * 2,
+            FRONT_RIGHT_WHEEL_DIAMETER = 0.04745360122422504 * 2,
+            REAR_LEFT_WHEEL_DIAMETER = 0.05136841212501805 * 2,
+            REAR_RIGHT_WHEEL_DIAMETER = 0.04905587215351095 * 2;
     static final SwerveModule[] SWERVE_MODULES = new SwerveModule[]{
-            new SwerveModule(1, -9.765625E-4, 0.04765354077913865 * 2),
-            new SwerveModule(2, 0.25341796875, 0.04745360122422504 * 2),
-            new SwerveModule(3, 0.20751953125, 0.05136841212501805 * 2),
-            new SwerveModule(4, -0.05419921875, 0.04905587215351095 * 2)
+            new SwerveModule(FRONT_LEFT_ID, FRONT_LEFT_STEER_ENCODER_OFFSET, FRONT_LEFT_WHEEL_DIAMETER),
+            new SwerveModule(FRONT_RIGHT_ID, FRONT_RIGHT_STEER_ENCODER_OFFSET, FRONT_RIGHT_WHEEL_DIAMETER),
+            new SwerveModule(REAR_LEFT_ID, REAR_LEFT_STEER_ENCODER_OFFSET, REAR_LEFT_WHEEL_DIAMETER),
+            new SwerveModule(REAR_RIGHT_ID, REAR_RIGHT_STEER_ENCODER_OFFSET, REAR_RIGHT_WHEEL_DIAMETER)
     };
 
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(PathPlannerConstants.ROBOT_CONFIG.moduleLocations);
@@ -36,20 +53,31 @@ public class SwerveConstants {
             DRIVE_NEUTRAL_DEADBAND = 0.2,
             ROTATION_NEUTRAL_DEADBAND = 0.2;
 
+    private static final PIDConstants
+            TRANSLATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
+            new PIDConstants(5, 0, 0) :
+            new PIDConstants(5, 0, 0),
+            PROFILED_ROTATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
+                    new PIDConstants(4, 0, 0) :
+                    new PIDConstants(4.4, 0, 0);
+    private static final double
+            MAXIMUM_ROTATION_VELOCITY = RobotHardwareStats.isSimulation() ? 720 : 600,
+            MAXIMUM_ROTATION_ACCELERATION = RobotHardwareStats.isSimulation() ? 720 : 720;
+    private static final TrapezoidProfile.Constraints ROTATION_CONSTRAINTS = new TrapezoidProfile.Constraints(
+            MAXIMUM_ROTATION_VELOCITY,
+            MAXIMUM_ROTATION_ACCELERATION
+    );
     static final double MAXIMUM_PID_ANGLE = 180;
     static final ProfiledPIDController PROFILED_ROTATION_PID_CONTROLLER = new ProfiledPIDController(
-            RobotHardwareStats.isSimulation() ? 4 : 4.4,
-            RobotHardwareStats.isSimulation() ? 0 : 0,
-            RobotHardwareStats.isSimulation() ? 0 : 0,
-            new TrapezoidProfile.Constraints(
-                    RobotHardwareStats.isSimulation() ? 720 : 600,
-                    RobotHardwareStats.isSimulation() ? 720 : 720
-            )
+            PROFILED_ROTATION_PID_CONSTANTS.kP,
+            PROFILED_ROTATION_PID_CONSTANTS.kI,
+            PROFILED_ROTATION_PID_CONSTANTS.kD,
+            ROTATION_CONSTRAINTS
     );
     static final PIDController TRANSLATION_PID_CONTROLLER = new PIDController(
-            RobotHardwareStats.isSimulation() ? 5 : 5,
-            RobotHardwareStats.isSimulation() ? 0 : 0,
-            RobotHardwareStats.isSimulation() ? 0 : 0
+            TRANSLATION_PID_CONSTANTS.kP,
+            TRANSLATION_PID_CONSTANTS.kI,
+            TRANSLATION_PID_CONSTANTS.kD
     );
     public static final double
             MAXIMUM_SPEED_METERS_PER_SECOND = PathPlannerConstants.ROBOT_CONFIG.moduleConfig.maxDriveVelocityMPS,
@@ -62,9 +90,9 @@ public class SwerveConstants {
 
     private static void configureGyro() {
         final Pigeon2Configuration config = new Pigeon2Configuration();
-        config.MountPose.MountPoseYaw = -1.5493969917297363;
-        config.MountPose.MountPosePitch = -0.31632718443870544;
         config.MountPose.MountPoseRoll = -0.9108231067657471;
+        config.MountPose.MountPosePitch = -0.31632718443870544;
+        config.MountPose.MountPoseYaw = -1.5493969917297363;
         GYRO.applyConfiguration(config);
         GYRO.setSimulationYawVelocitySupplier(() -> RobotContainer.SWERVE.getSelfRelativeVelocity().omegaRadiansPerSecond);
 

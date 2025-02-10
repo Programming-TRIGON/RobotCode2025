@@ -14,7 +14,22 @@ import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.simulation.SimpleMotorSimulation;
 
 public class SwerveModuleConstants {
+    private static final double
+            DRIVE_MOTOR_GEAR_RATIO = 5.36,
+            FRONT_STEER_MOTOR_GEAR_RATIO = 18.75,
+            REAR_STEER_MOTOR_GEAR_RATIO = 12.8;
+
     static final boolean ENABLE_FOC = true;
+
+    private static final double
+            DRIVE_MOMENT_OF_INERTIA = 0.003,
+            STEER_MOMENT_OF_INERTIA = 0.003;
+    private static final int
+            DRIVE_MOTOR_AMOUNT = 1,
+            STEER_MOTOR_AMOUNT = 1;
+    private static final DCMotor
+            DRIVE_MOTOR_GEARBOX = DCMotor.getKrakenX60Foc(DRIVE_MOTOR_AMOUNT),
+            STEER_MOTOR_GEARBOX = DCMotor.getFalcon500Foc(STEER_MOTOR_AMOUNT);
 
     public static final double MAXIMUM_MODULE_ROTATIONAL_SPEED_RADIANS_PER_SECOND = edu.wpi.first.math.util.Units.rotationsToRadians(7); //TODO: calibrate
     static final double VOLTAGE_COMPENSATION_SATURATION = 12;
@@ -31,7 +46,7 @@ public class SwerveModuleConstants {
      * @return the drive motor simulation
      */
     static SimpleMotorSimulation createDriveMotorSimulation() {
-        return new SimpleMotorSimulation(DCMotor.getKrakenX60Foc(1), 5.36, 0.003);
+        return new SimpleMotorSimulation(DRIVE_MOTOR_GEARBOX, DRIVE_MOTOR_GEAR_RATIO, DRIVE_MOMENT_OF_INERTIA);
     }
 
     /**
@@ -41,7 +56,7 @@ public class SwerveModuleConstants {
      * @return the steer motor simulation
      */
     static SimpleMotorSimulation createSteerMotorSimulation(boolean isFront) {
-        return new SimpleMotorSimulation(DCMotor.getFalcon500Foc(1), isFront ? 18.75 : 12.8, 0.003);
+        return new SimpleMotorSimulation(STEER_MOTOR_GEARBOX, isFront ? FRONT_STEER_MOTOR_GEAR_RATIO : REAR_STEER_MOTOR_GEAR_RATIO, STEER_MOMENT_OF_INERTIA);
     }
 
     static TalonFXConfiguration generateDriveMotorConfiguration() {
@@ -52,7 +67,7 @@ public class SwerveModuleConstants {
 
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.Feedback.SensorToMechanismRatio = 5.36;
+        config.Feedback.SensorToMechanismRatio = DRIVE_MOTOR_GEAR_RATIO;
 
         final double driveMotorSlipCurrent = PathPlannerConstants.ROBOT_CONFIG.moduleConfig.driveCurrentLimit;
         config.TorqueCurrent.PeakForwardTorqueCurrent = driveMotorSlipCurrent;
@@ -87,7 +102,7 @@ public class SwerveModuleConstants {
         config.CurrentLimits.StatorCurrentLimit = RobotHardwareStats.isSimulation() ? 200 : 30;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        config.Feedback.RotorToSensorRatio = isFront ? 18.75 : 12.8;
+        config.Feedback.RotorToSensorRatio = isFront ? FRONT_STEER_MOTOR_GEAR_RATIO : REAR_STEER_MOTOR_GEAR_RATIO;
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         config.Feedback.FeedbackRemoteSensorID = feedbackRemoteSensorID;
 

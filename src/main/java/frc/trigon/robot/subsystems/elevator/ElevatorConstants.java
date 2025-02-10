@@ -20,20 +20,36 @@ import org.trigon.hardware.simulation.ElevatorSimulation;
 import org.trigon.utilities.mechanisms.ElevatorMechanism2d;
 
 public class ElevatorConstants {
+    private static final int
+            MASTER_MOTOR_ID = 12,
+            FOLLOWER_MOTOR_ID = 13;
+    private static final String
+            MASTER_MOTOR_NAME = "ElevatorMasterMotor",
+            FOLLOWER_MOTOR_NAME = "ElevatorFollowerMotor";
     static final TalonFXMotor
-            MASTER_MOTOR = new TalonFXMotor(12, "ElevatorMasterMotor"),
-            FOLLOWER_MOTOR = new TalonFXMotor(13, "ElevatorFollowerMotor");
+            MASTER_MOTOR = new TalonFXMotor(MASTER_MOTOR_ID, MASTER_MOTOR_NAME),
+            FOLLOWER_MOTOR = new TalonFXMotor(FOLLOWER_MOTOR_ID, FOLLOWER_MOTOR_NAME);
+
+    private static final double GEAR_RATIO = 7.222222;
 
     static final boolean FOC_ENABLED = true;
 
+    private static final int NUMBER_OF_MOTORS = 2;
+    private static final DCMotor GEARBOX = DCMotor.getFalcon500Foc(NUMBER_OF_MOTORS);
+    private static final double
+            MASS_KILOGRAMS = 8,
+            DRUM_RADIUS_METERS = 0.025,
+            MINIMUM_ELEVATOR_HEIGHT_METERS = 0.73,
+            MAXIMUM_ELEVATOR_HEIGHT_METERS = 1.8;
+    private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
-            DCMotor.getFalcon500Foc(2),
-            7.222222,
-            8,
-            0.025,
-            0.73,//AFTER SEASON TODO: remove the need for this
-            1.8,
-            true
+            GEARBOX,
+            GEAR_RATIO,
+            MASS_KILOGRAMS,
+            DRUM_RADIUS_METERS,
+            MINIMUM_ELEVATOR_HEIGHT_METERS,//AFTER SEASON TODO: remove the need for this
+            MAXIMUM_ELEVATOR_HEIGHT_METERS,
+            SHOULD_SIMULATE_GRAVITY
     );
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
@@ -54,13 +70,13 @@ public class ElevatorConstants {
 
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
-            1.8 + 0.1,
-            0.73,
+            MAXIMUM_ELEVATOR_HEIGHT_METERS + 0.1,
+            MINIMUM_ELEVATOR_HEIGHT_METERS,
             Color.kYellow
     );
 
     static final double FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH_METERS = 0.6;
-    static final double DRUM_DIAMETER_METERS = 0.05;
+    static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
     static final double POSITION_TOLERANCE_METERS = 0.02;
     static final double
             GRIPPER_HITTING_ELEVATOR_BASE_LOWER_BOUND_POSITION_ROTATIONS = 0.1,
@@ -79,7 +95,7 @@ public class ElevatorConstants {
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
-        config.Feedback.SensorToMechanismRatio = 7.222222;
+        config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
         config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 0.6;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
