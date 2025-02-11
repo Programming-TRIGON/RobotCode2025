@@ -4,6 +4,7 @@ import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -72,7 +73,7 @@ public class CoralIntake extends MotorSubsystem {
         angleEncoder.update();
         beamBreak.updateSensor();
         distanceSensor.updateSensor();
-        logTargetPlacementStates();
+        logForQDashboard();
         Logger.recordOutput("CoralIntake/CurrentAngleDegrees", getCurrentEncoderAngle().getDegrees());
         Logger.recordOutput("CoralIntake/DistanceSensorDetectedDistanceCentimeters", distanceSensor.getScaledValue());
     }
@@ -195,6 +196,15 @@ public class CoralIntake extends MotorSubsystem {
 
     private Rotation2d getCurrentEncoderAngle() {
         return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION) + CoralIntakeConstants.ANGLE_ENCODER_POSITION_OFFSET_VALUE);
+    }
+
+    /**
+     * Logs the current match time and target reef placement for QDashboard.
+     * We use {@link SmartDashboard} instead of {@link Logger} because the {@link Logger} inputs don't show up in QDashboard for some reason.
+     */
+    private void logForQDashboard() {
+        SmartDashboard.putNumber("GameTime", DriverStation.getMatchTime()); // this is called gameTime instead of matchTime because MatchTime doesn't show up in QDashboard for some reason
+        logTargetPlacementStates();
     }
 
     private void logTargetPlacementStates() {
