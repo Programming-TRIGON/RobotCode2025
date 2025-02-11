@@ -33,19 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "RestCoralIntake",
-      "waypointRelativePos": 0.1016949152542373,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "RestCoralIntake"
-        }
-      }
-    },
-    {
       "name": "ScoreL4",
-      "waypointRelativePos": 0.22372881355932212,
+      "waypointRelativePos": 0.12571428571428564,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
