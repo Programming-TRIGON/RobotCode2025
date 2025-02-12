@@ -71,7 +71,6 @@ def on_action(event: keyboard.KeyboardEvent):
     else:
         keys_dict[key] = [time.time(), False]
 
-
 def main():
     connectNT()
     keyboard.start_recording()   
