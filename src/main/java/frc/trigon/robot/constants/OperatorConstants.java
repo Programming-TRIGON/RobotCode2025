@@ -6,10 +6,10 @@ import org.trigon.hardware.misc.KeyboardController;
 import org.trigon.hardware.misc.XboxController;
 
 public class OperatorConstants {
+    public static final double DRIVER_CONTROLLER_DEADBAND = 0.07;
     private static final int
             DRIVER_CONTROLLER_PORT = 0;
     private static final int DRIVER_CONTROLLER_EXPONENT = 2;
-    private static final double DRIVER_CONTROLLER_DEADBAND = 0.07;
     public static final XboxController DRIVER_CONTROLLER = new XboxController(
             DRIVER_CONTROLLER_PORT, DRIVER_CONTROLLER_EXPONENT, DRIVER_CONTROLLER_DEADBAND
     );
@@ -24,7 +24,6 @@ public class OperatorConstants {
             DRIVE_FROM_DPAD_TRIGGER = new Trigger(() -> DRIVER_CONTROLLER.getPov() != -1),
             TOGGLE_ROTATION_MODE_TRIGGER = DRIVER_CONTROLLER.b(),
             TOGGLE_BRAKE_TRIGGER = OPERATOR_CONTROLLER.g().or(RobotController::getUserButton),
-            RESET_TRACKED_GAME_PIECE_TRIGGER = DRIVER_CONTROLLER.a(),
             FORWARD_QUASISTATIC_CHARACTERIZATION_TRIGGER = OPERATOR_CONTROLLER.right(),
             BACKWARD_QUASISTATIC_CHARACTERIZATION_TRIGGER = OPERATOR_CONTROLLER.left(),
             FORWARD_DYNAMIC_CHARACTERIZATION_TRIGGER = OPERATOR_CONTROLLER.up(),
@@ -41,8 +40,8 @@ public class OperatorConstants {
             SCORE_IN_NET_TRIGGER = OPERATOR_CONTROLLER.n();
 
     public static final Trigger
-            ENABLE_CORAL_ALIGNMENT_COMMAND = OPERATOR_CONTROLLER.o(),
-            DISABLE_CORAL_ALIGNMENT_COMMAND = OPERATOR_CONTROLLER.p(),
+            ENABLE_AUTO_CORAL_INTAKE_TRIGGER = OPERATOR_CONTROLLER.o(),
+            DISABLE_AUTO_CORAL_INTAKE_TRIGGER = OPERATOR_CONTROLLER.p(),
             ENABLE_AUTONOMOUS_REEF_SCORING_TRIGGER = OPERATOR_CONTROLLER.u(),
             DISABLE_AUTONOMOUS_REEF_SCORING_TRIGGER = OPERATOR_CONTROLLER.i(),
             SET_TARGET_SCORING_REEF_LEVEL_L1_FROM_GRIPPER_TRIGGER = OPERATOR_CONTROLLER.numpadDecimal(),

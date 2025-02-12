@@ -73,7 +73,7 @@ public class CoralIntakeConstants {
             INTAKE_MASS_KILOGRAMS = 8;
     private static final Rotation2d
             MINIMUM_ANGLE = Rotation2d.fromDegrees(-48),
-            MAXIMUM_ANGLE = Rotation2d.fromDegrees(142);
+            MAXIMUM_ANGLE = Rotation2d.fromDegrees(150);
     private static final boolean SHOULD_SIMULATE_GRAVITY = true;
     private static final SimpleMotorSimulation
             INTAKE_SIMULATION = new SimpleMotorSimulation(
@@ -261,7 +261,7 @@ public class CoralIntakeConstants {
 
     private static void configureDistanceSensor() {
         DISTANCE_SENSOR.setScalingConstants(0.0002, -200);
-        DISTANCE_SENSOR.setSimulationSupplier(() -> 1000);
+        DISTANCE_SENSOR.setSimulationSupplier(() -> SimulationFieldHandler.isHoldingCoral() ? 0 : 1000);
     }
 
     public enum CoralIntakeState {
