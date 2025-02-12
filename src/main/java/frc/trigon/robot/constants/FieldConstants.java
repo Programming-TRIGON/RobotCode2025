@@ -69,14 +69,12 @@ public class FieldConstants {
 
         public final Rotation2d clockAngle;
         public final boolean isFacingDriverStation;
-        public final int clockPosition;
-        public int qDashboardOrder;
+        public final int qDashboardOrder;
 
         ReefClockPosition(boolean isFacingDriverStation, int qDashboardOrder) {
             this.qDashboardOrder = qDashboardOrder;
             this.clockAngle = calculateClockAngle();
             this.isFacingDriverStation = isFacingDriverStation;
-            this.clockPosition = ordinal() == 0 ? 12 : ordinal() * 2;
         }
 
         public static Rotation2d[] getClockAngles() {

@@ -73,7 +73,7 @@ public class CoralIntake extends MotorSubsystem {
         angleEncoder.update();
         beamBreak.updateSensor();
         distanceSensor.updateSensor();
-        logForQDashboard();
+        logToQDashboard();
         Logger.recordOutput("CoralIntake/CurrentAngleDegrees", getCurrentEncoderAngle().getDegrees());
         Logger.recordOutput("CoralIntake/DistanceSensorDetectedDistanceCentimeters", distanceSensor.getScaledValue());
     }
@@ -202,7 +202,7 @@ public class CoralIntake extends MotorSubsystem {
      * Logs the current match time and target reef placement for QDashboard.
      * We use {@link SmartDashboard} instead of {@link Logger} because the {@link Logger} inputs don't show up in QDashboard for some reason.
      */
-    private void logForQDashboard() {
+    private void logToQDashboard() {
         SmartDashboard.putNumber("GameTime", DriverStation.getMatchTime()); // this is called gameTime instead of matchTime because MatchTime doesn't show up in QDashboard for some reason
         logTargetPlacementStates();
     }
