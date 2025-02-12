@@ -38,8 +38,11 @@ public class FieldConstants {
 
     private static HashMap<Integer, Pose3d> fieldLayoutToTagIdToPoseMap() {
         final HashMap<Integer, Pose3d> tagIdToPose = new HashMap<>();
-        for (AprilTag aprilTag : APRIL_TAG_FIELD_LAYOUT.getTags())
+        for (AprilTag aprilTag : APRIL_TAG_FIELD_LAYOUT.getTags()) {
+            if (aprilTag.ID == 13)
+                continue;
             tagIdToPose.put(aprilTag.ID, aprilTag.pose.transformBy(TAG_OFFSET));
+        }
 
         return tagIdToPose;
     }
