@@ -39,8 +39,8 @@ public class FieldConstants {
     private static HashMap<Integer, Pose3d> fieldLayoutToTagIdToPoseMap() {
         final HashMap<Integer, Pose3d> tagIdToPose = new HashMap<>();
         for (AprilTag aprilTag : APRIL_TAG_FIELD_LAYOUT.getTags()) {
-            if (aprilTag.ID == 13)
-                continue;
+//            if (aprilTag.ID == 13 && Robot.isReal())
+//                continue; if we're at onyx then uncomment this
             tagIdToPose.put(aprilTag.ID, aprilTag.pose.transformBy(TAG_OFFSET));
         }
 
