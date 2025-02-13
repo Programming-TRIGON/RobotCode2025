@@ -31,13 +31,13 @@ public class ElevatorConstants {
             FOLLOWER_MOTOR = new TalonFXMotor(FOLLOWER_MOTOR_ID, FOLLOWER_MOTOR_NAME);
 
     private static final double GEAR_RATIO = 7.222222;
-
+    private static final boolean SHOULD_FOLLOWER_OPPOSE_MASTER = true;
     static final boolean FOC_ENABLED = true;
 
-    private static final int NUMBER_OF_MOTORS = 2;
-    private static final DCMotor GEARBOX = DCMotor.getFalcon500Foc(NUMBER_OF_MOTORS);
+    private static final int MOTOR_AMOUNT = 2;
+    private static final DCMotor GEARBOX = DCMotor.getFalcon500Foc(MOTOR_AMOUNT);
     private static final double
-            MASS_KILOGRAMS = 8,
+            ELEVATOR_MASS_KILOGRAMS = 8,
             DRUM_RADIUS_METERS = 0.025,
             MINIMUM_ELEVATOR_HEIGHT_METERS = 0.73,
             MAXIMUM_ELEVATOR_HEIGHT_METERS = 1.8;
@@ -45,7 +45,7 @@ public class ElevatorConstants {
     private static final ElevatorSimulation SIMULATION = new ElevatorSimulation(
             GEARBOX,
             GEAR_RATIO,
-            MASS_KILOGRAMS,
+            ELEVATOR_MASS_KILOGRAMS,
             DRUM_RADIUS_METERS,
             MINIMUM_ELEVATOR_HEIGHT_METERS,//AFTER SEASON TODO: remove the need for this
             MAXIMUM_ELEVATOR_HEIGHT_METERS,
@@ -66,7 +66,7 @@ public class ElevatorConstants {
             new Translation3d(-0.120, 0, 0.1111),
             new Rotation3d(0, 0, 0)
     );
-    
+
     static final ElevatorMechanism2d MECHANISM = new ElevatorMechanism2d(
             "ElevatorMechanism",
             MAXIMUM_ELEVATOR_HEIGHT_METERS + 0.1,
@@ -140,7 +140,7 @@ public class ElevatorConstants {
 
         FOLLOWER_MOTOR.applyConfiguration(config);
 
-        final Follower followerRequest = new Follower(MASTER_MOTOR.getID(), true);
+        final Follower followerRequest = new Follower(MASTER_MOTOR.getID(), SHOULD_FOLLOWER_OPPOSE_MASTER);
         FOLLOWER_MOTOR.setControl(followerRequest);
     }
 

@@ -53,8 +53,11 @@ public class CoralIntakeConstants {
             FUNNEL_MOTOR_GEAR_RATIO = 4;
     static final double ANGLE_MOTOR_GEAR_RATIO = 73;
 
-    static final double ANGLE_ENCODER_POSITION_OFFSET_VALUE = -0.00917;
-
+    private static final double ANGLE_ENCODER_GRAVITY_OFFSET_VALUE = -0.31585;
+    static final double ANGLE_ENCODER_POSITION_OFFSET_VALUE = -0.32502 - ANGLE_ENCODER_GRAVITY_OFFSET_VALUE;
+    private static final double
+            DISTANCE_SENSOR_SCALING_SLOPE = 0.0002,
+            DISTANCE_SENSOR_SCALING_INTERCEPT_POINT = -200;
     static final boolean FOC_ENABLED = true;
 
     private static final int
@@ -96,7 +99,9 @@ public class CoralIntakeConstants {
             MAXIMUM_ANGLE,
             SHOULD_SIMULATE_GRAVITY
     );
-    private static final DoubleSupplier BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> SimulationFieldHandler.isHoldingCoral() && !SimulationFieldHandler.isCoralInGripper() ? 1 : 0;
+    private static final DoubleSupplier
+            BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> SimulationFieldHandler.isHoldingCoral() && !SimulationFieldHandler.isCoralInGripper() ? 1 : 0,
+            DISTANCE_SENSOR_SIMULATION_VALUE_SUPPLIER = () -> SimulationFieldHandler.isHoldingCoral() ? 0 : 1000;
 
     static final SysIdRoutine.Config ANGLE_SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(1).per(Units.Second),
@@ -141,13 +146,14 @@ public class CoralIntakeConstants {
     private static final double
             CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.65,
             EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.06;
+    private static final double EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETRES = 17;
     static final BooleanEvent CORAL_COLLECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             BEAM_BREAK::getBinaryValue
     ).debounce(CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
-            () -> DISTANCE_SENSOR.getScaledValue() < (RobotHardwareStats.isSimulation() ? 100 : 17)
+            () -> DISTANCE_SENSOR.getScaledValue() < EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETRES
     ).debounce(EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(0.5);
@@ -245,7 +251,7 @@ public class CoralIntakeConstants {
         final CANcoderConfiguration config = new CANcoderConfiguration();
 
         config.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-        config.MagnetSensor.MagnetOffset = -0.31585;
+        config.MagnetSensor.MagnetOffset = ANGLE_ENCODER_GRAVITY_OFFSET_VALUE;
         config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
 
         ANGLE_ENCODER.applyConfiguration(config);
@@ -260,8 +266,8 @@ public class CoralIntakeConstants {
     }
 
     private static void configureDistanceSensor() {
-        DISTANCE_SENSOR.setScalingConstants(0.0002, -200);
-        DISTANCE_SENSOR.setSimulationSupplier(() -> SimulationFieldHandler.isHoldingCoral() ? 0 : 1000);
+        DISTANCE_SENSOR.setScalingConstants(DISTANCE_SENSOR_SCALING_SLOPE, DISTANCE_SENSOR_SCALING_INTERCEPT_POINT);
+        DISTANCE_SENSOR.setSimulationSupplier(DISTANCE_SENSOR_SIMULATION_VALUE_SUPPLIER);
     }
 
     public enum CoralIntakeState {

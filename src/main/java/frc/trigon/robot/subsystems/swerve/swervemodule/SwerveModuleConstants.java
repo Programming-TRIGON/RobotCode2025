@@ -18,7 +18,6 @@ public class SwerveModuleConstants {
             DRIVE_MOTOR_GEAR_RATIO = 5.36,
             FRONT_STEER_MOTOR_GEAR_RATIO = 18.75,
             REAR_STEER_MOTOR_GEAR_RATIO = 12.8;
-
     static final boolean ENABLE_FOC = true;
 
     private static final double

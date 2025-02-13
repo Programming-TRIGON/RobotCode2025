@@ -25,6 +25,8 @@ import org.trigon.hardware.simulation.SingleJointedArmSimulation;
 import org.trigon.utilities.mechanisms.SingleJointedArmMechanism2d;
 import org.trigon.utilities.mechanisms.SpeedMechanism2d;
 
+import java.util.function.DoubleSupplier;
+
 
 public class GripperConstants {
     private static final int
@@ -46,7 +48,8 @@ public class GripperConstants {
     static final double ANGLE_MOTOR_GEAR_RATIO = 34.642351;
     private static final double GRIPPING_MOTOR_GEAR_RATIO = 4;
 
-    static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = 0.04379;
+    private static final double ANGLE_ENCODER_GRAVITY_OFFSET = -0.36379;
+    static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = -0.32 - ANGLE_ENCODER_GRAVITY_OFFSET;
 
     static final boolean FOC_ENABLED = true;
 
@@ -78,6 +81,7 @@ public class GripperConstants {
             MAXIMUM_ANGLE,
             SHOULD_SIMULATE_GRAVITY
     );
+    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> SimulationFieldHandler.isCoralInGripper() && SimulationFieldHandler.isHoldingCoral() ? 1 : 1000;
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(0.25).per(Units.Seconds),
@@ -213,10 +217,7 @@ public class GripperConstants {
             LASER_CAN.setRegionOfInterest(6, 6, 12, 12);
             LASER_CAN.setRangingMode(LaserCanInterface.RangingMode.SHORT);
             LASER_CAN.setLoopTime(LaserCanInterface.TimingBudget.TIMING_BUDGET_33MS);
-            LASER_CAN.setSimulationSupplier(
-                    () -> SimulationFieldHandler.isCoralInGripper() &&
-                            SimulationFieldHandler.isHoldingCoral() ? 1 : 1000
-            );
+            LASER_CAN.setSimulationSupplier(LASER_CAN_SIMULATION_SUPPLIER);
         } catch (ConfigurationFailedException e) {
             e.printStackTrace();
         }
