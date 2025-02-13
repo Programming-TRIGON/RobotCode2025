@@ -44,7 +44,7 @@ public class CoralCollectionCommands {
 
     private static Command getInitiateFloorCoralCollectionCommand() {
         return new ParallelCommandGroup(
-                new CoralAutoDriveCommand().asProxy().onlyIf(() -> SHOULD_INTAKE_CORAL_AUTONOMOUSLY).until(OperatorConstants.CONTINUE_SCORING_TRIGGER),
+                new CoralAutoDriveCommand().asProxy().onlyIf(() -> SHOULD_INTAKE_CORAL_AUTONOMOUSLY && !OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER.getAsBoolean()).until(OperatorConstants.CONTINUE_SCORING_TRIGGER),
                 LEDCommands.getBlinkingCommand(Color.kAqua, CoralIntakeConstants.COLLECTION_LEDS_BLINKING_SPEED).unless(() -> SHOULD_INTAKE_CORAL_AUTONOMOUSLY),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
                 getScheduleCoralLoadingWhenCollectedCommand()
@@ -73,7 +73,7 @@ public class CoralCollectionCommands {
         return new ParallelCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.LOAD_CORAL),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
-                getCoralIntakeLoadingSequnceCommand()
+                getCoralIntakeLoadingSequenceCommand()
         ).unless(CoralCollectionCommands::shouldStopLoadingCoral).until(CoralCollectionCommands::shouldStopLoadingCoral);
     }
 
@@ -88,7 +88,7 @@ public class CoralCollectionCommands {
         return RobotContainer.GRIPPER.hasGamePiece() || OperatorConstants.CONTINUE_SCORING_TRIGGER.getAsBoolean();
     }
 
-    private static Command getCoralIntakeLoadingSequnceCommand() {
+    private static Command getCoralIntakeLoadingSequenceCommand() {
         return new SequentialCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_FOR_LOADING_TO_GRIPPER_WHILE_GAME_PIECE_NOT_DETECTED).until(RobotContainer.CORAL_INTAKE::hasGamePiece),
                 CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE).until(RobotContainer.CORAL_INTAKE::atTargetAngle),
