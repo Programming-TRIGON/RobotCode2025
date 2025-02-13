@@ -17,9 +17,8 @@ public class ClimberConstants {
     private static final int MOTOR_ID = 16;
     private static final String MOTOR_NAME = "ClimberMotor";
     static final TalonFXMotor MOTOR = new TalonFXMotor(MOTOR_ID, MOTOR_NAME);
-    
+
     static final boolean ENABLE_FOC = true;
-    static final double ON_CAGE_KG = 0;
     static final double
             MAXIMUM_GROUNDED_VELOCITY = 100,
             MAXIMUM_GROUNDED_ACCELERATION = 100,
@@ -75,6 +74,7 @@ public class ClimberConstants {
         config.Slot1.kS = RobotHardwareStats.isSimulation() ? config.Slot0.kS : 0;
         config.Slot1.kV = RobotHardwareStats.isSimulation() ? config.Slot0.kV : 0;
         config.Slot1.kA = RobotHardwareStats.isSimulation() ? config.Slot0.kA : 0;
+        config.Slot1.kG = RobotHardwareStats.isSimulation() ? 0 : 0;
 
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 3;

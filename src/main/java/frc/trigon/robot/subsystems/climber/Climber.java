@@ -105,7 +105,7 @@ public class Climber extends MotorSubsystem {
     }
 
     private DynamicMotionMagicVoltage determineRequest(boolean isAffectedByRobotWeight) {
-        return isAffectedByRobotWeight ? onCagePositionRequest.withFeedForward(ClimberConstants.ON_CAGE_KG) : groundedPositionRequest;
+        return isAffectedByRobotWeight ? onCagePositionRequest : groundedPositionRequest;
     }
 
     private void configureChangingDefaultCommand() {
