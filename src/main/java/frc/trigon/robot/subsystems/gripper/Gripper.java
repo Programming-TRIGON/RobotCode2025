@@ -119,6 +119,16 @@ public class Gripper extends MotorSubsystem {
     }
 
     /**
+     * This will check is at a safe angle.
+     * A safe angle is an angle where the gripper won't hit the coral on the reef when the elevator is moving up.
+     *
+     * @return whether the gripper is at a safe angle
+     */
+    public boolean isBelowMaximumSafeAngle() {
+        return getCurrentEncoderAngle().getDegrees() < GripperConstants.MAXIMUM_SAFE_ANGLE.getDegrees();
+    }
+
+    /**
      * This will set the gripper to the score in reef state,
      * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
      */
