@@ -15,7 +15,7 @@ import org.trigon.hardware.simulation.SimpleMotorSimulation;
 
 public class SwerveModuleConstants {
     private static final double
-            DRIVE_MOTOR_GEAR_RATIO = 5.36,
+            DRIVE_MOTOR_GEAR_RATIO = 7.13,
             FRONT_STEER_MOTOR_GEAR_RATIO = 18.75,
             REAR_STEER_MOTOR_GEAR_RATIO = 12.8;
     static final boolean ENABLE_FOC = true;
@@ -77,12 +77,12 @@ public class SwerveModuleConstants {
         config.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.1;
         config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 50 : 22;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 50 : 55;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.4708 : 6.2;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.4708 : 5.1;
         config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0.48818 : 2.6;
+        config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0.48818 : 2.4;
 
         config.Feedback.VelocityFilterTimeConstant = 0;
 
@@ -106,8 +106,8 @@ public class SwerveModuleConstants {
         config.Feedback.FeedbackRemoteSensorID = feedbackRemoteSensorID;
 
         config.Slot0.kP = isFront ?
-                (RobotHardwareStats.isSimulation() ? 120 : 55) :
-                (RobotHardwareStats.isSimulation() ? 120 : 55);
+                (RobotHardwareStats.isSimulation() ? 120 : 75) :
+                (RobotHardwareStats.isSimulation() ? 120 : 75);
         config.Slot0.kI = isFront ?
                 (RobotHardwareStats.isSimulation() ? 0 : 0) :
                 (RobotHardwareStats.isSimulation() ? 0 : 0);
