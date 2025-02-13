@@ -18,7 +18,7 @@ public class FieldConstants {
 
     private static final boolean SHOULD_USE_HOME_TAG_LAYOUT = true;
     public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = createAprilTagFieldLayout();
-    private static final Transform3d TAG_OFFSET = new Transform3d(0, 0.02, 0, new Rotation3d(0, 0, 0));
+    private static final Transform3d TAG_OFFSET = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
     public static final HashMap<Integer, Pose3d> TAG_ID_TO_POSE = fieldLayoutToTagIdToPoseMap();
 
     public static final int REEF_CLOCK_POSITIONS = 6;
@@ -63,19 +63,21 @@ public class FieldConstants {
     }
 
     public enum ReefClockPosition {
-        REEF_12_OCLOCK(true),
-        REEF_2_OCLOCK(true),
-        REEF_4_OCLOCK(true),
-        REEF_6_OCLOCK(true),
-        REEF_8_OCLOCK(true),
-        REEF_10_OCLOCK(true);
+        REEF_12_OCLOCK(true, 3),
+        REEF_2_OCLOCK(true, 2),
+        REEF_4_OCLOCK(true, 1),
+        REEF_6_OCLOCK(true, 0),
+        REEF_8_OCLOCK(true, 5),
+        REEF_10_OCLOCK(true, 4);
 
         public final Rotation2d clockAngle;
         public final boolean isFacingDriverStation;
+        public final int qDashboardOrder;
 
-        ReefClockPosition(boolean isFacingDriverStation) {
+        ReefClockPosition(boolean isFacingDriverStation, int qDashboardOrder) {
             this.clockAngle = calculateClockAngle();
             this.isFacingDriverStation = isFacingDriverStation;
+            this.qDashboardOrder = qDashboardOrder;
         }
 
         public static Rotation2d[] getClockAngles() {
