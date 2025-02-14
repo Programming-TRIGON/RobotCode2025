@@ -85,7 +85,7 @@ public class CoralCollectionCommands {
     }
 
     private static boolean shouldStopLoadingCoral() {
-        return RobotContainer.GRIPPER.hasGamePiece() || OperatorConstants.CONTINUE_SCORING_TRIGGER.getAsBoolean();
+        return RobotContainer.GRIPPER.hasGamePiece() || OperatorConstants.CONTINUE_TRIGGER.getAsBoolean();
     }
 
     private static Command getCoralIntakeLoadingSequenceCommand() {
