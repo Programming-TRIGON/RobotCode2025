@@ -145,13 +145,13 @@ public class CoralPlacingCommands {
 
     private static boolean canContinueScoringFromCoralIntake() {
         return RobotContainer.CORAL_INTAKE.atTargetAngle() &&
-                OperatorConstants.CONTINUE_SCORING_TRIGGER.getAsBoolean();
+                OperatorConstants.CONTINUE_TRIGGER.getAsBoolean();
     }
 
     private static boolean canContinueScoringFromGripper() {
         return RobotContainer.ELEVATOR.atTargetState() &&
                 RobotContainer.GRIPPER.atTargetAngle() &&
-                OperatorConstants.CONTINUE_SCORING_TRIGGER.getAsBoolean();
+                OperatorConstants.CONTINUE_TRIGGER.getAsBoolean();
 //                RobotContainer.SWERVE.atPose(calculateTargetScoringPose());
     }
 
