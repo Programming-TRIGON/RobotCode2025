@@ -16,33 +16,34 @@ import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.phoenix6.pigeon2.Pigeon2Gyro;
 import org.trigon.hardware.phoenix6.pigeon2.Pigeon2Signal;
 
-import java.util.function.DoubleSupplier;
-
 public class SwerveConstants {
-    private static final int PIGEON_ID = 0;
-    static final Pigeon2Gyro GYRO = new Pigeon2Gyro(PIGEON_ID, "SwerveGyro", RobotConstants.CANIVORE_NAME);
-    private static final double
-            GYRO_MOUNT_POSITION_YAW = -1.2466427087783813,
-            GYRO_MOUNT_POSITION_PITCH = -0.2344241589307785,
-            GYRO_MOUNT_POSITION_ROLL = -1.1703122854232788;
+    private static final int GYRO_ID = 0;
+    private static final String GYRO_NAME = "SwerveGyro";
+    static final Pigeon2Gyro GYRO = new Pigeon2Gyro(GYRO_ID, GYRO_NAME, RobotConstants.CANIVORE_NAME);
+
+    public static final int
+            FRONT_LEFT_ID = 1,
+            FRONT_RIGHT_ID = 2;
+    private static final int
+            REAR_LEFT_ID = 3,
+            REAR_RIGHT_ID = 4;
     private static final double
             FRONT_LEFT_STEER_ENCODER_OFFSET = -0.0078125,
             FRONT_RIGHT_STEER_ENCODER_OFFSET = 0.25341796875,
             REAR_LEFT_STEER_ENCODER_OFFSET = 0.20751953125,
             REAR_RIGHT_STEER_ENCODER_OFFSET = -0.05419921875;
-    public static final int
-            FRONT_LEFT_ID = 1,
-            FRONT_RIGHT_ID = 2,
-            REAR_LEFT_ID = 3,
-            REAR_RIGHT_ID = 4;
-    static final SwerveModule[] SWERVE_MODULES = {
-            new SwerveModule(FRONT_LEFT_ID, FRONT_LEFT_STEER_ENCODER_OFFSET, 0.046878853387037296 * 2),
-            new SwerveModule(FRONT_RIGHT_ID, FRONT_RIGHT_STEER_ENCODER_OFFSET, 0.047932004162597505 * 2),
-            new SwerveModule(REAR_LEFT_ID, REAR_LEFT_STEER_ENCODER_OFFSET, 0.05081950791699758 * 2),
-            new SwerveModule(REAR_RIGHT_ID, REAR_RIGHT_STEER_ENCODER_OFFSET, 0.050143313895756395 * 2)
+    private static final double
+            FRONT_LEFT_WHEEL_DIAMETER = 0.046878853387037296 * 2,
+            FRONT_RIGHT_WHEEL_DIAMETER = 0.047932004162597505 * 2,
+            REAR_LEFT_WHEEL_DIAMETER = 0.05081950791699758 * 2,
+            REAR_RIGHT_WHEEL_DIAMETER = 0.050143313895756395 * 2;
+    static final SwerveModule[] SWERVE_MODULES = new SwerveModule[]{
+            new SwerveModule(FRONT_LEFT_ID, FRONT_LEFT_STEER_ENCODER_OFFSET, FRONT_LEFT_WHEEL_DIAMETER),
+            new SwerveModule(FRONT_RIGHT_ID, FRONT_RIGHT_STEER_ENCODER_OFFSET, FRONT_RIGHT_WHEEL_DIAMETER),
+            new SwerveModule(REAR_LEFT_ID, REAR_LEFT_STEER_ENCODER_OFFSET, REAR_LEFT_WHEEL_DIAMETER),
+            new SwerveModule(REAR_RIGHT_ID, REAR_RIGHT_STEER_ENCODER_OFFSET, REAR_RIGHT_WHEEL_DIAMETER)
     };
 
-    private static final DoubleSupplier SIMULATION_YAW_VELOCITY_SUPPLIER = () -> RobotContainer.SWERVE.getSelfRelativeVelocity().omegaRadiansPerSecond;
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(PathPlannerConstants.ROBOT_CONFIG.moduleLocations);
     static final double
             TRANSLATION_TOLERANCE_METERS = 0.02,
@@ -91,11 +92,11 @@ public class SwerveConstants {
 
     private static void configureGyro() {
         final Pigeon2Configuration config = new Pigeon2Configuration();
-        config.MountPose.MountPoseYaw = GYRO_MOUNT_POSITION_YAW;
-        config.MountPose.MountPosePitch = GYRO_MOUNT_POSITION_PITCH;
-        config.MountPose.MountPoseRoll = GYRO_MOUNT_POSITION_ROLL;
+        config.MountPose.MountPoseRoll = -1.2466427087783813;
+        config.MountPose.MountPosePitch = -0.2344241589307785;
+        config.MountPose.MountPoseYaw = -1.1703122854232788;
         GYRO.applyConfiguration(config);
-        GYRO.setSimulationYawVelocitySupplier(SIMULATION_YAW_VELOCITY_SUPPLIER);
+        GYRO.setSimulationYawVelocitySupplier(() -> RobotContainer.SWERVE.getSelfRelativeVelocity().omegaRadiansPerSecond);
 
         GYRO.registerThreadedSignal(Pigeon2Signal.YAW, PoseEstimatorConstants.ODOMETRY_FREQUENCY_HERTZ);
     }

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private static final Rotation2d
             CAMERA_HORIZONTAL_FOV = Rotation2d.fromDegrees(75),
-            CAMERA_VERTICAL_FOV = Rotation2d.fromDegrees(75);
+            CAMERA_VERTICAL_FOV = Rotation2d.fromDegrees(45);
 
     private final String hostname;
     private final Transform3d robotCenterToCamera;

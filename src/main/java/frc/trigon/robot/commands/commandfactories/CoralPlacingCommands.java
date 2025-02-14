@@ -57,7 +57,7 @@ public class CoralPlacingCommands {
         return new ConditionalCommand(
                 getAutonomouslyScoreInReefFromGripperCommand().asProxy(),
                 getManuallyScoreInReefFromGripperCommand().asProxy(),
-                () -> SHOULD_SCORE_AUTONOMOUSLY
+                () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER.getAsBoolean()
         ).finallyDo(
                 (interrupted) -> {
                     if (interrupted && TARGET_SCORING_LEVEL.ordinal() > ScoringLevel.L2.ordinal() && RobotContainer.ELEVATOR.willMovementMoveThroughHitRange(0))
@@ -145,13 +145,13 @@ public class CoralPlacingCommands {
 
     private static boolean canContinueScoringFromCoralIntake() {
         return RobotContainer.CORAL_INTAKE.atTargetAngle() &&
-                OperatorConstants.CONTINUE_SCORING_TRIGGER.getAsBoolean();
+                OperatorConstants.CONTINUE_TRIGGER.getAsBoolean();
     }
 
     private static boolean canContinueScoringFromGripper() {
         return RobotContainer.ELEVATOR.atTargetState() &&
                 RobotContainer.GRIPPER.atTargetAngle() &&
-                OperatorConstants.CONTINUE_SCORING_TRIGGER.getAsBoolean();
+                OperatorConstants.CONTINUE_TRIGGER.getAsBoolean();
 //                RobotContainer.SWERVE.atPose(calculateTargetScoringPose());
     }
 
