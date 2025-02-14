@@ -34,11 +34,11 @@ public class SwerveModuleConstants {
             DRIVE_MOTOR_SLIP_CURRENT = PathPlannerConstants.ROBOT_CONFIG.moduleConfig.driveCurrentLimit, // TODO: calibrate right before competition
             STEER_MOTOR_CURRENT_LIMIT = RobotHardwareStats.isSimulation() ? 200 : 30;
     private static final double
-            FRONT_STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 75,
+            FRONT_STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 85,
             FRONT_STEER_MOTOR_I = 0,
             FRONT_STEER_MOTOR_D = 0;
     private static final double
-            REAR_STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 75,
+            REAR_STEER_MOTOR_P = RobotHardwareStats.isSimulation() ? 120 : 85,
             REAR_STEER_MOTOR_I = 0,
             REAR_STEER_MOTOR_D = 0;
     private static final double

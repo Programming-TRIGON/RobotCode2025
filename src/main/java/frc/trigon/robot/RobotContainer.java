@@ -6,7 +6,6 @@
 package frc.trigon.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -86,8 +85,7 @@ public class RobotContainer {
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
         OperatorConstants.RESET_TRACKED_GAME_PIECE_TRIGGER.onTrue(CommandConstants.RESET_TRACKED_GAME_PIECE_COMMAND);
 
-        OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CoralIntakeCommands.getDebuggingCommand());
-        OperatorConstants.OPERATOR_CONTROLLER.two().whileTrue(CoralIntakeCommands.getSetTargetStateCommand(9, 0, Rotation2d.fromDegrees(90)));
+        OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CommandConstants.WHEEL_RADIUS_CHARACTERIZATION_COMMAND);
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
         OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionCommand());
         OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());

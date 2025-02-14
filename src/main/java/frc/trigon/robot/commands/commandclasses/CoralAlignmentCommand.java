@@ -70,7 +70,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
     }
 
     private double calculateSwerveYPowerOutput() {
-        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
         final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
         if (trackedObjectPositionOnField == null)
             return 0;
@@ -81,7 +81,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
     }
 
     private FlippableRotation2d calculateTargetAngle() {
-        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
         final Translation2d trackedObjectFieldRelativePosition = CAMERA.getTrackedObjectFieldRelativePosition();
         if (trackedObjectFieldRelativePosition == null)
             return null;
