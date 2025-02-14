@@ -52,7 +52,6 @@ public class CoralIntakeConstants {
             INTAKE_MOTOR_GEAR_RATIO = 1.3,
             FUNNEL_MOTOR_GEAR_RATIO = 4;
     static final double ANGLE_MOTOR_GEAR_RATIO = 73;
-
     private static final double ANGLE_ENCODER_GRAVITY_OFFSET_VALUE = -0.31585;
     static final double ANGLE_ENCODER_POSITION_OFFSET_VALUE = -0.32502 - ANGLE_ENCODER_GRAVITY_OFFSET_VALUE;
     private static final double

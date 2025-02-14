@@ -47,10 +47,8 @@ public class GripperConstants {
 
     static final double ANGLE_MOTOR_GEAR_RATIO = 34.642351;
     private static final double GRIPPING_MOTOR_GEAR_RATIO = 4;
-
     private static final double ANGLE_ENCODER_GRAVITY_OFFSET = -0.36379;
     static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = -0.32 - ANGLE_ENCODER_GRAVITY_OFFSET;
-
     static final boolean FOC_ENABLED = true;
 
     private static final int
