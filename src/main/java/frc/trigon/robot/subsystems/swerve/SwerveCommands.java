@@ -3,6 +3,7 @@ package frc.trigon.robot.subsystems.swerve;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.*;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import org.trigon.commands.InitExecuteCommand;
@@ -144,7 +145,7 @@ public class SwerveCommands {
 
     private static Command getPathfindToPoseCommand(FlippablePose2d targetPose, PathConstraints pathConstraints) {
         final Pose2d targetFlippedPose = targetPose.get();
-        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
         if (currentPose.getTranslation().getDistance(targetFlippedPose.getTranslation()) < 0.55)
             return createOnTheFlyPathCommand(targetPose, pathConstraints);
         return AutoBuilder.pathfindToPose(targetFlippedPose, pathConstraints);
@@ -157,16 +158,19 @@ public class SwerveCommands {
     }
 
     private static Command createOnTheFlyPathCommand(FlippablePose2d targetPose, PathConstraints constraints) {
-        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
         final List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
                 currentPose,
                 targetPose.get()
         );
 
+        final ChassisSpeeds selfRelativeVelocity = RobotContainer.SWERVE.getSelfRelativeVelocity();
+        final double startingVelocity = Math.hypot(selfRelativeVelocity.vxMetersPerSecond, selfRelativeVelocity.vyMetersPerSecond);
+
         final PathPlannerPath path = new PathPlannerPath(
                 waypoints,
                 constraints,
-                new IdealStartingState(0, currentPose.getRotation()),
+                new IdealStartingState(startingVelocity, currentPose.getRotation()),
                 new GoalEndState(0, targetPose.get().getRotation())
         );
 

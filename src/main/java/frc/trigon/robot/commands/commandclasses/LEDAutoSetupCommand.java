@@ -33,9 +33,9 @@ public class LEDAutoSetupCommand extends SequentialCommandGroup {
         this.autoName = autoName;
 
         final Supplier<Color>[] ledColors = new Supplier[]{
-                () -> getDesiredLEDColorFromRobotPose(this.autoStartPose.getRotation().getDegrees() - RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getRotation().getDegrees(), TOLERANCE_DEGREES),
-                () -> getDesiredLEDColorFromRobotPose(this.autoStartPose.getX() - RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getX(), TOLERANCE_METERS),
-                () -> getDesiredLEDColorFromRobotPose(this.autoStartPose.getY() - RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getY(), TOLERANCE_METERS)
+                () -> getDesiredLEDColorFromRobotPose(this.autoStartPose.getRotation().getDegrees() - RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getRotation().getDegrees(), TOLERANCE_DEGREES),
+                () -> getDesiredLEDColorFromRobotPose(this.autoStartPose.getX() - RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getX(), TOLERANCE_METERS),
+                () -> getDesiredLEDColorFromRobotPose(this.autoStartPose.getY() - RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getY(), TOLERANCE_METERS)
         };
         addCommands(
                 getUpdateAutoStartPoseCommand(),

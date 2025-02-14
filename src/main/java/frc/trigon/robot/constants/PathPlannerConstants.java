@@ -29,18 +29,17 @@ import java.io.IOException;
  * A class that contains the constants and configurations for everything related to PathPlanner.
  */
 public class PathPlannerConstants {
-    public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(4, 3.1, Units.degreesToRadians(400), Units.degreesToRadians(250.000));
+    public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(3, 5, Units.degreesToRadians(400), Units.degreesToRadians(400));
     public static final double MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR = 2.2;
     public static final RobotConfig ROBOT_CONFIG = getRobotConfig();
 
     private static final PIDConstants
             AUTO_TRANSLATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
             new PIDConstants(6, 0, 0) :
-            new PIDConstants(6, 0, 0),
+            new PIDConstants(3, 0, 0),
             AUTO_ROTATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
                     new PIDConstants(5, 0, 0) :
-                    new PIDConstants(5, 0, 0);
-
+                    new PIDConstants(8, 0, 0);
     private static final PPHolonomicDriveController AUTO_PATH_FOLLOWING_CONTROLLER = new PPHolonomicDriveController(
             AUTO_TRANSLATION_PID_CONSTANTS,
             AUTO_ROTATION_PID_CONSTANTS
@@ -57,7 +56,7 @@ public class PathPlannerConstants {
 
     private static void configureAutoBuilder() {
         AutoBuilder.configure(
-                RobotContainer.POSE_ESTIMATOR::getCurrentEstimatedPose,
+                RobotContainer.POSE_ESTIMATOR::getEstimatedRobotPose,
                 RobotContainer.POSE_ESTIMATOR::resetPose,
                 RobotContainer.SWERVE::getSelfRelativeVelocity,
                 RobotContainer.SWERVE::selfRelativeDriveWithoutSetpointGeneration,
@@ -83,11 +82,11 @@ public class PathPlannerConstants {
         NamedCommands.registerCommand("RestElevator", ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         NamedCommands.registerCommand("RestCoralIntake", CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         NamedCommands.registerCommand("RestGripper", GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST));
-        NamedCommands.registerCommand("FeedCoral", GripperCommands.getScoreInReefForAutoCommand().withTimeout(0.1));
+        NamedCommands.registerCommand("FeedCoral", GripperCommands.getScoreInReefForAutoCommand().withTimeout(0.5));
         NamedCommands.registerCommand("CollectCoralFromFloor", AutonomousCommands.getCollectCoralFromFloorCommand());
         NamedCommands.registerCommand("CollectCoralFromFeeder", AutonomousCommands.getCollectCoralFromFeederCommand());
         NamedCommands.registerCommand("LoadCoral", CoralCollectionCommands.getLoadCoralCommand().until(RobotContainer.GRIPPER::hasGamePiece));
         NamedCommands.registerCommand("AlignToCoral", AutonomousCommands.getAlignToCoralCommand());
-        NamedCommands.registerCommand("ScoreL4Wait", AutonomousCommands.getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel.L4).until(() -> RobotContainer.ELEVATOR.atTargetState() && RobotContainer.GRIPPER.atTargetAngle()));
+        NamedCommands.registerCommand("ScoreL4Wait", AutonomousCommands.getScoreInReefFromGripperUntilReachedCommand(CoralPlacingCommands.ScoringLevel.L4));
     }
 }

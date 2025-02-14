@@ -148,7 +148,7 @@ public class ElevatorConstants {
         SCORE_L1(0),
         SCORE_L2(0),
         SCORE_L3(0.43),
-        SCORE_L4(1.02),
+        SCORE_L4(1),
         COLLECT_ALGAE_FROM_L3(0.365),
         SCORE_NET(1.04);
 

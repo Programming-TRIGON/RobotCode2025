@@ -113,7 +113,7 @@ public class Elevator extends MotorSubsystem {
         return RobotContainer.GRIPPER.isOpenForElevator();
     }
 
-    private boolean willMovementMoveThroughHitRange(double targetPositionRotations) {
+    public boolean willMovementMoveThroughHitRange(double targetPositionRotations) {
         final double currentPositionRotations = masterMotor.getSignal(TalonFXSignal.POSITION);
         if (isInGripperHitRange(currentPositionRotations) || isInGripperHitRange(targetPositionRotations))
             return true;

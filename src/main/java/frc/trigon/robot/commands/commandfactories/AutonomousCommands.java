@@ -27,9 +27,20 @@ import java.util.function.Supplier;
  */
 public class AutonomousCommands {
     public static Command getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
-        return new ParallelCommandGroup(
-                ElevatorCommands.getSetTargetStateCommand(() -> scoringLevel.elevatorState),
-                GripperCommands.getPrepareForStateCommand(() -> scoringLevel.gripperState)
+        return CoralCollectionCommands.getLoadCoralCommand().andThen(
+                new ParallelCommandGroup(
+                        ElevatorCommands.getSetTargetStateCommand(() -> scoringLevel.elevatorState),
+                        GripperCommands.getPrepareForStateCommand(() -> scoringLevel.gripperState)
+                )
+        );
+    }
+
+    public static Command getScoreInReefFromGripperUntilReachedCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
+        return CoralCollectionCommands.getLoadCoralCommand().andThen(
+                new ParallelCommandGroup(
+                        ElevatorCommands.getSetTargetStateCommand(() -> scoringLevel.elevatorState),
+                        GripperCommands.getPrepareForStateCommand(() -> scoringLevel.gripperState)
+                ).until(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState) && RobotContainer.GRIPPER.atState(scoringLevel.gripperState))
         );
     }
 

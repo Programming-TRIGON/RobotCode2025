@@ -81,18 +81,18 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     }
 
     private Rotation3d extractRotation3d(PhotonTrackedTarget target) {
-        final List<TargetCorner> detectedCorners = target.getMinAreaRectCorners();
+//        final List<TargetCorner> detectedCorners = target.getMinAreaRectCorners();
+//
+//        if (detectedCorners.size() != 4)
+        return calculateMiddleRotation(target);
 
-        if (detectedCorners.size() != 4)
-            return calculateMiddleRotation(target);
-
-        final Point objectPointOnCamera = findAverageOfLowestTwo(detectedCorners);
-        final Rotation3d objectRotationOnCamera = getCorrectedPixelRot(objectPointOnCamera);
-
-        if (objectRotationOnCamera == null)
-            calculateMiddleRotation(target);
-
-        return objectRotationOnCamera;
+//        final Point objectPointOnCamera = findAverageOfLowestTwo(detectedCorners);
+//        final Rotation3d objectRotationOnCamera = getCorrectedPixelRot(objectPointOnCamera);
+//
+//        if (objectRotationOnCamera == null)
+//            calculateMiddleRotation(target);
+//
+//        return objectRotationOnCamera;
     }
 
     private Rotation3d calculateMiddleRotation(PhotonTrackedTarget target) {
