@@ -30,13 +30,14 @@ public class SwerveModuleConstants {
             DRIVE_MOTOR_GEARBOX = DCMotor.getKrakenX60Foc(DRIVE_MOTOR_AMOUNT),
             STEER_MOTOR_GEARBOX = DCMotor.getFalcon500Foc(STEER_MOTOR_AMOUNT);
 
-    public static final double MAXIMUM_MODULE_ROTATIONAL_SPEED_RADIANS_PER_SECOND = edu.wpi.first.math.util.Units.rotationsToRadians(7); //TODO: calibrate
-    static final double VOLTAGE_COMPENSATION_SATURATION = 12;
     public static final SysIdRoutine.Config DRIVE_MOTOR_SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(1).per(Units.Second),
             Units.Volts.of(5),
             Units.Second.of(1000)
     );
+
+    public static final double MAXIMUM_MODULE_ROTATIONAL_SPEED_RADIANS_PER_SECOND = edu.wpi.first.math.util.Units.rotationsToRadians(7); //TODO: calibrate
+    static final double VOLTAGE_COMPENSATION_SATURATION = 12;
 
     /**
      * Creates a new SimpleMotorSimulation for the drive motor.
@@ -106,8 +107,8 @@ public class SwerveModuleConstants {
         config.Feedback.FeedbackRemoteSensorID = feedbackRemoteSensorID;
 
         config.Slot0.kP = isFront ?
-                (RobotHardwareStats.isSimulation() ? 120 : 75) :
-                (RobotHardwareStats.isSimulation() ? 120 : 75);
+                (RobotHardwareStats.isSimulation() ? 120 : 85) :
+                (RobotHardwareStats.isSimulation() ? 120 : 85);
         config.Slot0.kI = isFront ?
                 (RobotHardwareStats.isSimulation() ? 0 : 0) :
                 (RobotHardwareStats.isSimulation() ? 0 : 0);
