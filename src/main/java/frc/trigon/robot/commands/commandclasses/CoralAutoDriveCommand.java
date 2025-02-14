@@ -5,7 +5,10 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.*;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.CameraConstants;
@@ -35,7 +38,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
                 getSetLEDColorsCommand(),
                 getTrackCoralCommand(),
                 GeneralCommands.getContinuousConditionalCommand(
-                        getDriveToCoralWhenReadyToIntakeCommand(),
+                        getDriveToCoralCommand(),
                         GeneralCommands.getFieldRelativeDriveCommand(),
                         () -> CAMERA.getTrackedObjectFieldRelativePosition() != null
                 )
@@ -49,30 +52,6 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
         });
     }
 
-    private Command getSetLEDColorsCommand() {
-        return GeneralCommands.getContinuousConditionalCommand(
-                LEDCommands.getStaticColorCommand(Color.kGreen, LEDStrip.LED_STRIPS),
-                LEDCommands.getStaticColorCommand(Color.kRed, LEDStrip.LED_STRIPS),
-                () -> CAMERA.getTrackedObjectFieldRelativePosition() != null
-        );
-    }
-
-    private Command getDriveToCoralWhenReadyToIntakeCommand() {
-        return new SequentialCommandGroup(
-                getDriveToCoralCommand().until(() -> distanceFromTrackedCoral.getNorm() < CoralIntakeConstants.AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS),
-                SwerveCommands.getClosedLoopSelfRelativeDriveCommand(() -> 0, () -> 0, () -> 0).until(() -> RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR)),
-                getDriveToCoralCommand()
-        );
-    }
-
-    private Command getDriveToCoralCommand() {
-        return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                () -> X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getX()),
-                () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getY()),
-                this::calculateTargetAngle
-        );
-    }
-
     private Translation2d calculateDistanceFromTrackedCoral() {
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
         final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
@@ -81,6 +60,27 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
 
         final Translation2d difference = robotPose.getTranslation().minus(trackedObjectPositionOnField);
         return difference.rotateBy(robotPose.getRotation().unaryMinus());
+    }
+
+    private Command getSetLEDColorsCommand() {
+        return GeneralCommands.getContinuousConditionalCommand(
+                LEDCommands.getStaticColorCommand(Color.kGreen, LEDStrip.LED_STRIPS),
+                LEDCommands.getStaticColorCommand(Color.kRed, LEDStrip.LED_STRIPS),
+                () -> CAMERA.getTrackedObjectFieldRelativePosition() != null
+        );
+    }
+
+    private Command getDriveToCoralCommand() {
+        return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+                () -> shouldMoveTowardsCoral() ? X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getX()) : 0,
+                () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getY()),
+                this::calculateTargetAngle
+        );
+    }
+
+    private boolean shouldMoveTowardsCoral() {
+        return distanceFromTrackedCoral.getNorm() > CoralIntakeConstants.AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS ||
+                RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR);
     }
 
     private FlippableRotation2d calculateTargetAngle() {
