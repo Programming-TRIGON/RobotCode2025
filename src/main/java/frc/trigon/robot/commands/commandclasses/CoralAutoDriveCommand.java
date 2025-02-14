@@ -10,39 +10,56 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.trigon.robot.RobotContainer;
-import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.CameraConstants;
-import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
+import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.misc.leds.LEDCommands;
 import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 
-public class CoralAlignmentCommand extends ParallelCommandGroup {
-    public static final PIDController Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
+public class CoralAutoDriveCommand extends ParallelCommandGroup {
+    private static final PIDController
+            X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new PIDController(0.5, 0, 0) :
-            new PIDController(0.4, 0, 0.03);
+            new PIDController(0, 0, 0),
+            Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
+                    new PIDController(0.5, 0, 0) :
+                    new PIDController(0.4, 0, 0.03);
     private static final ObjectDetectionCamera CAMERA = CameraConstants.OBJECT_DETECTION_CAMERA;
+    private Translation2d distanceFromTrackedCoral;
 
-    public CoralAlignmentCommand() {
+    public CoralAutoDriveCommand() {
         addCommands(
                 new InstantCommand(CAMERA::initializeTracking),
                 getSetLEDColorsCommand(),
+                getTrackCoralCommand(),
                 GeneralCommands.getContinuousConditionalCommand(
-                        getDriveWhileAligningToCoralCommand(),
+                        getDriveToCoralCommand(),
                         GeneralCommands.getFieldRelativeDriveCommand(),
                         () -> CAMERA.getTrackedObjectFieldRelativePosition() != null
-                ),
-                getTrackCoralCommand()
+                )
         );
     }
 
     private Command getTrackCoralCommand() {
-        return new RunCommand(() -> CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL));
+        return new RunCommand(() -> {
+            CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL);
+            distanceFromTrackedCoral = calculateDistanceFromTrackedCoral();
+        });
+    }
+
+    private Translation2d calculateDistanceFromTrackedCoral() {
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+        final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
+        if (trackedObjectPositionOnField == null)
+            return new Translation2d();
+
+        final Translation2d difference = robotPose.getTranslation().minus(trackedObjectPositionOnField);
+        return difference.rotateBy(robotPose.getRotation().unaryMinus());
     }
 
     private Command getSetLEDColorsCommand() {
@@ -53,31 +70,17 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
         );
     }
 
-    private Command getDriveWhileAligningToCoralCommand() {
+    private Command getDriveToCoralCommand() {
         return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                () -> fieldRelativePowersToSelfRelativeXPower(OperatorConstants.DRIVER_CONTROLLER.getLeftY(), OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
-                this::calculateSwerveYPowerOutput,
+                () -> shouldMoveTowardsCoral() ? X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getX()) : 0,
+                () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getY()),
                 this::calculateTargetAngle
         );
     }
 
-    private double fieldRelativePowersToSelfRelativeXPower(double xPower, double yPower) {
-        final Rotation2d robotHeading = RobotContainer.SWERVE.getDriveRelativeAngle();
-        final double xValue = CommandConstants.calculateDriveStickAxisValue(xPower);
-        final double yValue = CommandConstants.calculateDriveStickAxisValue(yPower);
-
-        return (xValue * robotHeading.getCos()) + (yValue * robotHeading.getSin());
-    }
-
-    private double calculateSwerveYPowerOutput() {
-        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
-        final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
-        if (trackedObjectPositionOnField == null)
-            return 0;
-
-        final Translation2d difference = robotPose.getTranslation().minus(trackedObjectPositionOnField);
-        final Translation2d selfRelativeDifference = difference.rotateBy(robotPose.getRotation().unaryMinus());
-        return Y_PID_CONTROLLER.calculate(selfRelativeDifference.getY());
+    private boolean shouldMoveTowardsCoral() {
+        return distanceFromTrackedCoral.getNorm() > CoralIntakeConstants.AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS ||
+                RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR);
     }
 
     private FlippableRotation2d calculateTargetAngle() {

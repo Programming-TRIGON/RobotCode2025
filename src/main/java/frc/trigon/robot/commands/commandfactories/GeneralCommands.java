@@ -43,10 +43,10 @@ public class GeneralCommands {
      */
     public static Command getToggleRotationModeCommand() {
         return new InstantCommand(() -> {
-            if (RobotContainer.SWERVE.getDefaultCommand().equals(getFieldRelativeDriveCommand()))
-                RobotContainer.SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_TO_REEF_SECTIONS_COMMAND);
-            else
+            if (RobotContainer.SWERVE.getDefaultCommand().equals(CommandConstants.FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_TO_REEF_SECTIONS_COMMAND))
                 RobotContainer.SWERVE.setDefaultCommand(getFieldRelativeDriveCommand());
+            else
+                RobotContainer.SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_TO_REEF_SECTIONS_COMMAND);
 
             RobotContainer.SWERVE.getDefaultCommand().schedule();
         }).ignoringDisable(true);
