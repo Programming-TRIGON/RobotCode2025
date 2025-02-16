@@ -67,12 +67,11 @@ public class CommandConstants {
                     Rotation2d.fromDegrees(200),
                     (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),
                     RobotContainer.SWERVE
-            ),
-            RESET_TRACKED_GAME_PIECE_COMMAND = new InstantCommand(CameraConstants.OBJECT_DETECTION_CAMERA::resetTrackedObject);
+            );
 
     public static final Command
-            ENABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_ALIGN_TO_CORAL = true).ignoringDisable(true),
-            DISABLE_CORAL_ALIGNMENT_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_ALIGN_TO_CORAL = false).ignoringDisable(true),
+            ENABLE_AUTO_CORAL_INTAKE_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_INTAKE_CORAL_AUTONOMOUSLY = true).ignoringDisable(true),
+            DISABLE_AUTO_CORAL_INTAKE_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_INTAKE_CORAL_AUTONOMOUSLY = false).ignoringDisable(true),
             ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = true).ignoringDisable(true),
             DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = false).ignoringDisable(true),
             SET_TARGET_SCORING_REEF_LEVEL_L1_FROM_GRIPPER_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L1_GRIPPER).ignoringDisable(true),
