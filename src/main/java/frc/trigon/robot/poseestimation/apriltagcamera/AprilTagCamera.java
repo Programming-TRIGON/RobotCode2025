@@ -74,8 +74,8 @@ public class AprilTagCamera {
      */
     public StandardDeviations calculateStandardDeviations() {
         final double averageDistanceFromTags = calculateAverageDistanceFromTags();
-        final double translationStandardDeviation = calculateStandardDeviation(standardDeviations.getTranslationStandardDeviation(), averageDistanceFromTags, inputs.visibleTagIDs.length);
-        final double thetaStandardDeviation = calculateStandardDeviation(standardDeviations.getThetaStandardDeviation(), averageDistanceFromTags, inputs.visibleTagIDs.length);
+        final double translationStandardDeviation = calculateStandardDeviation(standardDeviations.translationStandardDeviation(), averageDistanceFromTags, inputs.visibleTagIDs.length);
+        final double thetaStandardDeviation = calculateStandardDeviation(standardDeviations.thetaStandardDeviation(), averageDistanceFromTags, inputs.visibleTagIDs.length);
 
         Logger.recordOutput("StandardDeviations/" + name + "/translations", translationStandardDeviation);
         Logger.recordOutput("StandardDeviations/" + name + "/theta", thetaStandardDeviation);
@@ -145,11 +145,11 @@ public class AprilTagCamera {
             logUsedTags();
 
         if (hasValidResult()) {
-            Logger.recordOutput("Poses/Robot/" + name + "/Pose", estimatedRobotPose);
+            Logger.recordOutput("Poses/Robot/Cameras/" + name + "Pose", estimatedRobotPose);
             return;
         }
 
-        Logger.recordOutput("Poses/Robot/" + name + "/Pose", AprilTagCameraConstants.EMPTY_POSE_LIST);
+        Logger.recordOutput("Poses/Robot/Cameras/" + name + "Pose", AprilTagCameraConstants.EMPTY_POSE_LIST);
     }
 
     private void logUsedTags() {

@@ -57,10 +57,10 @@ public class CoralPlacingCommands {
         return new ConditionalCommand(
                 getAutonomouslyScoreInReefFromGripperCommand().asProxy(),
                 getManuallyScoreInReefFromGripperCommand().asProxy(),
-                () -> SHOULD_SCORE_AUTONOMOUSLY
+                () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER.getAsBoolean()
         ).finallyDo(
                 (interrupted) -> {
-                    if (interrupted && TARGET_SCORING_LEVEL.ordinal() > ScoringLevel.L2.ordinal())
+                    if (interrupted && TARGET_SCORING_LEVEL.ordinal() > ScoringLevel.L2.ordinal() && RobotContainer.ELEVATOR.willMovementMoveThroughHitRange(0))
                         getMakeSureGripperDoesntHitReefCommand().schedule();
                 }
         );
@@ -134,7 +134,7 @@ public class CoralPlacingCommands {
     }
 
     private static double calculateDistanceToTargetScoringPose() {
-        final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getTranslation();
+        final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
         final Translation2d targetTranslation = calculateTargetScoringPose().get().getTranslation();
         return currentTranslation.getDistance(targetTranslation);
     }
@@ -145,13 +145,13 @@ public class CoralPlacingCommands {
 
     private static boolean canContinueScoringFromCoralIntake() {
         return RobotContainer.CORAL_INTAKE.atTargetAngle() &&
-                OperatorConstants.CONTINUE_SCORING_TRIGGER.getAsBoolean();
+                OperatorConstants.CONTINUE_TRIGGER.getAsBoolean();
     }
 
     private static boolean canContinueScoringFromGripper() {
         return RobotContainer.ELEVATOR.atTargetState() &&
                 RobotContainer.GRIPPER.atTargetAngle() &&
-                OperatorConstants.CONTINUE_SCORING_TRIGGER.getAsBoolean();
+                OperatorConstants.CONTINUE_TRIGGER.getAsBoolean();
 //                RobotContainer.SWERVE.atPose(calculateTargetScoringPose());
     }
 
@@ -163,11 +163,12 @@ public class CoralPlacingCommands {
      */
     public enum ScoringLevel {
         L1_CORAL_INTAKE(1.38, 0.14, Rotation2d.fromDegrees(180)),
-        L1_GRIPPER(1.38, 0.14, Rotation2d.fromDegrees(0)),
-        L2(1.36, 0.15, Rotation2d.fromDegrees(0)),
+        L1_GRIPPER(1.38, 0.17, Rotation2d.fromDegrees(0)),
+        L2(1.3, 0.17, Rotation2d.fromDegrees(0)),
         L3(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0)),
         L4(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0));
 
+        public final int level = calculateLevel();
         final double xTransformMeters, positiveYTransformMeters;
         final Rotation2d rotationTransform;
         final ElevatorConstants.ElevatorState elevatorState;
@@ -228,6 +229,12 @@ public class CoralPlacingCommands {
                 case 4 -> GripperConstants.GripperState.SCORE_L4;
                 default -> throw new IllegalStateException("Unexpected value: " + ordinal());
             };
+        }
+
+        private int calculateLevel() {
+            if (ordinal() == 0)
+                return 1;
+            return ordinal();
         }
     }
 }

@@ -16,7 +16,7 @@ import java.util.ArrayList;
 public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private static final Rotation2d
             CAMERA_HORIZONTAL_FOV = Rotation2d.fromDegrees(75),
-            CAMERA_VERTICAL_FOV = Rotation2d.fromDegrees(75);
+            CAMERA_VERTICAL_FOV = Rotation2d.fromDegrees(45);
 
     private final String hostname;
     private final Transform3d robotCenterToCamera;
@@ -28,7 +28,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
 
     @Override
     protected void updateInputs(ObjectDetectionCameraInputsAutoLogged inputs) {
-        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
         final Pose3d cameraPose = new Pose3d(robotPose).plus(robotCenterToCamera);
         final ArrayList<Pair<SimulatedGamePiece, Rotation3d>>[] visibleGamePieces = calculateAllVisibleGamePieces(cameraPose);
 
