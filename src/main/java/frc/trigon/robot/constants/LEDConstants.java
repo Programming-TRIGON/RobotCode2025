@@ -23,6 +23,15 @@ public class LEDConstants {
      * Initializes LEDConstants. Needed to be called for the LED strips to be initialized before being used.
      */
     public static void init() {
+        final CANdleConfiguration config = new CANdleConfiguration();
+        config.stripType = STRIP_TYPE;
+        config.brightnessScalar = BRIGHTNESS_SCALAR;
+        config.disableWhenLOS = true;
+        config.enableOptimizations = true;
+        CANDLE.configAllSettings(config);
+
+        CANdleLEDStrip.setCANdle(CANDLE);
+        CANdleLEDStrip.setTotalAmountOfLEDs(25);
     }
 
     static final double
