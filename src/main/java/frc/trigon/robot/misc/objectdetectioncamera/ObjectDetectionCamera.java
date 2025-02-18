@@ -54,7 +54,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
      */
     public Translation2d calculateBestObjectPositionOnField(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
         final Translation2d[] targetObjectsTranslation = getObjectPositionsOnField(targetGamePiece);
-        final Translation2d currentRobotTranslation = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getTranslation();
+        final Translation2d currentRobotTranslation = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
         Translation2d bestObjectTranslation = targetObjectsTranslation[0];
 
         for (int i = 1; i < targetObjectsTranslation.length; i++) {
@@ -79,7 +79,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
      * @return the object's 2D position on the field (z is assumed to be 0)
      */
     public Translation2d calculateObjectPositionFromRotation(Rotation3d objectRotation) {
-        final Pose3d cameraPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose()).plus(robotCenterToCamera);
+        final Pose3d cameraPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose()).plus(robotCenterToCamera);
         objectRotation = new Rotation3d(objectRotation.getX(), -objectRotation.getY(), objectRotation.getZ());
         final Pose3d objectRotationStart = cameraPose.plus(new Transform3d(0, 0, 0, objectRotation));
 

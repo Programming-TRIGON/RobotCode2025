@@ -10,7 +10,6 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
-import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
@@ -32,7 +31,7 @@ public class CommandConstants {
     private static final double
             MINIMUM_TRANSLATION_SHIFT_POWER = 0.18,
             MINIMUM_ROTATION_SHIFT_POWER = 0.3;
-    private static final double JOYSTICK_ORIENTED_ROTATION_DEADBAND = 0.4;
+    private static final double JOYSTICK_ORIENTED_ROTATION_DEADBAND = 0.07;
 
     public static final Command
             FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_TO_REEF_SECTIONS_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
@@ -45,13 +44,13 @@ public class CommandConstants {
                     () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftX()),
                     () -> calculateRotationStickAxisValue(DRIVER_CONTROLLER.getRightX())
             ),
-            RESET_HEADING_COMMAND = new InstantCommand(RobotContainer.POSE_ESTIMATOR::resetHeading),
-    //    RESET_HEADING_COMMAND = new InstantCommand(() -> RobotContainer.POSE_ESTIMATOR.resetPose(RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose())),
-    SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND = SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-            () -> getXPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
-            () -> getYPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
-            () -> 0
-    ),
+    //            RESET_HEADING_COMMAND = new InstantCommand(RobotContainer.POSE_ESTIMATOR::resetHeading),
+    RESET_HEADING_COMMAND = new InstantCommand(() -> RobotContainer.POSE_ESTIMATOR.resetPose(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose())),
+            SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND = SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+                    () -> getXPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
+                    () -> getYPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
+                    () -> 0
+            ),
             STATIC_WHITE_LED_COLOR_COMMAND = LEDCommands.getStaticColorCommand(Color.kWhite, LEDStrip.LED_STRIPS),
             WHEEL_RADIUS_CHARACTERIZATION_COMMAND = new WheelRadiusCharacterizationCommand(
                     PathPlannerConstants.ROBOT_CONFIG.moduleLocations,
@@ -62,7 +61,7 @@ public class CommandConstants {
             ),
             CALCULATE_CAMERA_POSITION_COMMAND = new CameraPositionCalculationCommand(
                     () -> {
-                        return RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose();
+                        return RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
                     },
                     Rotation2d.fromDegrees(200),
                     (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),

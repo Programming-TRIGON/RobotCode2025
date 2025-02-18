@@ -134,7 +134,7 @@ public class CoralPlacingCommands {
     }
 
     private static double calculateDistanceToTargetScoringPose() {
-        final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getCurrentEstimatedPose().getTranslation();
+        final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
         final Translation2d targetTranslation = calculateTargetScoringPose().get().getTranslation();
         return currentTranslation.getDistance(targetTranslation);
     }
@@ -164,7 +164,7 @@ public class CoralPlacingCommands {
     public enum ScoringLevel {
         L1_CORAL_INTAKE(1.38, 0.14, Rotation2d.fromDegrees(180)),
         L1_GRIPPER(1.38, 0.17, Rotation2d.fromDegrees(0)),
-        L2(1.3, 0.14, Rotation2d.fromDegrees(0)),
+        L2(1.3, 0.17, Rotation2d.fromDegrees(0)),
         L3(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0)),
         L4(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0));
 

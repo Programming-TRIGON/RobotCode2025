@@ -105,10 +105,6 @@ public class CoralIntake extends MotorSubsystem {
         return CoralIntakeConstants.CORAL_COLLECTION_BOOLEAN_EVENT.getAsBoolean();
     }
 
-    public boolean hasGamePieceQuickCheck() {
-        return beamBreak.getBinaryValue();
-    }
-
     public boolean isEarlyCoralCollectionDetected() {
         if (RobotHardwareStats.isSimulation()) // this is always true in simulation
             return false;

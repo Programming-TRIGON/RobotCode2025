@@ -40,7 +40,7 @@ public class AutonomousCommands {
                 new ParallelCommandGroup(
                         ElevatorCommands.getSetTargetStateCommand(() -> scoringLevel.elevatorState),
                         GripperCommands.getPrepareForStateCommand(() -> scoringLevel.gripperState)
-                ).until(() -> RobotContainer.ELEVATOR.atTargetState() && RobotContainer.GRIPPER.atTargetAngle())
+                ).until(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState) && RobotContainer.GRIPPER.atState(scoringLevel.gripperState))
         );
     }
 
