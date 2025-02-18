@@ -10,12 +10,9 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
-import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
-import frc.trigon.robot.subsystems.climber.ClimberCommands;
-import frc.trigon.robot.subsystems.climber.ClimberConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.commands.CameraPositionCalculationCommand;
 import org.trigon.commands.WheelRadiusCharacterizationCommand;
@@ -62,9 +59,6 @@ public class CommandConstants {
                     (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),
                     RobotContainer.SWERVE
             ),
-            OVERRIDE_IS_CLIMBING_COMMAND = new InstantCommand(() -> RobotContainer.CLIMBER.setIsClimbing(false)),
-            MANUALLY_RAISE_CLIMBER_COMMAND = ClimberCommands.getSetTargetVoltageCommand(ClimberConstants.MANUALLY_RAISE_CLIMBER_VOLTAGE),
-            MANUALLY_LOWER_CLIMBER_COMMAND = ClimberCommands.getSetTargetVoltageCommand(ClimberConstants.MANUALLY_LOWER_CLIMBER_VOLTAGE),
             CALCULATE_CAMERA_POSITION_COMMAND = new CameraPositionCalculationCommand(
                     () -> {
                         return RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
