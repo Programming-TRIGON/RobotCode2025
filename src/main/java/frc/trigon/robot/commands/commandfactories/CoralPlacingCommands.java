@@ -104,9 +104,9 @@ public class CoralPlacingCommands {
 
     private static Command getMakeSureGripperDoesntHitReefCommand() {
         return new ParallelCommandGroup(
-                GripperCommands.getSetTargetStateCommand(() -> GripperConstants.GripperState.AFTER_ELEVATOR_OPEN_POSITION),
+                GripperCommands.getSetTargetStateCommand(() -> GripperConstants.GripperState.STATE),
                 Commands.idle(RobotContainer.ELEVATOR)
-        ).until(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.AFTER_ELEVATOR_OPEN_POSITION));
+        ).until(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.STATE));
     }
 
     private static Command getGripperScoringSequenceCommand() {
