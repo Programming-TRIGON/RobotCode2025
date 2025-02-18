@@ -45,10 +45,10 @@ public class GripperConstants {
     static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
     static final LaserCAN LASER_CAN = new LaserCAN(LASER_CAN_ID, LASER_CAN_NAME);
 
-    static final double ANGLE_MOTOR_GEAR_RATIO = 34.642351;
+    static final double ANGLE_MOTOR_GEAR_RATIO = 20.5;
     private static final double GRIPPING_MOTOR_GEAR_RATIO = 4;
-    private static final double ANGLE_ENCODER_GRAVITY_OFFSET = -0.36379;
-    static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = -0.32 - ANGLE_ENCODER_GRAVITY_OFFSET;
+    private static final double ANGLE_ENCODER_GRAVITY_OFFSET = -0.12331;
+    static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = -0.295 - ANGLE_ENCODER_GRAVITY_OFFSET;
     static final boolean FOC_ENABLED = true;
 
     private static final int
@@ -82,7 +82,7 @@ public class GripperConstants {
     private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> SimulationFieldHandler.isCoralInGripper() && SimulationFieldHandler.isHoldingCoral() ? 1 : 1000;
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
-            Units.Volts.of(0.25).per(Units.Seconds),
+            Units.Volts.of(0.5).per(Units.Seconds),
             Units.Volts.of(1),
             Units.Second.of(1000)
     );
@@ -166,13 +166,13 @@ public class GripperConstants {
         config.Feedback.FeedbackRemoteSensorID = ANGLE_MOTOR.getID();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 8;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 6;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.1579;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 4.0791;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.254;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 2.52;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0 : 0.23721;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0 : 0.25;
 
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
@@ -181,11 +181,11 @@ public class GripperConstants {
         config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 5 : 8;
         config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 
-        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Rotation2d.fromDegrees(-59.645756).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET)).getRotations();
-
-        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Rotation2d.fromDegrees(120).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET)).getRotations();
+//        config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+//        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Rotation2d.fromDegrees(-59.645756).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET)).getRotations();
+//
+//        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+//        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Rotation2d.fromDegrees(120).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET)).getRotations();
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ARM_SIMULATION);
@@ -202,7 +202,7 @@ public class GripperConstants {
         final CANcoderConfiguration config = new CANcoderConfiguration();
 
         config.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
-        config.MagnetSensor.MagnetOffset = -0.36379;
+        config.MagnetSensor.MagnetOffset = ANGLE_ENCODER_GRAVITY_OFFSET;
         config.MagnetSensor.AbsoluteSensorDiscontinuityPoint = 0.5;
 
         ANGLE_ENCODER.applyConfiguration(config);

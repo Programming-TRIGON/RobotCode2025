@@ -18,11 +18,7 @@ import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.poseestimation.poseestimator.PoseEstimator;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import frc.trigon.robot.subsystems.coralintake.CoralIntake;
-import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
-import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.Elevator;
-import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
-import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.Gripper;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.swerve.Swerve;
@@ -72,10 +68,12 @@ public class RobotContainer {
     }
 
     private void bindDefaultCommands() {
-        SWERVE.setDefaultCommand(GeneralCommands.getFieldRelativeDriveCommand());
-        CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
-        ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
-        GRIPPER.setDefaultCommand(GripperCommands.getDefaultCommand());
+//        SWERVE.setDefaultCommand(GeneralCommands.getFieldRelativeDriveCommand());
+//        CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
+//        ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
+//        GRIPPER.setDefaultCommand(GripperCommands.getDefaultCommand());
+//        configureSysIdBindings(GRIPPER);
+        OperatorConstants.OPERATOR_CONTROLLER.t().whileTrue(GripperCommands.getDebuggingCommand());
     }
 
     private void bindControllerCommands() {

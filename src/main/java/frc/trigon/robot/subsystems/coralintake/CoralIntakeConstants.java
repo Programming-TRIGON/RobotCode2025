@@ -51,9 +51,9 @@ public class CoralIntakeConstants {
     private static final double
             INTAKE_MOTOR_GEAR_RATIO = 1.3,
             FUNNEL_MOTOR_GEAR_RATIO = 4;
-    static final double ANGLE_MOTOR_GEAR_RATIO = 73;
-    private static final double ANGLE_ENCODER_GRAVITY_OFFSET_VALUE = -0.31585;
-    static final double ANGLE_ENCODER_POSITION_OFFSET_VALUE = -0.32502 - ANGLE_ENCODER_GRAVITY_OFFSET_VALUE;
+    static final double ANGLE_MOTOR_GEAR_RATIO = 72;
+    private static final double ANGLE_ENCODER_GRAVITY_OFFSET_VALUE = -0.024915;
+    static final double ANGLE_ENCODER_POSITION_OFFSET_VALUE = -0.053 - ANGLE_ENCODER_GRAVITY_OFFSET_VALUE;//0.213
     private static final double
             DISTANCE_SENSOR_SCALING_SLOPE = 0.0002,
             DISTANCE_SENSOR_SCALING_INTERCEPT_POINT = -200;
@@ -214,13 +214,13 @@ public class CoralIntakeConstants {
         config.Feedback.FeedbackRemoteSensorID = ANGLE_ENCODER.getID();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 20;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 3;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 1.6663 : 0.5;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 1.6663 : 0.3;
         config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.12;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 8.7544 : 8.55;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 8.7544 : 9.15;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.41506;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.487;
 
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
