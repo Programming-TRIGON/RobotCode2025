@@ -1,9 +1,7 @@
 package frc.trigon.robot.subsystems.swerve.swervemodule;
 
-import com.ctre.phoenix6.controls.PositionVoltage;
-import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VoltageOut;
+import com.ctre.phoenix6.controls.*;
+import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -25,7 +23,7 @@ public class SwerveModule {
     private final CANcoderEncoder steerEncoder;
     private final PositionVoltage steerPositionRequest = new PositionVoltage(0).withEnableFOC(SwerveModuleConstants.ENABLE_FOC);
     private final double wheelDiameter;
-    private final VelocityTorqueCurrentFOC driveVelocityRequest = new VelocityTorqueCurrentFOC(0);
+    private final VelocityVoltage driveVelocityRequest = new VelocityVoltage(0).withEnableFOC(true);
     private final VoltageOut driveVoltageRequest = new VoltageOut(0).withEnableFOC(SwerveModuleConstants.ENABLE_FOC);
     private final TorqueCurrentFOC driveTorqueCurrentFOCRequest = new TorqueCurrentFOC(0);
     private boolean shouldDriveMotorUseClosedLoop = true;
@@ -70,7 +68,7 @@ public class SwerveModule {
         log.motor("Module" + driveMotor.getID() + "Drive")
                 .angularPosition(Units.Rotations.of(driveMotor.getSignal(TalonFXSignal.POSITION)))
                 .angularVelocity(Units.RotationsPerSecond.of(driveMotor.getSignal(TalonFXSignal.VELOCITY)))
-                .voltage(Units.Volts.of(driveMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
+                .voltage(Units.Volts.of(driveMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)))
     }
 
     /**
@@ -97,7 +95,7 @@ public class SwerveModule {
     }
 
     public void setDriveMotorTargetCurrent(double targetCurrent) {
-        driveMotor.setControl(driveTorqueCurrentFOCRequest.withOutput(targetCurrent));
+        driveMotor.setControl(driveVoltageRequest.withOutput(targetCurrent));
     }
 
     public void setTargetAngle(Rotation2d angle) {

@@ -32,7 +32,7 @@ public class SwerveModuleConstants {
 
     public static final SysIdRoutine.Config DRIVE_MOTOR_SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(1).per(Units.Second),
-            Units.Volts.of(5),
+            Units.Volts.of(8),
             Units.Second.of(1000)
     );
 
@@ -78,12 +78,12 @@ public class SwerveModuleConstants {
         config.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.1;
         config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 50 : 55;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 50 : 0;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.4708 : 5.1;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0.48818 : 2.4;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.4708 : 0.19774;//5.1;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 0.87087;
+        config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0.48818 : 0.049432;// 2.4;
 
         config.Feedback.VelocityFilterTimeConstant = 0;
 
