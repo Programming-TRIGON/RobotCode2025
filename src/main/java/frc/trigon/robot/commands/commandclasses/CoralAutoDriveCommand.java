@@ -25,7 +25,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
     private static final PIDController
             X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new PIDController(0.5, 0, 0) :
-            new PIDController(0, 0, 0),
+            new PIDController(0.3, 0, 0),
             Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
                     new PIDController(0.5, 0, 0) :
                     new PIDController(0.4, 0, 0.03);
@@ -56,7 +56,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
         final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
         if (trackedObjectPositionOnField == null)
-            return new Translation2d();
+            return null;
 
         final Translation2d difference = robotPose.getTranslation().minus(trackedObjectPositionOnField);
         return difference.rotateBy(robotPose.getRotation().unaryMinus());
@@ -74,16 +74,17 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
         return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                 () -> shouldMoveTowardsCoral() ? X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getX()) : 0,
                 () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getY()),
-                this::calculateTargetAngle
+                CoralAutoDriveCommand::calculateTargetAngle
         );
     }
 
     private boolean shouldMoveTowardsCoral() {
-        return distanceFromTrackedCoral.getNorm() > CoralIntakeConstants.AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS ||
-                RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR);
+        return distanceFromTrackedCoral != null &&
+                (distanceFromTrackedCoral.getNorm() > CoralIntakeConstants.AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS ||
+                        RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR));
     }
 
-    private FlippableRotation2d calculateTargetAngle() {
+    public static FlippableRotation2d calculateTargetAngle() {
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
         final Translation2d trackedObjectFieldRelativePosition = CAMERA.getTrackedObjectFieldRelativePosition();
         if (trackedObjectFieldRelativePosition == null)

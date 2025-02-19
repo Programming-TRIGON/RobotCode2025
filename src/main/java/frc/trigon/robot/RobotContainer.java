@@ -70,6 +70,7 @@ public class RobotContainer {
         bindDefaultCommands();
         bindControllerCommands();
         bindSetters();
+//        configureSysIdBindings(ELEVATOR);
     }
 
     private void bindDefaultCommands() {

@@ -7,8 +7,8 @@
     "ScoreFourL4Corals"
   ],
   "autoFolders": [],
-  "defaultMaxVel": 2.0,
-  "defaultMaxAccel": 3.0,
+  "defaultMaxVel": 3.2,
+  "defaultMaxAccel": 3.6,
   "defaultMaxAngVel": 400.0,
   "defaultMaxAngAccel": 400.0,
   "defaultNominalVoltage": 12.0,
