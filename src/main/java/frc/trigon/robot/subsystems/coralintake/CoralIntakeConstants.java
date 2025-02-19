@@ -53,7 +53,7 @@ public class CoralIntakeConstants {
             FUNNEL_MOTOR_GEAR_RATIO = 4;
     static final double ANGLE_MOTOR_GEAR_RATIO = 72;
     private static final double ANGLE_ENCODER_GRAVITY_OFFSET_VALUE = -0.024915;
-    static final double ANGLE_ENCODER_POSITION_OFFSET_VALUE = -0.053 - ANGLE_ENCODER_GRAVITY_OFFSET_VALUE;//0.213
+    static final double ANGLE_ENCODER_POSITION_OFFSET_VALUE = -0.053944 - ANGLE_ENCODER_GRAVITY_OFFSET_VALUE;//0.213
     private static final double
             DISTANCE_SENSOR_SCALING_SLOPE = 0.0002,
             DISTANCE_SENSOR_SCALING_INTERCEPT_POINT = -200;

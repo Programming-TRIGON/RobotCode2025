@@ -95,13 +95,13 @@ public class ElevatorConstants {
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 0.6;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 0;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0.22774 : 0;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.079427;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.88;
-        config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.42;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.059463;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.91465;
+        config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0.031976;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.40282;
 
         config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;

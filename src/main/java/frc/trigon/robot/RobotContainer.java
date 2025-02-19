@@ -8,6 +8,7 @@ package frc.trigon.robot;
 import com.pathplanner.lib.auto.AutoBuilder;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
+import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandfactories.*;
@@ -19,6 +20,7 @@ import frc.trigon.robot.poseestimation.poseestimator.PoseEstimator;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import frc.trigon.robot.subsystems.coralintake.CoralIntake;
 import frc.trigon.robot.subsystems.elevator.Elevator;
+import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.gripper.Gripper;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.swerve.Swerve;
@@ -38,6 +40,7 @@ public class RobotContainer {
     private LoggedDashboardChooser<Command> autoChooser;
 
     public RobotContainer() {
+        OperatorConstants.OPERATOR_CONTROLLER.a().whileTrue(new PrintCommand("jk"));
         initializeGeneralSystems();
         buildAutoChooser();
         configureBindings();
@@ -72,8 +75,8 @@ public class RobotContainer {
 //        CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
 //        ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
 //        GRIPPER.setDefaultCommand(GripperCommands.getDefaultCommand());
-//        configureSysIdBindings(GRIPPER);
-        OperatorConstants.OPERATOR_CONTROLLER.t().whileTrue(GripperCommands.getDebuggingCommand());
+//        configureSysIdBindings(ELEVATOR);
+        OperatorConstants.OPERATOR_CONTROLLER.t().whileTrue(ElevatorCommands.getDebuggingCommand());
     }
 
     private void bindControllerCommands() {
