@@ -68,7 +68,7 @@ public class SwerveModule {
         log.motor("Module" + driveMotor.getID() + "Drive")
                 .angularPosition(Units.Rotations.of(driveMotor.getSignal(TalonFXSignal.POSITION)))
                 .angularVelocity(Units.RotationsPerSecond.of(driveMotor.getSignal(TalonFXSignal.VELOCITY)))
-                .voltage(Units.Volts.of(driveMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)))
+                .voltage(Units.Volts.of(driveMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE)));
     }
 
     /**
