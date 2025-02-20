@@ -6,6 +6,7 @@
 package frc.trigon.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -30,6 +31,8 @@ import frc.trigon.robot.subsystems.swerve.Swerve;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
 
+import java.util.List;
+
 public class RobotContainer {
     public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator(
             CameraConstants.LEFT_REEF_TAG_CAMERA,
@@ -46,6 +49,7 @@ public class RobotContainer {
         initializeGeneralSystems();
         buildAutoChooser();
         configureBindings();
+        new PathPlannerAuto()
     }
 
     /**
@@ -130,6 +134,32 @@ public class RobotContainer {
     }
 
     private void buildAutoChooser() {
-        autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
+        autoChooser = new LoggedDashboardChooser<>("AutoChooser");
+
+        final List<String> autoNames = AutoBuilder.getAllAutoNames();
+        boolean hasDefault = false;
+
+        for (String autoName : autoNames) {
+            final PathPlannerAuto autoNonMirrored = new PathPlannerAuto(autoName);
+            final PathPlannerAuto autoMirrored = new PathPlannerAuto(autoName, true);
+
+            if (!PathPlannerConstants.DEFAULT_AUTO_NAME.isEmpty() && PathPlannerConstants.DEFAULT_AUTO_NAME.equals(autoName)) {
+                hasDefault = true;
+                autoChooser.addDefaultOption(autoNonMirrored.getName(), autoNonMirrored);
+                autoChooser.addOption(autoMirrored.getName() + "Mirrored", autoMirrored);
+            } else if (!PathPlannerConstants.DEFAULT_AUTO_NAME.isEmpty() && PathPlannerConstants.DEFAULT_AUTO_NAME.equals(autoName + "Mirrored")) {
+                hasDefault = true;
+                autoChooser.addDefaultOption(autoMirrored.getName() + "Mirrored", autoMirrored);
+                autoChooser.addOption(autoNonMirrored.getName(), autoNonMirrored);
+            } else {
+                autoChooser.addOption(autoNonMirrored.getName(), autoNonMirrored);
+                autoChooser.addOption(autoMirrored.getName() + "Mirrored", autoMirrored);
+            }
+        }
+
+        if (!hasDefault)
+            autoChooser.addDefaultOption("None", Commands.none());
+        else
+            autoChooser.addOption("None", Commands.none());
     }
 }
