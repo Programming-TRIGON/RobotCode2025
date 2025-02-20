@@ -140,7 +140,6 @@ public class CoralIntakeConstants {
 
     public static final double AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS = 1.3;
     public static final double
-            COLLECTION_LEDS_BLINKING_SPEED = 0.5,
             COLLECTION_RUMBLE_DURATION_SECONDS = 0.7,
             COLLECTION_RUMBLE_POWER = 1;
     private static final double
