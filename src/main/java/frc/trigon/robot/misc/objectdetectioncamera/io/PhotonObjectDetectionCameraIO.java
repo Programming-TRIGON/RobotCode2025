@@ -58,6 +58,7 @@ public class PhotonObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         for (int i = 0; i < ObjectDetectionCameraConstants.NUMBER_OF_GAME_PIECE_TYPES; i++)
             visibleObjectsRotations[i] = new ArrayList<>();
         Arrays.fill(inputs.hasTarget, false);
+        inputs.latestResultTimestamp = result.getTimestampSeconds();
 
         for (PhotonTrackedTarget currentTarget : result.getTargets()) {
             if (currentTarget.getDetectedObjectClassID() == -1)
