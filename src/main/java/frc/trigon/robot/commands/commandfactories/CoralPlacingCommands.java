@@ -1,13 +1,16 @@
 package frc.trigon.robot.commands.commandfactories;
 
+import com.ctre.phoenix.led.LarsonAnimation;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
 import frc.trigon.robot.constants.FieldConstants;
+import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
@@ -17,6 +20,8 @@ import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
+import org.trigon.hardware.misc.leds.LEDCommands;
+import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.utilities.flippable.FlippablePose2d;
 
 public class CoralPlacingCommands {
@@ -69,7 +74,8 @@ public class CoralPlacingCommands {
     private static Command getAutonomouslyScoreInReefFromCoralIntakeCommand() {
         return new ParallelCommandGroup(
                 getAutonomousDriveToReefThenManualDriveCommand(),
-                getCoralIntakeScoringSequnceCommand()
+                getCoralIntakeScoringSequnceCommand(),
+                LEDCommands.getBlinkingCommand(Color.kDarkBlue, LEDConstants.SCORING_BLINKING_SPEED, LEDStrip.LED_STRIPS).asProxy()
         );
     }
 
@@ -112,7 +118,16 @@ public class CoralPlacingCommands {
     private static Command getGripperScoringSequenceCommand() {
         return new SequentialCommandGroup(
                 GripperCommands.getPrepareForStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
-                GripperCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.gripperState)
+                GripperCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).alongWith(
+                        LEDCommands.getBreatheCommand(
+                                Color.kPurple,
+                                LEDConstants.SCORING_BREATHING_LEDS_AMOUNT,
+                                LEDConstants.SCORING_BLINKING_SPEED,
+                                false,
+                                LarsonAnimation.BounceMode.Back,
+                                LEDStrip.LED_STRIPS
+                        ).asProxy()
+                )
         );
     }
 
