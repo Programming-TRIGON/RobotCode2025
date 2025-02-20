@@ -59,11 +59,6 @@ public class CoralPlacingCommands {
                 getManuallyScoreInReefFromGripperCommand().asProxy(),
                 () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER.getAsBoolean()
         );
-//                (interrupted) -> {
-//                    if (interrupted && TARGET_SCORING_LEVEL.ordinal() > ScoringLevel.L2.ordinal() && RobotContainer.ELEVATOR.willMovementMoveThroughHitRange(0))
-//                        getMakeSureGripperDoesntHitReefCommand().schedule();
-//                }
-//        );
     }
 
     private static Command getAutonomouslyScoreInReefFromCoralIntakeCommand() {
@@ -104,7 +99,7 @@ public class CoralPlacingCommands {
 
     private static Command getMakeSureGripperDoesntHitReefCommand() {
         return new ParallelCommandGroup(
-                GripperCommands.getSetTargetStateCommand(() -> GripperConstants.GripperState.STATE),
+                GripperCommands.getSetTargetStateCommand(() -> GripperConstants.GripperState.OPEN_FOR_ELEVATOR_CLOSING),
                 Commands.idle(RobotContainer.ELEVATOR)
         );
     }

@@ -231,13 +231,12 @@ public class GripperConstants {
         SCORE_L1(Rotation2d.fromDegrees(93), -3),
         LOAD_CORAL(Rotation2d.fromDegrees(-50), 11),
         UNLOAD_CORAL(Rotation2d.fromDegrees(-50), -3),
-        OPEN_FOR_ELEVATOR_MINIMUM(Rotation2d.fromDegrees(-33), 0),
         COLLECT_ALGAE_FROM_REEF(Rotation2d.fromDegrees(32), -35),
         SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(110), 11),
         PREPARE_FOR_SCORING_ALGAE_IN_NET(SCORE_ALGAE_IN_NET.targetAngle, COLLECT_ALGAE_FROM_REEF.targetGripperVoltage),
         AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0),
         COLLECT_CORAL_FROM_FEEDER(Rotation2d.fromDegrees(115), 4),
-        STATE(Rotation2d.fromDegrees(93), 0); //TODO: Calibrate
+        OPEN_FOR_ELEVATOR_CLOSING(Rotation2d.fromDegrees(93), 0);
 
         final Rotation2d targetAngle;
         final double targetGripperVoltage;
