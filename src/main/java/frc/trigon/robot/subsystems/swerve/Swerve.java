@@ -154,13 +154,13 @@ public class Swerve extends MotorSubsystem {
 //        }
 
         final SwerveModuleState[] swerveModuleStates = SwerveConstants.KINEMATICS.toSwerveModuleStates(targetSpeeds);
-        final double[] targetAccelerationsMetersPerSecondSquared;
+        final double[] targetForcesNm;
         if (feedforwards == null)
-            targetAccelerationsMetersPerSecondSquared = new double[]{0, 0, 0, 0};
+            targetForcesNm = new double[]{0, 0, 0, 0};
         else
-            targetAccelerationsMetersPerSecondSquared = feedforwards.accelerationsMPSSq();
+            targetForcesNm = feedforwards.linearForcesNewtons();
 
-        setTargetModuleStates(swerveModuleStates, targetAccelerationsMetersPerSecondSquared);
+        setTargetModuleStates(swerveModuleStates, targetForcesNm);
     }
 
     public Rotation2d getDriveRelativeAngle() {
@@ -261,17 +261,17 @@ public class Swerve extends MotorSubsystem {
                 RobotHardwareStats.getPeriodicTimeSeconds()
         );
 
-        if (isStill(previousSetpoint.robotRelativeSpeeds())) {
-            stop();
-            return;
-        }
+//        if (isStill(previousSetpoint.robotRelativeSpeeds())) {
+//            stop();
+//            return;
+//        }
 
-        setTargetModuleStates(previousSetpoint.moduleStates(), previousSetpoint.feedforwards().accelerationsMPSSq());
+        setTargetModuleStates(previousSetpoint.moduleStates(), previousSetpoint.feedforwards().linearForcesNewtons());
     }
 
-    private void setTargetModuleStates(SwerveModuleState[] swerveModuleStates, double[] targetAccelerationsMetersPerSecondSquared) {
+    private void setTargetModuleStates(SwerveModuleState[] swerveModuleStates, double[] targetForcesNm) {
         for (int i = 0; i < swerveModules.length; i++)
-            swerveModules[i].setTargetState(swerveModuleStates[i], targetAccelerationsMetersPerSecondSquared[i]);
+            swerveModules[i].setTargetState(swerveModuleStates[i], targetForcesNm[i]);
     }
 
     private void setClosedLoop(boolean shouldUseClosedLoop) {

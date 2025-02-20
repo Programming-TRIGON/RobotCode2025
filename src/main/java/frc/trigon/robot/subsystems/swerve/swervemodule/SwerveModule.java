@@ -1,7 +1,9 @@
 package frc.trigon.robot.subsystems.swerve.swervemodule;
 
-import com.ctre.phoenix6.controls.*;
-import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
@@ -23,7 +25,7 @@ public class SwerveModule {
     private final CANcoderEncoder steerEncoder;
     private final PositionVoltage steerPositionRequest = new PositionVoltage(0).withEnableFOC(SwerveModuleConstants.ENABLE_FOC);
     private final double wheelDiameter;
-    private final VelocityVoltage driveVelocityRequest = new VelocityVoltage(0).withEnableFOC(true);
+    private final VelocityTorqueCurrentFOC driveVelocityRequest = new VelocityTorqueCurrentFOC(0).withUpdateFreqHz(1000);
     private final VoltageOut driveVoltageRequest = new VoltageOut(0).withEnableFOC(SwerveModuleConstants.ENABLE_FOC);
     private final TorqueCurrentFOC driveTorqueCurrentFOCRequest = new TorqueCurrentFOC(0);
     private boolean shouldDriveMotorUseClosedLoop = true;
@@ -48,15 +50,15 @@ public class SwerveModule {
         configureHardware(offsetRotations);
     }
 
-    public void setTargetState(SwerveModuleState targetState, double targetAccelerationMetersPerSecondSquared) {
+    public void setTargetState(SwerveModuleState targetState, double targetForceNm) {
         if (willOptimize(targetState)) {
             targetState.optimize(getCurrentAngle());
-            targetAccelerationMetersPerSecondSquared *= -1;
+            targetForceNm *= -1;
         }
 
         this.targetState = targetState;
         setTargetAngle(targetState.angle);
-        setTargetVelocity(targetState.speedMetersPerSecond, targetAccelerationMetersPerSecondSquared);
+        setTargetVelocity(targetState.speedMetersPerSecond, targetForceNm);
     }
 
     public void setBrake(boolean brake) {
@@ -95,7 +97,7 @@ public class SwerveModule {
     }
 
     public void setDriveMotorTargetCurrent(double targetCurrent) {
-        driveMotor.setControl(driveVoltageRequest.withOutput(targetCurrent));
+        driveMotor.setControl(driveTorqueCurrentFOCRequest.withOutput(targetCurrent));
     }
 
     public void setTargetAngle(Rotation2d angle) {
@@ -142,21 +144,21 @@ public class SwerveModule {
      * Sets the target velocity for the module.
      * The target velocity is set using either closed loop or open loop depending on {@link this#shouldDriveMotorUseClosedLoop}.
      *
-     * @param targetVelocityMetersPerSecond            the target velocity, in meters per second
-     * @param targetAccelerationMetersPerSecondSquared the target acceleration of the module in meters per second squared
+     * @param targetVelocityMetersPerSecond the target velocity, in meters per second
+     * @param targetForceNm                 the target force of the module in newton meters
      */
-    private void setTargetVelocity(double targetVelocityMetersPerSecond, double targetAccelerationMetersPerSecondSquared) {
+    private void setTargetVelocity(double targetVelocityMetersPerSecond, double targetForceNm) {
         if (shouldDriveMotorUseClosedLoop) {
-            setTargetClosedLoopVelocity(targetVelocityMetersPerSecond, targetAccelerationMetersPerSecondSquared);
+            setTargetClosedLoopVelocity(targetVelocityMetersPerSecond, targetForceNm);
             return;
         }
 
         setTargetOpenLoopVelocity(targetVelocityMetersPerSecond);
     }
 
-    private void setTargetClosedLoopVelocity(double targetVelocityMetersPerSecond, double targetAccelerationMetersPerSecondSquared) {
+    private void setTargetClosedLoopVelocity(double targetVelocityMetersPerSecond, double targetForceNm) {
         final double targetVelocityRotationsPerSecond = metersToDriveWheelRotations(targetVelocityMetersPerSecond);
-        final double targetAccelerationRotationsPerSecondSquared = metersToDriveWheelRotations(targetAccelerationMetersPerSecondSquared);
+        final double targetAccelerationRotationsPerSecondSquared = metersToDriveWheelRotations(targetForceNm);
         driveMotor.setControl(driveVelocityRequest.withVelocity(targetVelocityRotationsPerSecond).withAcceleration(targetAccelerationRotationsPerSecondSquared));
     }
 

@@ -6,6 +6,8 @@
 package frc.trigon.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.PrintCommand;
@@ -29,6 +31,8 @@ import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.swerve.Swerve;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
+
+import java.util.List;
 
 public class RobotContainer {
     public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator(
@@ -71,15 +75,14 @@ public class RobotContainer {
         bindDefaultCommands();
         bindControllerCommands();
         bindSetters();
+//        configureSysIdBindings(ELEVATOR);
     }
 
     private void bindDefaultCommands() {
         SWERVE.setDefaultCommand(GeneralCommands.getFieldRelativeDriveCommand());
         CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
-        GRIPPER.setDefaultCommand(GripperCommands.getDefaultCommand());
-//        configureSysIdBindings(ELEVATOR);
-//        OperatorConstants.OPERATOR_CONTROLLER.t().whileTrue(ElevatorCommands.getDebuggingCommand());
+        GRIPPER.setDefaultCommand(GripperCommands.getGripperDefaultCommand());
     }
 
     private void bindControllerCommands() {
@@ -88,7 +91,8 @@ public class RobotContainer {
         OperatorConstants.TOGGLE_ROTATION_MODE_TRIGGER.onTrue(GeneralCommands.getToggleRotationModeCommand());
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
 
-        OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CommandConstants.WHEEL_RADIUS_CHARACTERIZATION_COMMAND);
+        OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CoralIntakeCommands.getDebuggingCommand());
+        OperatorConstants.OPERATOR_CONTROLLER.two().whileTrue(CoralIntakeCommands.getSetTargetStateCommand(9, 0, Rotation2d.fromDegrees(90)));
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
         OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionCommand());
         OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
@@ -130,7 +134,34 @@ public class RobotContainer {
         subsystem.setDefaultCommand(Commands.idle(subsystem));
     }
 
+    @SuppressWarnings("All")
     private void buildAutoChooser() {
-        autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
+        autoChooser = new LoggedDashboardChooser<>("AutoChooser");
+
+        final List<String> autoNames = AutoBuilder.getAllAutoNames();
+        boolean hasDefault = false;
+
+        for (String autoName : autoNames) {
+            final PathPlannerAuto autoNonMirrored = new PathPlannerAuto(autoName);
+            final PathPlannerAuto autoMirrored = new PathPlannerAuto(autoName, true);
+
+            if (!PathPlannerConstants.DEFAULT_AUTO_NAME.isEmpty() && PathPlannerConstants.DEFAULT_AUTO_NAME.equals(autoName)) {
+                hasDefault = true;
+                autoChooser.addDefaultOption(autoNonMirrored.getName(), autoNonMirrored);
+                autoChooser.addOption(autoMirrored.getName() + "Mirrored", autoMirrored);
+            } else if (!PathPlannerConstants.DEFAULT_AUTO_NAME.isEmpty() && PathPlannerConstants.DEFAULT_AUTO_NAME.equals(autoName + "Mirrored")) {
+                hasDefault = true;
+                autoChooser.addDefaultOption(autoMirrored.getName() + "Mirrored", autoMirrored);
+                autoChooser.addOption(autoNonMirrored.getName(), autoNonMirrored);
+            } else {
+                autoChooser.addOption(autoNonMirrored.getName(), autoNonMirrored);
+                autoChooser.addOption(autoMirrored.getName() + "Mirrored", autoMirrored);
+            }
+        }
+
+        if (!hasDefault)
+            autoChooser.addDefaultOption("None", Commands.none());
+        else
+            autoChooser.addOption("None", Commands.none());
     }
 }

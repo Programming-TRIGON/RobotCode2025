@@ -138,7 +138,6 @@ public class CoralIntakeConstants {
             Color.kRed
     );
 
-    public static final double AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS = 1.3;
     public static final double
             COLLECTION_LEDS_BLINKING_SPEED = 0.5,
             COLLECTION_RUMBLE_DURATION_SECONDS = 0.7,
@@ -156,7 +155,7 @@ public class CoralIntakeConstants {
             () -> DISTANCE_SENSOR.getScaledValue() < EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETRES
     ).debounce(EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
 
-    static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(0.5);
+    static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1.5);
 
     static {
         configureIntakeMotor();

@@ -33,8 +33,8 @@
   "pointTowardsZones": [],
   "eventMarkers": [],
   "globalConstraints": {
-    "maxVelocity": 0.8,
-    "maxAcceleration": 0.8,
+    "maxVelocity": 3.2,
+    "maxAcceleration": 3.6,
     "maxAngularVelocity": 400.0,
     "maxAngularAcceleration": 400.0,
     "nominalVoltage": 12.0,
@@ -45,7 +45,7 @@
     "rotation": 127.2348339815746
   },
   "reversed": false,
-  "folder": null,
+  "folder": "TwoL4CoralsFromFeeder",
   "idealStartingState": {
     "velocity": 0,
     "rotation": 119.99999999999999
