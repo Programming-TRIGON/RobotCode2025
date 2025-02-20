@@ -158,7 +158,7 @@ public class Swerve extends MotorSubsystem {
         if (feedforwards == null)
             targetAccelerationsMetersPerSecondSquared = new double[]{0, 0, 0, 0};
         else
-            targetAccelerationsMetersPerSecondSquared = feedforwards.accelerationsMPSSq();
+            targetAccelerationsMetersPerSecondSquared = feedforwards.linearForcesNewtons();
 
         setTargetModuleStates(swerveModuleStates, targetAccelerationsMetersPerSecondSquared);
     }
@@ -261,12 +261,12 @@ public class Swerve extends MotorSubsystem {
                 RobotHardwareStats.getPeriodicTimeSeconds()
         );
 
-        if (isStill(previousSetpoint.robotRelativeSpeeds())) {
-            stop();
-            return;
-        }
+//        if (isStill(previousSetpoint.robotRelativeSpeeds())) {
+//            stop();
+//            return;
+//        }
 
-        setTargetModuleStates(previousSetpoint.moduleStates(), previousSetpoint.feedforwards().accelerationsMPSSq());
+        setTargetModuleStates(previousSetpoint.moduleStates(), previousSetpoint.feedforwards().linearForcesNewtons());
     }
 
     private void setTargetModuleStates(SwerveModuleState[] swerveModuleStates, double[] targetAccelerationsMetersPerSecondSquared) {
