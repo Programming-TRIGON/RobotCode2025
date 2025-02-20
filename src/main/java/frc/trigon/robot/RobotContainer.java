@@ -49,7 +49,6 @@ public class RobotContainer {
         initializeGeneralSystems();
         buildAutoChooser();
         configureBindings();
-        new PathPlannerAuto()
     }
 
     /**
@@ -133,6 +132,7 @@ public class RobotContainer {
         subsystem.setDefaultCommand(Commands.idle(subsystem));
     }
 
+    @SuppressWarnings("All")
     private void buildAutoChooser() {
         autoChooser = new LoggedDashboardChooser<>("AutoChooser");
 
