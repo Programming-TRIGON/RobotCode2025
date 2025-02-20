@@ -157,6 +157,11 @@ public class CoralIntakeConstants {
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1.5);
 
+    static final double
+            PULSING_PERIOD_SECONDS = 0.2,
+            PULSING_INTAKE_MOTOR_VOLTAGE = 8,
+            PULSING_FUNNEL_MOTOR_VOLTAGE = 2;
+
     static {
         configureIntakeMotor();
         configureFunnelMotor();
@@ -270,9 +275,8 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE(-4.5, -1, Rotation2d.fromDegrees(143.5)),
-        LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE(-4.5, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE.targetAngle),
-        PREPARE_FOR_LOADING_TO_GRIPPER_WHILE_GAME_PIECE_NOT_DETECTED(8, 2, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE.targetAngle),
+        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, -1, Rotation2d.fromDegrees(143.5)),
+        LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
         UNLOAD_CORAL_FROM_GRIPPER(6, 2, Rotation2d.fromDegrees(141)),
         CENTER_CORAL(8, 2, Rotation2d.fromDegrees(143.5)),
         COLLECT_FROM_FLOOR(8, 2, Rotation2d.fromDegrees(-46)),
