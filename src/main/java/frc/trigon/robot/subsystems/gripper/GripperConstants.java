@@ -33,7 +33,7 @@ public class GripperConstants {
             GRIPPING_MOTOR_ID = 14,
             ANGLE_MOTOR_ID = 15,
             ANGLE_ENCODER_ID = 15,
-            LASER_CAN_ID = 14;
+            LASER_CAN_ID = 0;
     private static final String
             GRIPPING_MOTOR_NAME = "GripperGrippingMotor",
             ANGLE_MOTOR_NAME = "GripperAngleMotor",
