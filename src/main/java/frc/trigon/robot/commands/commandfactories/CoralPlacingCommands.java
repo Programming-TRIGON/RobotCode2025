@@ -48,8 +48,8 @@ public class CoralPlacingCommands {
     private static Command getScoreInReefFromCoralIntakeCommand() {
         return new ConditionalCommand(
                 getAutonomouslyScoreInReefFromCoralIntakeCommand().asProxy(),
-                getCoralIntakeScoringSequnceCommand().asProxy(),
-                () -> SHOULD_SCORE_AUTONOMOUSLY
+                getCoralIntakeScoringSequenceCommand().asProxy(),
+                () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER.getAsBoolean()
         );
     }
 
@@ -64,11 +64,11 @@ public class CoralPlacingCommands {
     private static Command getAutonomouslyScoreInReefFromCoralIntakeCommand() {
         return new ParallelCommandGroup(
                 getAutonomousDriveToReefThenManualDriveCommand(),
-                getCoralIntakeScoringSequnceCommand()
+                getCoralIntakeScoringSequenceCommand()
         );
     }
 
-    private static Command getCoralIntakeScoringSequnceCommand() {
+    private static Command getCoralIntakeScoringSequenceCommand() {
         return new SequentialCommandGroup(
                 CoralCollectionCommands.getUnloadCoralCommand(),
                 CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1).until(CoralPlacingCommands::canContinueScoringFromCoralIntake),
