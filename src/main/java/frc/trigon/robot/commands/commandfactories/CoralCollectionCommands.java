@@ -1,10 +1,7 @@
 package frc.trigon.robot.commands.commandfactories;
 
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
 import frc.trigon.robot.constants.OperatorConstants;
@@ -92,7 +89,7 @@ public class CoralCollectionCommands {
         return new SequentialCommandGroup(
                 CoralIntakeCommands.getCenterCoralWithPulsingCommand().until(RobotContainer.CORAL_INTAKE::hasGamePiece),
                 CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK).until(RobotContainer.CORAL_INTAKE::atTargetAngle),
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK).onlyWhile(RobotContainer.CORAL_INTAKE::hasGamePiece),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK).raceWith(new WaitUntilCommand(() -> !RobotContainer.CORAL_INTAKE.hasGamePiece()).andThen(new WaitCommand(0.4))),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK)
         );
     }

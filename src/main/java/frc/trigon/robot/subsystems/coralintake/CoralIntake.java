@@ -135,11 +135,11 @@ public class CoralIntake extends MotorSubsystem {
 
     void initializePulsing() {
         pulsingTimer.restart();
-        isPulsingOn = false;
+        isPulsingOn = true;
     }
 
     void pulseIntake() {
-        if (pulsingTimer.advanceIfElapsed(CoralIntakeConstants.PULSING_PERIOD_SECONDS))
+        if (pulsingTimer.advanceIfElapsed(CoralIntakeConstants.PULSING_PERIOD_SECONDS) && getCurrentEncoderAngle().getDegrees() > CoralIntakeConstants.PULSING_ANGLE_DEGREES)
             isPulsingOn = !isPulsingOn;
 
         setTargetState(
