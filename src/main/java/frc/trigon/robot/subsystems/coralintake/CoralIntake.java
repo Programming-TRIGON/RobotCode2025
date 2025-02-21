@@ -5,6 +5,7 @@ import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
@@ -30,6 +31,8 @@ public class CoralIntake extends MotorSubsystem {
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private CoralIntakeConstants.CoralIntakeState targetState = CoralIntakeConstants.CoralIntakeState.REST;
+    private final Timer pulsingTimer = new Timer();
+    private boolean isPulsingOn = false;
 
     public CoralIntake() {
         setName("CoralIntake");
@@ -128,6 +131,27 @@ public class CoralIntake extends MotorSubsystem {
         return calculateVisualizationPose()
                 .transformBy(getVisualizationToRealPitchTransform())
                 .transformBy(CoralIntakeConstants.CORAL_INTAKE_ORIGIN_POINT_TO_CORAL_VISUALIZATION_TRANSFORM);
+    }
+
+    void initializePulsing() {
+        pulsingTimer.restart();
+        isPulsingOn = false;
+    }
+
+    void pulseIntake() {
+        if (pulsingTimer.advanceIfElapsed(CoralIntakeConstants.PULSING_PERIOD_SECONDS))
+            isPulsingOn = !isPulsingOn;
+
+        setTargetState(
+                isPulsingOn ? CoralIntakeConstants.PULSING_INTAKE_MOTOR_VOLTAGE : 0,
+                CoralIntakeConstants.PULSING_FUNNEL_MOTOR_VOLTAGE,
+                CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle
+        );
+    }
+
+    void stopPulsing() {
+        pulsingTimer.stop();
+        stop();
     }
 
     void prepareForState(CoralIntakeConstants.CoralIntakeState targetState) {
