@@ -158,7 +158,7 @@ public class CoralIntakeConstants {
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1.5);
 
     static final double
-            PULSING_PERIOD_SECONDS = 0.1,
+            PULSING_PERIOD_SECONDS = 0.15,
             PULSING_INTAKE_MOTOR_VOLTAGE = 10,
             PULSING_FUNNEL_MOTOR_VOLTAGE = 2,
             PULSING_ANGLE_DEGREES = -30;

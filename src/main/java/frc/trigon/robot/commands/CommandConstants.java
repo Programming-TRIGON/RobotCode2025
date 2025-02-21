@@ -60,9 +60,7 @@ public class CommandConstants {
                     RobotContainer.SWERVE
             ),
             CALCULATE_CAMERA_POSITION_COMMAND = new CameraPositionCalculationCommand(
-                    () -> {
-                        return RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
-                    },
+                    RobotContainer.POSE_ESTIMATOR::getEstimatedRobotPose,
                     Rotation2d.fromDegrees(200),
                     (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),
                     RobotContainer.SWERVE

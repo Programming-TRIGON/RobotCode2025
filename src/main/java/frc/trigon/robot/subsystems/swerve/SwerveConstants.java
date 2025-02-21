@@ -33,10 +33,10 @@ public class SwerveConstants {
             REAR_LEFT_STEER_ENCODER_OFFSET = 2.851074,
             REAR_RIGHT_STEER_ENCODER_OFFSET = 0.881836;
     private static final double
-            FRONT_LEFT_WHEEL_DIAMETER = 0.04697796651513718 * 2,
-            FRONT_RIGHT_WHEEL_DIAMETER = 0.04822497365619167 * 2,
-            REAR_LEFT_WHEEL_DIAMETER = 0.049276198612846316 * 2,
-            REAR_RIGHT_WHEEL_DIAMETER = 0.048539635527868386 * 2;
+            FRONT_LEFT_WHEEL_DIAMETER = 0.047824629445622546 * 2,
+            FRONT_RIGHT_WHEEL_DIAMETER = 0.048754331884527956 * 2,
+            REAR_LEFT_WHEEL_DIAMETER = 0.048932989322178815 * 2,
+            REAR_RIGHT_WHEEL_DIAMETER = 0.04851723583378366 * 2;
     static final SwerveModule[] SWERVE_MODULES = new SwerveModule[]{
             new SwerveModule(FRONT_LEFT_ID, FRONT_LEFT_STEER_ENCODER_OFFSET, FRONT_LEFT_WHEEL_DIAMETER),
             new SwerveModule(FRONT_RIGHT_ID, FRONT_RIGHT_STEER_ENCODER_OFFSET, FRONT_RIGHT_WHEEL_DIAMETER),
@@ -92,9 +92,9 @@ public class SwerveConstants {
 
     private static void configureGyro() {
         final Pigeon2Configuration config = new Pigeon2Configuration();
-        config.MountPose.MountPoseRoll = -1.2466427087783813;
-        config.MountPose.MountPosePitch = -0.2344241589307785;
-        config.MountPose.MountPoseYaw = -1.1703122854232788;
+        config.MountPose.MountPoseYaw = -89.80070495605469;
+        config.MountPose.MountPosePitch = -0.3784863352775574;
+        config.MountPose.MountPoseRoll = -1.1409828662872314;
         GYRO.applyConfiguration(config);
         GYRO.setSimulationYawVelocitySupplier(() -> RobotContainer.SWERVE.getSelfRelativeVelocity().omegaRadiansPerSecond);
 

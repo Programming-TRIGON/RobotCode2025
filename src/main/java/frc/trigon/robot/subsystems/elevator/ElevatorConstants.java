@@ -95,13 +95,13 @@ public class ElevatorConstants {
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 0.8;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 40;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0.22774 : 0;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.059463;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.91465;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0.22774 : 0.4;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.098;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.90;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.40282;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.37;
 
         config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
@@ -147,7 +147,7 @@ public class ElevatorConstants {
         REST(0),
         SCORE_L1(0),
         SCORE_L2(0),
-        SCORE_L3(0.43),
+        SCORE_L3(0.4),
         SCORE_L4(1),
         COLLECT_ALGAE_FROM_L3(0.365),
         SCORE_NET(1.04);
