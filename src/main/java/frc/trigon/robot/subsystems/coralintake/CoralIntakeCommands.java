@@ -2,6 +2,7 @@ package frc.trigon.robot.subsystems.coralintake;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
 import org.trigon.commands.GearRatioCalculationCommand;
@@ -31,6 +32,15 @@ public class CoralIntakeCommands {
                 CoralIntakeConstants.ANGLE_ENCODER,
                 0.08,
                 RobotContainer.CORAL_INTAKE
+        );
+    }
+
+    public static Command getCenterCoralWithPulsingCommand() {
+        return new FunctionalCommand(
+                RobotContainer.CORAL_INTAKE::initializePulsing,
+                RobotContainer.CORAL_INTAKE::pulseIntake,
+                (interrupted) -> RobotContainer.CORAL_INTAKE.stopPulsing(),
+                () -> false
         );
     }
 
