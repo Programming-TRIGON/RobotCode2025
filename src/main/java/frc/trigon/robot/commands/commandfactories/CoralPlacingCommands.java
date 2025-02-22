@@ -99,6 +99,7 @@ public class CoralPlacingCommands {
 
     private static Command getGripperScoringSequenceCommand() {
         return new SequentialCommandGroup(
+                new WaitUntilCommand(() -> RobotContainer.ELEVATOR.atState(TARGET_SCORING_LEVEL.elevatorState)),
                 GripperCommands.getPrepareForStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
                 GripperCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.gripperState)
         );
