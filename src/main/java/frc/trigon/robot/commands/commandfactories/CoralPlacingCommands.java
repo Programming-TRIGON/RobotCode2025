@@ -27,7 +27,7 @@ public class CoralPlacingCommands {
 
     public static Command getScoreInReefCommand() {
         return new ConditionalCommand(
-                getScoreInReefFromCoralIntakeCommand(),
+                getCoralIntakeScoringSequenceCommand().asProxy(),
                 getScoreInReefFromGripperCommand(),
                 () -> TARGET_SCORING_LEVEL == ScoringLevel.L1_CORAL_INTAKE
         ).alongWith(
@@ -45,26 +45,11 @@ public class CoralPlacingCommands {
         );
     }
 
-    private static Command getScoreInReefFromCoralIntakeCommand() {
-        return new ConditionalCommand(
-                getAutonomouslyScoreInReefFromCoralIntakeCommand().asProxy(),
-                getCoralIntakeScoringSequenceCommand().asProxy(),
-                () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER.getAsBoolean()
-        );
-    }
-
     private static Command getScoreInReefFromGripperCommand() {
-        return new ConditionalCommand(
+        return GeneralCommands.getContinuousConditionalCommand(
                 getAutonomouslyScoreInReefFromGripperCommand().asProxy(),
                 getManuallyScoreInReefFromGripperCommand().asProxy(),
-                () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER.getAsBoolean()
-        );
-    }
-
-    private static Command getAutonomouslyScoreInReefFromCoralIntakeCommand() {
-        return new ParallelCommandGroup(
-                getAutonomousDriveToReefThenManualDriveCommand(),
-                getCoralIntakeScoringSequenceCommand()
+                () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER.getAsBoolean() && TARGET_SCORING_LEVEL != ScoringLevel.L1_GRIPPER
         );
     }
 
@@ -151,8 +136,8 @@ public class CoralPlacingCommands {
      * The x and y transform are used to calculate the target placing position from the middle of the reef.
      */
     public enum ScoringLevel {
-        L1_CORAL_INTAKE(1.38, 0.14, Rotation2d.fromDegrees(180)),
-        L1_GRIPPER(1.38, 0.17, Rotation2d.fromDegrees(0)),
+        L1_CORAL_INTAKE(Double.NaN, Double.NaN, null),
+        L1_GRIPPER(Double.NaN, Double.NaN, null),
         L2(1.3, 0.17, Rotation2d.fromDegrees(0)),
         L3(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0)),
         L4(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0));
