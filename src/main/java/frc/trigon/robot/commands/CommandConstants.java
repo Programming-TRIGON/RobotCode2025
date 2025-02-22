@@ -56,7 +56,7 @@ public class CommandConstants {
                     () -> 0
             ),
             STATIC_WHITE_LED_COLOR_COMMAND = LEDCommands.getStaticColorCommand(Color.kWhite, LEDStrip.LED_STRIPS),
-            DEFAULT_LEDS_COMMAND = LEDCommands.getBreatheCommand(Color.kLightSeaGreen, LEDConstants.DEFAULT_COMMAND_BREATHING_LEDS_AMOUNT, LEDConstants.DEFAULT_COMMAND_BREATHING_CYCLE_TIME_SECONDS, LEDConstants.DEFAULT_COMMAND_BREATHING_IS_INVERTED, LarsonAnimation.BounceMode.Front, LEDStrip.LED_STRIPS),
+            DEFAULT_LEDS_COMMAND = LEDCommands.getBreatheCommand(Color.kLightSeaGreen, LEDConstants.DEFAULT_COMMAND_BREATHING_LEDS_AMOUNT, LEDConstants.DEFAULT_COMMAND_BREATHING_SPEED, LEDConstants.DEFAULT_COMMAND_BREATHING_IS_INVERTED, LarsonAnimation.BounceMode.Front, LEDStrip.LED_STRIPS),
             WHEEL_RADIUS_CHARACTERIZATION_COMMAND = new WheelRadiusCharacterizationCommand(
                     PathPlannerConstants.ROBOT_CONFIG.moduleLocations,
                     RobotContainer.SWERVE::getDriveWheelPositionsRadians,
