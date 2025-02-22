@@ -33,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "ScoreL4",
+      "name": "PrepareL4",
       "waypointRelativePos": 0.0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "ScoreL4"
+          "name": "PrepareL4"
         }
       }
     }

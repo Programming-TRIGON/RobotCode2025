@@ -44,13 +44,13 @@
       }
     },
     {
-      "name": "ScoreL4",
+      "name": "PrepareL4",
       "waypointRelativePos": 0.10169491525423731,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "ScoreL4"
+          "name": "PrepareL4"
         }
       }
     }

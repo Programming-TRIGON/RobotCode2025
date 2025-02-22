@@ -16,6 +16,7 @@ import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
+import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import org.json.simple.parser.ParseException;
 import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableRotation2d;
@@ -31,21 +32,26 @@ public class AutonomousCommands {
     private static final BooleanEvent SWITCH_TO_CORAL_FEEDBACK = new BooleanEvent(CommandScheduler.getInstance().getActiveButtonLoop(), () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).rising();
     private static final BooleanEvent SWITCH_TO_PP_FEEDBACK = new BooleanEvent(CommandScheduler.getInstance().getActiveButtonLoop(), () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).falling();
 
-    public static Command getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
+    public static Command getPrepareForScoringInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
         return CoralCollectionCommands.getLoadCoralCommand().andThen(
                 new ParallelCommandGroup(
                         ElevatorCommands.getSetTargetStateCommand(() -> scoringLevel.elevatorState),
-                        GripperCommands.getPrepareForStateCommand(() -> scoringLevel.gripperState)
+                        getGripperScoringSequenceCommand(scoringLevel)
                 )
         );
     }
 
-    public static Command getScoreInReefFromGripperUntilReachedCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
-        return CoralCollectionCommands.getLoadCoralCommand().andThen(
-                new ParallelCommandGroup(
-                        ElevatorCommands.getSetTargetStateCommand(() -> scoringLevel.elevatorState),
-                        GripperCommands.getPrepareForStateCommand(() -> scoringLevel.gripperState)
-                ).until(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState) && RobotContainer.GRIPPER.atState(scoringLevel.gripperState))
+    public static Command getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
+        return new SequentialCommandGroup(
+                getPrepareForScoringInReefFromGripperCommand(scoringLevel).until(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState) && RobotContainer.GRIPPER.atState(scoringLevel.gripperState)),
+                GripperCommands.getSetTargetStateCommand(scoringLevel.gripperState).withTimeout(0.5)
+        );
+    }
+
+    private static Command getGripperScoringSequenceCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
+        return new SequentialCommandGroup(
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF).until(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState)),
+                GripperCommands.getPrepareForStateCommand(scoringLevel.gripperState)
         );
     }
 
