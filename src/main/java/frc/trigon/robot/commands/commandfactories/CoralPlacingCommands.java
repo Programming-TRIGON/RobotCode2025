@@ -97,13 +97,6 @@ public class CoralPlacingCommands {
         );
     }
 
-    private static Command getMakeSureGripperDoesntHitReefCommand() {
-        return new ParallelCommandGroup(
-                GripperCommands.getSetTargetStateCommand(() -> GripperConstants.GripperState.OPEN_FOR_ELEVATOR_CLOSING),
-                Commands.idle(RobotContainer.ELEVATOR)
-        );
-    }
-
     private static Command getGripperScoringSequenceCommand() {
         return new SequentialCommandGroup(
                 GripperCommands.getPrepareForStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
