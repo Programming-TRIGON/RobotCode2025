@@ -3,25 +3,25 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.5502500000000001,
-        "y": 7.1255
+        "x": 1.5584016393442621,
+        "y": 6.854098360655738
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.566799739202616,
-        "y": 6.358174783607805
+        "x": 2.5660134739570077,
+        "y": 6.217364697639091
       },
       "isLocked": false,
       "linkedName": "ScoreFourL4Corals4"
     },
     {
       "anchor": {
-        "x": 3.1492500000000003,
-        "y": 4.17125
+        "x": 3.9679303278688525,
+        "y": 5.283709016393443
       },
       "prevControl": {
-        "x": 2.2733831275797005,
-        "y": 4.0556072572193615
+        "x": 3.51808368351054,
+        "y": 5.569195502691107
       },
       "nextControl": null,
       "isLocked": false,
@@ -71,8 +71,8 @@
     }
   ],
   "globalConstraints": {
-    "maxVelocity": 2.0,
-    "maxAcceleration": 3.0,
+    "maxVelocity": 3.2,
+    "maxAcceleration": 3.6,
     "maxAngularVelocity": 400.0,
     "maxAngularAcceleration": 400.0,
     "nominalVoltage": 12.0,
@@ -80,7 +80,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": -179.16917375667248
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": "ScoreFourL4Corals",

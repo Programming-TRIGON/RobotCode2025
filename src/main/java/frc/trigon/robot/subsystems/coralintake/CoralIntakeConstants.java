@@ -138,14 +138,13 @@ public class CoralIntakeConstants {
             Color.kRed
     );
 
-    public static final double AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS = 1.3;
     public static final double
             COLLECTION_RUMBLE_DURATION_SECONDS = 0.7,
             COLLECTION_RUMBLE_POWER = 1;
     private static final double
-            CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.65,
+            CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.32,
             EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.06;
-    private static final double EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETRES = 17;
+    private static final double EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETRES = 16;
     static final BooleanEvent CORAL_COLLECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             BEAM_BREAK::getBinaryValue
@@ -155,7 +154,13 @@ public class CoralIntakeConstants {
             () -> DISTANCE_SENSOR.getScaledValue() < EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETRES
     ).debounce(EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
 
-    static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(0.5);
+    static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1.5);
+
+    static final double
+            PULSING_PERIOD_SECONDS = 0.1,
+            PULSING_INTAKE_MOTOR_VOLTAGE = 10,
+            PULSING_FUNNEL_MOTOR_VOLTAGE = 2,
+            PULSING_ANGLE_DEGREES = -30;
 
     static {
         configureIntakeMotor();
@@ -213,7 +218,7 @@ public class CoralIntakeConstants {
         config.Feedback.FeedbackRemoteSensorID = ANGLE_ENCODER.getID();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 20;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 23;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 1.6663 : 0.5;
         config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.12;
@@ -270,9 +275,8 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE(-4.5, -1, Rotation2d.fromDegrees(143.5)),
-        LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE(-4.5, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE.targetAngle),
-        PREPARE_FOR_LOADING_TO_GRIPPER_WHILE_GAME_PIECE_NOT_DETECTED(8, 2, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE.targetAngle),
+        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, -1, Rotation2d.fromDegrees(143.5)),
+        LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
         UNLOAD_CORAL_FROM_GRIPPER(6, 2, Rotation2d.fromDegrees(141)),
         CENTER_CORAL(8, 2, Rotation2d.fromDegrees(143.5)),
         COLLECT_FROM_FLOOR(8, 2, Rotation2d.fromDegrees(-46)),

@@ -2,6 +2,7 @@ package frc.trigon.robot.misc.objectdetectioncamera.io;
 
 import edu.wpi.first.math.Pair;
 import edu.wpi.first.math.geometry.*;
+import edu.wpi.first.wpilibj.Timer;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCameraIO;
@@ -65,6 +66,8 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
             for (int j = 0; j < visibleGamePieces[i].size(); j++)
                 inputs.visibleObjectRotations[i][j] = visibleGamePieces[i].get(j).getSecond();
         }
+
+        inputs.latestResultTimestamp = Timer.getTimestamp();
 
         logVisibleGamePieces(visibleGamePieces);
     }

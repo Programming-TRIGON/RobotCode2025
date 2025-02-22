@@ -1,9 +1,6 @@
 package frc.trigon.robot.misc.objectdetectioncamera;
 
-import edu.wpi.first.math.geometry.Pose3d;
-import edu.wpi.first.math.geometry.Rotation3d;
-import edu.wpi.first.math.geometry.Transform3d;
-import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.misc.objectdetectioncamera.io.PhotonObjectDetectionCameraIO;
@@ -79,7 +76,8 @@ public class ObjectDetectionCamera extends SubsystemBase {
      * @return the object's 2D position on the field (z is assumed to be 0)
      */
     public Translation2d calculateObjectPositionFromRotation(Rotation3d objectRotation) {
-        final Pose3d cameraPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose()).plus(robotCenterToCamera);
+        final Pose2d robotPoseAtResultTimestamp = RobotContainer.POSE_ESTIMATOR.getEstimatedPoseAtTimestamp(objectDetectionCameraInputs.latestResultTimestamp);
+        final Pose3d cameraPose = new Pose3d(robotPoseAtResultTimestamp).plus(robotCenterToCamera);
         objectRotation = new Rotation3d(objectRotation.getX(), -objectRotation.getY(), objectRotation.getZ());
         final Pose3d objectRotationStart = cameraPose.plus(new Transform3d(0, 0, 0, objectRotation));
 

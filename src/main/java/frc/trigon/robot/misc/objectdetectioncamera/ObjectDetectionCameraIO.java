@@ -22,5 +22,6 @@ public class ObjectDetectionCameraIO {
          * The second index is the index of the game piece's Rotation3d, with the best object placed first (index 0).
          */
         public Rotation3d[][] visibleObjectRotations = new Rotation3d[ObjectDetectionCameraConstants.NUMBER_OF_GAME_PIECE_TYPES][0];
+        public double latestResultTimestamp = 0;
     }
 }

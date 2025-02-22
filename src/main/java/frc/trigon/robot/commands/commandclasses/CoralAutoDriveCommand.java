@@ -5,10 +5,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.util.Color;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.CameraConstants;
@@ -22,10 +19,11 @@ import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 
 public class CoralAutoDriveCommand extends ParallelCommandGroup {
+    private static final double AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS = 1.5;
     private static final PIDController
             X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new PIDController(0.5, 0, 0) :
-            new PIDController(0, 0, 0),
+            new PIDController(0.37, 0, 0),
             Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
                     new PIDController(0.5, 0, 0) :
                     new PIDController(0.4, 0, 0.03);
@@ -56,7 +54,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
         final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
         if (trackedObjectPositionOnField == null)
-            return new Translation2d();
+            return null;
 
         final Translation2d difference = robotPose.getTranslation().minus(trackedObjectPositionOnField);
         return difference.rotateBy(robotPose.getRotation().unaryMinus());
@@ -71,19 +69,27 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
     }
 
     private Command getDriveToCoralCommand() {
-        return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                () -> shouldMoveTowardsCoral() ? X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getX()) : 0,
-                () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getY()),
-                this::calculateTargetAngle
+        return new SequentialCommandGroup(
+                SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+                        () -> 0,
+                        () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getY()),
+                        CoralAutoDriveCommand::calculateTargetAngle
+                ).until(this::shouldMoveTowardsCoral),
+                SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+                        () -> X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getX()),
+                        () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getY()),
+                        CoralAutoDriveCommand::calculateTargetAngle
+                )
         );
     }
 
     private boolean shouldMoveTowardsCoral() {
-        return distanceFromTrackedCoral.getNorm() > CoralIntakeConstants.AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS ||
-                RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR);
+        return distanceFromTrackedCoral != null &&
+                (distanceFromTrackedCoral.getNorm() > AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS ||
+                        RobotContainer.CORAL_INTAKE.atState(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR));
     }
 
-    private FlippableRotation2d calculateTargetAngle() {
+    public static FlippableRotation2d calculateTargetAngle() {
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
         final Translation2d trackedObjectFieldRelativePosition = CAMERA.getTrackedObjectFieldRelativePosition();
         if (trackedObjectFieldRelativePosition == null)
