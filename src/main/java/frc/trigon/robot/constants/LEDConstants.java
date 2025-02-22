@@ -12,15 +12,15 @@ public class LEDConstants {
     static final CANdle CANDLE = new CANdle(CANDLE_ID, RobotConstants.CANIVORE_NAME);
 
     private static final int
-            RIGHT_CLIMBER_NUMBER_OF_LEDS = 20,
-            LEFT_CLIMBER_NUMBER_OF_LEDS = 20;
+            RIGHT_LED_STRIP_NUMBER_OF_LEDS = 20,
+            LEFT_LED_STRIP_NUMBER_OF_LEDS = 20;
     private static final int LED_OFFSET = 8;
     private static final boolean
-            RIGHT_CLIMBER_INVERTED = false,
-            LEFT_CLIMBER_INVERTED = false;
+            RIGHT_LED_STRIP_INVERTED = false,
+            LEFT_LED_STRIP_INVERTED = false;
     public static final LEDStrip
-            RIGHT_CLIMBER_LEDS = LEDStrip.createCANdleLEDStrip(RIGHT_CLIMBER_INVERTED, RIGHT_CLIMBER_NUMBER_OF_LEDS, LED_OFFSET),
-            LEFT_CLIMBER_LEDS = LEDStrip.createCANdleLEDStrip(LEFT_CLIMBER_INVERTED, LEFT_CLIMBER_NUMBER_OF_LEDS, RIGHT_CLIMBER_NUMBER_OF_LEDS + LED_OFFSET);
+            RIGHT_LED_STRIP_LEDS = LEDStrip.createCANdleLEDStrip(RIGHT_LED_STRIP_INVERTED, RIGHT_LED_STRIP_NUMBER_OF_LEDS, LED_OFFSET),
+            LEFT_LED_STRIP_LEDS = LEDStrip.createCANdleLEDStrip(LEFT_LED_STRIP_INVERTED, LEFT_LED_STRIP_NUMBER_OF_LEDS, RIGHT_LED_STRIP_NUMBER_OF_LEDS + LED_OFFSET);
 
     public static final int DEFAULT_COMMAND_BREATHING_LEDS_AMOUNT = 7;
     public static final double DEFAULT_COMMAND_BREATHING_SPEED = 0.95;
@@ -43,6 +43,6 @@ public class LEDConstants {
 
         CANDLE.configAllSettings(config);
         CANdleLEDStrip.setCANdle(CANDLE);
-        CANdleLEDStrip.setTotalAmountOfLEDs(RIGHT_CLIMBER_NUMBER_OF_LEDS + LEFT_CLIMBER_NUMBER_OF_LEDS + LED_OFFSET);
+        CANdleLEDStrip.setTotalAmountOfLEDs(RIGHT_LED_STRIP_NUMBER_OF_LEDS + LEFT_LED_STRIP_NUMBER_OF_LEDS + LED_OFFSET);
     }
 }
