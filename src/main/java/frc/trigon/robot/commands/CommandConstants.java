@@ -1,5 +1,6 @@
 package frc.trigon.robot.commands;
 
+import com.ctre.phoenix.led.LarsonAnimation;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
@@ -10,8 +11,8 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
-import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
+import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.subsystems.climber.ClimberCommands;
@@ -55,6 +56,7 @@ public class CommandConstants {
                     () -> 0
             ),
             STATIC_WHITE_LED_COLOR_COMMAND = LEDCommands.getStaticColorCommand(Color.kWhite, LEDStrip.LED_STRIPS),
+            DEFAULT_LEDS_COMMAND = LEDCommands.getBreatheCommand(Color.kLightSeaGreen, LEDConstants.DEFAULT_COMMAND_BREATHING_LEDS_AMOUNT, LEDConstants.DEFAULT_COMMAND_BREATHING_CYCLE_TIME_SECONDS, LEDConstants.DEFAULT_COMMAND_BREATHING_IS_INVERTED, LarsonAnimation.BounceMode.Front, LEDStrip.LED_STRIPS),
             WHEEL_RADIUS_CHARACTERIZATION_COMMAND = new WheelRadiusCharacterizationCommand(
                     PathPlannerConstants.ROBOT_CONFIG.moduleLocations,
                     RobotContainer.SWERVE::getDriveWheelPositionsRadians,

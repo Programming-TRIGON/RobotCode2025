@@ -5,45 +5,43 @@ import com.ctre.phoenix.led.CANdleConfiguration;
 import org.trigon.hardware.misc.leds.CANdleLEDStrip;
 import org.trigon.hardware.misc.leds.LEDStrip;
 
-import static org.trigon.hardware.misc.leds.LEDStrip.createCANdleLEDStrip;
-
 public class LEDConstants {
+    private static final int CANDLE_ID = 0;
+    private static final CANdle.LEDStripType STRIP_TYPE = CANdle.LEDStripType.RGB;
+    private static final double BRIGHTNESS_SCALAR = 0.5;
+    static final CANdle CANDLE = new CANdle(CANDLE_ID, RobotConstants.CANIVORE_NAME);
+
+    private static final int
+            RIGHT_CLIMBER_NUMBER_OF_LEDS = 20,
+            LEFT_CLIMBER_NUMBER_OF_LEDS = 20;
+    private static final boolean
+            RIGHT_CLIMBER_INVERTED = false,
+            LEFT_CLIMBER_INVERTED = false;
+    public static final LEDStrip
+            RIGHT_CLIMBER_LEDS = LEDStrip.createCANdleLEDStrip(RIGHT_CLIMBER_INVERTED, RIGHT_CLIMBER_NUMBER_OF_LEDS, 0),
+            LEFT_CLIMBER_LEDS = LEDStrip.createCANdleLEDStrip(LEFT_CLIMBER_INVERTED, LEFT_CLIMBER_NUMBER_OF_LEDS, RIGHT_CLIMBER_NUMBER_OF_LEDS);
+
+    public static final int DEFAULT_COMMAND_BREATHING_LEDS_AMOUNT = 7;
+    public static final double DEFAULT_COMMAND_BREATHING_CYCLE_TIME_SECONDS = 0.95;
+    public static final boolean DEFAULT_COMMAND_BREATHING_IS_INVERTED = false;
     public static final double
             SCORING_BLINKING_SPEED = 0.5,
-            RELEASE_CORAL_BREATHING_SPEED = 0.3,
             INTAKE_GROUND_CORAL_BREATHING_SPEED = 0.3;
-    public static final int
-            SCORING_BREATHING_LEDS_AMOUNT = 5;
-
-    private static final int CANDLE_ID = 0;
-    private static final CANdle CANDLE = new CANdle(CANDLE_ID, RobotConstants.CANIVORE_NAME);
-
-    private static final boolean
-            IS_RIGHT_STRIP_INVERTED = false,
-            IS_LEFT_STRIP_INVERTED = false;
-    private static final int
-            RIGHT_STRIP_NUMBER_OF_LEDS = 20,
-            LEFT_STRIP_NUMBER_OF_LEDS = 20;
-    private static final int LED_OFFSET = 8;
-
-    private static final LEDStrip[] LED_STRIPS = new LEDStrip[]{
-            createCANdleLEDStrip(IS_RIGHT_STRIP_INVERTED, RIGHT_STRIP_NUMBER_OF_LEDS, LED_OFFSET),
-            createCANdleLEDStrip(IS_LEFT_STRIP_INVERTED, LEFT_STRIP_NUMBER_OF_LEDS, LEFT_STRIP_NUMBER_OF_LEDS + LED_OFFSET)
-    };
-
+    public static final int SCORING_BREATHING_LEDS_AMOUNT = 5;
 
     /**
      * Initializes LEDConstants. Needed to be called for the LED strips to be initialized before being used.
      */
     public static void init() {
         final CANdleConfiguration config = new CANdleConfiguration();
-        config.stripType = CANdle.LEDStripType.RGB;
-        config.brightnessScalar = 0.5;
+
+        config.stripType = STRIP_TYPE;
+        config.brightnessScalar = BRIGHTNESS_SCALAR;
         config.disableWhenLOS = true;
         config.enableOptimizations = true;
-        CANDLE.configAllSettings(config);
 
+        CANDLE.configAllSettings(config);
         CANdleLEDStrip.setCANdle(CANDLE);
-        CANdleLEDStrip.setTotalAmountOfLEDs(25);
+        CANdleLEDStrip.setTotalAmountOfLEDs(RIGHT_CLIMBER_NUMBER_OF_LEDS + LEFT_CLIMBER_NUMBER_OF_LEDS);
     }
 }
