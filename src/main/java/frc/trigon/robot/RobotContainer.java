@@ -10,7 +10,6 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.PrintCommand;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandfactories.*;
@@ -47,7 +46,6 @@ public class RobotContainer {
     private LoggedDashboardChooser<Command> autoChooser;
 
     public RobotContainer() {
-        OperatorConstants.OPERATOR_CONTROLLER.a().whileTrue(new PrintCommand("jk"));
         initializeGeneralSystems();
         buildAutoChooser();
         configureBindings();

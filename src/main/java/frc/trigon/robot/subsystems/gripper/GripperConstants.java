@@ -224,12 +224,12 @@ public class GripperConstants {
     }
 
     public enum GripperState {
-        REST(Rotation2d.fromDegrees(-50), 0),
+        REST(Rotation2d.fromDegrees(-56), 0),
         EJECT(Rotation2d.fromDegrees(55), -3),
         SCORE_L4(Rotation2d.fromDegrees(48), -8),
         SCORE_L3_OR_L2(Rotation2d.fromDegrees(55), SCORE_L4.targetGripperVoltage),
         SCORE_L1(Rotation2d.fromDegrees(93), -3),
-        LOAD_CORAL(Rotation2d.fromDegrees(-50), 11),
+        LOAD_CORAL(Rotation2d.fromDegrees(-56), 11),
         UNLOAD_CORAL(Rotation2d.fromDegrees(-50), -3),
         COLLECT_ALGAE_FROM_REEF(Rotation2d.fromDegrees(32), -35),
         SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(110), 11),

@@ -238,7 +238,7 @@ public class CoralIntakeConstants {
         config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = -0.128662 - ANGLE_ENCODER_POSITION_OFFSET_VALUE;
 
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Rotation2d.fromDegrees(143.8).minus(Rotation2d.fromRotations(ANGLE_ENCODER_POSITION_OFFSET_VALUE)).getRotations();
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Rotation2d.fromDegrees(145).minus(Rotation2d.fromRotations(ANGLE_ENCODER_POSITION_OFFSET_VALUE)).getRotations();
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
@@ -276,14 +276,14 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, -1, Rotation2d.fromDegrees(143.5)),
+        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, -1, Rotation2d.fromDegrees(144.5)),
         LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
         UNLOAD_CORAL_FROM_GRIPPER(6, 2, Rotation2d.fromDegrees(141)),
-        CENTER_CORAL(8, 2, Rotation2d.fromDegrees(143.5)),
+        CENTER_CORAL(8, 2, Rotation2d.fromDegrees(144.5)),
         COLLECT_FROM_FLOOR(8, 2, Rotation2d.fromDegrees(-46)),
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(90)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
-        REST(0, 0, Rotation2d.fromDegrees(143.5)),
+        REST(0, 0, Rotation2d.fromDegrees(144.5)),
         SCORE_L1(-3, -1, Rotation2d.fromDegrees(45));
 
         public final double
