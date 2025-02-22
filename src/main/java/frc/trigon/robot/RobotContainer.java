@@ -81,7 +81,7 @@ public class RobotContainer {
         CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         GRIPPER.setDefaultCommand(GripperCommands.getDefaultCommand());
-        LEDStrip.setDefaultCommandForAllLEDS(CommandConstants.STATIC_WHITE_LED_COLOR_COMMAND);
+        LEDStrip.setDefaultCommandForAllLEDS(CommandConstants.DEFAULT_LEDS_COMMAND);
     }
 
     private void bindControllerCommands() {
