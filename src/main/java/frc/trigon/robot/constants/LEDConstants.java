@@ -7,8 +7,6 @@ import org.trigon.hardware.misc.leds.LEDStrip;
 
 public class LEDConstants {
     private static final int CANDLE_ID = 0;
-    private static final CANdle.LEDStripType STRIP_TYPE = CANdle.LEDStripType.RGB;
-    private static final double BRIGHTNESS_SCALAR = 0.5;
     static final CANdle CANDLE = new CANdle(CANDLE_ID, RobotConstants.CANIVORE_NAME);
 
     private static final int
@@ -24,7 +22,6 @@ public class LEDConstants {
 
     public static final int DEFAULT_COMMAND_BREATHING_LEDS_AMOUNT = 7;
     public static final double DEFAULT_COMMAND_BREATHING_SPEED = 0.95;
-    public static final boolean DEFAULT_COMMAND_BREATHING_IS_INVERTED = false;
     public static final double
             SCORING_BLINKING_SPEED = 0.5,
             INTAKE_GROUND_CORAL_BREATHING_SPEED = 0.3;
@@ -36,8 +33,8 @@ public class LEDConstants {
     public static void init() {
         final CANdleConfiguration config = new CANdleConfiguration();
 
-        config.stripType = STRIP_TYPE;
-        config.brightnessScalar = BRIGHTNESS_SCALAR;
+        config.stripType = CANdle.LEDStripType.RGB;
+        config.brightnessScalar = 0.5;
         config.disableWhenLOS = true;
         config.enableOptimizations = true;
 
