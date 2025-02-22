@@ -28,11 +28,11 @@ import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 
 public class Swerve extends MotorSubsystem {
-    public Pose2d targetPathPlannerPose = new Pose2d();
     private final Pigeon2Gyro gyro = SwerveConstants.GYRO;
     private final SwerveModule[] swerveModules = SwerveConstants.SWERVE_MODULES;
     private final Phoenix6SignalThread phoenix6SignalThread = Phoenix6SignalThread.getInstance();
     private final SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(PathPlannerConstants.ROBOT_CONFIG, SwerveModuleConstants.MAXIMUM_MODULE_ROTATIONAL_SPEED_RADIANS_PER_SECOND);
+    private Pose2d targetPathPlannerPose = new Pose2d();
     private SwerveSetpoint previousSetpoint;
 
     public Swerve() {
@@ -139,6 +139,10 @@ public class Swerve extends MotorSubsystem {
         for (int i = 0; i < swerveModules.length; i++)
             swerveModulesPositions[i] = swerveModules[i].getDriveWheelPositionRadians();
         return swerveModulesPositions;
+    }
+
+    public void setTargetPathPlannerPose(Pose2d targetPathPlannerPose) {
+        this.targetPathPlannerPose = targetPathPlannerPose;
     }
 
     public void drivePathPlanner(ChassisSpeeds targetPathPlannerFeedforwardSpeeds) {

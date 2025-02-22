@@ -162,7 +162,7 @@ public class PoseEstimator implements AutoCloseable {
             Logger.recordOutput("PathPlanner/Path", pathPoses.toArray(new Pose2d[0]));
         });
         PathPlannerLogging.setLogTargetPoseCallback((pose) -> {
-            RobotContainer.SWERVE.targetPathPlannerPose = pose;
+            RobotContainer.SWERVE.setTargetPathPlannerPose(pose);
             Logger.recordOutput("PathPlanner/TargetPose", pose);
         });
     }
