@@ -10,8 +10,8 @@ public class LEDConstants {
     static final CANdle CANDLE = new CANdle(CANDLE_ID, RobotConstants.CANIVORE_NAME);
 
     private static final int
-            RIGHT_LED_STRIP_NUMBER_OF_LEDS = 20,
-            LEFT_LED_STRIP_NUMBER_OF_LEDS = 20;
+            RIGHT_LED_STRIP_NUMBER_OF_LEDS = 17,
+            LEFT_LED_STRIP_NUMBER_OF_LEDS = 17;
     private static final int LED_OFFSET = 8;
     private static final boolean
             RIGHT_LED_STRIP_INVERTED = false,
@@ -33,10 +33,12 @@ public class LEDConstants {
     public static void init() {
         final CANdleConfiguration config = new CANdleConfiguration();
 
-        config.stripType = CANdle.LEDStripType.RGB;
+        config.stripType = CANdle.LEDStripType.GRB;
         config.brightnessScalar = 0.5;
-        config.disableWhenLOS = true;
-        config.enableOptimizations = true;
+        config.disableWhenLOS = false;
+        config.enableOptimizations = false;
+        config.v5Enabled = true;
+        config.statusLedOffWhenActive = true;
 
         CANDLE.configAllSettings(config);
         CANdleLEDStrip.setCANdle(CANDLE);
