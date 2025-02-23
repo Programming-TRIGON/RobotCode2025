@@ -32,6 +32,7 @@ public class Swerve extends MotorSubsystem {
     private final SwerveModule[] swerveModules = SwerveConstants.SWERVE_MODULES;
     private final Phoenix6SignalThread phoenix6SignalThread = Phoenix6SignalThread.getInstance();
     private final SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(PathPlannerConstants.ROBOT_CONFIG, SwerveModuleConstants.MAXIMUM_MODULE_ROTATIONAL_SPEED_RADIANS_PER_SECOND);
+    private Pose2d targetPathPlannerPose = new Pose2d();
     private SwerveSetpoint previousSetpoint;
 
     public Swerve() {
@@ -140,6 +141,17 @@ public class Swerve extends MotorSubsystem {
         return swerveModulesPositions;
     }
 
+    public void setTargetPathPlannerPose(Pose2d targetPathPlannerPose) {
+        this.targetPathPlannerPose = targetPathPlannerPose;
+    }
+
+    public void drivePathPlanner(ChassisSpeeds targetPathPlannerFeedforwardSpeeds) {
+        final ChassisSpeeds pidSpeeds = calculateSelfRelativePIDToPoseSpeeds(new FlippablePose2d(targetPathPlannerPose, false));
+        final ChassisSpeeds dividedFeedforward = targetPathPlannerFeedforwardSpeeds.times(PathPlannerConstants.FEEDFORWARD_SCALAR);
+        final ChassisSpeeds combinedSpeeds = pidSpeeds.plus(dividedFeedforward);
+        selfRelativeDrive(combinedSpeeds);
+    }
+
     /**
      * Drives the swerve with robot-relative targetSpeeds without using setpoint generation.
      * Used for PathPlanner because it generates setpoints automatically.
@@ -185,17 +197,8 @@ public class Swerve extends MotorSubsystem {
      * @param targetPose the target pose, relative to the blue alliance driver station's right corner
      */
     void pidToPose(FlippablePose2d targetPose) {
-        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
-        final Pose2d flippedTargetPose = targetPose.get();
-        final double xSpeed = SwerveConstants.TRANSLATION_PID_CONTROLLER.calculate(currentPose.getX(), flippedTargetPose.getX());
-        final double ySpeed = SwerveConstants.TRANSLATION_PID_CONTROLLER.calculate(currentPose.getY(), flippedTargetPose.getY());
-        final int direction = Flippable.isRedAlliance() ? -1 : 1;
-        final ChassisSpeeds targetFieldRelativeSpeeds = new ChassisSpeeds(
-                xSpeed * direction,
-                ySpeed * direction,
-                calculateProfiledAngleSpeedToTargetAngle(targetPose.getRotation())
-        );
-        selfRelativeDrive(fieldRelativeSpeedsToSelfRelativeSpeeds(targetFieldRelativeSpeeds));
+        final ChassisSpeeds targetSpeeds = calculateSelfRelativePIDToPoseSpeeds(targetPose);
+        selfRelativeDrive(targetSpeeds);
     }
 
     /**
@@ -297,6 +300,21 @@ public class Swerve extends MotorSubsystem {
                 yPower * SwerveConstants.MAXIMUM_SPEED_METERS_PER_SECOND,
                 thetaPower * SwerveConstants.MAXIMUM_ROTATIONAL_SPEED_RADIANS_PER_SECOND
         );
+    }
+
+    private ChassisSpeeds calculateSelfRelativePIDToPoseSpeeds(FlippablePose2d targetPose) {
+        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
+        final Pose2d flippedTargetPose = targetPose.get();
+        final double xSpeed = SwerveConstants.X_TRANSLATION_PID_CONTROLLER.calculate(currentPose.getX(), flippedTargetPose.getX());
+        final double ySpeed = SwerveConstants.Y_TRANSLATION_PID_CONTROLLER.calculate(currentPose.getY(), flippedTargetPose.getY());
+        final int direction = Flippable.isRedAlliance() ? -1 : 1;
+        final ChassisSpeeds targetFieldRelativeSpeeds = new ChassisSpeeds(
+                xSpeed * direction,
+                ySpeed * direction,
+                calculateProfiledAngleSpeedToTargetAngle(targetPose.getRotation())
+        );
+
+        return fieldRelativeSpeedsToSelfRelativeSpeeds(targetFieldRelativeSpeeds);
     }
 
     private void updatePoseEstimatorStates() {
