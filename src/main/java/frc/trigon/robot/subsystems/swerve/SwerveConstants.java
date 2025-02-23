@@ -79,11 +79,17 @@ public class SwerveConstants {
             PROFILED_ROTATION_PID_CONSTANTS.kD,
             ROTATION_CONSTRAINTS
     );
-    static final PIDController TRANSLATION_PID_CONTROLLER = new PIDController(
+    static final PIDController
+            X_TRANSLATION_PID_CONTROLLER = new PIDController(
             TRANSLATION_PID_CONSTANTS.kP,
             TRANSLATION_PID_CONSTANTS.kI,
             TRANSLATION_PID_CONSTANTS.kD
-    );
+    ),
+            Y_TRANSLATION_PID_CONTROLLER = new PIDController(
+                    TRANSLATION_PID_CONSTANTS.kP,
+                    TRANSLATION_PID_CONSTANTS.kI,
+                    TRANSLATION_PID_CONSTANTS.kD
+            );
 
     static {
         configureGyro();
