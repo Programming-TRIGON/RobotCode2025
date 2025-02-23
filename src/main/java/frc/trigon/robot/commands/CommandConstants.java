@@ -19,6 +19,7 @@ import org.trigon.commands.WheelRadiusCharacterizationCommand;
 import org.trigon.hardware.misc.XboxController;
 import org.trigon.hardware.misc.leds.LEDCommands;
 import org.trigon.hardware.misc.leds.LEDStrip;
+import org.trigon.hardware.misc.leds.LEDStripAnimationSettings;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 
 /**
@@ -51,8 +52,7 @@ public class CommandConstants {
                     () -> getYPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
                     () -> 0
             ),
-            STATIC_WHITE_LED_COLOR_COMMAND = LEDCommands.getStaticColorCommand(Color.kWhite, LEDStrip.LED_STRIPS),
-            DEFAULT_LEDS_COMMAND = LEDCommands.getColorFlowCommand(Color.kGreen, 0.2, false, LEDStrip.LED_STRIPS),
+            STATIC_WHITE_LED_COLOR_COMMAND = LEDCommands.getAnimateCommand(new LEDStripAnimationSettings.StaticColorSettings(Color.kWhite), LEDStrip.LED_STRIPS),
             WHEEL_RADIUS_CHARACTERIZATION_COMMAND = new WheelRadiusCharacterizationCommand(
                     PathPlannerConstants.ROBOT_CONFIG.moduleLocations,
                     RobotContainer.SWERVE::getDriveWheelPositionsRadians,

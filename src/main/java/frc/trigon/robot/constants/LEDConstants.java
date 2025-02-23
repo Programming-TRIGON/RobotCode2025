@@ -2,10 +2,14 @@ package frc.trigon.robot.constants;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleConfiguration;
+import edu.wpi.first.wpilibj.util.Color;
 import org.trigon.hardware.misc.leds.CANdleLEDStrip;
 import org.trigon.hardware.misc.leds.LEDStrip;
+import org.trigon.hardware.misc.leds.LEDStripAnimationSettings;
 
 public class LEDConstants {
+    public static final LEDStripAnimationSettings.ColorFlowSettings DEFAULT_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kGreen, 0.1, false);
+
     private static final int CANDLE_ID = 0;
     static final CANdle CANDLE = new CANdle(CANDLE_ID, RobotConstants.CANIVORE_NAME);
 
