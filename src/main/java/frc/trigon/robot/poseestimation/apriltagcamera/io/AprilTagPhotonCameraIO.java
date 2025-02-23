@@ -137,7 +137,6 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
         );
 
         return pnpResult.map(value -> Pose3d.kZero.plus(value.best).transformBy(robotToCamera)).orElse(null);
-
     }
 
     private int[] getVisibleTagIDs(PhotonPipelineResult result) {
