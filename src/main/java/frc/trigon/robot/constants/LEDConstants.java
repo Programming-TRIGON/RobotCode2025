@@ -2,13 +2,25 @@ package frc.trigon.robot.constants;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleConfiguration;
+import com.ctre.phoenix.led.LarsonAnimation;
 import edu.wpi.first.wpilibj.util.Color;
 import org.trigon.hardware.misc.leds.CANdleLEDStrip;
 import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.hardware.misc.leds.LEDStripAnimationSettings;
 
 public class LEDConstants {
-    public static final LEDStripAnimationSettings.ColorFlowSettings DEFAULT_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kGreen, 0.1, false);
+    public static final LEDStripAnimationSettings.ColorFlowSettings
+            DEFAULT_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kGreen, 0.1, false),
+            MANUAL_GROUND_INTAKE_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kCrimson, 0.7, false),
+            AUTO_GROUND_INTAKE_WITHOUT_VISIBLE_CORAL_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kLightBlue, 0.7, false),
+            AUTO_GROUND_INTAKE_WITH_VISIBLE_CORAL_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kDarkMagenta, 0.7, false);
+    public static final LEDStripAnimationSettings.AlternateColorSettings
+            CORAL_STATION_INTAKE_SETTINGS = new LEDStripAnimationSettings.AlternateColorSettings(Color.kDarkRed, Color.kDeepSkyBlue);
+    public static final LEDStripAnimationSettings.BreatheSettings
+            SCORE_CORAL_SETTINGS = new LEDStripAnimationSettings.BreatheSettings(Color.kGreen, 5, 0.3, false, LarsonAnimation.BounceMode.Back);
+    public static final LEDStripAnimationSettings.BlinkSettings
+            INTAKE_CONFIRMATION_SETTINGS = new LEDStripAnimationSettings.BlinkSettings(Color.kCrimson, 0.5),
+            RELEASE_CORAL_SETTINGS = new LEDStripAnimationSettings.BlinkSettings(Color.kGreen, 0.75);
 
     private static final int CANDLE_ID = 0;
     static final CANdle CANDLE = new CANdle(CANDLE_ID, RobotConstants.CANIVORE_NAME);

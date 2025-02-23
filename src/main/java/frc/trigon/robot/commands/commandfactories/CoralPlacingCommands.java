@@ -1,11 +1,9 @@
 package frc.trigon.robot.commands.commandfactories;
 
-import com.ctre.phoenix.led.LarsonAnimation;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
@@ -92,12 +90,8 @@ public class CoralPlacingCommands {
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF).until(() -> RobotContainer.ELEVATOR.atState(TARGET_SCORING_LEVEL.elevatorState)),
                 GripperCommands.getPrepareForStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
                 GripperCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).alongWith(
-                        LEDCommands.getBreatheCommand(
-                                Color.kPurple,
-                                LEDConstants.SCORING_BREATHING_LEDS_AMOUNT,
-                                LEDConstants.SCORING_BLINKING_SPEED,
-                                false,
-                                LarsonAnimation.BounceMode.Back,
+                        LEDCommands.getAnimateCommand(
+                                LEDConstants.RELEASE_CORAL_SETTINGS,
                                 LEDStrip.LED_STRIPS
                         ).asProxy()
                 )

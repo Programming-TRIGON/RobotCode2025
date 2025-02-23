@@ -9,6 +9,7 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.AutonomousCommands;
 import org.trigon.hardware.misc.leds.LEDCommands;
 import org.trigon.hardware.misc.leds.LEDStrip;
+import org.trigon.hardware.misc.leds.LEDStripAnimationSettings;
 
 import java.util.function.Supplier;
 
@@ -39,7 +40,7 @@ public class LEDAutoSetupCommand extends SequentialCommandGroup {
         };
         addCommands(
                 getUpdateAutoStartPoseCommand(),
-                LEDCommands.getSectionColorCommand(ledColors, LEDStrip.LED_STRIPS)
+                LEDCommands.getAnimateCommand(new LEDStripAnimationSettings.SectionColorSettings(ledColors), LEDStrip.LED_STRIPS)
         );
     }
 
