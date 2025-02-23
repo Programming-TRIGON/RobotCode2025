@@ -30,7 +30,7 @@ import java.io.IOException;
  * A class that contains the constants and configurations for everything related to PathPlanner.
  */
 public class PathPlannerConstants {
-    public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(3.2, 3.6, Units.degreesToRadians(400), Units.degreesToRadians(400));
+    public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(3.2, 4.1, Units.degreesToRadians(450), Units.degreesToRadians(900));
     public static final double MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR = 2.2;
     public static final String DEFAULT_AUTO_NAME = "None";
     public static final RobotConfig ROBOT_CONFIG = getRobotConfig();

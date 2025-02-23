@@ -145,9 +145,6 @@ public class SwerveCommands {
 
     private static Command getPathfindToPoseCommand(FlippablePose2d targetPose, PathConstraints pathConstraints) {
         final Pose2d targetFlippedPose = targetPose.get();
-        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
-        if (currentPose.getTranslation().getDistance(targetFlippedPose.getTranslation()) < 0.55)
-            return createOnTheFlyPathCommand(targetPose, pathConstraints);
         return AutoBuilder.pathfindToPose(targetFlippedPose, pathConstraints);
     }
 

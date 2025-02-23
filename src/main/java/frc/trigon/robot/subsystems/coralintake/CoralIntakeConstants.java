@@ -156,12 +156,11 @@ public class CoralIntakeConstants {
     ).debounce(EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1.5);
-
     static final double
-            PULSING_PERIOD_SECONDS = 0.15,
+            PULSING_PERIOD_SECONDS = 0.3,
             PULSING_INTAKE_MOTOR_VOLTAGE = 10,
             PULSING_FUNNEL_MOTOR_VOLTAGE = 2,
-            PULSING_ANGLE_DEGREES = -30;
+            PULSING_ANGLE_DEGREES = 10;
 
     static {
         configureIntakeMotor();
@@ -219,10 +218,10 @@ public class CoralIntakeConstants {
         config.Feedback.FeedbackRemoteSensorID = ANGLE_ENCODER.getID();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 3;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 15;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 1.6663 : 0.3;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.12;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 1.6663 : 1.3;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.1;
         config.Slot0.kV = RobotHardwareStats.isSimulation() ? 8.7544 : 9.15;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.487;

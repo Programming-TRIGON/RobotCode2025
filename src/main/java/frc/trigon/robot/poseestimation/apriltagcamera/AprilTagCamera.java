@@ -5,7 +5,6 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.poseestimation.poseestimator.StandardDeviations;
 import org.littletonrobotics.junction.Logger;
-import org.trigon.hardware.RobotHardwareStats;
 
 /**
  * An april tag camera is a class that provides the robot's pose from a camera using one or multiple apriltags.
@@ -39,9 +38,7 @@ public class AprilTagCamera {
         this.standardDeviations = standardDeviations;
         this.cameraToRobotCenter = toTransform2d(robotCenterToCamera).inverse();
 
-        aprilTagCameraIO = AprilTagCameraIO.generateIO(aprilTagCameraType, name);
-        if (RobotHardwareStats.isSimulation())
-            aprilTagCameraIO.addSimulatedCameraToVisionSimulation(robotCenterToCamera);
+        aprilTagCameraIO = AprilTagCameraIO.generateIO(aprilTagCameraType, name, robotCenterToCamera);
     }
 
     public void update() {
@@ -115,6 +112,13 @@ public class AprilTagCamera {
     }
 
     private Pose2d chooseBestRobotPose() {
+        if (isWithinBestTagRangeForAccurateSolvePNPResult() || !inputs.hasConstrainedResult)
+            return chooseBestNormalSolvePNPPose();
+
+        return cameraPoseToRobotPose(inputs.constrainedSolvePNPPose.toPose2d());
+    }
+
+    private Pose2d chooseBestNormalSolvePNPPose() {
         if (inputs.bestCameraSolvePNPPose.equals(inputs.alternateCameraSolvePNPPose))
             return cameraPoseToRobotPose(inputs.bestCameraSolvePNPPose.toPose2d());
 

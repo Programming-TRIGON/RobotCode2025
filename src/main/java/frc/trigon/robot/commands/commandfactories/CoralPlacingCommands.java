@@ -28,12 +28,10 @@ public class CoralPlacingCommands {
     public static Command getScoreInReefCommand() {
         return new ConditionalCommand(
                 getCoralIntakeScoringSequenceCommand().asProxy(),
-                getScoreInReefFromGripperCommand(),
+                getScoreInReefFromGripperCommand().asProxy(),
                 () -> TARGET_SCORING_LEVEL == ScoringLevel.L1_CORAL_INTAKE
-        ).alongWith(
-                getWaitUntilScoringTargetChangesCommand().andThen(
-                        () -> getScoreInReefCommand().onlyWhile(OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER).schedule()
-                )
+        ).raceWith(getWaitUntilScoringTargetChangesCommand()).andThen(
+                () -> getScoreInReefCommand().onlyWhile(OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER).schedule()
         );
     }
 

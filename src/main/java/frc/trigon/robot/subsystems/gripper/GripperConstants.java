@@ -122,7 +122,7 @@ public class GripperConstants {
     static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-34);
     private static final double
             COLLECTION_DETECTION_MAXIMUM_DISTANCE_MILLIMETERS = 10,
-            COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.14;
+            COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.10;
     static final BooleanEvent COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             () -> LASER_CAN.hasResult() && LASER_CAN.getDistanceMillimeters() < COLLECTION_DETECTION_MAXIMUM_DISTANCE_MILLIMETERS
@@ -166,10 +166,10 @@ public class GripperConstants {
         config.Feedback.FeedbackRemoteSensorID = ANGLE_MOTOR.getID();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 6;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 120;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.254;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0.1;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.2;
         config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 2.52;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0 : 0.25;
@@ -236,7 +236,7 @@ public class GripperConstants {
         PREPARE_FOR_SCORING_ALGAE_IN_NET(SCORE_ALGAE_IN_NET.targetAngle, COLLECT_ALGAE_FROM_REEF.targetGripperVoltage),
         AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0),
         COLLECT_CORAL_FROM_FEEDER(Rotation2d.fromDegrees(115), 4),
-        OPEN_FOR_NOT_HITTING_REEF(Rotation2d.fromDegrees(93), 0);
+        OPEN_FOR_NOT_HITTING_REEF(Rotation2d.fromDegrees(93), 0.2);
 
         final Rotation2d targetAngle;
         final double targetGripperVoltage;
