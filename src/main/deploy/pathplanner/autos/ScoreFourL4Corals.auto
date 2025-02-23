@@ -13,13 +13,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ScoreL4Wait"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedCoral"
+            "name": "ScoreL4"
           }
         },
         {
@@ -50,13 +44,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ScoreL4Wait"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedCoral"
+            "name": "ScoreL4"
           }
         },
         {
@@ -87,13 +75,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ScoreL4Wait"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedCoral"
+            "name": "ScoreL4"
           }
         },
         {
@@ -124,13 +106,7 @@
         {
           "type": "named",
           "data": {
-            "name": "ScoreL4Wait"
-          }
-        },
-        {
-          "type": "named",
-          "data": {
-            "name": "FeedCoral"
+            "name": "ScoreL4"
           }
         }
       ]
