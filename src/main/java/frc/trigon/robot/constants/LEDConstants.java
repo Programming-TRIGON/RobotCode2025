@@ -20,8 +20,6 @@ public class LEDConstants {
             RIGHT_LED_STRIP = LEDStrip.createCANdleLEDStrip(RIGHT_LED_STRIP_INVERTED, RIGHT_LED_STRIP_NUMBER_OF_LEDS, LED_OFFSET),
             LEFT_LED_STRIP = LEDStrip.createCANdleLEDStrip(LEFT_LED_STRIP_INVERTED, LEFT_LED_STRIP_NUMBER_OF_LEDS, RIGHT_LED_STRIP_NUMBER_OF_LEDS + LED_OFFSET);
 
-    public static final int DEFAULT_COMMAND_BREATHING_LEDS_AMOUNT = 7;
-    public static final double DEFAULT_COMMAND_BREATHING_SPEED = 0.95;
     public static final double
             SCORING_BLINKING_SPEED = 0.5,
             INTAKE_GROUND_CORAL_BREATHING_SPEED = 0.3;
@@ -42,6 +40,6 @@ public class LEDConstants {
 
         CANDLE.configAllSettings(config);
         CANdleLEDStrip.setCANdle(CANDLE);
-        CANdleLEDStrip.setTotalAmountOfLEDs(RIGHT_LED_STRIP_NUMBER_OF_LEDS + LEFT_LED_STRIP_NUMBER_OF_LEDS + LED_OFFSET);
+        CANdleLEDStrip.setTotalAmountOfLEDs(LED_OFFSET + RIGHT_LED_STRIP_NUMBER_OF_LEDS + LEFT_LED_STRIP_NUMBER_OF_LEDS);
     }
 }

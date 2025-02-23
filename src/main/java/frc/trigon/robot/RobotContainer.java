@@ -83,6 +83,7 @@ public class RobotContainer {
         ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         GRIPPER.setDefaultCommand(GripperCommands.getGripperDefaultCommand());
         LEDStrip.setDefaultCommandForAllLEDS(CommandConstants.DEFAULT_LEDS_COMMAND);
+//        LEDConstants.LEFT_LED_STRIP.setDefaultCommand(CommandConstants.DEFAULT_LEDS_COMMAND);
     }
 
     private void bindControllerCommands() {
