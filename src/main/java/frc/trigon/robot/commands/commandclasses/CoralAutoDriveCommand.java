@@ -62,8 +62,8 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
 
     private Command getSetLEDColorsCommand() {
         return GeneralCommands.getContinuousConditionalCommand(
-                LEDCommands.getAnimateCommand(LEDConstants.AUTO_GROUND_INTAKE_WITH_VISIBLE_CORAL_SETTINGS, LEDStrip.LED_STRIPS),
-                LEDCommands.getAnimateCommand(LEDConstants.AUTO_GROUND_INTAKE_WITHOUT_VISIBLE_CORAL_SETTINGS, LEDStrip.LED_STRIPS),
+                LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
+                LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
                 () -> CAMERA.getTrackedObjectFieldRelativePosition() != null
         );
     }

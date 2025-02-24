@@ -3,6 +3,7 @@ package frc.trigon.robot.commands.commandfactories;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
+import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
@@ -13,6 +14,8 @@ import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import org.trigon.hardware.misc.leds.LEDCommands;
 import org.trigon.hardware.misc.leds.LEDStrip;
+
+
 
 public class CoralCollectionCommands {
     public static boolean SHOULD_INTAKE_CORAL_AUTONOMOUSLY = true;
@@ -36,6 +39,8 @@ public class CoralCollectionCommands {
     private static Command getInitiateFeederCoralCollectionCommand() {
         return new ParallelCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FEEDER),
+                LEDCommands.getAnimateCommand(LEDConstants.CORAL_STATION_INTAKE_SETTINGS, LEDStrip.LED_STRIPS).asProxy(),
+                LEDCommands.getAnimateCommand(LEDConstants.INTAKE_CONFIRMATION_SETTINGS, LEDStrip.LED_STRIPS).onlyIf((RobotContainer.CORAL_INTAKE::hasGamePiece)),
                 getScheduleCoralLoadingWhenCollectedCommand()
         );
     }
@@ -43,14 +48,18 @@ public class CoralCollectionCommands {
     private static Command getInitiateFloorCoralCollectionCommand() {
         return new ParallelCommandGroup(
                 new CoralAutoDriveCommand().asProxy().onlyIf(() -> SHOULD_INTAKE_CORAL_AUTONOMOUSLY).until(OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER),
-                LEDCommands.getAnimateCommand(LEDConstants.MANUAL_GROUND_INTAKE_SETTINGS, LEDStrip.LED_STRIPS).unless(() -> SHOULD_INTAKE_CORAL_AUTONOMOUSLY),
+                GeneralCommands.getContinuousConditionalCommand(
+                    LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
+                    LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
+                    () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null
+                ),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
                 getScheduleCoralLoadingWhenCollectedCommand()
         );
     }
 
     private static Command getScheduleCoralLoadingWhenCollectedCommand() {
-        return GeneralCommands.runWhen(getCollectionRumbleCommand().andThen(getScheduleCoralLoadingCommand()), CoralCollectionCommands::didCollectCoral);
+        return GeneralCommands.runWhen(getCollectionConfirmationCommand().andThen(getScheduleCoralLoadingCommand()), CoralCollectionCommands::didCollectCoral);
     }
 
     private static Command getScheduleCoralLoadingCommand() {
@@ -80,6 +89,7 @@ public class CoralCollectionCommands {
     public static Command getUnloadCoralCommand() {
         return new ParallelCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.UNLOAD_CORAL),
+                LEDCommands.getAnimateCommand(LEDConstants.RELEASE_CORAL_SETTINGS, LEDStrip.LED_STRIPS).asProxy(),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.UNLOAD_CORAL_FROM_GRIPPER)
         ).unless(RobotContainer.CORAL_INTAKE::hasGamePiece).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
     }
@@ -97,9 +107,11 @@ public class CoralCollectionCommands {
         );
     }
 
-    private static Command getCollectionRumbleCommand() {
+    private static Command getCollectionConfirmationCommand() {
         return new InstantCommand(
                 () -> OperatorConstants.DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER)
+        ).alongWith(
+                LEDCommands.getAnimateCommand(LEDConstants.INTAKE_CONFIRMATION_SETTINGS, LEDStrip.LED_STRIPS).asProxy()
         );
     }
 

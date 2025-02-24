@@ -12,8 +12,8 @@ public class LEDConstants {
     public static final LEDStripAnimationSettings.ColorFlowSettings
             DEFAULT_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kDarkGreen, 0.1, false),
             MANUAL_GROUND_INTAKE_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kDarkMagenta, 0.5, false),
-            AUTO_GROUND_INTAKE_WITHOUT_VISIBLE_CORAL_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kRed, 0.3, false),
-            AUTO_GROUND_INTAKE_WITH_VISIBLE_CORAL_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kDeepSkyBlue, 0.6, false),
+            GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kRed, 0.3, false),
+            GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kGreen, 0.6, false),
             CORAL_STATION_INTAKE_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kYellow, 0.4, true);
     public static final LEDStripAnimationSettings.BreatheSettings
             SCORE_CORAL_SETTINGS = new LEDStripAnimationSettings.BreatheSettings(Color.kGreen, 5, 0.2, false, LarsonAnimation.BounceMode.Back),
@@ -21,6 +21,8 @@ public class LEDConstants {
     public static final LEDStripAnimationSettings.BlinkSettings
             INTAKE_CONFIRMATION_SETTINGS = new LEDStripAnimationSettings.BlinkSettings(Color.kDarkMagenta, 1),
             RELEASE_CORAL_SETTINGS = new LEDStripAnimationSettings.BlinkSettings(Color.kGreen, 1);
+    public static final LEDStripAnimationSettings.StaticColorSettings
+            
 
     private static final int CANDLE_ID = 0;
     static final CANdle CANDLE = new CANdle(CANDLE_ID, RobotConstants.CANIVORE_NAME);
@@ -40,6 +42,7 @@ public class LEDConstants {
             SCORING_BLINKING_SPEED = 0.5,
             INTAKE_GROUND_CORAL_BREATHING_SPEED = 0.3;
     public static final int SCORING_BREATHING_LEDS_AMOUNT = 5;
+    public static final int RELEASE_CORAL_TIMEOUT_SECONDS = 1;
 
     /**
      * Initializes LEDConstants. Needed to be called for the LED strips to be initialized before being used.
