@@ -44,7 +44,7 @@ public class LEDAutoSetupCommand extends ParallelCommandGroup {
                 () -> getDesiredLEDColorFromRobotPose(-calculateRobotRelativeDifference().getX(), TOLERANCE_METERS),
                 () -> getDesiredLEDColorFromRobotPose(-calculateRobotRelativeDifference().getY(), TOLERANCE_METERS)
         };
-        
+
         addCommands(
                 getUpdateAutoStartPoseCommand(),
                 LEDCommands.getAnimateCommand(new LEDStripAnimationSettings.SectionColorSettings(leftLedColors), LEDConstants.LEFT_LED_STRIP),
@@ -65,7 +65,7 @@ public class LEDAutoSetupCommand extends ParallelCommandGroup {
 
     private Translation2d calculateRobotRelativeDifference() {
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
-        final Translation2d robotRelativeRobotTranslation = robotPose.getTranslation().minus(this.autoStartPose.getTranslation());
+        final Translation2d robotRelativeRobotTranslation = robotPose.getTranslation().rotateBy(robotPose.getRotation());
         final Translation2d robotRelativeAutoStartTranslation = robotRelativeRobotTranslation.rotateBy(robotPose.getRotation());
         return robotRelativeAutoStartTranslation.minus(robotRelativeRobotTranslation);
     }
