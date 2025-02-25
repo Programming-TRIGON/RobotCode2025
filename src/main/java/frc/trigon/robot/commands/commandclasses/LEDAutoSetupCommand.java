@@ -1,6 +1,7 @@
 package frc.trigon.robot.commands.commandclasses;
 
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
@@ -9,6 +10,7 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.AutonomousCommands;
 import org.trigon.hardware.misc.leds.LEDCommands;
 import org.trigon.hardware.misc.leds.LEDStrip;
+import org.trigon.hardware.misc.leds.LEDStripAnimationSettings;
 
 import java.util.function.Supplier;
 
@@ -34,12 +36,12 @@ public class LEDAutoSetupCommand extends SequentialCommandGroup {
 
         final Supplier<Color>[] ledColors = new Supplier[]{
                 () -> getDesiredLEDColorFromRobotPose(this.autoStartPose.getRotation().getDegrees() - RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getRotation().getDegrees(), TOLERANCE_DEGREES),
-                () -> getDesiredLEDColorFromRobotPose(this.autoStartPose.getX() - RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getX(), TOLERANCE_METERS),
-                () -> getDesiredLEDColorFromRobotPose(this.autoStartPose.getY() - RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getY(), TOLERANCE_METERS)
+                () -> getDesiredLEDColorFromRobotPose(calculateRobotRelativeDifference().getX(), TOLERANCE_METERS),
+                () -> getDesiredLEDColorFromRobotPose(calculateRobotRelativeDifference().getY(), TOLERANCE_METERS)
         };
         addCommands(
                 getUpdateAutoStartPoseCommand(),
-                LEDCommands.getSectionColorCommand(ledColors, LEDStrip.LED_STRIPS)
+                LEDCommands.getAnimateCommand(new LEDStripAnimationSettings.SectionColorSettings(ledColors), LEDStrip.LED_STRIPS)
         );
     }
 
@@ -52,6 +54,13 @@ public class LEDAutoSetupCommand extends SequentialCommandGroup {
         return new InstantCommand(() -> {
             this.autoStartPose = AutonomousCommands.getAutoStartPose(autoName.get());
         });
+    }
+
+    private Translation2d calculateRobotRelativeDifference() {
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
+        final Translation2d robotRelativeRobotTranslation = robotPose.getTranslation().minus(this.autoStartPose.getTranslation());
+        final Translation2d robotRelativeAutoStartTranslation = robotRelativeRobotTranslation.rotateBy(robotPose.getRotation());
+        return robotRelativeAutoStartTranslation.minus(robotRelativeRobotTranslation);
     }
 
     /**
