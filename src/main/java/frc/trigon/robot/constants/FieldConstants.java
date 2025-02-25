@@ -63,21 +63,21 @@ public class FieldConstants {
     }
 
     public enum ReefClockPosition {
-        REEF_12_OCLOCK(true, 3),
-        REEF_2_OCLOCK(true, 2),
-        REEF_4_OCLOCK(true, 1),
-        REEF_6_OCLOCK(true, 0),
-        REEF_8_OCLOCK(true, 5),
-        REEF_10_OCLOCK(true, 4);
+        REEF_12_OCLOCK(true),
+        REEF_2_OCLOCK(true),
+        REEF_4_OCLOCK(true),
+        REEF_6_OCLOCK(true),
+        REEF_8_OCLOCK(true),
+        REEF_10_OCLOCK(true);
 
         public final Rotation2d clockAngle;
         public final boolean isFacingDriverStation;
-        public final int qDashboardOrder;
+        public final int clockPosition;
 
-        ReefClockPosition(boolean isFacingDriverStation, int qDashboardOrder) {
+        ReefClockPosition(boolean isFacingDriverStation) {
             this.clockAngle = calculateClockAngle();
             this.isFacingDriverStation = isFacingDriverStation;
-            this.qDashboardOrder = qDashboardOrder;
+            this.clockPosition = ordinal() == 0 ? 12 : ordinal() * 2;
         }
 
         public static Rotation2d[] getClockAngles() {
