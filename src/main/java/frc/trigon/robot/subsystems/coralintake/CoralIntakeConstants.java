@@ -216,11 +216,11 @@ public class CoralIntakeConstants {
         config.Feedback.FeedbackRemoteSensorID = ANGLE_ENCODER.getID();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 10;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 100;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 1.6663 : 0;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.126;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 8.7544 : 9;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 1.6663 : 5;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.12216;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 8.7544 : 8.8994;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.51;
 

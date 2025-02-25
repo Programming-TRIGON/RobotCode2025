@@ -33,7 +33,7 @@ public class AutonomousCommands {
     private static final BooleanEvent SWITCH_TO_PP_FEEDBACK = new BooleanEvent(CommandScheduler.getInstance().getActiveButtonLoop(), () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).falling();
 
     public static Command getPrepareForScoringInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
-        return CoralCollectionCommands.getLoadCoralCommand().andThen(
+        return CoralCollectionCommands.getLoadCoralCommand().unless(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState)).andThen(
                 new ParallelCommandGroup(
                         ElevatorCommands.getSetTargetStateCommand(() -> scoringLevel.elevatorState),
                         getGripperScoringSequenceCommand(scoringLevel)
