@@ -7,7 +7,10 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
-import frc.trigon.robot.constants.*;
+import frc.trigon.robot.constants.FieldConstants;
+import frc.trigon.robot.constants.LEDConstants;
+import frc.trigon.robot.constants.OperatorConstants;
+import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
@@ -50,6 +53,12 @@ public class CoralPlacingCommands {
                 getAutonomouslyScoreInReefFromGripperCommand().asProxy(),
                 getManuallyScoreInReefFromGripperCommand().asProxy(),
                 () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER.getAsBoolean() && TARGET_SCORING_LEVEL != ScoringLevel.L1_GRIPPER
+        ).alongWith(
+                GeneralCommands.getContinuousConditionalCommand(
+                        LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
+                        LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
+                        () -> RobotContainer.SWERVE.atPose(calculateTargetScoringPose())
+                ).asProxy()
         );
     }
 
@@ -65,13 +74,7 @@ public class CoralPlacingCommands {
         return CoralCollectionCommands.getLoadCoralCommand().andThen(
                 new ParallelCommandGroup(
                         ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
-                        getGripperScoringSequenceCommand(),
-                        GeneralCommands.getContinuousConditionalCommand(
-                                LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
-                                LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
-                                () -> RobotContainer.SWERVE.atPose(calculateTargetScoringPose())
-                        ),
-                        LEDCommands.getAnimateCommand(LEDConstants.SCORE_CORAL_SETTINGS, LEDStrip.LED_STRIPS).asProxy()
+                        getGripperScoringSequenceCommand()
                 )
         );
     }
@@ -81,8 +84,7 @@ public class CoralPlacingCommands {
                 CoralCollectionCommands.getLoadCoralCommand().andThen(
                         new ParallelCommandGroup(
                                 getOpenElevatorWhenCloseToReefCommand(),
-                                getGripperScoringSequenceCommand(),
-                                LEDCommands.getAnimateCommand(LEDConstants.SCORE_CORAL_AUTONOMOUSLY_SETTINGS, LEDStrip.LED_STRIPS).asProxy()
+                                getGripperScoringSequenceCommand()
                         )
                 ),
                 getAutonomousDriveToReefThenManualDriveCommand()

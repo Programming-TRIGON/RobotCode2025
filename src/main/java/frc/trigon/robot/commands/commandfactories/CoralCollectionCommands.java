@@ -6,6 +6,7 @@ import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
+import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
@@ -49,7 +50,7 @@ public class CoralCollectionCommands {
                 GeneralCommands.getContinuousConditionalCommand(
                         LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
                         LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
-                        () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null
+                        () -> CameraConstants.OBJECT_DETECTION_CAMERA.hasTargets(SimulatedGamePieceConstants.GamePieceType.CORAL)
                 ),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
                 getScheduleCoralLoadingWhenCollectedCommand()
@@ -106,9 +107,8 @@ public class CoralCollectionCommands {
     }
 
     private static Command getCollectionConfirmationCommand() {
-        return new InstantCommand(
-                () -> OperatorConstants.DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER)
-        ).alongWith(
+        return new ParallelCommandGroup(
+                new InstantCommand(() -> OperatorConstants.DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER)),
                 LEDCommands.getAnimateCommand(LEDConstants.INTAKE_CONFIRMATION_SETTINGS, LEDStrip.LED_STRIPS).asProxy()
         );
     }
