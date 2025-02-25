@@ -9,7 +9,7 @@ import org.trigon.hardware.misc.leds.LEDStripAnimationSettings;
 
 public class LEDConstants {
     public static final LEDStripAnimationSettings.LEDAnimationSettings
-            DEFAULT_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kDarkBlue, 0.2, false),
+            DEFAULT_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(new Color(0, 150 / 255.0, 1), 0.2, false),
             GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS = new LEDStripAnimationSettings.StaticColorSettings(Color.kRed),
             GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS = new LEDStripAnimationSettings.StaticColorSettings(Color.kGreen),
             CORAL_STATION_INTAKE_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kYellow, 0.4, true),
