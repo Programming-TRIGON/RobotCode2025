@@ -4,7 +4,6 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
@@ -14,8 +13,6 @@ import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.hardware.RobotHardwareStats;
-import org.trigon.hardware.misc.leds.LEDCommands;
-import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 
 public class CoralAutoDriveCommand extends ParallelCommandGroup {
@@ -33,7 +30,6 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
     public CoralAutoDriveCommand() {
         addCommands(
                 new InstantCommand(CAMERA::initializeTracking),
-                getSetLEDColorsCommand(),
                 getTrackCoralCommand(),
                 GeneralCommands.getContinuousConditionalCommand(
                         getDriveToCoralCommand(),
@@ -58,14 +54,6 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
 
         final Translation2d difference = robotPose.getTranslation().minus(trackedObjectPositionOnField);
         return difference.rotateBy(robotPose.getRotation().unaryMinus());
-    }
-
-    private Command getSetLEDColorsCommand() {
-        return GeneralCommands.getContinuousConditionalCommand(
-                LEDCommands.getStaticColorCommand(Color.kGreen, LEDStrip.LED_STRIPS),
-                LEDCommands.getStaticColorCommand(Color.kRed, LEDStrip.LED_STRIPS),
-                () -> CAMERA.getTrackedObjectFieldRelativePosition() != null
-        );
     }
 
     private Command getDriveToCoralCommand() {
