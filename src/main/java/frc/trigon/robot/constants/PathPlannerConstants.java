@@ -69,7 +69,7 @@ public class PathPlannerConstants {
                 RobotContainer.POSE_ESTIMATOR::getEstimatedRobotPose,
                 RobotContainer.POSE_ESTIMATOR::resetPose,
                 RobotContainer.SWERVE::getSelfRelativeVelocity,
-                RobotContainer.SWERVE::drivePathPlanner,
+                (chassisSpeeds -> RobotContainer.SWERVE.drivePathPlanner(chassisSpeeds, true)),
                 AUTO_PATH_FOLLOWING_CONTROLLER,
                 ROBOT_CONFIG,
                 Flippable::isRedAlliance,

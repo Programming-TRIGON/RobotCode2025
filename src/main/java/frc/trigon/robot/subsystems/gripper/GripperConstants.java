@@ -162,9 +162,9 @@ public class GripperConstants {
         config.Feedback.FeedbackRemoteSensorID = ANGLE_MOTOR.getID();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 20;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 100;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 1;
         config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.2;
         config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 2.52;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
@@ -215,7 +215,7 @@ public class GripperConstants {
     public enum GripperState {
         REST(Rotation2d.fromDegrees(-56), 0),
         EJECT(Rotation2d.fromDegrees(55), -3),
-        SCORE_L4(Rotation2d.fromDegrees(48), -8),
+        SCORE_L4(Rotation2d.fromDegrees(46), -8),
         SCORE_L3_OR_L2(Rotation2d.fromDegrees(55), SCORE_L4.targetGripperVoltage),
         SCORE_L1(Rotation2d.fromDegrees(93), -3),
         LOAD_CORAL(Rotation2d.fromDegrees(-56), 11),

@@ -46,6 +46,7 @@ public class AutonomousCommands {
                 getPrepareForScoringInReefFromGripperCommand(scoringLevel)
                         .unless(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState) && RobotContainer.GRIPPER.atState(scoringLevel.gripperState))
                         .until(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState) && RobotContainer.GRIPPER.atState(scoringLevel.gripperState)),
+                new WaitCommand(0.1),
                 GripperCommands.getSetTargetStateCommand(scoringLevel.gripperState).withTimeout(0.6)
         );
     }

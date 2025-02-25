@@ -216,19 +216,19 @@ public class CoralIntakeConstants {
         config.Feedback.FeedbackRemoteSensorID = ANGLE_ENCODER.getID();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 120;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 10;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 1.6663 : 7;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.1;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 8.7544 : 8;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 1.6663 : 0;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.126;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 8.7544 : 9;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.487;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.51;
 
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
         config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 12 / config.Slot0.kV : 1;
-        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 6 : 10;
+        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 6 : 8;
         config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;

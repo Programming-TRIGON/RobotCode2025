@@ -72,7 +72,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void autonomousPeriodic() {
         if (!RobotContainer.SWERVE.isPathPlannerDriving)
-            RobotContainer.SWERVE.drivePathPlanner(new ChassisSpeeds());
+            RobotContainer.SWERVE.drivePathPlanner(new ChassisSpeeds(), false);
     }
 
     @Override

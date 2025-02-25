@@ -55,8 +55,8 @@ public class CoralPlacingCommands {
                 GeneralCommands.getContinuousConditionalCommand(
                         LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
                         LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
-                        () -> RobotContainer.SWERVE.atPose(calculateTargetScoringPose())
-                ).asProxy()
+                        () -> RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation().getDistance(calculateTargetScoringPose().get().getTranslation()) < 0.05
+                ).until(OperatorConstants.CONTINUE_TRIGGER)
         );
     }
 
@@ -79,7 +79,7 @@ public class CoralPlacingCommands {
 
     private static Command getAutonomouslyScoreInReefFromGripperCommand() {
         return new ParallelCommandGroup(
-                CoralCollectionCommands.getLoadCoralCommand().andThen(
+                CoralCollectionCommands.getLoadCoralCommand().unless(() -> RobotContainer.ELEVATOR.atState(TARGET_SCORING_LEVEL.elevatorState)).andThen(
                         new ParallelCommandGroup(
                                 getOpenElevatorWhenCloseToReefCommand(),
                                 getGripperScoringSequenceCommand()
@@ -97,7 +97,7 @@ public class CoralPlacingCommands {
                         LEDCommands.getAnimateCommand(
                                 LEDConstants.RELEASE_CORAL_SETTINGS,
                                 LEDStrip.LED_STRIPS
-                        ).withTimeout(LEDConstants.RELEASE_CORAL_TIMEOUT_SECONDS).asProxy()
+                        ).withTimeout(LEDConstants.RELEASE_CORAL_TIMEOUT_SECONDS)
                 )
         );
     }
