@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.260573630136986,
-        "y": 6.737136130136986
+        "x": 1.8471298356903842,
+        "y": 7.089590865758071
       },
       "isLocked": false,
       "linkedName": "TwoL4CoralsFromFeeder2"
     },
     {
       "anchor": {
-        "x": 3.9679303278688525,
-        "y": 5.307684426229509
+        "x": 3.65625,
+        "y": 5.091905737704917
       },
       "prevControl": {
-        "x": 3.1865947114304958,
-        "y": 6.3594823714349875
+        "x": 3.4859448456042266,
+        "y": 5.318337998273693
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "TwoL4CoralsFromFeeder5"
+      "linkedName": null
     }
   ],
   "rotationTargets": [],
@@ -33,13 +33,13 @@
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "PrepareL4",
-      "waypointRelativePos": 0.0,
+      "name": "PrepareL2",
+      "waypointRelativePos": 0,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
         "data": {
-          "name": "PrepareL4"
+          "name": "PrepareL2"
         }
       }
     }
@@ -54,7 +54,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 118.72032679786948
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": "TwoL4CoralsFromFeeder",

@@ -27,7 +27,7 @@ public class AprilTagCameraIO {
         public Pose3d alternateCameraSolvePNPPose = new Pose3d();
         public Pose3d constrainedSolvePNPPose = new Pose3d();
         public int[] visibleTagIDs = new int[0];
-        public double poseAmbiguity = 0;
+        public double poseAmbiguity = 1;
         public double[] distancesFromTags = new double[0];
     }
 }

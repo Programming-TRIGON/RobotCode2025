@@ -1,7 +1,5 @@
 package frc.trigon.robot.subsystems.gripper;
 
-import au.grapplerobotics.ConfigurationFailedException;
-import au.grapplerobotics.interfaces.LaserCanInterface;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.*;
@@ -15,7 +13,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.misc.simulatedfield.SimulationFieldHandler;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import org.trigon.hardware.RobotHardwareStats;
-import org.trigon.hardware.grapple.lasercan.LaserCAN;
+import org.trigon.hardware.misc.simplesensor.SimpleSensor;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
@@ -33,17 +31,17 @@ public class GripperConstants {
             GRIPPING_MOTOR_ID = 14,
             ANGLE_MOTOR_ID = 15,
             ANGLE_ENCODER_ID = 15,
-            LASER_CAN_ID = 0;
+            BEAM_BREAK_CHANNEL = 2;
     private static final String
             GRIPPING_MOTOR_NAME = "GripperGrippingMotor",
             ANGLE_MOTOR_NAME = "GripperAngleMotor",
             ANGLE_ENCODER_NAME = "GripperAngleEncoder",
-            LASER_CAN_NAME = "GripperLaserCAN";
+            BEAM_BREAK_NAME = "GripperBeamBreak";
     static final TalonFXMotor
             GRIPPING_MOTOR = new TalonFXMotor(GRIPPING_MOTOR_ID, GRIPPING_MOTOR_NAME),
             ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
     static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
-    static final LaserCAN LASER_CAN = new LaserCAN(LASER_CAN_ID, LASER_CAN_NAME);
+    static final SimpleSensor BEAM_BREAK = SimpleSensor.createDigitalSensor(BEAM_BREAK_CHANNEL, BEAM_BREAK_NAME);
 
     static final double ANGLE_MOTOR_GEAR_RATIO = 20.5;
     private static final double GRIPPING_MOTOR_GEAR_RATIO = 4;
@@ -79,7 +77,7 @@ public class GripperConstants {
             MAXIMUM_ANGLE,
             SHOULD_SIMULATE_GRAVITY
     );
-    private static final DoubleSupplier LASER_CAN_SIMULATION_SUPPLIER = () -> SimulationFieldHandler.isCoralInGripper() && SimulationFieldHandler.isHoldingCoral() ? 1 : 1000;
+    private static final DoubleSupplier BEAM_BREAK_SIMULATION_SUPPLIER = () -> SimulationFieldHandler.isCoralInGripper() && SimulationFieldHandler.isHoldingCoral() ? 1 : 1000;
 
     static final SysIdRoutine.Config SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(0.5).per(Units.Seconds),
@@ -120,19 +118,17 @@ public class GripperConstants {
     static final double SCORE_IN_REEF_FOR_AUTO_VOLTAGE = -5;
     static final double MINIMUM_VOLTAGE_FOR_EJECTING = -3;
     static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-34);
-    private static final double
-            COLLECTION_DETECTION_MAXIMUM_DISTANCE_MILLIMETERS = 10,
-            COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.10;
+    private static final double COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.10;
     static final BooleanEvent COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
-            () -> LASER_CAN.hasResult() && LASER_CAN.getDistanceMillimeters() < COLLECTION_DETECTION_MAXIMUM_DISTANCE_MILLIMETERS
+            BEAM_BREAK::getBinaryValue
     ).debounce(COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
 
     static {
         configureGrippingMotor();
         configureAngleMotor();
         configureEncoder();
-        configureLaserCAN();
+        configureBeamBreak();
     }
 
     private static void configureGrippingMotor() {
@@ -166,9 +162,9 @@ public class GripperConstants {
         config.Feedback.FeedbackRemoteSensorID = ANGLE_MOTOR.getID();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 120;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 20;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0.1;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.2;
         config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 2.52;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
@@ -212,15 +208,8 @@ public class GripperConstants {
         ANGLE_ENCODER.registerSignal(CANcoderSignal.VELOCITY, 100);
     }
 
-    private static void configureLaserCAN() {
-        try {
-            LASER_CAN.setRegionOfInterest(6, 6, 12, 12);
-            LASER_CAN.setRangingMode(LaserCanInterface.RangingMode.SHORT);
-            LASER_CAN.setLoopTime(LaserCanInterface.TimingBudget.TIMING_BUDGET_33MS);
-            LASER_CAN.setSimulationSupplier(LASER_CAN_SIMULATION_SUPPLIER);
-        } catch (ConfigurationFailedException e) {
-            e.printStackTrace();
-        }
+    private static void configureBeamBreak() {
+        BEAM_BREAK.setSimulationSupplier(BEAM_BREAK_SIMULATION_SUPPLIER);
     }
 
     public enum GripperState {
@@ -231,11 +220,12 @@ public class GripperConstants {
         SCORE_L1(Rotation2d.fromDegrees(93), -3),
         LOAD_CORAL(Rotation2d.fromDegrees(-56), 11),
         UNLOAD_CORAL(Rotation2d.fromDegrees(-50), -3),
-        COLLECT_ALGAE_FROM_REEF(Rotation2d.fromDegrees(32), -35),
+        COLLECT_ALGAE_FROM_REEF(Rotation2d.fromDegrees(30), -40),
+        HOLD_ALGAE(Rotation2d.fromDegrees(40), -40),
         SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(110), 11),
         PREPARE_FOR_SCORING_ALGAE_IN_NET(SCORE_ALGAE_IN_NET.targetAngle, COLLECT_ALGAE_FROM_REEF.targetGripperVoltage),
         AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0),
-        COLLECT_CORAL_FROM_FEEDER(Rotation2d.fromDegrees(115), 4),
+        COLLECT_CORAL_FROM_FEEDER(Rotation2d.fromDegrees(90), 8),
         OPEN_FOR_NOT_HITTING_REEF(Rotation2d.fromDegrees(93), 0.2);
 
         final Rotation2d targetAngle;

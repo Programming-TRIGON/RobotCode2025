@@ -218,7 +218,7 @@ public class PoseEstimator implements AutoCloseable {
 
         for (AprilTagCamera aprilTagCamera : aprilTagCameras) {
             aprilTagCamera.update();
-            if (aprilTagCamera.hasValidResult()) {
+            if (aprilTagCamera.hasValidResult() && aprilTagCamera.getEstimatedRobotPose() != null) {
                 camerasWithNewResult[index] = aprilTagCamera;
                 index++;
             }

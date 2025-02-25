@@ -1,13 +1,22 @@
 package frc.trigon.robot.commands.commandfactories;
 
 import edu.wpi.first.wpilibj2.command.*;
+import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.OperatorConstants;
+import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
+import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 
 public class AlgaeManipulationCommands {
+    public static Command getCollectAlgaeFromFloorCommand() {
+        return new SequentialCommandGroup(
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_ALGAE_FROM_FLOOR)
+        );
+    }
+
     public static Command getCollectAlgaeFromReefCommand() {
         return new ConditionalCommand(
                 getCollectAlgaeFromL2Command(),
@@ -42,6 +51,9 @@ public class AlgaeManipulationCommands {
     }
 
     private static Command getGripAlgaeCommand() {
-        return GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF);
+        return new SequentialCommandGroup(
+                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF).raceWith(new WaitCommand(1).andThen(new WaitUntilCommand(RobotContainer.GRIPPER::isMovingSlowly))),
+                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.HOLD_ALGAE)
+        );
     }
 }

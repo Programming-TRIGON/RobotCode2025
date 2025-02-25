@@ -144,7 +144,7 @@ public class CoralIntakeConstants {
     private static final double
             CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.32,
             EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.06;
-    private static final double EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETRES = 16;
+    private static final double EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETRES = 15;
     static final BooleanEvent CORAL_COLLECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             BEAM_BREAK::getBinaryValue
@@ -217,11 +217,11 @@ public class CoralIntakeConstants {
         config.Feedback.FeedbackRemoteSensorID = ANGLE_ENCODER.getID();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 15;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 120;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 1.6663 : 1.3;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 1.6663 : 7;
         config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.1;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 8.7544 : 9.15;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 8.7544 : 8;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.487;
 
@@ -282,7 +282,8 @@ public class CoralIntakeConstants {
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(90)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
         REST(0, 0, Rotation2d.fromDegrees(144.5)),
-        SCORE_L1(-3, -1, Rotation2d.fromDegrees(45));
+        SCORE_L1(-3, -1, Rotation2d.fromDegrees(45)),
+        COLLECT_ALGAE_FROM_FLOOR(-6, 0, Rotation2d.fromDegrees(-40));
 
         public final double
                 targetIntakeVoltage,

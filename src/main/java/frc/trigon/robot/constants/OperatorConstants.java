@@ -16,7 +16,7 @@ public class OperatorConstants {
 
     public static final double
             POV_DIVIDER = 2,
-            ROTATION_STICK_SPEED_DIVIDER = 0.7;
+            ROTATION_STICK_SPEED_DIVIDER = 1;
 
     public static final Trigger
             RESET_HEADING_TRIGGER = DRIVER_CONTROLLER.y(),

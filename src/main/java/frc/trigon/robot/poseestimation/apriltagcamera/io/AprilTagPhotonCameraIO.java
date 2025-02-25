@@ -70,6 +70,7 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
         inputs.visibleTagIDs = getVisibleTagIDs(latestResult);
         inputs.poseAmbiguity = latestResult.getMultiTagResult().isPresent() ? 0 : latestResult.getBestTarget().getPoseAmbiguity();
         inputs.distancesFromTags = getDistancesFromTags(latestResult);
+        inputs.hasConstrainedResult = false;
     }
 
     private void updateSolvePNPPoses(AprilTagCameraInputsAutoLogged inputs, PhotonPipelineResult latestResult) {
@@ -92,7 +93,7 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
         inputs.bestCameraSolvePNPPose = tagPose.transformBy(bestTargetToCamera);
         inputs.alternateCameraSolvePNPPose = tagPose.transformBy(alternateTargetToCamera);
 
-        updateConstrainedSolvePNPPose(inputs, latestResult);
+//        updateConstrainedSolvePNPPose(inputs, latestResult);
     }
 
     private void updateConstrainedSolvePNPPose(AprilTagCameraInputsAutoLogged inputs, PhotonPipelineResult latestResult) {

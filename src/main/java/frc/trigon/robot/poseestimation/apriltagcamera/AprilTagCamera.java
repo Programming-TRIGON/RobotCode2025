@@ -17,7 +17,7 @@ public class AprilTagCamera {
     private final Transform2d cameraToRobotCenter;
     private final StandardDeviations standardDeviations;
     private final AprilTagCameraIO aprilTagCameraIO;
-    private Pose2d estimatedRobotPose = null;
+    private Pose2d estimatedRobotPose = new Pose2d();
 
     /**
      * Constructs a new AprilTagCamera.
@@ -112,7 +112,7 @@ public class AprilTagCamera {
     }
 
     private Pose2d chooseBestRobotPose() {
-        if (isWithinBestTagRangeForAccurateSolvePNPResult() || !inputs.hasConstrainedResult)
+        if (!inputs.hasConstrainedResult || isWithinBestTagRangeForAccurateSolvePNPResult())
             return chooseBestNormalSolvePNPPose();
 
         return cameraPoseToRobotPose(inputs.constrainedSolvePNPPose.toPose2d());
