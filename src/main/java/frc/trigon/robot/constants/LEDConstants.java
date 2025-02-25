@@ -22,7 +22,10 @@ public class LEDConstants {
             INTAKE_CONFIRMATION_SETTINGS = new LEDStripAnimationSettings.BlinkSettings(Color.kDarkMagenta, 1),
             RELEASE_CORAL_SETTINGS = new LEDStripAnimationSettings.BlinkSettings(Color.kGreen, 1);
     public static final LEDStripAnimationSettings.StaticColorSettings
-            
+            SCORING_CORRECT_POSE_SETTING = new LEDStripAnimationSettings.StaticColorSettings(Color.kGreen),
+            SCORING_INCORRECT_POSE_SETTING = new LEDStripAnimationSettings.StaticColorSettings(Color.kGreen);
+
+
 
     private static final int CANDLE_ID = 0;
     static final CANdle CANDLE = new CANdle(CANDLE_ID, RobotConstants.CANIVORE_NAME);
