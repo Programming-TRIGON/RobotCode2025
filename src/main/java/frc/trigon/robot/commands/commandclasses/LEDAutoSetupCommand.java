@@ -8,9 +8,6 @@ import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.AutonomousCommands;
-import frc.trigon.robot.constants.LEDConstants;
-import org.trigon.hardware.misc.leds.LEDCommands;
-import org.trigon.hardware.misc.leds.LEDStripAnimationSettings;
 
 import java.util.function.Supplier;
 
@@ -45,11 +42,7 @@ public class LEDAutoSetupCommand extends ParallelCommandGroup {
                 () -> getDesiredLEDColorFromRobotPose(-calculateRobotRelativeDifference().getY(), TOLERANCE_METERS)
         };
 
-        addCommands(
-                getUpdateAutoStartPoseCommand(),
-                LEDCommands.getAnimateCommand(new LEDStripAnimationSettings.SectionColorSettings(leftLedColors), LEDConstants.LEFT_LED_STRIP),
-                LEDCommands.getAnimateCommand(new LEDStripAnimationSettings.SectionColorSettings(rightLedColors), LEDConstants.RIGHT_LED_STRIP)
-        );
+        addCommands(getUpdateAutoStartPoseCommand());
     }
 
     @Override

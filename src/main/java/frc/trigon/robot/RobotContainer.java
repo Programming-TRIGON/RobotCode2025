@@ -30,7 +30,6 @@ import frc.trigon.robot.subsystems.gripper.Gripper;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.swerve.Swerve;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.utilities.flippable.Flippable;
 
 import java.util.List;
@@ -82,7 +81,6 @@ public class RobotContainer {
         CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         GRIPPER.setDefaultCommand(GripperCommands.getGripperDefaultCommand());
-        LEDStrip.setDefaultAnimationForAllLEDS(LEDConstants.DEFAULT_SETTINGS);
     }
 
     private void bindControllerCommands() {
