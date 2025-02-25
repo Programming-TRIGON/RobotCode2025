@@ -2,7 +2,6 @@ package frc.trigon.robot.constants;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.CANdleConfiguration;
-import com.ctre.phoenix.led.LarsonAnimation;
 import edu.wpi.first.wpilibj.util.Color;
 import org.trigon.hardware.misc.leds.CANdleLEDStrip;
 import org.trigon.hardware.misc.leds.LEDStrip;
@@ -10,20 +9,13 @@ import org.trigon.hardware.misc.leds.LEDStripAnimationSettings;
 
 public class LEDConstants {
     public static final LEDStripAnimationSettings.ColorFlowSettings
-            DEFAULT_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kDarkGreen, 0.9, false),
-            MANUAL_GROUND_INTAKE_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kDarkMagenta, 0.5, false),
+            DEFAULT_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kDarkGreen, 0.2, false),
             GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kRed, 0.3, false),
             GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kGreen, 0.6, false),
             CORAL_STATION_INTAKE_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kYellow, 0.4, true);
-    public static final LEDStripAnimationSettings.BreatheSettings
-            SCORE_CORAL_SETTINGS = new LEDStripAnimationSettings.BreatheSettings(Color.kGreen, 5, 0.2, false, LarsonAnimation.BounceMode.Back),
-            SCORE_CORAL_AUTONOMOUSLY_SETTINGS = new LEDStripAnimationSettings.BreatheSettings(Color.kNavy, 7, 0.4, false, LarsonAnimation.BounceMode.Center);
     public static final LEDStripAnimationSettings.BlinkSettings
-            INTAKE_CONFIRMATION_SETTINGS = new LEDStripAnimationSettings.BlinkSettings(Color.kDarkMagenta, 1),
-            RELEASE_CORAL_SETTINGS = new LEDStripAnimationSettings.BlinkSettings(Color.kGreen, 1);
-    public static final LEDStripAnimationSettings.StaticColorSettings
-            SCORING_CORRECT_POSE_SETTING = new LEDStripAnimationSettings.StaticColorSettings(Color.kGreen),
-            SCORING_INCORRECT_POSE_SETTING = new LEDStripAnimationSettings.StaticColorSettings(Color.kGreen);
+            INTAKE_CONFIRMATION_SETTINGS = new LEDStripAnimationSettings.BlinkSettings(Color.kDarkMagenta, 0.7),
+            RELEASE_CORAL_SETTINGS = new LEDStripAnimationSettings.BlinkSettings(Color.kGreen, 0.7);
 
     private static final int CANDLE_ID = 0;
     static final CANdle CANDLE = new CANdle(CANDLE_ID, RobotConstants.CANIVORE_NAME);

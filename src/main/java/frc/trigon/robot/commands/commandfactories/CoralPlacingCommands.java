@@ -74,13 +74,6 @@ public class CoralPlacingCommands {
         return CoralCollectionCommands.getLoadCoralCommand().andThen(
                 new ParallelCommandGroup(
                         ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
-                        getGripperScoringSequenceCommand(),
-                        GeneralCommands.getContinuousConditionalCommand(
-                                LEDCommands.getAnimateCommand(LEDConstants.SCORING_CORRECT_POSE_SETTING, LEDStrip.LED_STRIPS).asProxy(),
-                                LEDCommands.getAnimateCommand(LEDConstants.SCORING_INCORRECT_POSE_SETTING, LEDStrip.LED_STRIPS).asProxy(),
-                                () -> RobotContainer.SWERVE.atPose(calculateTargetScoringPose())
-                        ),
-                        LEDCommands.getAnimateCommand(LEDConstants.SCORE_CORAL_SETTINGS, LEDStrip.LED_STRIPS).asProxy(),
                         getGripperScoringSequenceCommand()
                 )
         );
@@ -91,15 +84,9 @@ public class CoralPlacingCommands {
                 CoralCollectionCommands.getLoadCoralCommand().andThen(
                         new ParallelCommandGroup(
                                 getOpenElevatorWhenCloseToReefCommand(),
-                                getGripperScoringSequenceCommand(),
-                                GeneralCommands.getContinuousConditionalCommand(
-                                        LEDCommands.getAnimateCommand(LEDConstants.SCORING_CORRECT_POSE_SETTING, LEDStrip.LED_STRIPS),
-                                        LEDCommands.getAnimateCommand(LEDConstants.SCORING_INCORRECT_POSE_SETTING, LEDStrip.LED_STRIPS),
-                                        () -> RobotContainer.SWERVE.atPose(calculateTargetScoringPose())
-                                )
-                                ),
                                 getGripperScoringSequenceCommand()
-                        ),
+                        )
+                ),
                 getAutonomousDriveToReefThenManualDriveCommand()
         );
     }
