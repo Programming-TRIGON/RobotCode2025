@@ -10,7 +10,7 @@ import org.trigon.hardware.misc.leds.LEDStripAnimationSettings;
 
 public class LEDConstants {
     public static final LEDStripAnimationSettings.ColorFlowSettings
-            DEFAULT_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kDarkGreen, 0.1, false),
+            DEFAULT_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kDarkGreen, 0.9, false),
             MANUAL_GROUND_INTAKE_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kDarkMagenta, 0.5, false),
             GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kRed, 0.3, false),
             GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS = new LEDStripAnimationSettings.ColorFlowSettings(Color.kGreen, 0.6, false),
@@ -24,8 +24,6 @@ public class LEDConstants {
     public static final LEDStripAnimationSettings.StaticColorSettings
             SCORING_CORRECT_POSE_SETTING = new LEDStripAnimationSettings.StaticColorSettings(Color.kGreen),
             SCORING_INCORRECT_POSE_SETTING = new LEDStripAnimationSettings.StaticColorSettings(Color.kGreen);
-
-
 
     private static final int CANDLE_ID = 0;
     static final CANdle CANDLE = new CANdle(CANDLE_ID, RobotConstants.CANIVORE_NAME);
@@ -41,10 +39,6 @@ public class LEDConstants {
             RIGHT_LED_STRIP = LEDStrip.createCANdleLEDStrip(RIGHT_LED_STRIP_INVERTED, RIGHT_LED_STRIP_NUMBER_OF_LEDS, LED_OFFSET),
             LEFT_LED_STRIP = LEDStrip.createCANdleLEDStrip(LEFT_LED_STRIP_INVERTED, LEFT_LED_STRIP_NUMBER_OF_LEDS, RIGHT_LED_STRIP_NUMBER_OF_LEDS + LED_OFFSET);
 
-    public static final double
-            SCORING_BLINKING_SPEED = 0.5,
-            INTAKE_GROUND_CORAL_BREATHING_SPEED = 0.3;
-    public static final int SCORING_BREATHING_LEDS_AMOUNT = 5;
     public static final int RELEASE_CORAL_TIMEOUT_SECONDS = 1;
 
     /**
