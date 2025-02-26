@@ -20,6 +20,7 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 import org.photonvision.targeting.PnpResult;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -156,11 +157,16 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
     private int[] getVisibleTagIDs(PhotonPipelineResult result) {
         final List<PhotonTrackedTarget> targets = result.getTargets();
         final int[] visibleTagIDs = new int[targets.size()];
+        int indx = 0;
 
-        for (int i = 0; i < targets.size(); i++)
-            visibleTagIDs[i] = targets.get(i).getFiducialId();
+        for (int i = 0; i < targets.size(); i++) {
+            if (FieldConstants.TAG_ID_TO_POSE.containsKey(targets.get(i).getFiducialId())) {
+                visibleTagIDs[i] = targets.get(i).getFiducialId();
+                i++;
+            }
+        }
 
-        return visibleTagIDs;
+        return Arrays.copyOf(visibleTagIDs, indx);
     }
 
     private double[] getDistancesFromTags(PhotonPipelineResult result) {

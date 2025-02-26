@@ -138,8 +138,9 @@ public class AprilTagCamera {
 
     private double calculateAverageDistanceFromTags() {
         double totalDistance = 0;
-        for (int visibleTagID : inputs.visibleTagIDs)
+        for (int visibleTagID : inputs.visibleTagIDs) {
             totalDistance += FieldConstants.TAG_ID_TO_POSE.get(visibleTagID).getTranslation().getDistance(inputs.bestCameraSolvePNPPose.getTranslation());
+        }
         return totalDistance / inputs.visibleTagIDs.length;
     }
 
