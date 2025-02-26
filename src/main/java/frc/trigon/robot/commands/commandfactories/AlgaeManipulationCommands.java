@@ -18,7 +18,7 @@ public class AlgaeManipulationCommands {
     }
 
     public static Command getCollectAlgaeFromReefCommand() {
-        return new ConditionalCommand(
+        return GeneralCommands.getContinuousConditionalCommand(
                 getCollectAlgaeFromL2Command(),
                 getCollectAlgaeFromL3Command(),
                 () -> !OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER.getAsBoolean()
