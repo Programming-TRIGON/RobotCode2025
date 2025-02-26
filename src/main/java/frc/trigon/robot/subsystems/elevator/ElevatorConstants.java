@@ -153,9 +153,9 @@ public class ElevatorConstants {
         SCORE_L1(0),
         SCORE_L2(0),
         SCORE_L3(0.4),
-        SCORE_L4(1.03),
+        SCORE_L4(1.02),
         COLLECT_ALGAE_FROM_L3(0.35),
-        SCORE_NET(1.03);
+        SCORE_NET(1.02);
 
         public final double targetPositionMeters;
 
