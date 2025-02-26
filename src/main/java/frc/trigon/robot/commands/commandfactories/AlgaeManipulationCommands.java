@@ -21,7 +21,7 @@ public class AlgaeManipulationCommands {
         return new ConditionalCommand(
                 getCollectAlgaeFromL2Command(),
                 getCollectAlgaeFromL3Command(),
-                () -> CoralPlacingCommands.TARGET_SCORING_LEVEL == CoralPlacingCommands.ScoringLevel.L2
+                () -> !OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER.getAsBoolean()
         ).alongWith(
                 new WaitUntilCommand(OperatorConstants.SCORE_IN_NET_TRIGGER).andThen(new InstantCommand(() -> getScoreInNetCommand().schedule()))
         );
