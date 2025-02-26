@@ -141,7 +141,7 @@ public class CoralIntakeConstants {
             COLLECTION_RUMBLE_DURATION_SECONDS = 0.7,
             COLLECTION_RUMBLE_POWER = 1;
     private static final double
-            CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.6,
+            CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.4,
             EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.06;
     private static final double EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETRES = 15;
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
@@ -150,8 +150,8 @@ public class CoralIntakeConstants {
     ).debounce(EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
     static final BooleanEvent CORAL_COLLECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
-            () -> EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean()
-//            BEAM_BREAK::getBinaryValue
+//            () -> EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean()
+            BEAM_BREAK::getBinaryValue
     ).debounce(CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1.5);
@@ -274,14 +274,14 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, -1, Rotation2d.fromDegrees(144.5)),
+        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, -1, Rotation2d.fromDegrees(143)),
         LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
         UNLOAD_CORAL_FROM_GRIPPER(6, 2, Rotation2d.fromDegrees(141)),
-        CENTER_CORAL(8, 2, Rotation2d.fromDegrees(144.5)),
+        CENTER_CORAL(8, 2, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
         COLLECT_FROM_FLOOR(8, 2, Rotation2d.fromDegrees(-46)),
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(90)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
-        REST(0, 0, Rotation2d.fromDegrees(144.5)),
+        REST(0, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
         SCORE_L1(-1, -1, Rotation2d.fromDegrees(52)),
         COLLECT_ALGAE_FROM_FLOOR(-6, 0, Rotation2d.fromDegrees(-40));
 

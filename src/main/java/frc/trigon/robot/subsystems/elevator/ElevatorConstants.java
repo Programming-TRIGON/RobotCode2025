@@ -129,8 +129,6 @@ public class ElevatorConstants {
         MASTER_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
         MASTER_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
         MASTER_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
-
-        MASTER_MOTOR.setPosition(0);
     }
 
     private static void configureFollowerMotor() {
