@@ -234,7 +234,7 @@ public class CoralIntake extends MotorSubsystem {
 
     private double getClockPositionForElastic() {
         if (CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation)
-            return CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition;
+            return CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition - 0.5;
         return CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition + 0.5;
     }
 }
