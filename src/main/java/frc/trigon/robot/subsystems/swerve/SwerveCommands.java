@@ -2,7 +2,6 @@ package frc.trigon.robot.subsystems.swerve;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.path.*;
-import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.*;
@@ -145,8 +144,6 @@ public class SwerveCommands {
     }
 
     private static Command getPathfindToPoseCommand(FlippablePose2d targetPose, PathConstraints pathConstraints) {
-        Pathfinding.setGoalPosition(targetPose.get().getTranslation());
-        Pathfinding.setStartPosition(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation());
         return AutoBuilder.pathfindToPose(targetPose.get(), pathConstraints);
     }
 
