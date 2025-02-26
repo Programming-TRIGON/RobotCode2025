@@ -281,7 +281,7 @@ public class CoralIntakeConstants {
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(90)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
         REST(0, 0, Rotation2d.fromDegrees(144.5)),
-        SCORE_L1(-3, -1, Rotation2d.fromDegrees(45)),
+        SCORE_L1(-1, -1, Rotation2d.fromDegrees(52)),
         COLLECT_ALGAE_FROM_FLOOR(-6, 0, Rotation2d.fromDegrees(-40));
 
         public final double
