@@ -43,8 +43,7 @@ public class CoralCollectionCommands {
 
     private static Command getInitiateFloorCoralCollectionCommand() {
         return new ParallelCommandGroup(
-//                General
-//                Commands.getContinuousConditionalCommand(
+//                GeneralCommands.getContinuousConditionalCommand(
 //                        LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
 //                        LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
 //                        () -> CameraConstants.OBJECT_DETECTION_CAMERA.hasTargets(SimulatedGamePieceConstants.GamePieceType.CORAL)

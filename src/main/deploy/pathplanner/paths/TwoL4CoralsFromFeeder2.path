@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.1,
-        "y": 5.25
+        "x": 4.99,
+        "y": 5.24
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.371171181394669,
-        "y": 5.727511506785052
+        "x": 4.26117118139467,
+        "y": 5.717511506785052
       },
       "isLocked": false,
       "linkedName": "TwoL4CoralsFromFeeder1"
