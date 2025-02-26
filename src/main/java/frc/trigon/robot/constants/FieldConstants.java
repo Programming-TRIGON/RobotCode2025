@@ -10,11 +10,15 @@ import org.trigon.utilities.FilesHandler;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 
 public class FieldConstants {
     public static final double
             FIELD_WIDTH_METERS = FlippingUtil.fieldSizeY,
             FIELD_LENGTH_METERS = FlippingUtil.fieldSizeX;
+    private static final List<Integer> I_HATE_YOU = List.of(
+            13, 12, 16, 15, 14, 4, 5, 3, 2, 1
+    );
 
     private static final boolean SHOULD_USE_HOME_TAG_LAYOUT = false;
     public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = createAprilTagFieldLayout();
@@ -30,7 +34,7 @@ public class FieldConstants {
         try {
             return SHOULD_USE_HOME_TAG_LAYOUT ?
                     new AprilTagFieldLayout(FilesHandler.DEPLOY_PATH + "field_calibration.json") :
-                    AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
+                    AprilTagFieldLayout.loadField(AprilTagFields.k2025ReefscapeWelded);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -39,9 +43,8 @@ public class FieldConstants {
     private static HashMap<Integer, Pose3d> fieldLayoutToTagIdToPoseMap() {
         final HashMap<Integer, Pose3d> tagIdToPose = new HashMap<>();
         for (AprilTag aprilTag : APRIL_TAG_FIELD_LAYOUT.getTags()) {
-            if (aprilTag.ID == 13 || aprilTag.ID == 12 || aprilTag.ID == 1 || aprilTag.ID == 2 || aprilTag.ID == 4 || aprilTag.ID == 5|| aprilTag.ID == 15|| aprilTag.ID == 14)
-                continue;
-            tagIdToPose.put(aprilTag.ID, aprilTag.pose.transformBy(TAG_OFFSET));
+            if (!I_HATE_YOU.contains(aprilTag.ID))
+                tagIdToPose.put(aprilTag.ID, aprilTag.pose.transformBy(TAG_OFFSET));
         }
 
         return tagIdToPose;

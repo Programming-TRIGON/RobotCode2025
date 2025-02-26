@@ -12,7 +12,7 @@ import frc.trigon.robot.poseestimation.poseestimator.StandardDeviations;
 public class CameraConstants {
     private static final StandardDeviations
             REEF_TAG_CAMERA_STANDARD_DEVIATIONS = new StandardDeviations(
-            0.02,
+            0.015,
             0.01
     ),
             FEEDER_TAG_CAMERA_STANDARD_DEVIATIONS = new StandardDeviations(
