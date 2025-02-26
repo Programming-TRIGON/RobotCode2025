@@ -88,6 +88,7 @@ public class Gripper extends MotorSubsystem {
         return getCurrentEncoderAngle().getDegrees() > GripperConstants.MINIMUM_OPEN_FOR_ELEVATOR_ANGLE.getDegrees();
     }
 
+    @AutoLogOutput(key = "Gripper/HasGamePiece")
     public boolean hasGamePiece() {
         return GripperConstants.COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean();
     }
