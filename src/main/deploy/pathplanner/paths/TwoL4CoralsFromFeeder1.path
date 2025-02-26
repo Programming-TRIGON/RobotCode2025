@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 5.035,
-        "y": 5.23
+        "x": 5.1,
+        "y": 5.25
       },
       "prevControl": {
-        "x": 6.306734030678893,
-        "y": 5.0248238759157395
+        "x": 6.371734030678892,
+        "y": 5.044823875915739
       },
       "nextControl": null,
       "isLocked": false,
@@ -59,7 +59,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.7435628364706
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": "TwoL4CoralsFromFeeder",

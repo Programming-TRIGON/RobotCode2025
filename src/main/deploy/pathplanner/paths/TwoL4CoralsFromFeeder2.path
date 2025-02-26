@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 5.035,
-        "y": 5.23
+        "x": 5.1,
+        "y": 5.25
       },
       "prevControl": null,
       "nextControl": {
-        "x": 4.30617118139467,
-        "y": 5.707511506785052
+        "x": 4.371171181394669,
+        "y": 5.727511506785052
       },
       "isLocked": false,
       "linkedName": "TwoL4CoralsFromFeeder1"
@@ -53,7 +53,7 @@
   "folder": "TwoL4CoralsFromFeeder",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 59.7435628364706
+    "rotation": 59.99999999999999
   },
   "useDefaultConstraints": true
 }
