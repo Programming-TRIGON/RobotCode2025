@@ -59,7 +59,13 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
     }
 
     private void updateHasResultInputs(AprilTagCameraInputsAutoLogged inputs, PhotonPipelineResult latestResult) {
-        updateSolvePNPPoses(inputs, latestResult);
+        final PhotonTrackedTarget bestTag = getBestTag(latestResult);
+        if (bestTag == null) {
+            updateNoResultInputs(inputs);
+            inputs.hasResult = false;
+            return;
+        }
+        updateSolvePNPPoses(inputs, latestResult, bestTag);
         if (inputs.bestCameraSolvePNPPose == null) {
             updateNoResultInputs(inputs);
             inputs.hasResult = false;
@@ -68,12 +74,19 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
 
         inputs.latestResultTimestampSeconds = latestResult.getTimestampSeconds();
         inputs.visibleTagIDs = getVisibleTagIDs(latestResult);
-        inputs.poseAmbiguity = latestResult.getMultiTagResult().isPresent() ? 0 : latestResult.getBestTarget().getPoseAmbiguity();
+        inputs.poseAmbiguity = latestResult.getMultiTagResult().isPresent() ? 0 : bestTag.getPoseAmbiguity();
         inputs.distancesFromTags = getDistancesFromTags(latestResult);
         inputs.hasConstrainedResult = false;
     }
 
-    private void updateSolvePNPPoses(AprilTagCameraInputsAutoLogged inputs, PhotonPipelineResult latestResult) {
+    private PhotonTrackedTarget getBestTag(PhotonPipelineResult result) {
+        for (PhotonTrackedTarget tag : result.getTargets())
+            if (FieldConstants.TAG_ID_TO_POSE.containsKey(tag.getFiducialId()))
+                return tag;
+        return null;
+    }
+
+    private void updateSolvePNPPoses(AprilTagCameraInputsAutoLogged inputs, PhotonPipelineResult latestResult, PhotonTrackedTarget bestTag) {
         if (latestResult.getMultiTagResult().isPresent()) {
             final Transform3d cameraPoseTransform = latestResult.getMultiTagResult().get().estimatedPose.best;
             inputs.bestCameraSolvePNPPose = new Pose3d().plus(cameraPoseTransform).relativeTo(FieldConstants.APRIL_TAG_FIELD_LAYOUT.getOrigin());
@@ -81,14 +94,14 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
             return;
         }
 
-        final Pose3d tagPose = FieldConstants.TAG_ID_TO_POSE.get(latestResult.getBestTarget().getFiducialId());
+        final Pose3d tagPose = FieldConstants.TAG_ID_TO_POSE.get(bestTag.getFiducialId());
         if (tagPose == null) {
             inputs.bestCameraSolvePNPPose = null;
             return;
         }
 
-        final Transform3d bestTargetToCamera = latestResult.getBestTarget().getBestCameraToTarget().inverse();
-        final Transform3d alternateTargetToCamera = latestResult.getBestTarget().getBestCameraToTarget().inverse();
+        final Transform3d bestTargetToCamera = bestTag.getBestCameraToTarget().inverse();
+        final Transform3d alternateTargetToCamera = bestTag.getBestCameraToTarget().inverse();
 
         inputs.bestCameraSolvePNPPose = tagPose.transformBy(bestTargetToCamera);
         inputs.alternateCameraSolvePNPPose = tagPose.transformBy(alternateTargetToCamera);

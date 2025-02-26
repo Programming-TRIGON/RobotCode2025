@@ -157,7 +157,7 @@ public class AprilTagCamera {
     }
 
     private void logUsedTags() {
-        if (!inputs.hasResult) {
+        if (!hasValidResult()) {
             Logger.recordOutput("UsedTags/" + this.getName(), new Pose3d[0]);
             return;
         }
