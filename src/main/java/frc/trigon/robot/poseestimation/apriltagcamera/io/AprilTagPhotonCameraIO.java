@@ -159,10 +159,10 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
         final int[] visibleTagIDs = new int[targets.size()];
         int indx = 0;
 
-        for (int i = 0; i < targets.size(); i++) {
-            if (FieldConstants.TAG_ID_TO_POSE.containsKey(targets.get(i).getFiducialId())) {
-                visibleTagIDs[i] = targets.get(i).getFiducialId();
-                i++;
+        for (PhotonTrackedTarget target : targets) {
+            if (FieldConstants.TAG_ID_TO_POSE.containsKey(target.getFiducialId())) {
+                visibleTagIDs[indx] = target.getFiducialId();
+                indx++;
             }
         }
 
