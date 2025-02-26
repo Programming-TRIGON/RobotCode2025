@@ -198,7 +198,7 @@ public class CoralPlacingCommands {
 
         private ElevatorConstants.ElevatorState determineElevatorState() {
             return switch (ordinal()) {
-                case 0 -> null;
+                case 0 -> ElevatorConstants.ElevatorState.REST;
                 case 1 -> ElevatorConstants.ElevatorState.SCORE_L1;
                 case 2 -> ElevatorConstants.ElevatorState.SCORE_L2;
                 case 3 -> ElevatorConstants.ElevatorState.SCORE_L3;
