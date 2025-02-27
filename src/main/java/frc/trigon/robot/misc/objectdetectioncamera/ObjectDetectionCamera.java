@@ -123,7 +123,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
         return objectDetectionCameraInputs.hasTarget[targetGamePiece.id];
     }
 
-    private Rotation3d[] getTargetObjectsRotations(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
+    public Rotation3d[] getTargetObjectsRotations(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
         return objectDetectionCameraInputs.visibleObjectRotations[targetGamePiece.id];
     }
 
