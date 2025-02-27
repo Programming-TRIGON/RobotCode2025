@@ -3,47 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.0967213114754095,
-        "y": 5.415573770491803
+        "x": 3.99,
+        "y": 5.24
       },
       "prevControl": null,
       "nextControl": {
-        "x": 6.043052909329065,
-        "y": 5.553953171013486
+        "x": 3.1467423359330575,
+        "y": 5.962649944832286
       },
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "TwoL4CoralsFromFeeder5"
     },
     {
       "anchor": {
-        "x": 5.022848360655738,
-        "y": 5.2597336065573765
+        "x": 1.6828767123287671,
+        "y": 7.278060787671233
       },
       "prevControl": {
-        "x": 6.267705636194057,
-        "y": 5.29499599882074
+        "x": 1.997253786882593,
+        "y": 7.010504613218083
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "ScoreFourL4Corals1"
+      "linkedName": "TwoL4CoralsFromFeeder2"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "PrepareL4",
-      "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "PrepareL4"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 3.2,
     "maxAcceleration": 3.2,
@@ -54,13 +42,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.99999999999999
+    "rotation": 125.00000000000001
   },
   "reversed": false,
-  "folder": "ScoreFourL4Corals",
+  "folder": "TwoL4CoralsFromFeeder",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 0.0
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }

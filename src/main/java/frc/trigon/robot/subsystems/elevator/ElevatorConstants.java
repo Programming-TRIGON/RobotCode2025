@@ -2,10 +2,7 @@ package frc.trigon.robot.subsystems.elevator;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.signals.GravityTypeValue;
-import com.ctre.phoenix6.signals.InvertedValue;
-import com.ctre.phoenix6.signals.NeutralModeValue;
-import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
+import com.ctre.phoenix6.signals.*;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
 import edu.wpi.first.math.geometry.Translation3d;
@@ -75,7 +72,7 @@ public class ElevatorConstants {
 
     static final double FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH_METERS = 0.6;
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
-    static final double POSITION_TOLERANCE_METERS = 0.02;
+    static final double POSITION_TOLERANCE_METERS = 0.04;
     static final double
             GRIPPER_HITTING_ELEVATOR_BASE_LOWER_BOUND_POSITION_ROTATIONS = 0.29,
             GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS = 0.7;
@@ -95,16 +92,24 @@ public class ElevatorConstants {
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 2.4;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 40;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0.22774 : 0;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.096434;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.83783;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0.22774 : 0.4;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.098;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.90;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.4;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.37;
 
         config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+
+        config.HardwareLimitSwitch.ReverseLimitEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
+        config.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = 0;
+
+        config.HardwareLimitSwitch.ForwardLimitEnable = false;
 
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
         config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
@@ -124,8 +129,6 @@ public class ElevatorConstants {
         MASTER_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
         MASTER_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
         MASTER_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
-
-        MASTER_MOTOR.setPosition(0);
     }
 
     private static void configureFollowerMotor() {
@@ -147,10 +150,10 @@ public class ElevatorConstants {
         REST(0),
         SCORE_L1(0),
         SCORE_L2(0),
-        SCORE_L3(0.43),
-        SCORE_L4(1),
-        COLLECT_ALGAE_FROM_L3(0.365),
-        SCORE_NET(1.04);
+        SCORE_L3(0.4),
+        SCORE_L4(1.03),
+        COLLECT_ALGAE_FROM_L3(0.35),
+        SCORE_NET(1.03);
 
         public final double targetPositionMeters;
 

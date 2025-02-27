@@ -12,7 +12,7 @@ import frc.trigon.robot.poseestimation.poseestimator.StandardDeviations;
 public class CameraConstants {
     private static final StandardDeviations
             REEF_TAG_CAMERA_STANDARD_DEVIATIONS = new StandardDeviations(
-            0.02,
+            0.015,
             0.01
     ),
             FEEDER_TAG_CAMERA_STANDARD_DEVIATIONS = new StandardDeviations(
@@ -26,11 +26,11 @@ public class CameraConstants {
             new Rotation3d(0, Units.degreesToRadians(25), 0)
     ),
             ROBOT_CENTER_TO_LEFT_REEF_TAG_CAMERA = new Transform3d(
-                    new Translation3d(-0.1653037830136877, 0.2666392621226995, 0.369),
+                    new Translation3d(-0.2233383804584499, 0.2896992413455202, 0.369),
                     new Rotation3d(Units.degreesToRadians(180), Units.degreesToRadians(10), Units.degreesToRadians(200))
             ),
             ROBOT_CENTER_TO_RIGHT_REEF_TAG_CAMERA = new Transform3d(
-                    new Translation3d(-0.18925073637050002, -0.2646779509495591, 0.369),
+                    new Translation3d(-0.19412155946556942, -0.26473108567364695, 0.369),
                     new Rotation3d(Units.degreesToRadians(180), Units.degreesToRadians(10), Units.degreesToRadians(160))
             ),
             ROBOT_CENTER_TO_FEEDER_TAG_CAMERA = new Transform3d(

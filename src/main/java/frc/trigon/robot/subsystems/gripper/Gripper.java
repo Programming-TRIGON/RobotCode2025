@@ -11,7 +11,7 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
-import org.trigon.hardware.grapple.lasercan.LaserCAN;
+import org.trigon.hardware.misc.simplesensor.SimpleSensor;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
@@ -22,9 +22,9 @@ public class Gripper extends MotorSubsystem {
     private final TalonFXMotor grippingMotor = GripperConstants.GRIPPING_MOTOR;
     private final TalonFXMotor angleMotor = GripperConstants.ANGLE_MOTOR;
     private final CANcoderEncoder angleEncoder = GripperConstants.ANGLE_ENCODER;
-    private final LaserCAN laserCAN = GripperConstants.LASER_CAN;
+    private final SimpleSensor beamBreak = GripperConstants.BEAM_BREAK;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(GripperConstants.FOC_ENABLED);
-    private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(0);
+    private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(0).withMaxAbsDutyCycle(0.5);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(GripperConstants.FOC_ENABLED);
     private GripperConstants.GripperState targetState = GripperConstants.GripperState.REST;
 
@@ -52,7 +52,7 @@ public class Gripper extends MotorSubsystem {
         grippingMotor.update();
         angleMotor.update();
         angleEncoder.update();
-        laserCAN.update();
+        beamBreak.updateSensor();
         Logger.recordOutput("Gripper/CurrentAngleDegrees", getCurrentEncoderAngle().getDegrees());
     }
 
@@ -88,6 +88,7 @@ public class Gripper extends MotorSubsystem {
         return getCurrentEncoderAngle().getDegrees() > GripperConstants.MINIMUM_OPEN_FOR_ELEVATOR_ANGLE.getDegrees();
     }
 
+    @AutoLogOutput(key = "Gripper/HasGamePiece")
     public boolean hasGamePiece() {
         return GripperConstants.COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean();
     }
@@ -115,7 +116,12 @@ public class Gripper extends MotorSubsystem {
     }
 
     public Translation3d getRobotRelativeExitVelocity() {
-        return new Translation3d(getGrippingWheelVelocityMetersPerSecond(), new Rotation3d(0, -getCurrentEncoderAngle().getRadians(), 0));
+        return new Translation3d(-5, new Rotation3d(0, -getCurrentEncoderAngle().getRadians(), 0));
+    }
+
+    @AutoLogOutput
+    public boolean isMovingSlowly() {
+        return -grippingMotor.getSignal(TalonFXSignal.VELOCITY) < 4;
     }
 
     /**

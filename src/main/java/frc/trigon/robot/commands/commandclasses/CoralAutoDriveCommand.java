@@ -16,7 +16,7 @@ import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 
 public class CoralAutoDriveCommand extends ParallelCommandGroup {
-    private static final double AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS = 1.5;
+    private static final double AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS = 2.2;
     private static final PIDController
             X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new PIDController(0.5, 0, 0) :

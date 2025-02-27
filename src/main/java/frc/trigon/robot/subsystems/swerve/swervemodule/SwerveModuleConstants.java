@@ -32,7 +32,7 @@ public class SwerveModuleConstants {
 
     public static final SysIdRoutine.Config DRIVE_MOTOR_SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(1).per(Units.Second),
-            Units.Volts.of(5),
+            Units.Volts.of(8),
             Units.Second.of(1000)
     );
 

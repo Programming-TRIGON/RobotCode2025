@@ -3,29 +3,29 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.697902397260274,
-        "y": 7.353189212328767
+        "x": 1.6828767123287671,
+        "y": 7.278060787671233
       },
       "prevControl": null,
       "nextControl": {
-        "x": 3.275599315068493,
-        "y": 6.81226455479452
+        "x": 3.260573630136986,
+        "y": 6.737136130136986
       },
       "isLocked": false,
-      "linkedName": "TwoL4CoralsFromFeeder4"
+      "linkedName": "TwoL4CoralsFromFeeder2"
     },
     {
       "anchor": {
-        "x": 3.9679303278688525,
-        "y": 5.27172131147541
+        "x": 3.99,
+        "y": 5.24
       },
       "prevControl": {
-        "x": 3.1865947114304958,
-        "y": 6.323519256680889
+        "x": 3.2086643835616435,
+        "y": 6.291797945205479
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": null
+      "linkedName": "TwoL4CoralsFromFeeder5"
     }
   ],
   "rotationTargets": [],
@@ -46,7 +46,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.2,
-    "maxAcceleration": 3.6,
+    "maxAcceleration": 3.2,
     "maxAngularVelocity": 400.0,
     "maxAngularAcceleration": 400.0,
     "nominalVoltage": 12.0,
@@ -54,13 +54,13 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 118.72032679786948
+    "rotation": 119.99999999999999
   },
   "reversed": false,
   "folder": "TwoL4CoralsFromFeeder",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 127.2348339815746
+    "rotation": 125.00000000000001
   },
   "useDefaultConstraints": true
 }

@@ -6,9 +6,11 @@ import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.AutonomousCommands;
 import frc.trigon.robot.constants.LEDConstants;
+import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.misc.leds.LEDCommands;
 import org.trigon.hardware.misc.leds.LEDStripAnimationSettings;
 
@@ -19,10 +21,10 @@ import java.util.function.Supplier;
  * pose of the selected autonomous path.
  * This is very useful for placing the robot in the correct starting position and orientation for autonomous mode before a match.
  */
-public class LEDAutoSetupCommand extends ParallelCommandGroup {
+public class LEDAutoSetupCommand extends SequentialCommandGroup {
     private static final double
             TOLERANCE_METERS = 0.1,
-            TOLERANCE_DEGREES = 2;
+            TOLERANCE_DEGREES = 4;
     private final Supplier<String> autoName;
     private Pose2d autoStartPose;
 
@@ -47,8 +49,10 @@ public class LEDAutoSetupCommand extends ParallelCommandGroup {
 
         addCommands(
                 getUpdateAutoStartPoseCommand(),
-                LEDCommands.getAnimateCommand(new LEDStripAnimationSettings.SectionColorSettings(leftLedColors), LEDConstants.LEFT_LED_STRIP),
-                LEDCommands.getAnimateCommand(new LEDStripAnimationSettings.SectionColorSettings(rightLedColors), LEDConstants.RIGHT_LED_STRIP)
+                new ParallelCommandGroup(
+                        LEDCommands.getAnimateCommand(new LEDStripAnimationSettings.SectionColorSettings(leftLedColors), LEDConstants.LEFT_LED_STRIP),
+                        LEDCommands.getAnimateCommand(new LEDStripAnimationSettings.SectionColorSettings(rightLedColors), LEDConstants.RIGHT_LED_STRIP)
+                )
         );
     }
 
@@ -60,14 +64,14 @@ public class LEDAutoSetupCommand extends ParallelCommandGroup {
     private Command getUpdateAutoStartPoseCommand() {
         return new InstantCommand(() -> {
             this.autoStartPose = AutonomousCommands.getAutoStartPose(autoName.get());
+            Logger.recordOutput("PathPlanner/AutoStartPose", autoStartPose);
         });
     }
 
     private Translation2d calculateRobotRelativeDifference() {
         final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
-        final Translation2d robotRelativeRobotTranslation = robotPose.getTranslation().rotateBy(robotPose.getRotation());
-        final Translation2d robotRelativeAutoStartTranslation = robotRelativeRobotTranslation.rotateBy(robotPose.getRotation());
-        return robotRelativeAutoStartTranslation.minus(robotRelativeRobotTranslation);
+        final Translation2d robotRelativeRobotTranslation = robotPose.getTranslation().minus(this.autoStartPose.getTranslation());
+        return robotRelativeRobotTranslation.rotateBy(robotPose.getRotation());
     }
 
     /**
