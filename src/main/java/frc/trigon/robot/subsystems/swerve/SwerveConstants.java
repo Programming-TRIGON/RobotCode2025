@@ -61,7 +61,7 @@ public class SwerveConstants {
     private static final PIDConstants
             TRANSLATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
             new PIDConstants(5, 0, 0) :
-            new PIDConstants(5, 0, 0.22),
+            new PIDConstants(5, 0, 0.24),
             PROFILED_ROTATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
                     new PIDConstants(4, 0, 0) :
                     new PIDConstants(6, 0, 0.1);
