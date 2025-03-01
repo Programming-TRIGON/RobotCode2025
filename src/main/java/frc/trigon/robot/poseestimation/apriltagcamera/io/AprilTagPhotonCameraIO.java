@@ -102,7 +102,7 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
         }
 
         final Transform3d bestTargetToCamera = bestTag.getBestCameraToTarget().inverse();
-        final Transform3d alternateTargetToCamera = bestTag.getBestCameraToTarget().inverse();
+        final Transform3d alternateTargetToCamera = bestTag.getAlternateCameraToTarget().inverse();
 
         inputs.bestCameraSolvePNPPose = tagPose.transformBy(bestTargetToCamera);
         inputs.alternateCameraSolvePNPPose = tagPose.transformBy(alternateTargetToCamera);
