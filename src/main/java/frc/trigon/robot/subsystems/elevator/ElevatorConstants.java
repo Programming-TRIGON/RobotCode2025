@@ -27,7 +27,7 @@ public class ElevatorConstants {
             MASTER_MOTOR = new TalonFXMotor(MASTER_MOTOR_ID, MASTER_MOTOR_NAME),
             FOLLOWER_MOTOR = new TalonFXMotor(FOLLOWER_MOTOR_ID, FOLLOWER_MOTOR_NAME);
 
-    private static final double GEAR_RATIO = 7.222222;
+    private static final double GEAR_RATIO = 4.3333333333;
     private static final boolean SHOULD_FOLLOWER_OPPOSE_MASTER = true;
     static final boolean FOC_ENABLED = true;
 
@@ -92,7 +92,7 @@ public class ElevatorConstants {
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 40;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 40; //TODO: recalibrate it with new gear ratio
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0.22774 : 0.4;
         config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.098;
