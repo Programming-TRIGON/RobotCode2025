@@ -85,6 +85,35 @@ task(replayWatch, type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
 }
 
+
+// dashboard stuff starts here
+task npmBuild(type: Exec) {
+    workingDir "src/main/dashboard"
+    commandLine 'npm.cmd', 'install'
+}
+
+task npmRunBuild(type: Exec) {
+    dependsOn npmBuild
+    workingDir "src/main/dashboard"
+    commandLine 'npm.cmd', 'run', 'build'
+}
+
+task moveDist(type: Copy) {
+    dependsOn npmRunBuild
+    from "src/main/dashboard/dist"
+    into "src/main/deploy/dashboard"
+}
+
+task buildDashboard {
+    dependsOn moveDist
+    group = "build"
+    description = "Runs npm build and moves dist to deploy/dashboard"
+}
+
+compileJava.finalizedBy(buildDashboard)
+// dashboard stuff ends here
+
+
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
