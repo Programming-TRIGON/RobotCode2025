@@ -118,7 +118,7 @@ public class ElevatorConstants {
         config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 6.6;
 
         config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 80 : 20;
-        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 80 : 65;
+        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 80 : 55;
         config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 
         MASTER_MOTOR.applyConfiguration(config);
