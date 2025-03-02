@@ -92,13 +92,13 @@ public class ElevatorConstants {
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 40; //TODO: recalibrate it with new gear ratio
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 30; //TODO: recalibrate it with new gear ratio
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0.22774 : 0.4;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.098;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.90;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0.22774 : 1;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.091796875;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.5321499705314636;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.37;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.5869140625;
 
         config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
@@ -117,7 +117,7 @@ public class ElevatorConstants {
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 6.6;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 80 : 11.45833333333333;
+        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 80 : 20;
         config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 80 : 65;
         config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 

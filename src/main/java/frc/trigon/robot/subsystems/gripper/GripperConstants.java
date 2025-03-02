@@ -173,8 +173,8 @@ public class GripperConstants {
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 5 : 3;
-        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 5 : 8;
+        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 5 : 5;
+        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 5 : 15;
         config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
@@ -189,6 +189,7 @@ public class GripperConstants {
         ANGLE_MOTOR.registerSignal(TalonFXSignal.ROTOR_POSITION, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.ROTOR_VELOCITY, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.POSITION, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
