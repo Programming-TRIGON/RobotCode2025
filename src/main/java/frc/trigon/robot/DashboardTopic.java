@@ -14,8 +14,6 @@ public class DashboardTopic implements Closeable {
             DASHBOARD_TABLE = "Dashboard",
             ROBOT_TABLE_PATH = "robot",
             DASHBOARD_TABLE_PATH = "dashboard";
-
-
     private static final Set<DashboardTopic> topics = new HashSet<>();
 
     private final Consumer<NetworkTableValue> onChanged;

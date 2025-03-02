@@ -5,6 +5,9 @@
 
 package frc.trigon.robot;
 
+import edu.wpi.first.net.WebServer;
+import edu.wpi.first.networktables.NetworkTableValue;
+import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.trigon.robot.constants.RobotConstants;
@@ -19,15 +22,20 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.phoenix6.Phoenix6Inputs;
 
+import java.nio.file.Paths;
+
 public class Robot extends LoggedRobot {
     public static final boolean IS_REAL = Robot.isReal();
     private final CommandScheduler commandScheduler = CommandScheduler.getInstance();
     private Command autonomousCommand;
     private final RobotContainer robotContainer;
 
+
     Robot() {
         RobotConstants.init();
         configLogger();
+        ReefTracker.init();
+        WebServer.start(5801, Paths.get(Filesystem.getDeployDirectory().getAbsolutePath(), "dashboard").toString());
         robotContainer = new RobotContainer();
     }
 
