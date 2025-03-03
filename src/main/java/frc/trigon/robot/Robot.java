@@ -30,6 +30,18 @@ public class Robot extends LoggedRobot {
     private Command autonomousCommand;
     private final RobotContainer robotContainer;
 
+    DashboardTopic targetL = new DashboardTopic(
+            "Settings/targetL", NetworkTableValue.makeString("L4"), (value) -> {
+        System.out.println(value.getValue());
+    }
+    );
+
+    DashboardTopic compromise = new DashboardTopic(
+            "Settings/compromise", NetworkTableValue.makeBoolean(true), (value) -> {
+        System.out.println(value.getValue());
+    }
+    );
+
 
     Robot() {
         RobotConstants.init();
@@ -42,6 +54,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void robotPeriodic() {
         Phoenix6Inputs.refreshAllInputs();
+        DashboardTopic.updateAll();
         commandScheduler.run();
     }
 
