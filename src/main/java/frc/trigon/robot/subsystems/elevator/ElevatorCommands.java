@@ -19,6 +19,13 @@ public class ElevatorCommands {
         );
     }
 
+    public static Command voltCmd(double volt) {
+        return new StartEndCommand(
+                () -> RobotContainer.ELEVATOR.sysIdDrive(volt),
+                RobotContainer.ELEVATOR::stop
+        );
+    }
+
     public static Command getSetTargetStateCommand(Supplier<ElevatorConstants.ElevatorState> targetStateSupplier) {
         return getWaitUntilAllowedToMoveToPositionCommand(
                 RobotContainer.ELEVATOR.metersToRotations(targetStateSupplier.get().targetPositionMeters)

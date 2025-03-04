@@ -204,6 +204,7 @@ public class SwerveModule {
 
         driveMotor.registerSignal(TalonFXSignal.VELOCITY, 100);
         driveMotor.registerSignal(TalonFXSignal.TORQUE_CURRENT, 100);
+        driveMotor.registerSignal(TalonFXSignal.SUPPLY_CURRENT, 100);
         driveMotor.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
         driveMotor.registerThreadedSignal(TalonFXSignal.POSITION, PoseEstimatorConstants.ODOMETRY_FREQUENCY_HERTZ);
     }

@@ -5,7 +5,6 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.poseestimation.poseestimator.StandardDeviations;
 import org.littletonrobotics.junction.Logger;
-import org.trigon.hardware.RobotHardwareStats;
 
 /**
  * An april tag camera is a class that provides the robot's pose from a camera using one or multiple apriltags.
@@ -18,7 +17,7 @@ public class AprilTagCamera {
     private final Transform2d cameraToRobotCenter;
     private final StandardDeviations standardDeviations;
     private final AprilTagCameraIO aprilTagCameraIO;
-    private Pose2d estimatedRobotPose = null;
+    private Pose2d estimatedRobotPose = new Pose2d();
 
     /**
      * Constructs a new AprilTagCamera.
@@ -39,9 +38,7 @@ public class AprilTagCamera {
         this.standardDeviations = standardDeviations;
         this.cameraToRobotCenter = toTransform2d(robotCenterToCamera).inverse();
 
-        aprilTagCameraIO = AprilTagCameraIO.generateIO(aprilTagCameraType, name);
-        if (RobotHardwareStats.isSimulation())
-            aprilTagCameraIO.addSimulatedCameraToVisionSimulation(robotCenterToCamera);
+        aprilTagCameraIO = AprilTagCameraIO.generateIO(aprilTagCameraType, name, robotCenterToCamera);
     }
 
     public void update() {
@@ -60,11 +57,11 @@ public class AprilTagCamera {
     }
 
     public double getLatestResultTimestampSeconds() {
-        return inputs.latestResultTimestampSeconds;
+        return inputs.latestResultTimestampSeconds - 0.1;
     }
 
     public boolean hasValidResult() {
-        return inputs.hasResult && inputs.poseAmbiguity < AprilTagCameraConstants.MAXIMUM_AMBIGUITY;
+        return inputs.hasResult && inputs.poseAmbiguity < AprilTagCameraConstants.MAXIMUM_AMBIGUITY && inputs.distancesFromTags[0] < 5;
     }
 
     /**
@@ -115,6 +112,13 @@ public class AprilTagCamera {
     }
 
     private Pose2d chooseBestRobotPose() {
+        if (!inputs.hasConstrainedResult || isWithinBestTagRangeForAccurateSolvePNPResult())
+            return chooseBestNormalSolvePNPPose();
+
+        return cameraPoseToRobotPose(inputs.constrainedSolvePNPPose.toPose2d());
+    }
+
+    private Pose2d chooseBestNormalSolvePNPPose() {
         if (inputs.bestCameraSolvePNPPose.equals(inputs.alternateCameraSolvePNPPose))
             return cameraPoseToRobotPose(inputs.bestCameraSolvePNPPose.toPose2d());
 
@@ -134,8 +138,9 @@ public class AprilTagCamera {
 
     private double calculateAverageDistanceFromTags() {
         double totalDistance = 0;
-        for (int visibleTagID : inputs.visibleTagIDs)
+        for (int visibleTagID : inputs.visibleTagIDs) {
             totalDistance += FieldConstants.TAG_ID_TO_POSE.get(visibleTagID).getTranslation().getDistance(inputs.bestCameraSolvePNPPose.getTranslation());
+        }
         return totalDistance / inputs.visibleTagIDs.length;
     }
 
@@ -153,7 +158,7 @@ public class AprilTagCamera {
     }
 
     private void logUsedTags() {
-        if (!inputs.hasResult) {
+        if (!hasValidResult()) {
             Logger.recordOutput("UsedTags/" + this.getName(), new Pose3d[0]);
             return;
         }

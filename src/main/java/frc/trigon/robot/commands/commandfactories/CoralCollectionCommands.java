@@ -2,11 +2,8 @@ package frc.trigon.robot.commands.commandfactories;
 
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
-import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
-import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
-import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
@@ -39,26 +36,25 @@ public class CoralCollectionCommands {
     private static Command getInitiateFeederCoralCollectionCommand() {
         return new ParallelCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FEEDER),
-                LEDCommands.getAnimateCommand(LEDConstants.CORAL_STATION_INTAKE_SETTINGS, LEDStrip.LED_STRIPS).asProxy(),
+                LEDCommands.getAnimateCommand(LEDConstants.CORAL_STATION_INTAKE_SETTINGS, LEDStrip.LED_STRIPS),
                 getScheduleCoralLoadingWhenCollectedCommand()
         );
     }
 
     private static Command getInitiateFloorCoralCollectionCommand() {
         return new ParallelCommandGroup(
-                new CoralAutoDriveCommand().asProxy().onlyIf(() -> SHOULD_INTAKE_CORAL_AUTONOMOUSLY).until(OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER),
-                GeneralCommands.getContinuousConditionalCommand(
-                        LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
-                        LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
-                        () -> CameraConstants.OBJECT_DETECTION_CAMERA.hasTargets(SimulatedGamePieceConstants.GamePieceType.CORAL)
-                ),
+//                GeneralCommands.getContinuousConditionalCommand(
+//                        LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
+//                        LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
+//                        () -> CameraConstants.OBJECT_DETECTION_CAMERA.hasTargets(SimulatedGamePieceConstants.GamePieceType.CORAL)
+//                ).until(CoralCollectionCommands::didCollectCoral),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
                 getScheduleCoralLoadingWhenCollectedCommand()
         );
     }
 
     private static Command getScheduleCoralLoadingWhenCollectedCommand() {
-        return GeneralCommands.runWhen(getCollectionConfirmationCommand().andThen(getScheduleCoralLoadingCommand()), CoralCollectionCommands::didCollectCoral);
+        return GeneralCommands.runWhen(getCollectionConfirmationCommand().alongWith(getScheduleCoralLoadingCommand()), CoralCollectionCommands::didCollectCoral);
     }
 
     private static Command getScheduleCoralLoadingCommand() {
@@ -79,7 +75,7 @@ public class CoralCollectionCommands {
         return new ParallelCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.LOAD_CORAL),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
-                getCoralIntakeLoadingSequenceCommand()
+                getCoralIntakeLoadingSequenceCommand().asProxy()
         ).unless(CoralCollectionCommands::shouldStopLoadingCoral).until(CoralCollectionCommands::shouldStopLoadingCoral).andThen(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF).until(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF))
         );
@@ -87,8 +83,10 @@ public class CoralCollectionCommands {
 
     public static Command getUnloadCoralCommand() {
         return new ParallelCommandGroup(
-                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.UNLOAD_CORAL),
-                LEDCommands.getAnimateCommand(LEDConstants.RELEASE_CORAL_SETTINGS, LEDStrip.LED_STRIPS).asProxy(),
+                new SequentialCommandGroup(
+                        GripperCommands.getPrepareForStateCommand(GripperConstants.GripperState.UNLOAD_CORAL).until(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.UNLOAD_CORAL)),
+                        GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.UNLOAD_CORAL)
+                ),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.UNLOAD_CORAL_FROM_GRIPPER)
         ).unless(RobotContainer.CORAL_INTAKE::hasGamePiece).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
     }
@@ -109,7 +107,7 @@ public class CoralCollectionCommands {
     private static Command getCollectionConfirmationCommand() {
         return new ParallelCommandGroup(
                 new InstantCommand(() -> OperatorConstants.DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER)),
-                LEDCommands.getAnimateCommand(LEDConstants.INTAKE_CONFIRMATION_SETTINGS, LEDStrip.LED_STRIPS).asProxy()
+                LEDCommands.getAnimateCommand(LEDConstants.INTAKE_CONFIRMATION_SETTINGS, LEDStrip.LED_STRIPS).withTimeout(LEDConstants.RELEASE_CORAL_TIMEOUT_SECONDS)
         );
     }
 

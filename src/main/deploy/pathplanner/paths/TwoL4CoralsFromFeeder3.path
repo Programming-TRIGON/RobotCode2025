@@ -16,12 +16,12 @@
     },
     {
       "anchor": {
-        "x": 3.681292808219178,
-        "y": 5.144413527397259
+        "x": 3.69,
+        "y": 5.07
       },
       "prevControl": {
-        "x": 3.035188356164383,
-        "y": 6.00087756849315
+        "x": 3.0438955479452052,
+        "y": 5.926464041095891
       },
       "nextControl": null,
       "isLocked": false,
@@ -46,7 +46,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.2,
-    "maxAcceleration": 3.6,
+    "maxAcceleration": 3.2,
     "maxAngularVelocity": 400.0,
     "maxAngularAcceleration": 400.0,
     "nominalVoltage": 12.0,
@@ -60,7 +60,7 @@
   "folder": "TwoL4CoralsFromFeeder",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 128.15722658736908
+    "rotation": 125.00000000000001
   },
   "useDefaultConstraints": true
 }

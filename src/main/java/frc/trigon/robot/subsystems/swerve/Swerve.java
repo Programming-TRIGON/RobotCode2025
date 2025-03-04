@@ -1,5 +1,6 @@
 package frc.trigon.robot.subsystems.swerve;
 
+import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
@@ -9,6 +10,7 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.RobotContainer;
@@ -33,6 +35,7 @@ public class Swerve extends MotorSubsystem {
     private final Phoenix6SignalThread phoenix6SignalThread = Phoenix6SignalThread.getInstance();
     private final SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(PathPlannerConstants.ROBOT_CONFIG, SwerveModuleConstants.MAXIMUM_MODULE_ROTATIONAL_SPEED_RADIANS_PER_SECOND);
     private Pose2d targetPathPlannerPose = new Pose2d();
+    public boolean isPathPlannerDriving = false;
     private SwerveSetpoint previousSetpoint;
 
     public Swerve() {
@@ -70,6 +73,8 @@ public class Swerve extends MotorSubsystem {
         updatePoseEstimatorStates();
         RobotContainer.POSE_ESTIMATOR.periodic();
         updateNetworkTables();
+
+        Logger.recordOutput("HUHUH", Pathfinding.isNewPathAvailable());
     }
 
     @Override
@@ -145,10 +150,15 @@ public class Swerve extends MotorSubsystem {
         this.targetPathPlannerPose = targetPathPlannerPose;
     }
 
-    public void drivePathPlanner(ChassisSpeeds targetPathPlannerFeedforwardSpeeds) {
+    public void drivePathPlanner(ChassisSpeeds targetPathPlannerFeedforwardSpeeds, boolean isFromPathPlanner) {
+        isPathPlannerDriving = !isStill(targetPathPlannerFeedforwardSpeeds);
+        if (isFromPathPlanner && DriverStation.isAutonomous() && !isPathPlannerDriving)
+            return;
+        if (atPose(new FlippablePose2d(targetPathPlannerPose, false)))
+            return;
         final ChassisSpeeds pidSpeeds = calculateSelfRelativePIDToPoseSpeeds(new FlippablePose2d(targetPathPlannerPose, false));
-        final ChassisSpeeds dividedFeedforward = targetPathPlannerFeedforwardSpeeds.times(PathPlannerConstants.FEEDFORWARD_SCALAR);
-        final ChassisSpeeds combinedSpeeds = pidSpeeds.plus(dividedFeedforward);
+        final ChassisSpeeds scaledSpeeds = targetPathPlannerFeedforwardSpeeds.times(DriverStation.isAutonomous() ? 0.4 : PathPlannerConstants.FEEDFORWARD_SCALAR);
+        final ChassisSpeeds combinedSpeeds = pidSpeeds.plus(scaledSpeeds);
         selfRelativeDrive(combinedSpeeds);
     }
 
@@ -180,7 +190,7 @@ public class Swerve extends MotorSubsystem {
         return Flippable.isRedAlliance() ? currentAngle.rotateBy(Rotation2d.fromDegrees(180)) : currentAngle;
     }
 
-    void initializeDrive(boolean shouldUseClosedLoop) {
+    public void initializeDrive(boolean shouldUseClosedLoop) {
         previousSetpoint = new SwerveSetpoint(getSelfRelativeVelocity(), getModuleStates(), DriveFeedforwards.zeros(PathPlannerConstants.ROBOT_CONFIG.numModules));
         setClosedLoop(shouldUseClosedLoop);
         resetRotationController();
