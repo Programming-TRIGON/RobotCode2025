@@ -30,8 +30,8 @@ public class CoralIntakeConstants {
             FUNNEL_MOTOR_ID = 10,
             ANGLE_MOTOR_ID = 11,
             ANGLE_ENCODER_ID = 11,
-            BEAM_BREAK_CHANNEL = 0,
-            DISTANCE_SENSOR_CHANNEL = 1;
+            BEAM_BREAK_CHANNEL = 1,
+            DISTANCE_SENSOR_CHANNEL = 0;
     private static final String
             INTAKE_MOTOR_NAME = "CoralIntakeMotor",
             FUNNEL_MOTOR_NAME = "CoralFunnelMotor",

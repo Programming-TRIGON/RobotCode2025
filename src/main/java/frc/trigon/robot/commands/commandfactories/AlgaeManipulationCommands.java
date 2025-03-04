@@ -7,6 +7,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorCommands;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorConstants;
+import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
+import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
@@ -20,7 +22,6 @@ public class AlgaeManipulationCommands {
     }
 
     public static Command getCollectAlgaeFromReefCommand() {
-<<<<<<<HEAD
         return new ParallelCommandGroup(
                 getOpenElevatorForAlgaeCommand(),
                 getGripAlgaeCommand()
@@ -34,14 +35,6 @@ public class AlgaeManipulationCommands {
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.COLLECT_ALGAE_FROM_L3),
                 () -> CoralPlacingCommands.TARGET_SCORING_LEVEL == CoralPlacingCommands.ScoringLevel.L2
-                        == == == =
-        return GeneralCommands.getContinuousConditionalCommand(
-                getCollectAlgaeFromL2Command(),
-                getCollectAlgaeFromL3Command(),
-                () -> !OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER.getAsBoolean()
-        ).alongWith(
-                new WaitUntilCommand(OperatorConstants.SCORE_IN_NET_TRIGGER).andThen(new InstantCommand(() -> getScoreInNetCommand().schedule()))
-                        >>> >>> > main
         );
     }
 
@@ -57,15 +50,9 @@ public class AlgaeManipulationCommands {
     }
 
     private static Command getGripAlgaeCommand() {
-<<<<<<<HEAD
         return new ParallelCommandGroup(
                 GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF),
                 AlgaeManipulatorCommands.getSetTargetStateCommand(AlgaeManipulatorConstants.AlgaeManipulatorState.HOLD_ALGAE)
-                        == == == =
-        return new SequentialCommandGroup(
-                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF).raceWith(new WaitCommand(1).andThen(new WaitUntilCommand(RobotContainer.GRIPPER::isMovingSlowly))),
-                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.HOLD_ALGAE)
-                        >>> >>> > main
         );
     }
 }
