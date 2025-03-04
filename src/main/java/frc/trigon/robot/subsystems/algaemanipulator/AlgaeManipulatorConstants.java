@@ -1,7 +1,10 @@
 package frc.trigon.robot.subsystems.algaemanipulator;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.signals.*;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.InvertedValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.ctre.phoenix6.signals.StaticFeedforwardSignValue;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
@@ -24,7 +27,7 @@ public class AlgaeManipulatorConstants {
     private static final int ANGLE_MOTOR_AMOUNT = 1;
     private static final DCMotor ANGLE_MOTOR_GEARBOX = DCMotor.getKrakenX60(ANGLE_MOTOR_AMOUNT);
     private static final double
-            ARM_LENGTH_METERS = 0.24, //TODO: Measure this
+            ARM_LENGTH_METERS = 0.35, //TODO: Measure this
             ARM_MASS_KILOGRAMS = 3;
     private static final Rotation2d
             MINIMUM_ANGLE = Rotation2d.fromDegrees(0),
@@ -64,10 +67,7 @@ public class AlgaeManipulatorConstants {
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.Feedback.RotorToSensorRatio = GEAR_RATIO;
 
-        config.Feedback.FeedbackRemoteSensorID = ANGLE_MOTOR.getID();
-        config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
-
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 1 : 0;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 0;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0;
@@ -78,8 +78,8 @@ public class AlgaeManipulatorConstants {
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 5 : 5;
-        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 5 : 5;
+        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 100 : 5;
+        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 100 : 5;
         config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
@@ -103,8 +103,8 @@ public class AlgaeManipulatorConstants {
     }
 
     public enum AlgaeManipulatorState {
-        REST(MINIMUM_ANGLE),
-        COLLECT_ALGAE(MAXIMUM_ANGLE),
+        REST(Rotation2d.fromDegrees(10)),
+        COLLECT_ALGAE(Rotation2d.fromDegrees(80)),
         SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(50));
 
         final Rotation2d targetAngle;
