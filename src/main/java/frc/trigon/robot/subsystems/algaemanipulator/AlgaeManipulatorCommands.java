@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import org.trigon.commands.NetworkTablesCommand;
 
 import java.util.Set;
@@ -15,6 +16,14 @@ public class AlgaeManipulatorCommands {
                 false,
                 Set.of(RobotContainer.ALGAE_MANIPULATOR),
                 "Debugging/AlgaeManipulatorTargetAngleDegrees"
+        );
+    }
+
+    public static Command getDefaultCommand() {
+        return GeneralCommands.getContinuousConditionalCommand(
+                getSetTargetStateCommand(AlgaeManipulatorConstants.AlgaeManipulatorState.REST),
+                getSetTargetStateCommand(AlgaeManipulatorConstants.AlgaeManipulatorState.OPEN_FOR_GRIPPER),
+                () -> RobotContainer.GRIPPER.getCurrentEncoderAngle().getDegrees() < AlgaeManipulatorConstants.MAXIMUM_RESTING_GRIPPER_ANGLE.getDegrees()
         );
     }
 

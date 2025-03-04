@@ -181,7 +181,7 @@ public class Gripper extends MotorSubsystem {
         );
     }
 
-    private Rotation2d getCurrentEncoderAngle() {
+    public Rotation2d getCurrentEncoderAngle() {
         return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION) + GripperConstants.POSITION_OFFSET_FROM_GRAVITY_OFFSET);
     }
 

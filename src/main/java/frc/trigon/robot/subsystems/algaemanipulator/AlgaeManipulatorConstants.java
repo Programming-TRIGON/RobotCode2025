@@ -18,7 +18,7 @@ public class AlgaeManipulatorConstants {
     private static final String ANGLE_MOTOR_NAME = "AlgaeManipulatorAngleMotor";
     static final TalonFXMotor ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
 
-    private static final double GEAR_RATIO = 1;
+    private static final double GEAR_RATIO = 44 / 18.0;
     static final boolean FOC_ENABLED = true;
 
     private static final int ANGLE_MOTOR_AMOUNT = 1;
@@ -53,6 +53,7 @@ public class AlgaeManipulatorConstants {
     );
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
+    static final Rotation2d MAXIMUM_RESTING_GRIPPER_ANGLE = Rotation2d.fromDegrees(100);
 
     static {
         final TalonFXConfiguration config = new TalonFXConfiguration();
@@ -79,14 +80,14 @@ public class AlgaeManipulatorConstants {
         config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 100 : 5;
         config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 
-        config.HardwareLimitSwitch.ReverseLimitEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = MAXIMUM_ANGLE.getRotations();
-        config.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.LimitSwitchPin;
-        config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
+        config.HardwareLimitSwitch.ForwardLimitEnable = true;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
+        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
+        config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
+        config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
 
-        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAXIMUM_ANGLE.getRotations();
+//        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+//        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAXIMUM_ANGLE.getRotations();
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ANGLE_MOTOR_SIMULATION);
@@ -94,15 +95,15 @@ public class AlgaeManipulatorConstants {
         ANGLE_MOTOR.registerSignal(TalonFXSignal.POSITION, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
-        ANGLE_MOTOR.registerSignal(TalonFXSignal.REVERSE_LIMIT, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.FORWARD_LIMIT, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
     }
 
     public enum AlgaeManipulatorState {
-        REST(Rotation2d.fromDegrees(10)),
-        COLLECT_ALGAE(Rotation2d.fromDegrees(80)),
-        SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(50));
+        REST(Rotation2d.fromDegrees(0)),
+        OPEN_FOR_GRIPPER(Rotation2d.fromDegrees(-10)),
+        HOLD_ALGAE(Rotation2d.fromDegrees(-80));
 
         final Rotation2d targetAngle;
 
