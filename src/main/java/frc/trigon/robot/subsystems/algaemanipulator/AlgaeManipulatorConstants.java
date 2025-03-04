@@ -47,7 +47,7 @@ public class AlgaeManipulatorConstants {
     );
 
     static final SingleJointedArmMechanism2d ANGLE_MECHANISM = new SingleJointedArmMechanism2d(
-            "GripperAngleMechanism",
+            "AlgaeManipulatorAngleMechanism",
             ARM_LENGTH_METERS,
             Color.kRed
     );
