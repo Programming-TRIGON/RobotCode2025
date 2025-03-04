@@ -21,14 +21,16 @@ public class AlgaeManipulatorCommands {
     public static Command getSetTargetStateCommand(AlgaeManipulatorConstants.AlgaeManipulatorState targetState) {
         return new StartEndCommand(
                 () -> RobotContainer.ALGAE_MANIPULATOR.setTargetState(targetState),
-                RobotContainer.ALGAE_MANIPULATOR::stop
+                RobotContainer.ALGAE_MANIPULATOR::stop,
+                RobotContainer.ALGAE_MANIPULATOR
         );
     }
 
     public static Command getSetTargetAngleCommand(Rotation2d targetAngle) {
         return new StartEndCommand(
                 () -> RobotContainer.ALGAE_MANIPULATOR.setTargetAngle(targetAngle),
-                RobotContainer.ALGAE_MANIPULATOR::stop
+                RobotContainer.ALGAE_MANIPULATOR::stop,
+                RobotContainer.ALGAE_MANIPULATOR
         );
     }
 }
