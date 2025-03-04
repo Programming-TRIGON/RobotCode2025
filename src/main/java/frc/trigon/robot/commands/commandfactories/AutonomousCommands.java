@@ -33,7 +33,7 @@ public class AutonomousCommands {
     private static final BooleanEvent SWITCH_TO_PP_FEEDBACK = new BooleanEvent(CommandScheduler.getInstance().getActiveButtonLoop(), () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).falling();
 
     public static Command getPrepareForScoringInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
-        return CoralCollectionCommands.getLoadCoralCommand().andThen(
+        return CoralCollectionCommands.getLoadCoralCommand().unless(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState)).andThen(
                 new ParallelCommandGroup(
                         ElevatorCommands.getSetTargetStateCommand(() -> scoringLevel.elevatorState),
                         getGripperScoringSequenceCommand(scoringLevel)
@@ -43,14 +43,19 @@ public class AutonomousCommands {
 
     public static Command getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
         return new SequentialCommandGroup(
-                getPrepareForScoringInReefFromGripperCommand(scoringLevel).until(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState) && RobotContainer.GRIPPER.atState(scoringLevel.gripperState)),
-                GripperCommands.getSetTargetStateCommand(scoringLevel.gripperState).withTimeout(0.5)
+                getPrepareForScoringInReefFromGripperCommand(scoringLevel)
+                        .unless(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState) && RobotContainer.GRIPPER.atState(scoringLevel.gripperState))
+                        .until(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState) && RobotContainer.GRIPPER.atState(scoringLevel.gripperState)),
+                new WaitCommand(0.1),
+                GripperCommands.getSetTargetStateCommand(scoringLevel.gripperState).withTimeout(0.6)
         );
     }
 
     private static Command getGripperScoringSequenceCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
         return new SequentialCommandGroup(
-                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF).until(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState)),
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF)
+                        .unless(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState))
+                        .until(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState)),
                 GripperCommands.getPrepareForStateCommand(scoringLevel.gripperState)
         );
     }
@@ -153,7 +158,8 @@ public class AutonomousCommands {
             final FlippablePose2d flippedAutoStartPose = new FlippablePose2d(nonFlippedAutoStartPose, true);
             return flippedAutoStartPose.get();
         } catch (IOException | ParseException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            return new Pose2d();
         }
     }
 }

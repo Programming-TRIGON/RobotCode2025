@@ -26,10 +26,6 @@ def connectNT():
 def turn_off_keys_with_delay():
     global ntcoreinst, table, minimum_press_time, keys_dict
     while True:
-        if (ntcoreinst is not None and not ntcoreinst.isConnected()):
-            restart()
-            continue
-
         time.sleep(0.01)
         for key in keys_dict:
             if (keys_dict[key][1] and time.time() - keys_dict[key][0] > minimum_press_time):
@@ -37,15 +33,6 @@ def turn_off_keys_with_delay():
                 keys_dict.pop(key, None)
                 print(key + " is out")
                 break
-
-def restart():
-    global keys_dict
-    print("Restarting")
-    keys_dict = {}
-    keyboard.stop_recording()
-    ntcoreinst.stopClient()
-    connectNT()
-    keyboard.start_recording()
 
 def on_action(event: keyboard.KeyboardEvent):
     global ntcoreinst, table, minimum_press_time, keys_dict
