@@ -20,8 +20,8 @@ public class LEDConstants {
     static final CANdle CANDLE = new CANdle(CANDLE_ID, RobotConstants.CANIVORE_NAME);
 
     private static final int
-            RIGHT_LED_STRIP_NUMBER_OF_LEDS = 17,
-            LEFT_LED_STRIP_NUMBER_OF_LEDS = 17;
+            RIGHT_LED_STRIP_NUMBER_OF_LEDS = 19,
+            LEFT_LED_STRIP_NUMBER_OF_LEDS = 19;
     private static final int LED_OFFSET = 8;
     private static final boolean
             RIGHT_LED_STRIP_INVERTED = false,
