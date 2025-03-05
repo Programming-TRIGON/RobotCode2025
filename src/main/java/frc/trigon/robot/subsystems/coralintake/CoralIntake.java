@@ -11,6 +11,7 @@ import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
+import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
@@ -226,16 +227,16 @@ public class CoralIntake extends MotorSubsystem {
      */
     private void logToDashboard() {
         Logger.recordOutput("GameTime", DriverStation.getMatchTime());
-        Logger.recordOutput("TargetCoralPlacementStates/IsTargetSideLeft", !CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation);
-        Logger.recordOutput("TargetCoralPlacementStates/TargetLevel", CoralPlacingCommands.TARGET_SCORING_LEVEL.level);
+        Logger.recordOutput("TargetCoralPlacementStates/IsTargetSideLeft", !OperatorConstants.REEF_CHOOSER.getReefSide().doesFlipYTransformWhenFacingDriverStation);
+        Logger.recordOutput("TargetCoralPlacementStates/TargetLevel", OperatorConstants.REEF_CHOOSER.getScoringLevel().level);
         Logger.recordOutput("TargetCoralPlacementStates/TargetClockPositionForElastic", getClockPositionForElastic());
         Logger.recordOutput("ShouldIntakeCoralAutonomously", CoralCollectionCommands.SHOULD_INTAKE_CORAL_AUTONOMOUSLY);
         Logger.recordOutput("ShouldScoreCoralAutonomously", CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY);
     }
 
     private double getClockPositionForElastic() {
-        if (CoralPlacingCommands.TARGET_REEF_SCORING_SIDE.doesFlipYTransformWhenFacingDriverStation)
-            return CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition - 0.5;
-        return CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION.clockPosition + 0.5;
+        if (OperatorConstants.REEF_CHOOSER.getReefSide().doesFlipYTransformWhenFacingDriverStation)
+            return OperatorConstants.REEF_CHOOSER.getClockPosition().clockPosition - 0.5;
+        return OperatorConstants.REEF_CHOOSER.getClockPosition().clockPosition + 0.5;
     }
 }

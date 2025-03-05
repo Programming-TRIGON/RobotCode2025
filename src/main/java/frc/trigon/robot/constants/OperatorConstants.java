@@ -2,17 +2,21 @@ package frc.trigon.robot.constants;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.trigon.robot.misc.ReefChooser;
 import org.trigon.hardware.misc.KeyboardController;
 import org.trigon.hardware.misc.XboxController;
 
 public class OperatorConstants {
     public static final double DRIVER_CONTROLLER_DEADBAND = 0.07;
-    private static final int DRIVER_CONTROLLER_PORT = 0;
+    private static final int
+            DRIVER_CONTROLLER_PORT = 0,
+            REEF_CHOOSER_PORT = 1;
     private static final int DRIVER_CONTROLLER_EXPONENT = 2;
     public static final XboxController DRIVER_CONTROLLER = new XboxController(
             DRIVER_CONTROLLER_PORT, DRIVER_CONTROLLER_EXPONENT, DRIVER_CONTROLLER_DEADBAND
     );
     public static final KeyboardController OPERATOR_CONTROLLER = new KeyboardController();
+    public static final ReefChooser REEF_CHOOSER = new ReefChooser(REEF_CHOOSER_PORT);
 
     public static final double
             POV_DIVIDER = 2,

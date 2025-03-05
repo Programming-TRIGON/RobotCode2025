@@ -59,7 +59,7 @@ public class CoralCollectionCommands {
 
     private static Command getScheduleCoralLoadingCommand() {
         return new InstantCommand(() -> {
-            if (CoralPlacingCommands.TARGET_SCORING_LEVEL == CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE)
+            if (OperatorConstants.REEF_CHOOSER.getScoringLevel() == CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE)
                 getCenterCoralInIntakeCommand().schedule();
             else
                 getLoadCoralCommand().schedule();
