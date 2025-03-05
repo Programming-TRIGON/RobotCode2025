@@ -20,6 +20,7 @@ import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.hardware.simulation.SimpleMotorSimulation;
 import org.trigon.hardware.simulation.SingleJointedArmSimulation;
+import org.trigon.utilities.Conversions;
 import org.trigon.utilities.mechanisms.SingleJointedArmMechanism2d;
 import org.trigon.utilities.mechanisms.SpeedMechanism2d;
 
@@ -27,7 +28,7 @@ import java.util.function.DoubleSupplier;
 
 
 public class GripperConstants {
-    private static final int
+    public static final int
             GRIPPING_MOTOR_ID = 14,
             ANGLE_MOTOR_ID = 15,
             ANGLE_ENCODER_ID = 15,
@@ -45,8 +46,8 @@ public class GripperConstants {
 
     static final double ANGLE_MOTOR_GEAR_RATIO = 20.5;
     private static final double GRIPPING_MOTOR_GEAR_RATIO = 4;
-    private static final double ANGLE_ENCODER_GRAVITY_OFFSET = -0.12331;
-    static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = RobotHardwareStats.isSimulation() ? 0 : -0.044444 - ANGLE_ENCODER_GRAVITY_OFFSET;
+    private static final double ANGLE_ENCODER_GRAVITY_OFFSET = -0.12331 + Conversions.degreesToRotations(60);
+    static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = RobotHardwareStats.isSimulation() ? 0 : -0.044444 + Conversions.degreesToRotations(60) - ANGLE_ENCODER_GRAVITY_OFFSET;
     static final boolean FOC_ENABLED = true;
 
     private static final int
@@ -141,6 +142,9 @@ public class GripperConstants {
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         config.Feedback.RotorToSensorRatio = GRIPPING_MOTOR_GEAR_RATIO;
 
+        config.HardwareLimitSwitch.ForwardLimitEnable = false;
+        config.HardwareLimitSwitch.ReverseLimitEnable = false;
+
         GRIPPING_MOTOR.applyConfiguration(config);
         GRIPPING_MOTOR.setPhysicsSimulation(GRIPPING_SIMULATION);
 
@@ -178,10 +182,10 @@ public class GripperConstants {
         config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Rotation2d.fromDegrees(-59.645756).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET)).getRotations();
+        config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Rotation2d.fromDegrees(-59.645756).getRotations() - POSITION_OFFSET_FROM_GRAVITY_OFFSET;
 
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Rotation2d.fromDegrees(120).minus(Rotation2d.fromRotations(POSITION_OFFSET_FROM_GRAVITY_OFFSET)).getRotations();
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Rotation2d.fromDegrees(120).getRotations() - POSITION_OFFSET_FROM_GRAVITY_OFFSET;
 
         ANGLE_MOTOR.applyConfiguration(config);
         ANGLE_MOTOR.setPhysicsSimulation(ARM_SIMULATION);

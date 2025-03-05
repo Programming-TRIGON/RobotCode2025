@@ -121,7 +121,7 @@ public class Gripper extends MotorSubsystem {
 
     @AutoLogOutput
     public boolean isMovingSlowly() {
-        return -grippingMotor.getSignal(TalonFXSignal.VELOCITY) < 4;
+        return Math.abs(grippingMotor.getSignal(TalonFXSignal.VELOCITY)) < 4;
     }
 
     /**

@@ -1,9 +1,7 @@
 package frc.trigon.robot.commands.commandfactories;
 
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ConditionalCommand;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.*;
+import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorCommands;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorConstants;
@@ -50,8 +48,10 @@ public class AlgaeManipulationCommands {
     }
 
     private static Command getGripAlgaeCommand() {
-        return new ParallelCommandGroup(
-                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF),
+        return new SequentialCommandGroup(
+                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF).raceWith(new WaitCommand(1).andThen(new WaitUntilCommand(RobotContainer.GRIPPER::isMovingSlowly))),
+                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.HOLD_ALGAE)
+        ).alongWith(
                 AlgaeManipulatorCommands.getSetTargetStateCommand(AlgaeManipulatorConstants.AlgaeManipulatorState.HOLD_ALGAE)
         );
     }

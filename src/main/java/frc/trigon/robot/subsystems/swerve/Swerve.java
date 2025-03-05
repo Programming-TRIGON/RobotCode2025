@@ -1,6 +1,5 @@
 package frc.trigon.robot.subsystems.swerve;
 
-import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
@@ -73,8 +72,6 @@ public class Swerve extends MotorSubsystem {
         updatePoseEstimatorStates();
         RobotContainer.POSE_ESTIMATOR.periodic();
         updateNetworkTables();
-
-        Logger.recordOutput("HUHUH", Pathfinding.isNewPathAvailable());
     }
 
     @Override

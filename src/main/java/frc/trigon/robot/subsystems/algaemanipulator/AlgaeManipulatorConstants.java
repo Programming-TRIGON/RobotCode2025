@@ -7,6 +7,7 @@ import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
@@ -53,7 +54,7 @@ public class AlgaeManipulatorConstants {
     );
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
-    static final Rotation2d MAXIMUM_RESTING_GRIPPER_ANGLE = Rotation2d.fromDegrees(100);
+    static final Rotation2d MAXIMUM_RESTING_GRIPPER_ANGLE = Rotation2d.fromDegrees(75);
 
     static {
         final TalonFXConfiguration config = new TalonFXConfiguration();
@@ -62,13 +63,13 @@ public class AlgaeManipulatorConstants {
         config.Audio.BeepOnConfig = false;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
-        config.Feedback.RotorToSensorRatio = GEAR_RATIO;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 0;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 50;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.1;
         config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0 : 0;
@@ -83,7 +84,8 @@ public class AlgaeManipulatorConstants {
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
-        config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.LimitSwitchPin;
+        config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.RemoteTalonFX;
+        config.HardwareLimitSwitch.ForwardLimitRemoteSensorID = GripperConstants.GRIPPING_MOTOR_ID;
         config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
 
 //        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
@@ -102,8 +104,8 @@ public class AlgaeManipulatorConstants {
 
     public enum AlgaeManipulatorState {
         REST(Rotation2d.fromDegrees(0)),
-        OPEN_FOR_GRIPPER(Rotation2d.fromDegrees(-10)),
-        HOLD_ALGAE(Rotation2d.fromDegrees(-80));
+        OPEN_FOR_GRIPPER(Rotation2d.fromDegrees(-25)),
+        HOLD_ALGAE(Rotation2d.fromDegrees(-144));
 
         final Rotation2d targetAngle;
 
