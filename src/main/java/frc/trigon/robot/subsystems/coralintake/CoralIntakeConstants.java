@@ -160,7 +160,7 @@ public class CoralIntakeConstants {
             PULSING_OFF_PERIOD_SECONDS = 0.1,
             PULSING_INTAKE_MOTOR_VOLTAGE = 10,
             PULSING_FUNNEL_MOTOR_VOLTAGE = 2,
-            PULSING_ANGLE_DEGREES = 10;
+            PULSING_ANGLE_DEGREES = 90;
 
     static {
         configureIntakeMotor();

@@ -98,7 +98,7 @@ public class ElevatorConstants {
         config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.25513;
         config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.52756;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.68749;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.4;
 
         config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;

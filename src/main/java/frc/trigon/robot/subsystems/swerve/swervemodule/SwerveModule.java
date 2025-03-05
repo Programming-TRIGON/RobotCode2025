@@ -210,10 +210,8 @@ public class SwerveModule {
     }
 
     private void configureSteerMotor() {
-        final boolean isFront = driveMotor.getID() == SwerveConstants.FRONT_LEFT_ID || driveMotor.getID() == SwerveConstants.FRONT_RIGHT_ID;
-
-        steerMotor.applyConfiguration(SwerveModuleConstants.generateSteerMotorConfiguration(isFront, steerMotor.getID()));
-        steerMotor.setPhysicsSimulation(SwerveModuleConstants.createSteerMotorSimulation(isFront));
+        steerMotor.applyConfiguration(SwerveModuleConstants.generateSteerMotorConfiguration(steerMotor.getID()));
+        steerMotor.setPhysicsSimulation(SwerveModuleConstants.createSteerMotorSimulation());
 
         steerMotor.registerSignal(TalonFXSignal.VELOCITY, 100);
         steerMotor.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);

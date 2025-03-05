@@ -7,6 +7,7 @@ package frc.trigon.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -32,6 +33,7 @@ import frc.trigon.robot.subsystems.gripper.Gripper;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.Swerve;
+import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.utilities.flippable.Flippable;
@@ -48,6 +50,7 @@ public class RobotContainer {
     public static final CoralIntake CORAL_INTAKE = new CoralIntake();
     public static final Elevator ELEVATOR = new Elevator();
     public static final Gripper GRIPPER = new Gripper();
+    public static final LoggedPowerDistribution POWER_DISTRIBUTION = LoggedPowerDistribution.getInstance(1, PowerDistribution.ModuleType.kRev);
 
     private LoggedDashboardChooser<Command> autoChooser;
 
@@ -55,8 +58,6 @@ public class RobotContainer {
         initializeGeneralSystems();
         buildAutoChooser();
         configureBindings();
-
-//        new PowerDistribution(1, PowerDistribution.ModuleType.kRev);
     }
 
     /**
@@ -81,7 +82,7 @@ public class RobotContainer {
         bindDefaultCommands();
         bindControllerCommands();
         bindSetters();
-        configureSysIdBindings(ELEVATOR);
+//        configureSysIdBindings(ELEVATOR);
     }
 
     private void bindDefaultCommands() {
