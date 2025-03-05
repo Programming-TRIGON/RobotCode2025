@@ -89,7 +89,7 @@ public class RobotContainer {
 //        ALGAE_MANIPULATOR.setDefaultCommand(AlgaeManipulatorCommands.getDefaultCommand());
         CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
-//        GRIPPER.setDefaultCommand(GripperCommands.getGripperDefaultCommand());
+        GRIPPER.setDefaultCommand(GripperCommands.getGripperDefaultCommand());
         LEDStrip.setDefaultAnimationForAllLEDS(LEDConstants.DEFAULT_SETTINGS);
     }
 
