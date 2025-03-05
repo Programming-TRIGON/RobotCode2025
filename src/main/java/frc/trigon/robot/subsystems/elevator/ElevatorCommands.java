@@ -19,9 +19,9 @@ public class ElevatorCommands {
         );
     }
 
-    public static Command voltCmd(double volt) {
+    public static Command getSetTargetVoltageCommand(double targetVoltage) {
         return new StartEndCommand(
-                () -> RobotContainer.ELEVATOR.sysIdDrive(volt),
+                () -> RobotContainer.ELEVATOR.sysIdDrive(targetVoltage),
                 RobotContainer.ELEVATOR::stop
         );
     }
