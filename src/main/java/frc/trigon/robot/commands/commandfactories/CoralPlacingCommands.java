@@ -21,6 +21,7 @@ import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.hardware.misc.leds.LEDCommands;
 import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.utilities.flippable.FlippablePose2d;
+import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 public class CoralPlacingCommands {
     public static boolean SHOULD_SCORE_AUTONOMOUSLY = false;
@@ -36,6 +37,13 @@ public class CoralPlacingCommands {
         ).raceWith(getWaitUntilScoringTargetChangesCommand()).andThen(
                 () -> getScoreInReefCommand().onlyWhile(OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER).schedule()
         );
+    }
+
+    public static FlippablePose2d calculateTargetScoringPose() {
+        if (OperatorConstants.OVERRIDE_AUTO_SCORING_TO_CLOSEST_SCORING_LOCATION_TRIGGER.getAsBoolean()) {
+            return calculateClosestScoringPose();
+        }
+        return TARGET_SCORING_LEVEL.calculateTargetPlacingPosition(TARGET_REEF_SCORING_CLOCK_POSITION, TARGET_REEF_SCORING_SIDE);
     }
 
     private static Command getWaitUntilScoringTargetChangesCommand() {
@@ -125,8 +133,34 @@ public class CoralPlacingCommands {
         return currentTranslation.getDistance(targetTranslation);
     }
 
-    public static FlippablePose2d calculateTargetScoringPose() {
-        return TARGET_SCORING_LEVEL.calculateTargetPlacingPosition(TARGET_REEF_SCORING_CLOCK_POSITION, TARGET_REEF_SCORING_SIDE);
+    private static FlippablePose2d calculateClosestScoringPose() {
+        final Translation2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
+        final Translation2d reefCenterPose = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
+        final double reefCenterToScorePoseXTransformMeters = 1.3;
+        final double reefCenterToScorePoseYTransformMeters = 0.17;
+
+        double closestReefClockPositionDistance = Double.POSITIVE_INFINITY;
+        final Rotation2d[] reefClockAngles = FieldConstants.REEF_CLOCK_ANGLES;
+
+        Rotation2d closestReefClockPositionAngle = new Rotation2d();
+
+        for (Rotation2d reefClockAngle : reefClockAngles) {
+            final Pose2d reefCenterPoseAtAngle = new Pose2d(reefCenterPose, reefClockAngle);
+            final Translation2d scorePose = reefCenterPoseAtAngle.transformBy(new Transform2d(reefCenterToScorePoseXTransformMeters, 0, new Rotation2d())).getTranslation();
+            final double distanceToScoringLocation = scorePose.getDistance(robotPose);
+            if (distanceToScoringLocation < closestReefClockPositionDistance) {
+                closestReefClockPositionDistance = distanceToScoringLocation;
+                closestReefClockPositionAngle = reefClockAngle;
+            }
+        }
+
+        final Translation2d closestReefAngleScorePosition = new Pose2d(reefCenterPose, closestReefClockPositionAngle).transformBy(new Transform2d(reefCenterToScorePoseXTransformMeters, 0, new Rotation2d())).getTranslation();
+        final Translation2d right = closestReefAngleScorePosition.plus(new Translation2d(0, reefCenterToScorePoseYTransformMeters));
+        final Translation2d left = closestReefAngleScorePosition.plus(new Translation2d(0, reefCenterToScorePoseYTransformMeters).unaryMinus());
+        final double distanceToRightBranchAtClosestReefAngle = right.getDistance(robotPose);
+        final double distanceToLeftBranchAtClosestReefAngle = left.getDistance(robotPose);
+
+        return new FlippablePose2d(distanceToRightBranchAtClosestReefAngle > distanceToLeftBranchAtClosestReefAngle ? left : right, closestReefClockPositionAngle.getRadians(), false);
     }
 
     private static boolean canContinueScoringFromCoralIntake() {
