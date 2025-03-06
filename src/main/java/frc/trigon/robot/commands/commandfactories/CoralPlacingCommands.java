@@ -212,7 +212,7 @@ public class CoralPlacingCommands {
     public enum ScoringLevel {
         L1_CORAL_INTAKE(Double.NaN, Double.NaN, null),
         L1_GRIPPER(Double.NaN, Double.NaN, null),
-        L2(1.3, 0.17, Rotation2d.fromDegrees(0)),
+        L2(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, Rotation2d.fromDegrees(0)),
         L3(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0)),
         L4(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0));
 
