@@ -152,10 +152,10 @@ public class CoralPlacingCommands {
             }
         }
 
-        final Translation2d closestReefSide = new Pose2d(reefCenterPositionOnField, closestReefClockPositionAngle).transformBy(REEF_CENTER_TO_TARGET_SCORING_POSITION_X).getTranslation();
+        final Pose2d closestReefSide = new Pose2d(reefCenterPositionOnField, closestReefClockPositionAngle).transformBy(REEF_CENTER_TO_TARGET_SCORING_POSITION_X);
         final Translation2d
-                closestReefSideRightBranch = closestReefSide.plus(new Translation2d(0, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS)),
-                closestReefSideLeftBranch = closestReefSide.plus(new Translation2d(0, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS).unaryMinus());
+                closestReefSideRightBranch = closestReefSide.transformBy(new Transform2d(new Translation2d(0, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS), new Rotation2d())).getTranslation(),
+                closestReefSideLeftBranch = closestReefSide.transformBy(new Transform2d(new Translation2d(0, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS).unaryMinus(), new Rotation2d())).getTranslation();
         final boolean isClosestReefBranchLeft = closestReefSideRightBranch.getDistance(robotPositionOnField) > closestReefSideLeftBranch.getDistance(robotPositionOnField);
 
         return new FlippablePose2d(
