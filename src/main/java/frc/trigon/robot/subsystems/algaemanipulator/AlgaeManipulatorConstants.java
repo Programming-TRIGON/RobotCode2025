@@ -19,7 +19,7 @@ public class AlgaeManipulatorConstants {
     private static final String ANGLE_MOTOR_NAME = "AlgaeManipulatorAngleMotor";
     static final TalonFXMotor ANGLE_MOTOR = new TalonFXMotor(ANGLE_MOTOR_ID, ANGLE_MOTOR_NAME);
 
-    private static final double GEAR_RATIO = 44 / 18.0;
+    private static final double GEAR_RATIO = 24.375;
     static final boolean FOC_ENABLED = true;
 
     private static final int ANGLE_MOTOR_AMOUNT = 1;
@@ -54,7 +54,7 @@ public class AlgaeManipulatorConstants {
     );
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
-    static final Rotation2d MAXIMUM_RESTING_GRIPPER_ANGLE = Rotation2d.fromDegrees(75);
+    static final Rotation2d MAXIMUM_RESTING_GRIPPER_ANGLE = Rotation2d.fromDegrees(40);
 
     static {
         final TalonFXConfiguration config = new TalonFXConfiguration();
@@ -63,10 +63,10 @@ public class AlgaeManipulatorConstants {
         config.Audio.BeepOnConfig = false;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 50;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 75;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.1;
@@ -77,9 +77,9 @@ public class AlgaeManipulatorConstants {
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 100 : 1;
-        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 100 : 1;
-        config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
+        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 100 : 12;
+        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 100 : 12;
+        config.MotionMagic.MotionMagicJerk = 0;
 
         config.HardwareLimitSwitch.ForwardLimitEnable = true;
         config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
@@ -104,8 +104,8 @@ public class AlgaeManipulatorConstants {
 
     public enum AlgaeManipulatorState {
         REST(Rotation2d.fromDegrees(0)),
-        OPEN_FOR_GRIPPER(Rotation2d.fromDegrees(-25)),
-        HOLD_ALGAE(Rotation2d.fromDegrees(-144));
+        OPEN_FOR_GRIPPER(Rotation2d.fromDegrees(-30)),
+        HOLD_ALGAE(Rotation2d.fromDegrees(-146));
 
         final Rotation2d targetAngle;
 

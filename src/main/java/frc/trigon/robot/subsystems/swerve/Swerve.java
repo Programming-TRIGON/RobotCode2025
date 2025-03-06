@@ -153,7 +153,7 @@ public class Swerve extends MotorSubsystem {
             return;
         final ChassisSpeeds pidSpeeds = calculateSelfRelativePIDToPoseSpeeds(new FlippablePose2d(targetPathPlannerPose, false));
 //        final ChassisSpeeds pidSpeeds = new ChassisSpeeds();
-        final ChassisSpeeds combinedSpeeds = pidSpeeds.plus(targetPathPlannerFeedforwardSpeeds);
+        final ChassisSpeeds combinedSpeeds = targetPathPlannerFeedforwardSpeeds.plus(pidSpeeds);
         selfRelativeDrive(combinedSpeeds);
     }
 
