@@ -54,7 +54,7 @@ public class AlgaeManipulatorConstants {
     );
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
-    static final Rotation2d MAXIMUM_RESTING_GRIPPER_ANGLE = Rotation2d.fromDegrees(50);
+    static final Rotation2d MAXIMUM_RESTING_GRIPPER_ANGLE = Rotation2d.fromDegrees(0);
 
     static {
         final TalonFXConfiguration config = new TalonFXConfiguration();
@@ -77,8 +77,8 @@ public class AlgaeManipulatorConstants {
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 100 : 12;
-        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 100 : 12;
+        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 100 : 22;
+        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 100 : 18;
         config.MotionMagic.MotionMagicJerk = 0;
 
         config.HardwareLimitSwitch.ForwardLimitEnable = true;

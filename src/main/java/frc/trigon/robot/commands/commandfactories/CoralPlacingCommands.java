@@ -257,6 +257,7 @@ public class CoralPlacingCommands {
             final double yTransform = reefSide.shouldFlipYTransform(reefClockPosition) ? -positiveYTransformMeters : positiveYTransformMeters;
             final Transform2d transform = new Transform2d(xTransformMeters, yTransform, rotationTransform);
 
+            System.out.println(reefCenterPose.plus(transform));
             return new FlippablePose2d(reefCenterPose.plus(transform), true);
         }
 

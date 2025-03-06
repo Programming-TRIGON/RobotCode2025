@@ -21,7 +21,12 @@ public class AlgaeManipulatorCommands {
 
     public static Command getDefaultCommand() {
         return GeneralCommands.getContinuousConditionalCommand(
-                getSetTargetStateCommand(AlgaeManipulatorConstants.AlgaeManipulatorState.REST),
+                new StartEndCommand(
+                        () -> RobotContainer.ALGAE_MANIPULATOR.setTargetState(AlgaeManipulatorConstants.AlgaeManipulatorState.REST),
+                        () -> {
+                        },
+                        RobotContainer.ALGAE_MANIPULATOR
+                ),
                 getSetTargetStateCommand(AlgaeManipulatorConstants.AlgaeManipulatorState.OPEN_FOR_GRIPPER),
                 () -> RobotContainer.GRIPPER.getCurrentEncoderAngle().getDegrees() < AlgaeManipulatorConstants.MAXIMUM_RESTING_GRIPPER_ANGLE.getDegrees()
         );
