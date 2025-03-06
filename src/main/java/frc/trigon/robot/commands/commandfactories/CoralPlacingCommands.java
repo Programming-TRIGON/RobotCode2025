@@ -49,7 +49,8 @@ public class CoralPlacingCommands {
         return new ParallelRaceGroup(
                 new WaitUntilChangeCommand<>(() -> TARGET_SCORING_LEVEL),
                 new WaitUntilChangeCommand<>(() -> TARGET_REEF_SCORING_CLOCK_POSITION),
-                new WaitUntilChangeCommand<>(() -> TARGET_REEF_SCORING_SIDE)
+                new WaitUntilChangeCommand<>(() -> TARGET_REEF_SCORING_SIDE),
+                new WaitUntilChangeCommand<>(OperatorConstants.OVERRIDE_AUTO_SCORING_TO_CLOSEST_SCORING_LOCATION_TRIGGER::getAsBoolean)
         );
     }
 
