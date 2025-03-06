@@ -33,7 +33,7 @@ public class Swerve extends MotorSubsystem {
     private final SwerveModule[] swerveModules = SwerveConstants.SWERVE_MODULES;
     private final Phoenix6SignalThread phoenix6SignalThread = Phoenix6SignalThread.getInstance();
     private final SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(PathPlannerConstants.ROBOT_CONFIG, SwerveModuleConstants.MAXIMUM_MODULE_ROTATIONAL_SPEED_RADIANS_PER_SECOND);
-    private Pose2d targetPathPlannerPose = new Pose2d();
+    public Pose2d targetPathPlannerPose = new Pose2d();
     public boolean isPathPlannerDriving = false;
     private SwerveSetpoint previousSetpoint;
 

@@ -56,7 +56,7 @@ public class AprilTagCamera {
     }
 
     public double getLatestResultTimestampSeconds() {
-        return inputs.latestResultTimestampSeconds - 0.12;
+        return inputs.latestResultTimestampSeconds - 0.115;
     }
 
     public boolean hasValidResult() {

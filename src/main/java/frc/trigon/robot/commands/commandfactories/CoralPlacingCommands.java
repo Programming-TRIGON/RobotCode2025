@@ -24,7 +24,7 @@ import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 public class CoralPlacingCommands {
-    public static boolean SHOULD_SCORE_AUTONOMOUSLY = false;
+    public static boolean SHOULD_SCORE_AUTONOMOUSLY = true;
     public static ScoringLevel TARGET_SCORING_LEVEL = ScoringLevel.L4;
     public static FieldConstants.ReefClockPosition TARGET_REEF_SCORING_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_6_OCLOCK;
     public static FieldConstants.ReefSide TARGET_REEF_SCORING_SIDE = FieldConstants.ReefSide.RIGHT;
@@ -78,7 +78,7 @@ public class CoralPlacingCommands {
     }
 
     private static Command getManuallyScoreInReefFromGripperCommand() {
-        return CoralCollectionCommands.getLoadCoralCommand().unless(() -> RobotContainer.ELEVATOR.atState(TARGET_SCORING_LEVEL.elevatorState)).andThen(
+        return CoralCollectionCommands.getLoadCoralCommand().andThen(
                 new ParallelCommandGroup(
                         ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
                         getGripperScoringSequenceCommand()
@@ -88,7 +88,7 @@ public class CoralPlacingCommands {
 
     private static Command getAutonomouslyScoreInReefFromGripperCommand() {
         return new ParallelCommandGroup(
-                CoralCollectionCommands.getLoadCoralCommand().unless(() -> RobotContainer.ELEVATOR.atState(TARGET_SCORING_LEVEL.elevatorState)).andThen(
+                CoralCollectionCommands.getLoadCoralCommand().andThen(
                         new ParallelCommandGroup(
                                 getOpenElevatorWhenCloseToReefCommand(),
                                 getGripperScoringSequenceCommand()
@@ -100,7 +100,7 @@ public class CoralPlacingCommands {
 
     private static Command getGripperScoringSequenceCommand() {
         return new SequentialCommandGroup(
-                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF).unless(() -> RobotContainer.ELEVATOR.atState(TARGET_SCORING_LEVEL.elevatorState)).until(() -> RobotContainer.ELEVATOR.atState(TARGET_SCORING_LEVEL.elevatorState)),
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF).unless(() -> RobotContainer.ELEVATOR.atState(TARGET_SCORING_LEVEL.elevatorState) || TARGET_SCORING_LEVEL == ScoringLevel.L2 || TARGET_SCORING_LEVEL == ScoringLevel.L1_GRIPPER).until(() -> RobotContainer.ELEVATOR.atState(TARGET_SCORING_LEVEL.elevatorState)),
                 GripperCommands.getPrepareForStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
                 GripperCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).alongWith(
                         LEDCommands.getAnimateCommand(
@@ -257,7 +257,6 @@ public class CoralPlacingCommands {
             final double yTransform = reefSide.shouldFlipYTransform(reefClockPosition) ? -positiveYTransformMeters : positiveYTransformMeters;
             final Transform2d transform = new Transform2d(xTransformMeters, yTransform, rotationTransform);
 
-            System.out.println(reefCenterPose.plus(transform));
             return new FlippablePose2d(reefCenterPose.plus(transform), true);
         }
 

@@ -103,8 +103,8 @@ public class AlgaeManipulatorConstants {
     }
 
     public enum AlgaeManipulatorState {
-        REST(Rotation2d.fromDegrees(0)),
-        OPEN_FOR_GRIPPER(Rotation2d.fromDegrees(-40)),
+        REST(Rotation2d.fromDegrees(-10)),
+        OPEN_FOR_GRIPPER(Rotation2d.fromDegrees(-30)),
         HOLD_ALGAE(Rotation2d.fromDegrees(-146));
 
         final Rotation2d targetAngle;

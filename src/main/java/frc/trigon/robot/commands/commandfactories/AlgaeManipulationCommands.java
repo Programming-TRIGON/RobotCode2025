@@ -29,7 +29,7 @@ public class AlgaeManipulationCommands {
     }
 
     private static Command getOpenElevatorForAlgaeCommand() {
-        return new ConditionalCommand(
+        return GeneralCommands.getContinuousConditionalCommand(
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.COLLECT_ALGAE_FROM_L3),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
                 OperatorConstants.MULTIFUNCTION_TRIGGER

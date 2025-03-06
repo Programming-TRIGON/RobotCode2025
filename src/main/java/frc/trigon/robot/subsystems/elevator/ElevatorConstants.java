@@ -29,6 +29,9 @@ public class ElevatorConstants {
 
     private static final double GEAR_RATIO = 4.3333333333;
     private static final boolean SHOULD_FOLLOWER_OPPOSE_MASTER = true;
+    static final double
+            DEFAULT_MAXIMUM_VELOCITY = 20,
+            DEFAULT_MAXIMUM_ACCELERATION = 50;
     static final boolean FOC_ENABLED = true;
 
     private static final int MOTOR_AMOUNT = 2;
@@ -117,8 +120,8 @@ public class ElevatorConstants {
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 6.6;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 80 : 20;
-        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 80 : 55;
+        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 80 : DEFAULT_MAXIMUM_VELOCITY;
+        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 80 : DEFAULT_MAXIMUM_ACCELERATION;
         config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 
         MASTER_MOTOR.applyConfiguration(config);
@@ -147,18 +150,20 @@ public class ElevatorConstants {
     }
 
     public enum ElevatorState {
-        REST(0),
-        SCORE_L1(0),
-        SCORE_L2(0),
-        SCORE_L3(0.4),
-        SCORE_L4(1.03),
-        COLLECT_ALGAE_FROM_L3(0.35),
-        SCORE_NET(1.03);
+        REST(0, 0.7),
+        SCORE_L1(0, 1),
+        SCORE_L2(0, 1),
+        SCORE_L3(0.4, 1),
+        SCORE_L4(1.03, 1),
+        COLLECT_ALGAE_FROM_L3(0.35, 1),
+        SCORE_NET(1.03, 0.3);
 
         public final double targetPositionMeters;
+        final double speedScalar;
 
-        ElevatorState(double targetPositionMeters) {
+        ElevatorState(double targetPositionMeters, double speedScalar) {
             this.targetPositionMeters = targetPositionMeters;
+            this.speedScalar = speedScalar;
         }
     }
 }

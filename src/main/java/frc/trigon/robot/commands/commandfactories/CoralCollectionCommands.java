@@ -75,10 +75,8 @@ public class CoralCollectionCommands {
         return new ParallelCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.LOAD_CORAL),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
-                getCoralIntakeLoadingSequenceCommand().asProxy()
-        ).unless(CoralCollectionCommands::shouldStopLoadingCoral).until(CoralCollectionCommands::shouldStopLoadingCoral).andThen(
-                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF).until(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF))
-        );
+                getCoralIntakeLoadingSequenceCommand()
+        ).unless(CoralCollectionCommands::shouldStopLoadingCoral).until(CoralCollectionCommands::shouldStopLoadingCoral);
     }
 
     public static Command getUnloadCoralCommand() {
