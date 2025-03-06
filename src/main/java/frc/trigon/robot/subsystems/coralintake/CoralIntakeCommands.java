@@ -47,7 +47,8 @@ public class CoralIntakeCommands {
     public static Command getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState targetState) {
         return new StartEndCommand(
                 () -> RobotContainer.CORAL_INTAKE.prepareForState(targetState),
-                RobotContainer.CORAL_INTAKE::stop,
+                () -> {
+                },
                 RobotContainer.CORAL_INTAKE
         );
     }

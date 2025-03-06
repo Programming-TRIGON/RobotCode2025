@@ -5,6 +5,7 @@
 
 package frc.trigon.robot;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.net.WebServer;
 import edu.wpi.first.networktables.NetworkTableValue;
 import edu.wpi.first.wpilibj.Filesystem;
@@ -60,6 +61,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousInit() {
+        RobotContainer.SWERVE.initializeDrive(true);
         autonomousCommand = robotContainer.getAutonomousCommand();
 
         if (autonomousCommand != null)
@@ -90,6 +92,8 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousPeriodic() {
+        if (!RobotContainer.SWERVE.isPathPlannerDriving)
+            RobotContainer.SWERVE.drivePathPlanner(new ChassisSpeeds(), false);
     }
 
     @Override

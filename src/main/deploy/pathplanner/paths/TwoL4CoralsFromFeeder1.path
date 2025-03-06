@@ -3,49 +3,43 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 7.084733606557376,
-        "y": 5.955020491803278
+        "x": 7.0967213114754095,
+        "y": 5.283709016393443
       },
       "prevControl": null,
       "nextControl": {
-        "x": 5.880700120233254,
-        "y": 5.772448731607429
+        "x": 5.993852459016393,
+        "y": 5.27172131147541
       },
       "isLocked": false,
       "linkedName": null
     },
     {
       "anchor": {
-        "x": 5.010860655737704,
-        "y": 5.247745901639345
+        "x": 4.99,
+        "y": 5.24
       },
       "prevControl": {
-        "x": 6.261292925222995,
-        "y": 5.652724718486871
+        "x": 6.261734030678893,
+        "y": 5.034823875915739
       },
       "nextControl": null,
       "isLocked": false,
       "linkedName": "TwoL4CoralsFromFeeder1"
     }
   ],
-  "rotationTargets": [],
+  "rotationTargets": [
+    {
+      "waypointRelativePos": 0.5501066098081023,
+      "rotationDegrees": 59.99999999999999
+    }
+  ],
   "constraintZones": [],
   "pointTowardsZones": [],
   "eventMarkers": [
     {
-      "name": "RestCoralIntake",
-      "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "RestCoralIntake"
-        }
-      }
-    },
-    {
       "name": "PrepareL4",
-      "waypointRelativePos": 0.10169491525423731,
+      "waypointRelativePos": 0.15395003376096963,
       "endWaypointRelativePos": null,
       "command": {
         "type": "named",
@@ -57,7 +51,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.2,
-    "maxAcceleration": 3.6,
+    "maxAcceleration": 3.2,
     "maxAngularVelocity": 400.0,
     "maxAngularAcceleration": 400.0,
     "nominalVoltage": 12.0,
@@ -65,7 +59,7 @@
   },
   "goalEndState": {
     "velocity": 0,
-    "rotation": 59.7435628364706
+    "rotation": 59.99999999999999
   },
   "reversed": false,
   "folder": "TwoL4CoralsFromFeeder",
