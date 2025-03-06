@@ -54,7 +54,7 @@ public class AlgaeManipulatorConstants {
     );
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
-    static final Rotation2d MAXIMUM_RESTING_GRIPPER_ANGLE = Rotation2d.fromDegrees(40);
+    static final Rotation2d MAXIMUM_RESTING_GRIPPER_ANGLE = Rotation2d.fromDegrees(50);
 
     static {
         final TalonFXConfiguration config = new TalonFXConfiguration();
@@ -66,7 +66,7 @@ public class AlgaeManipulatorConstants {
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
         config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 75;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 85;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.1;
@@ -104,7 +104,7 @@ public class AlgaeManipulatorConstants {
 
     public enum AlgaeManipulatorState {
         REST(Rotation2d.fromDegrees(0)),
-        OPEN_FOR_GRIPPER(Rotation2d.fromDegrees(-30)),
+        OPEN_FOR_GRIPPER(Rotation2d.fromDegrees(-40)),
         HOLD_ALGAE(Rotation2d.fromDegrees(-146));
 
         final Rotation2d targetAngle;
