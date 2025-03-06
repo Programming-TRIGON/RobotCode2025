@@ -32,7 +32,6 @@ public class FieldConstants {
     public static final double
             REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS = 1.3,
             REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS = 0.17;
-    public static Transform2d REEF_CENTER_TO_TARGET_SCORING_POSITION_X = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, 0, new Rotation2d());
 
     private static AprilTagFieldLayout createAprilTagFieldLayout() {
         try {

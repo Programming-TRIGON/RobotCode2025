@@ -133,6 +133,7 @@ public class CoralPlacingCommands {
     }
 
     private static FlippablePose2d calculateClosestScoringPose() {
+        final Transform2d REEF_CENTER_TO_TARGET_SCORING_POSITION_X = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, 0, new Rotation2d());
         final Rotation2d[] reefClockAngles = FieldConstants.REEF_CLOCK_ANGLES;
         final Translation2d
                 reefCenterPositionOnField = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get(),
@@ -143,21 +144,22 @@ public class CoralPlacingCommands {
 
         for (Rotation2d reefClockAngle : reefClockAngles) {
             final Pose2d reefCenterPoseAtAngle = new Pose2d(reefCenterPositionOnField, reefClockAngle);
-            final Translation2d scoringLocationOnField = reefCenterPoseAtAngle.transformBy(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X).getTranslation();
-            final double distanceToScoringLocation = scoringLocationOnField.getDistance(robotPositionOnField);
+            final Translation2d scoringPositionOnField = reefCenterPoseAtAngle.transformBy(REEF_CENTER_TO_TARGET_SCORING_POSITION_X).getTranslation();
+            final double distanceToScoringLocation = scoringPositionOnField.getDistance(robotPositionOnField);
             if (distanceToScoringLocation < closestReefClockPositionDistance) {
                 closestReefClockPositionDistance = distanceToScoringLocation;
                 closestReefClockPositionAngle = reefClockAngle;
             }
         }
-        final Translation2d closestReefSide = new Pose2d(reefCenterPositionOnField, closestReefClockPositionAngle).transformBy(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X).getTranslation();
+
+        final Translation2d closestReefSide = new Pose2d(reefCenterPositionOnField, closestReefClockPositionAngle).transformBy(REEF_CENTER_TO_TARGET_SCORING_POSITION_X).getTranslation();
         final Translation2d
-                rightBranch = closestReefSide.plus(new Translation2d(0, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS)),
-                leftBranch = closestReefSide.plus(new Translation2d(0, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS).unaryMinus());
+                closestReefSideRightBranch = closestReefSide.plus(new Translation2d(0, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS)),
+                closestReefSideLeftBranch = closestReefSide.plus(new Translation2d(0, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS).unaryMinus());
+        final boolean isClosestReefBranchLeft = closestReefSideRightBranch.getDistance(robotPositionOnField) > closestReefSideLeftBranch.getDistance(robotPositionOnField);
 
         return new FlippablePose2d(
-                rightBranch.getDistance(robotPositionOnField) > leftBranch.getDistance(robotPositionOnField) ?
-                        leftBranch : rightBranch,
+                isClosestReefBranchLeft ? closestReefSideLeftBranch : closestReefSideRightBranch,
                 closestReefClockPositionAngle.getRadians(),
                 false);
     }
