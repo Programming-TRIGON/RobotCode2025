@@ -48,6 +48,9 @@ public class GripperConstants {
     private static final double GRIPPING_MOTOR_GEAR_RATIO = 4;
     private static final double ANGLE_ENCODER_GRAVITY_OFFSET = -0.12331 + Conversions.degreesToRotations(60);
     static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = RobotHardwareStats.isSimulation() ? 0 : -0.044444 + Conversions.degreesToRotations(60) - ANGLE_ENCODER_GRAVITY_OFFSET;
+    static final double
+            DEFAULT_MAXIMUM_VELOCITY = RobotHardwareStats.isSimulation() ? 5 : 5,
+            DEFAULT_MAXIMUM_ACCELERATION = RobotHardwareStats.isSimulation() ? 5 : 5;
     static final boolean FOC_ENABLED = true;
 
     private static final int
@@ -177,8 +180,8 @@ public class GripperConstants {
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 5 : 5;
-        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 5 : 5;
+        config.MotionMagic.MotionMagicCruiseVelocity = DEFAULT_MAXIMUM_VELOCITY;
+        config.MotionMagic.MotionMagicAcceleration = DEFAULT_MAXIMUM_ACCELERATION;
         config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 
         config.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
@@ -218,27 +221,29 @@ public class GripperConstants {
     }
 
     public enum GripperState {
-        REST(Rotation2d.fromDegrees(-56), 0),
-        EJECT(Rotation2d.fromDegrees(55), -3),
-        SCORE_L4(Rotation2d.fromDegrees(49), -6),
-        SCORE_L3_OR_L2(Rotation2d.fromDegrees(55), SCORE_L4.targetGripperVoltage),
-        SCORE_L1(Rotation2d.fromDegrees(93), -3),
-        LOAD_CORAL(Rotation2d.fromDegrees(-56), 11),
-        UNLOAD_CORAL(Rotation2d.fromDegrees(-50), -3),
-        COLLECT_ALGAE_FROM_REEF(Rotation2d.fromDegrees(30), -50),
-        HOLD_ALGAE(Rotation2d.fromDegrees(50), -40),
-        SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(70), 11),
-        PREPARE_FOR_SCORING_ALGAE_IN_NET(Rotation2d.fromDegrees(100), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage),
-        AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0),
-        COLLECT_CORAL_FROM_FEEDER(Rotation2d.fromDegrees(90), 8),
-        OPEN_FOR_NOT_HITTING_REEF(Rotation2d.fromDegrees(110), 0.2);
+        REST(Rotation2d.fromDegrees(-56), 0, 1),
+        EJECT(Rotation2d.fromDegrees(55), -3, 1),
+        SCORE_L4(Rotation2d.fromDegrees(49), -6, 1),
+        SCORE_L3_OR_L2(Rotation2d.fromDegrees(55), SCORE_L4.targetGripperVoltage, 1),
+        SCORE_L1(Rotation2d.fromDegrees(93), -3, 1),
+        LOAD_CORAL(Rotation2d.fromDegrees(-56), 11, 1),
+        UNLOAD_CORAL(Rotation2d.fromDegrees(-50), -3, 1),
+        COLLECT_ALGAE_FROM_REEF(Rotation2d.fromDegrees(30), -50, 1),
+        HOLD_ALGAE(Rotation2d.fromDegrees(50), -40, 0.3),
+        SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(70), 11, 0.3),
+        PREPARE_FOR_SCORING_ALGAE_IN_NET(Rotation2d.fromDegrees(100), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage, 0.3),
+        AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0, 1),
+        COLLECT_CORAL_FROM_FEEDER(Rotation2d.fromDegrees(90), 8, 1),
+        OPEN_FOR_NOT_HITTING_REEF(Rotation2d.fromDegrees(110), 0.2, 1);
 
         final Rotation2d targetAngle;
         final double targetGripperVoltage;
+        final double speedScalar;
 
-        GripperState(Rotation2d targetAngle, double targetVoltage) {
+        GripperState(Rotation2d targetAngle, double targetVoltage, double speedScalar) {
             this.targetAngle = targetAngle;
             this.targetGripperVoltage = targetVoltage;
+            this.speedScalar = speedScalar;
         }
     }
 }

@@ -30,8 +30,8 @@ public class ElevatorConstants {
     private static final double GEAR_RATIO = 4.3333333333;
     private static final boolean SHOULD_FOLLOWER_OPPOSE_MASTER = true;
     static final double
-            DEFAULT_MAXIMUM_VELOCITY = 20,
-            DEFAULT_MAXIMUM_ACCELERATION = 50;
+            DEFAULT_MAXIMUM_VELOCITY = RobotHardwareStats.isSimulation() ? 80 : 20,
+            DEFAULT_MAXIMUM_ACCELERATION = RobotHardwareStats.isSimulation() ? 80 : 50;
     static final boolean FOC_ENABLED = true;
 
     private static final int MOTOR_AMOUNT = 2;
@@ -120,8 +120,8 @@ public class ElevatorConstants {
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 6.6;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 80 : DEFAULT_MAXIMUM_VELOCITY;
-        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 80 : DEFAULT_MAXIMUM_ACCELERATION;
+        config.MotionMagic.MotionMagicCruiseVelocity = DEFAULT_MAXIMUM_VELOCITY;
+        config.MotionMagic.MotionMagicAcceleration = DEFAULT_MAXIMUM_ACCELERATION;
         config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 
         MASTER_MOTOR.applyConfiguration(config);
@@ -156,6 +156,7 @@ public class ElevatorConstants {
         SCORE_L3(0.4, 1),
         SCORE_L4(1.03, 1),
         COLLECT_ALGAE_FROM_L3(0.35, 1),
+        REST_WITH_ALGAE(0, 0.3),
         SCORE_NET(1.03, 0.3);
 
         public final double targetPositionMeters;
