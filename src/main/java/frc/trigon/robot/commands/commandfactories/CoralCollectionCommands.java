@@ -2,7 +2,6 @@ package frc.trigon.robot.commands.commandfactories;
 
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
-import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
@@ -10,8 +9,6 @@ import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
-import org.trigon.hardware.misc.leds.LEDCommands;
-import org.trigon.hardware.misc.leds.LEDStrip;
 
 
 public class CoralCollectionCommands {
@@ -36,7 +33,6 @@ public class CoralCollectionCommands {
     private static Command getInitiateFeederCoralCollectionCommand() {
         return new ParallelCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FEEDER),
-                LEDCommands.getAnimateCommand(LEDConstants.CORAL_STATION_INTAKE_SETTINGS, LEDStrip.LED_STRIPS),
                 getScheduleCoralLoadingWhenCollectedCommand()
         );
     }
@@ -106,8 +102,7 @@ public class CoralCollectionCommands {
 
     private static Command getCollectionConfirmationCommand() {
         return new ParallelCommandGroup(
-                new InstantCommand(() -> OperatorConstants.DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER)),
-                LEDCommands.getAnimateCommand(LEDConstants.INTAKE_CONFIRMATION_SETTINGS, LEDStrip.LED_STRIPS).withTimeout(LEDConstants.RELEASE_CORAL_TIMEOUT_SECONDS)
+                new InstantCommand(() -> OperatorConstants.DRIVER_CONTROLLER.rumble(CoralIntakeConstants.COLLECTION_RUMBLE_DURATION_SECONDS, CoralIntakeConstants.COLLECTION_RUMBLE_POWER))
         );
     }
 
