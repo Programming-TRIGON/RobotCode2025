@@ -7,7 +7,6 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
-import frc.trigon.robot.commands.CommandConstants;
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 import org.trigon.hardware.RobotHardwareStats;
 
@@ -31,7 +30,6 @@ public abstract class MotorSubsystem extends edu.wpi.first.wpilibj2.command.Subs
         DISABLED_TRIGGER.onTrue(new InstantCommand(() -> forEach(MotorSubsystem::stop)).ignoringDisable(true));
         DISABLED_TRIGGER.onFalse(new InstantCommand(() -> {
             setAllSubsystemsBrakeAsync(true);
-            CommandConstants.STATIC_WHITE_LED_COLOR_COMMAND.cancel();
             IS_BRAKING = true;
         }).ignoringDisable(true));
     }

@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
 import frc.trigon.robot.constants.FieldConstants;
-import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
+import frc.trigon.robot.misc.ReefChooser;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
@@ -18,38 +18,28 @@ import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
-import org.trigon.hardware.misc.leds.LEDCommands;
-import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 public class CoralPlacingCommands {
     public static boolean SHOULD_SCORE_AUTONOMOUSLY = true;
-    public static ScoringLevel TARGET_SCORING_LEVEL = ScoringLevel.L4;
-    public static FieldConstants.ReefClockPosition TARGET_REEF_SCORING_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_6_OCLOCK;
-    public static FieldConstants.ReefSide TARGET_REEF_SCORING_SIDE = FieldConstants.ReefSide.RIGHT;
+    private static final ReefChooser REEF_CHOOSER = OperatorConstants.REEF_CHOOSER;
 
     public static Command getScoreInReefCommand() {
         return new ConditionalCommand(
                 getCoralIntakeScoringSequenceCommand().asProxy(),
                 getScoreInReefFromGripperCommand().asProxy(),
-                () -> TARGET_SCORING_LEVEL == ScoringLevel.L1_CORAL_INTAKE
+                () -> REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_CORAL_INTAKE
         ).raceWith(getWaitUntilScoringTargetChangesCommand()).andThen(
                 () -> getScoreInReefCommand().onlyWhile(OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER).schedule()
         );
     }
 
-    public static FlippablePose2d calculateTargetScoringPose() {
-        if (OperatorConstants.OVERRIDE_AUTO_SCORING_TO_CLOSEST_SCORING_LOCATION_TRIGGER.getAsBoolean())
-            return calculateClosestScoringPose();
-        return TARGET_SCORING_LEVEL.calculateTargetPlacingPosition(TARGET_REEF_SCORING_CLOCK_POSITION, TARGET_REEF_SCORING_SIDE);
-    }
-
     private static Command getWaitUntilScoringTargetChangesCommand() {
         return new ParallelRaceGroup(
-                new WaitUntilChangeCommand<>(() -> TARGET_SCORING_LEVEL),
-                new WaitUntilChangeCommand<>(() -> TARGET_REEF_SCORING_CLOCK_POSITION),
-                new WaitUntilChangeCommand<>(() -> TARGET_REEF_SCORING_SIDE),
+                new WaitUntilChangeCommand<>(REEF_CHOOSER::getScoringLevel),
+                new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition),
+                new WaitUntilChangeCommand<>(REEF_CHOOSER::getReefSide),
                 new WaitUntilChangeCommand<>(OperatorConstants.OVERRIDE_AUTO_SCORING_TO_CLOSEST_SCORING_LOCATION_TRIGGER::getAsBoolean)
         );
     }
@@ -58,14 +48,8 @@ public class CoralPlacingCommands {
         return GeneralCommands.getContinuousConditionalCommand(
                 getAutonomouslyScoreInReefFromGripperCommand().asProxy(),
                 getManuallyScoreInReefFromGripperCommand().asProxy(),
-                () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.MULTIFUNCTION_TRIGGER.getAsBoolean() && TARGET_SCORING_LEVEL != ScoringLevel.L1_GRIPPER
-        ).alongWith(
-                GeneralCommands.getContinuousConditionalCommand(
-                        LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS).alongWith(new InstantCommand(() -> OperatorConstants.DRIVER_CONTROLLER.rumble(0.2, 1)).andThen(new WaitCommand(0.35).andThen(new InstantCommand(() -> OperatorConstants.DRIVER_CONTROLLER.rumble(0.2, 1))))),
-                        LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
-                        () -> RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation().getDistance(calculateTargetScoringPose().get().getTranslation()) < 0.05
-                ).until(OperatorConstants.CONTINUE_TRIGGER)
-        );
+                () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.MULTIFUNCTION_TRIGGER.getAsBoolean() && REEF_CHOOSER.getScoringLevel() != ScoringLevel.L1_GRIPPER
+        ).until(OperatorConstants.CONTINUE_TRIGGER);
     }
 
     private static Command getCoralIntakeScoringSequenceCommand() {
@@ -80,7 +64,7 @@ public class CoralPlacingCommands {
     private static Command getManuallyScoreInReefFromGripperCommand() {
         return CoralCollectionCommands.getLoadCoralCommand().andThen(
                 new ParallelCommandGroup(
-                        ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
+                        ElevatorCommands.getSetTargetStateCommand(REEF_CHOOSER::getElevatorState),
                         getGripperScoringSequenceCommand()
                 )
         );
@@ -100,20 +84,17 @@ public class CoralPlacingCommands {
 
     private static Command getGripperScoringSequenceCommand() {
         return new SequentialCommandGroup(
-                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF).unless(() -> RobotContainer.ELEVATOR.atState(TARGET_SCORING_LEVEL.elevatorState) || TARGET_SCORING_LEVEL == ScoringLevel.L2 || TARGET_SCORING_LEVEL == ScoringLevel.L1_GRIPPER).until(() -> RobotContainer.ELEVATOR.atState(TARGET_SCORING_LEVEL.elevatorState)),
-                GripperCommands.getPrepareForStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
-                GripperCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.gripperState).alongWith(
-                        LEDCommands.getAnimateCommand(
-                                LEDConstants.RELEASE_CORAL_SETTINGS,
-                                LEDStrip.LED_STRIPS
-                        ).withTimeout(LEDConstants.RELEASE_CORAL_TIMEOUT_SECONDS)
-                )
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF)
+                        .unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState()) || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L2 || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_GRIPPER)
+                        .until(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())),
+                GripperCommands.getPrepareForStateCommand(REEF_CHOOSER::getGripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
+                GripperCommands.getSetTargetStateCommand(REEF_CHOOSER::getGripperState)
         );
     }
 
     private static Command getOpenElevatorWhenCloseToReefCommand() {
         return GeneralCommands.runWhen(
-                ElevatorCommands.getSetTargetStateCommand(() -> TARGET_SCORING_LEVEL.elevatorState),
+                ElevatorCommands.getSetTargetStateCommand(REEF_CHOOSER::getElevatorState),
                 () -> calculateDistanceToTargetScoringPose() < PathPlannerConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR
         );
     }
@@ -128,9 +109,15 @@ public class CoralPlacingCommands {
         );
     }
 
+    public static FlippablePose2d calculateTargetScoringPose() {
+        if (OperatorConstants.OVERRIDE_AUTO_SCORING_TO_CLOSEST_SCORING_LOCATION_TRIGGER.getAsBoolean())
+            return calculateClosestScoringPose();
+        return REEF_CHOOSER.calculateTargetScoringPose();
+    }
+
     private static double calculateDistanceToTargetScoringPose() {
         final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
-        final Translation2d targetTranslation = calculateTargetScoringPose().get().getTranslation();
+        final Translation2d targetTranslation = REEF_CHOOSER.calculateTargetScoringPose().get().getTranslation();
         return currentTranslation.getDistance(targetTranslation);
     }
 
@@ -218,11 +205,11 @@ public class CoralPlacingCommands {
         L3(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0)),
         L4(L2.xTransformMeters, L2.positiveYTransformMeters, Rotation2d.fromDegrees(0));
 
+        public final ElevatorConstants.ElevatorState elevatorState;
+        public final GripperConstants.GripperState gripperState;
         public final int level = calculateLevel();
         final double xTransformMeters, positiveYTransformMeters;
         final Rotation2d rotationTransform;
-        final ElevatorConstants.ElevatorState elevatorState;
-        final GripperConstants.GripperState gripperState;
 
         /**
          * Constructs a scoring level with the given x and y transform.
