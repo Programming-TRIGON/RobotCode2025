@@ -29,6 +29,9 @@ public class ElevatorConstants {
 
     private static final double GEAR_RATIO = 4.3333333333;
     private static final boolean SHOULD_FOLLOWER_OPPOSE_MASTER = true;
+    static final double
+            DEFAULT_MAXIMUM_VELOCITY = RobotHardwareStats.isSimulation() ? 80 : 20,
+            DEFAULT_MAXIMUM_ACCELERATION = RobotHardwareStats.isSimulation() ? 80 : 50;
     static final boolean FOC_ENABLED = true;
 
     private static final int MOTOR_AMOUNT = 2;
@@ -92,16 +95,16 @@ public class ElevatorConstants {
         config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 30; //TODO: recalibrate it with new gear ratio
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 6.5905;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0.22774 : 1;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.091796875;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.5321499705314636;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0.22774 : 0.47602;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.25513;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.52756;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.5869140625;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.30539 : 0.4;
 
         config.Slot0.GravityType = GravityTypeValue.Elevator_Static;
-        config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+        config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
 
         config.HardwareLimitSwitch.ReverseLimitEnable = true;
         config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
@@ -117,8 +120,8 @@ public class ElevatorConstants {
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 6.6;
 
-        config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 80 : 20;
-        config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 80 : 55;
+        config.MotionMagic.MotionMagicCruiseVelocity = DEFAULT_MAXIMUM_VELOCITY;
+        config.MotionMagic.MotionMagicAcceleration = DEFAULT_MAXIMUM_ACCELERATION;
         config.MotionMagic.MotionMagicJerk = config.MotionMagic.MotionMagicAcceleration * 10;
 
         MASTER_MOTOR.applyConfiguration(config);
@@ -147,18 +150,21 @@ public class ElevatorConstants {
     }
 
     public enum ElevatorState {
-        REST(0),
-        SCORE_L1(0),
-        SCORE_L2(0),
-        SCORE_L3(0.4),
-        SCORE_L4(1.03),
-        COLLECT_ALGAE_FROM_L3(0.35),
-        SCORE_NET(1.03);
+        REST(0, 0.7),
+        SCORE_L1(0, 1),
+        SCORE_L2(0, 1),
+        SCORE_L3(0.4, 1),
+        SCORE_L4(1.03, 1),
+        COLLECT_ALGAE_FROM_L3(0.35, 1),
+        REST_WITH_ALGAE(0, 0.3),
+        SCORE_NET(1.03, 0.3);
 
         public final double targetPositionMeters;
+        final double speedScalar;
 
-        ElevatorState(double targetPositionMeters) {
+        ElevatorState(double targetPositionMeters, double speedScalar) {
             this.targetPositionMeters = targetPositionMeters;
+            this.speedScalar = speedScalar;
         }
     }
 }

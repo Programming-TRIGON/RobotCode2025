@@ -19,6 +19,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.phoenix6.Phoenix6Inputs;
+import org.trigon.utilities.flippable.FlippablePose2d;
 
 public class Robot extends LoggedRobot {
     public static final boolean IS_REAL = Robot.isReal();
@@ -71,8 +72,10 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        if (!RobotContainer.SWERVE.isPathPlannerDriving)
-            RobotContainer.SWERVE.drivePathPlanner(new ChassisSpeeds(), false);
+        if (!RobotContainer.SWERVE.isPathPlannerDriving) {
+            if (!RobotContainer.SWERVE.atPose(new FlippablePose2d(RobotContainer.SWERVE.targetPathPlannerPose, false)))
+                RobotContainer.SWERVE.drivePathPlanner(new ChassisSpeeds(), false);
+        }
     }
 
     @Override

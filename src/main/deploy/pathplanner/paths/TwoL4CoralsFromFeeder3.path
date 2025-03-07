@@ -3,13 +3,13 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6828767123287671,
-        "y": 7.278060787671233
+        "x": 1.6662909836065571,
+        "y": 7.339600409836065
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4491866438356165,
-        "y": 6.586879280821917
+        "x": 2.4326009151134063,
+        "y": 6.64841890298675
       },
       "isLocked": false,
       "linkedName": "TwoL4CoralsFromFeeder2"
@@ -46,7 +46,7 @@
   ],
   "globalConstraints": {
     "maxVelocity": 3.2,
-    "maxAcceleration": 3.2,
+    "maxAcceleration": 3.6,
     "maxAngularVelocity": 400.0,
     "maxAngularAcceleration": 400.0,
     "nominalVoltage": 12.0,

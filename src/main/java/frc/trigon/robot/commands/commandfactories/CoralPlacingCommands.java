@@ -49,19 +49,20 @@ public class CoralPlacingCommands {
                 getAutonomouslyScoreInReefFromGripperCommand().asProxy(),
                 getManuallyScoreInReefFromGripperCommand().asProxy(),
                 () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.MULTIFUNCTION_TRIGGER.getAsBoolean() && REEF_CHOOSER.getScoringLevel() != ScoringLevel.L1_GRIPPER
-        ).until(OperatorConstants.CONTINUE_TRIGGER);
+        );
     }
 
     private static Command getCoralIntakeScoringSequenceCommand() {
         return new SequentialCommandGroup(
                 CoralCollectionCommands.getUnloadCoralCommand(),
                 CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1).until(CoralPlacingCommands::canContinueScoringFromCoralIntake),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1_BOOST).withTimeout(0.5),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1)
         );
     }
 
     private static Command getManuallyScoreInReefFromGripperCommand() {
-        return CoralCollectionCommands.getLoadCoralCommand().unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())).andThen(
+        return CoralCollectionCommands.getLoadCoralCommand().andThen(
                 new ParallelCommandGroup(
                         ElevatorCommands.getSetTargetStateCommand(REEF_CHOOSER::getElevatorState),
                         getGripperScoringSequenceCommand()
@@ -71,7 +72,7 @@ public class CoralPlacingCommands {
 
     private static Command getAutonomouslyScoreInReefFromGripperCommand() {
         return new ParallelCommandGroup(
-                CoralCollectionCommands.getLoadCoralCommand().unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())).andThen(
+                CoralCollectionCommands.getLoadCoralCommand().andThen(
                         new ParallelCommandGroup(
                                 getOpenElevatorWhenCloseToReefCommand(),
                                 getGripperScoringSequenceCommand()
@@ -83,7 +84,9 @@ public class CoralPlacingCommands {
 
     private static Command getGripperScoringSequenceCommand() {
         return new SequentialCommandGroup(
-                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF).unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())).until(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())),
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF)
+                        .unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState()) || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L2 || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_GRIPPER)
+                        .until(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())),
                 GripperCommands.getPrepareForStateCommand(REEF_CHOOSER::getGripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
                 GripperCommands.getSetTargetStateCommand(REEF_CHOOSER::getGripperState)
         );

@@ -16,7 +16,6 @@ import org.trigon.hardware.simulation.SimpleMotorSimulation;
 public class SwerveModuleConstants {
     private static final double
             DRIVE_MOTOR_GEAR_RATIO = 7.13,
-            FRONT_STEER_MOTOR_GEAR_RATIO = 18.75,
             REAR_STEER_MOTOR_GEAR_RATIO = 12.8;
     static final boolean ENABLE_FOC = true;
 
@@ -55,8 +54,8 @@ public class SwerveModuleConstants {
      *
      * @return the steer motor simulation
      */
-    static SimpleMotorSimulation createSteerMotorSimulation(boolean isFront) {
-        return new SimpleMotorSimulation(STEER_MOTOR_GEARBOX, isFront ? FRONT_STEER_MOTOR_GEAR_RATIO : REAR_STEER_MOTOR_GEAR_RATIO, STEER_MOMENT_OF_INERTIA);
+    static SimpleMotorSimulation createSteerMotorSimulation() {
+        return new SimpleMotorSimulation(STEER_MOTOR_GEARBOX, REAR_STEER_MOTOR_GEAR_RATIO, STEER_MOMENT_OF_INERTIA);
     }
 
     static TalonFXConfiguration generateDriveMotorConfiguration() {
@@ -78,10 +77,10 @@ public class SwerveModuleConstants {
         config.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.1;
         config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 50 : 50;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 50 : 40;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.4708 : 5.2;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.4708 : 5.1;
         config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : DRIVE_MOTOR_GEAR_RATIO / (1 / DCMotor.getKrakenX60Foc(1).KtNMPerAmp);
 
@@ -90,31 +89,25 @@ public class SwerveModuleConstants {
         return config;
     }
 
-    static TalonFXConfiguration generateSteerMotorConfiguration(boolean isFront, int feedbackRemoteSensorID) {
+    static TalonFXConfiguration generateSteerMotorConfiguration(int feedbackRemoteSensorID) {
         final TalonFXConfiguration config = new TalonFXConfiguration();
 
         config.Audio.BeepOnBoot = false;
-        config.Audio.BeepOnConfig = false;
+        config.Audio.BeepOnConfig = true;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.MotorOutput.Inverted = isFront ? InvertedValue.Clockwise_Positive : InvertedValue.CounterClockwise_Positive;
+        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
 
         config.CurrentLimits.StatorCurrentLimit = RobotHardwareStats.isSimulation() ? 200 : 30;
         config.CurrentLimits.StatorCurrentLimitEnable = true;
 
-        config.Feedback.RotorToSensorRatio = isFront ? FRONT_STEER_MOTOR_GEAR_RATIO : REAR_STEER_MOTOR_GEAR_RATIO;
+        config.Feedback.RotorToSensorRatio = REAR_STEER_MOTOR_GEAR_RATIO;
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
         config.Feedback.FeedbackRemoteSensorID = feedbackRemoteSensorID;
 
-        config.Slot0.kP = isFront ?
-                (RobotHardwareStats.isSimulation() ? 120 : 85) :
-                (RobotHardwareStats.isSimulation() ? 120 : 85);
-        config.Slot0.kI = isFront ?
-                (RobotHardwareStats.isSimulation() ? 0 : 0) :
-                (RobotHardwareStats.isSimulation() ? 0 : 0);
-        config.Slot0.kD = isFront ?
-                (RobotHardwareStats.isSimulation() ? 0 : 0) :
-                (RobotHardwareStats.isSimulation() ? 0 : 0);
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 120 : 85;
+        config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.ClosedLoopGeneral.ContinuousWrap = true;
 
         return config;

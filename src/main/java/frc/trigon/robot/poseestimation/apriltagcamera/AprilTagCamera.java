@@ -1,7 +1,6 @@
 package frc.trigon.robot.poseestimation.apriltagcamera;
 
 import edu.wpi.first.math.geometry.*;
-import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.poseestimation.poseestimator.StandardDeviations;
 import org.littletonrobotics.junction.Logger;
@@ -57,7 +56,7 @@ public class AprilTagCamera {
     }
 
     public double getLatestResultTimestampSeconds() {
-        return inputs.latestResultTimestampSeconds - 0.1;
+        return inputs.latestResultTimestampSeconds - 0.115;
     }
 
     public boolean hasValidResult() {
@@ -123,13 +122,14 @@ public class AprilTagCamera {
             return cameraPoseToRobotPose(inputs.bestCameraSolvePNPPose.toPose2d());
 
         final Pose2d bestPose = cameraPoseToRobotPose(inputs.bestCameraSolvePNPPose.toPose2d());
-        final Pose2d alternatePose = cameraPoseToRobotPose(inputs.alternateCameraSolvePNPPose.toPose2d());
-        final Rotation2d robotAngleAtResultTime = RobotContainer.POSE_ESTIMATOR.getEstimatedPoseAtTimestamp(inputs.latestResultTimestampSeconds).getRotation();
-
-        final double bestAngleDifference = Math.abs(bestPose.getRotation().minus(robotAngleAtResultTime).getRadians());
-        final double alternateAngleDifference = Math.abs(alternatePose.getRotation().minus(robotAngleAtResultTime).getRadians());
-
-        return bestAngleDifference > alternateAngleDifference ? alternatePose : bestPose;
+        return bestPose;
+//        final Pose2d alternatePose = cameraPoseToRobotPose(inputs.alternateCameraSolvePNPPose.toPose2d());
+//        final Rotation2d robotAngleAtResultTime = RobotContainer.POSE_ESTIMATOR.getEstimatedPoseAtTimestamp(inputs.latestResultTimestampSeconds).getRotation();
+//
+//        final double bestAngleDifference = Math.abs(bestPose.getRotation().minus(robotAngleAtResultTime).getRadians());
+//        final double alternateAngleDifference = Math.abs(alternatePose.getRotation().minus(robotAngleAtResultTime).getRadians());
+//
+//        return bestAngleDifference > alternateAngleDifference ? alternatePose : bestPose;
     }
 
     private Pose2d cameraPoseToRobotPose(Pose2d cameraPose) {
