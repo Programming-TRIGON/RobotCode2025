@@ -23,7 +23,7 @@ public class AlgaeManipulatorConstants {
     static final boolean FOC_ENABLED = true;
 
     private static final int ANGLE_MOTOR_AMOUNT = 1;
-    private static final DCMotor ANGLE_MOTOR_GEARBOX = DCMotor.getKrakenX60(ANGLE_MOTOR_AMOUNT);
+    private static final DCMotor ANGLE_MOTOR_GEARBOX = DCMotor.getKrakenX60Foc(ANGLE_MOTOR_AMOUNT);
     private static final double
             ARM_LENGTH_METERS = 0.35, //TODO: Measure this
             ARM_MASS_KILOGRAMS = 3;
@@ -65,7 +65,7 @@ public class AlgaeManipulatorConstants {
         config.Audio.BeepOnConfig = false;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
-        config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+        config.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
         config.Feedback.SensorToMechanismRatio = GEAR_RATIO;
 
         config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 85;
@@ -83,12 +83,12 @@ public class AlgaeManipulatorConstants {
         config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 100 : 18;
         config.MotionMagic.MotionMagicJerk = 0;
 
-        config.HardwareLimitSwitch.ForwardLimitEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionEnable = true;
-        config.HardwareLimitSwitch.ForwardLimitAutosetPositionValue = 0;
-        config.HardwareLimitSwitch.ForwardLimitSource = ForwardLimitSourceValue.RemoteTalonFX;
-        config.HardwareLimitSwitch.ForwardLimitRemoteSensorID = GripperConstants.GRIPPING_MOTOR_ID;
-        config.HardwareLimitSwitch.ForwardLimitType = ForwardLimitTypeValue.NormallyOpen;
+        config.HardwareLimitSwitch.ReverseLimitEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionEnable = true;
+        config.HardwareLimitSwitch.ReverseLimitAutosetPositionValue = 0;
+        config.HardwareLimitSwitch.ReverseLimitSource = ReverseLimitSourceValue.RemoteTalonFX;
+        config.HardwareLimitSwitch.ReverseLimitRemoteSensorID = GripperConstants.GRIPPING_MOTOR_ID;
+        config.HardwareLimitSwitch.ReverseLimitType = ReverseLimitTypeValue.NormallyOpen;
 
 //        config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
 //        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = MAXIMUM_ANGLE.getRotations();
@@ -99,7 +99,7 @@ public class AlgaeManipulatorConstants {
         ANGLE_MOTOR.registerSignal(TalonFXSignal.POSITION, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
-        ANGLE_MOTOR.registerSignal(TalonFXSignal.FORWARD_LIMIT, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.REVERSE_LIMIT, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
     }
