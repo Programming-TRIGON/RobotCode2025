@@ -32,6 +32,14 @@ public class AlgaeManipulatorCommands {
         );
     }
 
+    public static Command getOpenCommand() {
+        return new StartEndCommand(
+                RobotContainer.ALGAE_MANIPULATOR::open,
+                RobotContainer.ALGAE_MANIPULATOR::stop,
+                RobotContainer.ALGAE_MANIPULATOR
+        );
+    }
+
     public static Command getSetTargetStateCommand(AlgaeManipulatorConstants.AlgaeManipulatorState targetState) {
         return new StartEndCommand(
                 () -> RobotContainer.ALGAE_MANIPULATOR.setTargetState(targetState),

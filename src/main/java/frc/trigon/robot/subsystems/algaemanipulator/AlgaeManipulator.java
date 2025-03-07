@@ -1,6 +1,7 @@
 package frc.trigon.robot.subsystems.algaemanipulator;
 
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.units.Units;
@@ -15,6 +16,7 @@ public class AlgaeManipulator extends MotorSubsystem {
     private final TalonFXMotor angleMotor = AlgaeManipulatorConstants.ANGLE_MOTOR;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(AlgaeManipulatorConstants.FOC_ENABLED);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(AlgaeManipulatorConstants.FOC_ENABLED);
+    private final TorqueCurrentFOC torqueRequest = new TorqueCurrentFOC(0).withMaxAbsDutyCycle(AlgaeManipulatorConstants.MAXIMUM_CURRENT_REQUEST_DUTY_CYCLE);
     private AlgaeManipulatorConstants.AlgaeManipulatorState targetState = AlgaeManipulatorConstants.AlgaeManipulatorState.REST;
 
     public AlgaeManipulator() {
@@ -70,6 +72,10 @@ public class AlgaeManipulator extends MotorSubsystem {
     public boolean atTargetAngle() {
         final double difference = Math.abs(getCurrentAngle().getDegrees() - targetState.targetAngle.getDegrees());
         return difference < AlgaeManipulatorConstants.ANGLE_TOLERANCE.getDegrees();
+    }
+
+    void open() {
+        angleMotor.setControl(torqueRequest.withOutput(AlgaeManipulatorConstants.OPEN_TORQUE_CURRENT));
     }
 
     void setTargetState(AlgaeManipulatorConstants.AlgaeManipulatorState targetState) {
