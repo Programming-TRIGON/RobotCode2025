@@ -22,7 +22,7 @@ import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 public class CoralPlacingCommands {
-    public static boolean SHOULD_SCORE_AUTONOMOUSLY = false;
+    public static boolean SHOULD_SCORE_AUTONOMOUSLY = true;
     private static final ReefChooser REEF_CHOOSER = OperatorConstants.REEF_CHOOSER;
 
     public static Command getScoreInReefCommand() {
@@ -99,11 +99,17 @@ public class CoralPlacingCommands {
     private static Command getAutonomousDriveToReefThenManualDriveCommand() {
         return new SequentialCommandGroup(
                 SwerveCommands.getDriveToPoseCommand(
-                        REEF_CHOOSER::calculateTargetScoringPose,
+                        CoralPlacingCommands::calculateTargetScoringPose,
                         PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
                 ),
                 GeneralCommands.getFieldRelativeDriveCommand()
         );
+    }
+
+    public static FlippablePose2d calculateTargetScoringPose() {
+        if (OperatorConstants.OVERRIDE_AUTO_SCORING_TO_CLOSEST_SCORING_LOCATION_TRIGGER.getAsBoolean())
+            return calculateClosestScoringPose();
+        return REEF_CHOOSER.calculateTargetScoringPose();
     }
 
     private static double calculateDistanceToTargetScoringPose() {
