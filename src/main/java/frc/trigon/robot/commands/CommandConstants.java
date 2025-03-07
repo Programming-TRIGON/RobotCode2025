@@ -3,7 +3,6 @@ package frc.trigon.robot.commands;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.util.Color;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.trigon.robot.RobotContainer;
@@ -17,9 +16,6 @@ import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.commands.CameraPositionCalculationCommand;
 import org.trigon.commands.WheelRadiusCharacterizationCommand;
 import org.trigon.hardware.misc.XboxController;
-import org.trigon.hardware.misc.leds.LEDCommands;
-import org.trigon.hardware.misc.leds.LEDStrip;
-import org.trigon.hardware.misc.leds.LEDStripAnimationSettings;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 
 /**
@@ -52,7 +48,6 @@ public class CommandConstants {
             () -> getYPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
             () -> 0
     ),
-            STATIC_WHITE_LED_COLOR_COMMAND = LEDCommands.getAnimateCommand(new LEDStripAnimationSettings.StaticColorSettings(Color.kWhite), LEDStrip.LED_STRIPS),
             WHEEL_RADIUS_CHARACTERIZATION_COMMAND = new WheelRadiusCharacterizationCommand(
                     PathPlannerConstants.ROBOT_CONFIG.moduleLocations,
                     RobotContainer.SWERVE::getDriveWheelPositionsRadians,
