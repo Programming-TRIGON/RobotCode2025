@@ -93,7 +93,7 @@ public class SwerveModuleConstants {
         final TalonFXConfiguration config = new TalonFXConfiguration();
 
         config.Audio.BeepOnBoot = false;
-        config.Audio.BeepOnConfig = false;
+        config.Audio.BeepOnConfig = true;
 
         config.MotorOutput.NeutralMode = NeutralModeValue.Brake;
         config.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
