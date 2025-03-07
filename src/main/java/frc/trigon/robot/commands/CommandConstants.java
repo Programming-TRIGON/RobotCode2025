@@ -66,20 +66,7 @@ public class CommandConstants {
             ENABLE_AUTO_CORAL_INTAKE_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_INTAKE_CORAL_AUTONOMOUSLY = true).ignoringDisable(true),
             DISABLE_AUTO_CORAL_INTAKE_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_INTAKE_CORAL_AUTONOMOUSLY = false).ignoringDisable(true),
             ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = true).ignoringDisable(true),
-            DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = false).ignoringDisable(true),
-            SET_TARGET_SCORING_REEF_LEVEL_L1_FROM_GRIPPER_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L1_GRIPPER).ignoringDisable(true),
-            SET_TARGET_SCORING_REEF_LEVEL_L1_FROM_CORAL_INTAKE_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE).ignoringDisable(true),
-            SET_TARGET_SCORING_REEF_LEVEL_L2_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L2).ignoringDisable(true),
-            SET_TARGET_SCORING_REEF_LEVEL_L3_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L3).ignoringDisable(true),
-            SET_TARGET_SCORING_REEF_LEVEL_L4_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_SCORING_LEVEL = CoralPlacingCommands.ScoringLevel.L4).ignoringDisable(true),
-            SET_TARGET_SCORING_REEF_CLOCK_POSITION_2_OCLOCK_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_2_OCLOCK).ignoringDisable(true),
-            SET_TARGET_SCORING_REEF_CLOCK_POSITION_4_OCLOCK_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_4_OCLOCK).ignoringDisable(true),
-            SET_TARGET_SCORING_REEF_CLOCK_POSITION_6_OCLOCK_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_6_OCLOCK).ignoringDisable(true),
-            SET_TARGET_SCORING_REEF_CLOCK_POSITION_8_OCLOCK_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_8_OCLOCK).ignoringDisable(true),
-            SET_TARGET_SCORING_REEF_CLOCK_POSITION_10_OCLOCK_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_10_OCLOCK).ignoringDisable(true),
-            SET_TARGET_SCORING_REEF_CLOCK_POSITION_12_OCLOCK_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_REEF_SCORING_CLOCK_POSITION = FieldConstants.ReefClockPosition.REEF_12_OCLOCK).ignoringDisable(true),
-            SET_TARGET_REEF_SCORING_SIDE_LEFT_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_REEF_SCORING_SIDE = FieldConstants.ReefSide.LEFT).ignoringDisable(true),
-            SET_TARGET_REEF_SCORING_SIDE_RIGHT_COMMAND = new InstantCommand(() -> CoralPlacingCommands.TARGET_REEF_SCORING_SIDE = FieldConstants.ReefSide.RIGHT).ignoringDisable(true);
+            DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = false).ignoringDisable(true);
 
     /**
      * Calculates the target drive power from an axis value by dividing it by the shift mode value.
