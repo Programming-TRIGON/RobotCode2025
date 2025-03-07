@@ -2,6 +2,7 @@ package frc.trigon.robot.misc;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandGenericHID;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.constants.FieldConstants;
@@ -19,7 +20,7 @@ public class ReefChooser {
     public ReefChooser(int port) {
         hid = new CommandGenericHID(port);
 
-        configureBindings();
+        new WaitCommand(3).andThen(this::configureBindings).ignoringDisable(true).schedule();
     }
 
     public CoralPlacingCommands.ScoringLevel getScoringLevel() {
@@ -68,7 +69,7 @@ public class ReefChooser {
 
     private void configureReefHIDBindings() {
         for (int i = 0; i < 12; i++)
-            hid.button(i).onTrue(getSetFaceFromIndexCommand(i));
+            hid.button(i + 1).onTrue(getSetFaceFromIndexCommand(i));
     }
 
     private Command getSetFaceFromIndexCommand(int index) {
