@@ -98,10 +98,10 @@ public class RobotContainer {
         OperatorConstants.OPERATOR_CONTROLLER.v().whileTrue(
                 new SequentialCommandGroup(
                         GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF).until(() -> GRIPPER.atState(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF)),
-                        ElevatorCommands.voltCmd(-3)
+                        ElevatorCommands.getSetTargetVoltageCommand(-3)
                 )
         );
-        OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.and(OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER).whileTrue(new CoralAutoDriveCommand());
+        OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.and(OperatorConstants.MULTIFUNCTION_TRIGGER).whileTrue(new CoralAutoDriveCommand());
         OperatorConstants.LED_AUTO_SETUP_TRIGGER.toggleOnTrue(new LEDAutoSetupCommand(() -> autoChooser.get().getName()));
 
 //        OperatorConstants.OPERATOR_CONTROLLER.f3().whileTrue(new CoralAlignmentCommand());

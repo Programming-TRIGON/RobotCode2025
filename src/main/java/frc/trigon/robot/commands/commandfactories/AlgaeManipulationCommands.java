@@ -21,7 +21,7 @@ public class AlgaeManipulationCommands {
         return GeneralCommands.getContinuousConditionalCommand(
                 getCollectAlgaeFromL2Command(),
                 getCollectAlgaeFromL3Command(),
-                () -> !OperatorConstants.OVERRIDE_AUTONOMOUS_FUNCTIONS_TRIGGER.getAsBoolean()
+                () -> !OperatorConstants.MULTIFUNCTION_TRIGGER.getAsBoolean()
         ).alongWith(
                 new WaitUntilCommand(OperatorConstants.SCORE_IN_NET_TRIGGER).andThen(new InstantCommand(() -> getScoreInNetCommand().schedule()))
         );
