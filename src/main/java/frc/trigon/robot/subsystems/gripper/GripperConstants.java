@@ -46,11 +46,11 @@ public class GripperConstants {
 
     static final double ANGLE_MOTOR_GEAR_RATIO = 20.5;
     private static final double GRIPPING_MOTOR_GEAR_RATIO = 4;
-    private static final double ANGLE_ENCODER_GRAVITY_OFFSET = -0.12331 + Conversions.degreesToRotations(60);
+    private static final double ANGLE_ENCODER_GRAVITY_OFFSET = -0.12331 + Conversions.degreesToRotations(60) - 0.063537;
     static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = RobotHardwareStats.isSimulation() ? 0 : -0.044444 + Conversions.degreesToRotations(60) - ANGLE_ENCODER_GRAVITY_OFFSET;
     static final double
-            DEFAULT_MAXIMUM_VELOCITY = RobotHardwareStats.isSimulation() ? 5 : 5,
-            DEFAULT_MAXIMUM_ACCELERATION = RobotHardwareStats.isSimulation() ? 5 : 5;
+            DEFAULT_MAXIMUM_VELOCITY = RobotHardwareStats.isSimulation() ? 5 : 6,
+            DEFAULT_MAXIMUM_ACCELERATION = RobotHardwareStats.isSimulation() ? 5 : 6.5;
     static final boolean FOC_ENABLED = true;
 
     private static final int
@@ -169,16 +169,26 @@ public class GripperConstants {
         config.Feedback.FeedbackRemoteSensorID = ANGLE_MOTOR.getID();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 70;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 60;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0.2;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.2;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 2.52;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 3.5;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.31291;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 1.6;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0 : 0.25;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0 : 0.39472;
+
+        config.Slot1.kP = RobotHardwareStats.isSimulation() ? 100 : 35;
+        config.Slot1.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
+        config.Slot1.kD = RobotHardwareStats.isSimulation() ? 0 : 3.1312;
+        config.Slot1.kS = config.Slot0.kS;
+        config.Slot1.kV = config.Slot0.kV;
+        config.Slot1.kA = config.Slot0.kA;
+        config.Slot1.kG = RobotHardwareStats.isSimulation() ? config.Slot0.kG : 0.39472;
 
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
         config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
+        config.Slot1.GravityType = GravityTypeValue.Arm_Cosine;
+        config.Slot1.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
 
         config.MotionMagic.MotionMagicCruiseVelocity = DEFAULT_MAXIMUM_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = DEFAULT_MAXIMUM_ACCELERATION;
@@ -230,7 +240,7 @@ public class GripperConstants {
         UNLOAD_CORAL(Rotation2d.fromDegrees(-50), -3, 1),
         COLLECT_ALGAE_FROM_REEF(Rotation2d.fromDegrees(30), -50, 1),
         HOLD_ALGAE(Rotation2d.fromDegrees(70), -40, 0.3),
-        SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(70), 11, 0.3),
+        SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(60), 11, 1),
         PREPARE_FOR_SCORING_ALGAE_IN_NET(Rotation2d.fromDegrees(100), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage, 0.3),
         AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0, 1),
         COLLECT_CORAL_FROM_FEEDER(Rotation2d.fromDegrees(90), 8, 1),

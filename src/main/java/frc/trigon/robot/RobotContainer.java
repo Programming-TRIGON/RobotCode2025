@@ -79,7 +79,7 @@ public class RobotContainer {
         bindDefaultCommands();
         bindControllerCommands();
         bindSetters();
-//        configureSysIdBindings(ELEVATOR);
+//        configureSysIdBindings(GRIPPER);
     }
 
     private void bindDefaultCommands() {
@@ -107,7 +107,7 @@ public class RobotContainer {
         OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionCommand());
         OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
 
-        OperatorConstants.DEBUGGING_TRIGGER.whileTrue(ElevatorCommands.getDebuggingCommand());
+        OperatorConstants.DEBUGGING_TRIGGER.whileTrue(GripperCommands.getDebuggingCommand());
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
         OperatorConstants.UNLOAD_CORAL_TRIGGER.whileTrue(CoralCollectionCommands.getUnloadCoralCommand());
         OperatorConstants.COLLECT_ALGAE_TRIGGER.or(OperatorConstants.DRIVER_CONTROLLER.a()).whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());

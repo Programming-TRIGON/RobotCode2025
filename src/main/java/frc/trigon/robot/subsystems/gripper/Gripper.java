@@ -152,6 +152,7 @@ public class Gripper extends MotorSubsystem {
 
     void setTargetState(Rotation2d targetAngle, double targetGrippingVoltage) {
         scalePositionRequestSpeed(targetState.speedScalar);
+        positionRequest.Slot = 0;
         setTargetAngle(targetAngle);
         setTargetVoltage(targetGrippingVoltage);
     }
@@ -163,6 +164,8 @@ public class Gripper extends MotorSubsystem {
     }
 
     void setTargetStateWithCurrent(Rotation2d targetAngle, double targetGrippingCurrent) {
+        positionRequest.Slot = 1;
+        scalePositionRequestSpeed(targetState.speedScalar);
         setTargetAngle(targetAngle);
         grippingMotor.setControl(torqueCurrentRequest.withOutput(targetGrippingCurrent));
     }

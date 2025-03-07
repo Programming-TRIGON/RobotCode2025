@@ -56,7 +56,7 @@ public class AlgaeManipulatorConstants {
     public static final double MAXIMUM_CURRENT_REQUEST_DUTY_CYCLE = 0.5;
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
     static final Rotation2d MAXIMUM_RESTING_GRIPPER_ANGLE = Rotation2d.fromDegrees(0);
-    static final double OPEN_TORQUE_CURRENT = -20;
+    static final double OPEN_TORQUE_CURRENT = 17;
 
     static {
         final TalonFXConfiguration config = new TalonFXConfiguration();
@@ -105,8 +105,8 @@ public class AlgaeManipulatorConstants {
     }
 
     public enum AlgaeManipulatorState {
-        REST(Rotation2d.fromDegrees(-10)),
-        OPEN_FOR_GRIPPER(Rotation2d.fromDegrees(-30));
+        REST(Rotation2d.fromDegrees(10)),
+        OPEN_FOR_GRIPPER(Rotation2d.fromDegrees(30));
 
         final Rotation2d targetAngle;
 

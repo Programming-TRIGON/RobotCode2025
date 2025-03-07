@@ -49,7 +49,7 @@ public class CoralPlacingCommands {
                 getAutonomouslyScoreInReefFromGripperCommand().asProxy(),
                 getManuallyScoreInReefFromGripperCommand().asProxy(),
                 () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.MULTIFUNCTION_TRIGGER.getAsBoolean() && REEF_CHOOSER.getScoringLevel() != ScoringLevel.L1_GRIPPER
-        ).until(OperatorConstants.CONTINUE_TRIGGER);
+        );
     }
 
     private static Command getCoralIntakeScoringSequenceCommand() {
