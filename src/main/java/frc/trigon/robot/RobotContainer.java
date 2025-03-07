@@ -13,10 +13,8 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
-import frc.trigon.robot.commands.commandclasses.LEDAutoSetupCommand;
 import frc.trigon.robot.commands.commandfactories.*;
 import frc.trigon.robot.constants.CameraConstants;
-import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.poseestimation.poseestimator.PoseEstimator;
@@ -32,7 +30,6 @@ import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.Swerve;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
-import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.utilities.flippable.Flippable;
 
 import java.util.List;
@@ -71,7 +68,6 @@ public class RobotContainer {
      */
     private void initializeGeneralSystems() {
         Flippable.init();
-        LEDConstants.init();
         PathPlannerConstants.init();
     }
 
@@ -87,7 +83,6 @@ public class RobotContainer {
         CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         GRIPPER.setDefaultCommand(GripperCommands.getGripperDefaultCommand());
-        LEDStrip.setDefaultAnimationForAllLEDS(LEDConstants.DEFAULT_SETTINGS);
     }
 
     private void bindControllerCommands() {
@@ -102,7 +97,6 @@ public class RobotContainer {
                 )
         );
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.and(OperatorConstants.MULTIFUNCTION_TRIGGER).whileTrue(new CoralAutoDriveCommand());
-        OperatorConstants.LED_AUTO_SETUP_TRIGGER.toggleOnTrue(new LEDAutoSetupCommand(() -> autoChooser.get().getName()));
 
 //        OperatorConstants.OPERATOR_CONTROLLER.f3().whileTrue(new CoralAlignmentCommand());
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());

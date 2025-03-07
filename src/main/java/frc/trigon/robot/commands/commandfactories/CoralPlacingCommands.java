@@ -8,7 +8,6 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
 import frc.trigon.robot.constants.FieldConstants;
-import frc.trigon.robot.constants.LEDConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.misc.ReefChooser;
@@ -19,8 +18,6 @@ import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
-import org.trigon.hardware.misc.leds.LEDCommands;
-import org.trigon.hardware.misc.leds.LEDStrip;
 import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableTranslation2d;
 
@@ -52,13 +49,7 @@ public class CoralPlacingCommands {
                 getAutonomouslyScoreInReefFromGripperCommand().asProxy(),
                 getManuallyScoreInReefFromGripperCommand().asProxy(),
                 () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.MULTIFUNCTION_TRIGGER.getAsBoolean() && REEF_CHOOSER.getScoringLevel() != ScoringLevel.L1_GRIPPER
-        ).alongWith(
-                GeneralCommands.getContinuousConditionalCommand(
-                        LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITH_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS).alongWith(new InstantCommand(() -> OperatorConstants.DRIVER_CONTROLLER.rumble(0.2, 1)).andThen(new WaitCommand(0.35).andThen(new InstantCommand(() -> OperatorConstants.DRIVER_CONTROLLER.rumble(0.2, 1))))),
-                        LEDCommands.getAnimateCommand(LEDConstants.GROUND_INTAKE_WITHOUT_CORAL_VISIBLE_TO_CAMERA_SETTINGS, LEDStrip.LED_STRIPS),
-                        () -> RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation().getDistance(REEF_CHOOSER.calculateTargetScoringPose().get().getTranslation()) < 0.05
-                ).until(OperatorConstants.CONTINUE_TRIGGER)
-        );
+        ).until(OperatorConstants.CONTINUE_TRIGGER);
     }
 
     private static Command getCoralIntakeScoringSequenceCommand() {
@@ -94,12 +85,7 @@ public class CoralPlacingCommands {
         return new SequentialCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF).unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())).until(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())),
                 GripperCommands.getPrepareForStateCommand(REEF_CHOOSER::getGripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
-                GripperCommands.getSetTargetStateCommand(REEF_CHOOSER::getGripperState).alongWith(
-                        LEDCommands.getAnimateCommand(
-                                LEDConstants.RELEASE_CORAL_SETTINGS,
-                                LEDStrip.LED_STRIPS
-                        ).withTimeout(LEDConstants.RELEASE_CORAL_TIMEOUT_SECONDS)
-                )
+                GripperCommands.getSetTargetStateCommand(REEF_CHOOSER::getGripperState)
         );
     }
 
