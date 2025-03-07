@@ -49,14 +49,27 @@ public class ReefTracker {
         return BranchState.values()[ordinal];
     }
 
-
-    private static void setBranchState(Branch branch, BranchState state) {
-        getBranchTopic(branch).set(NetworkTableValue.makeInteger(state.ordinal()));
+    private void updateTargetCoralPlacementStatesFromDashboard() {
     }
 
     private static void updateBranchFromNT(Branch branch, NetworkTableValue value) {
         if (value.getType() == NetworkTableType.kInteger) {
+            switch ((int) value.getInteger()) {
+                case 0:
+                    setBranchState(branch, BranchState.FREE);
+                    break;
+                case 1:
+                    setBranchState(branch, BranchState.OCCUPIED);
+                    break;
+                case 2:
+                    setBranchState(branch, BranchState.DISABLED);
+                    break;
+            }
         }
+    }
+
+    private static void setBranchState(Branch branch, BranchState state) {
+        getBranchTopic(branch).set(NetworkTableValue.makeInteger(state.ordinal()));
     }
 
     private static DashboardTopic makeBranchTopic(Branch branch) {
@@ -84,7 +97,8 @@ public class ReefTracker {
 
     private static DashboardTopic makeAlgaeTopic(Face face) {
         return new DashboardTopic(
-                String.format("Reef/%s/Algae", face), NetworkTableValue.makeBoolean(ReefTracker.DEFAULT_ALGAE_STATE), (value) -> {
+                String.format("Reef/%s/Algae", face),
+                NetworkTableValue.makeBoolean(ReefTracker.DEFAULT_ALGAE_STATE), (value) -> {
             if (value.getType() == NetworkTableType.kBoolean)
                 getAlgaePair(face).getSecond().set(value.getBoolean());
         }
