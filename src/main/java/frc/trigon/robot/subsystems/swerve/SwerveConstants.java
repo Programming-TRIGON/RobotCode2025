@@ -99,9 +99,9 @@ public class SwerveConstants {
 
     private static void configureGyro() {
         final Pigeon2Configuration config = new Pigeon2Configuration();
-        config.MountPose.MountPoseYaw = -89.80070495605469;
-        config.MountPose.MountPosePitch = -0.3784863352775574;
-        config.MountPose.MountPoseRoll = -1.1409828662872314;
+        config.MountPose.MountPoseYaw = -90.09468078613281;
+        config.MountPose.MountPosePitch = -1.1334741115570068;
+        config.MountPose.MountPoseRoll = -1.7601540088653564;
         GYRO.applyConfiguration(config);
         GYRO.setSimulationYawVelocitySupplier(() -> RobotContainer.SWERVE.getSelfRelativeVelocity().omegaRadiansPerSecond);
 
