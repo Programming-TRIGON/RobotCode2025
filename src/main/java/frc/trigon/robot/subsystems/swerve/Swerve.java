@@ -71,7 +71,7 @@ public class Swerve extends MotorSubsystem {
 
         updatePoseEstimatorStates();
         RobotContainer.POSE_ESTIMATOR.periodic();
-        updateNetworkTables();
+//        updateNetworkTables();
     }
 
     @Override
@@ -151,8 +151,11 @@ public class Swerve extends MotorSubsystem {
         isPathPlannerDriving = !isStill(targetPathPlannerFeedforwardSpeeds);
         if (isFromPathPlanner && DriverStation.isAutonomous() && !isPathPlannerDriving)
             return;
+        if (atPose(new FlippablePose2d(targetPathPlannerPose, false)))
+            return;
         final ChassisSpeeds pidSpeeds = calculateSelfRelativePIDToPoseSpeeds(new FlippablePose2d(targetPathPlannerPose, false));
-        final ChassisSpeeds combinedSpeeds = targetPathPlannerFeedforwardSpeeds.plus(pidSpeeds);
+        final ChassisSpeeds scaledSpeeds = targetPathPlannerFeedforwardSpeeds.times(DriverStation.isAutonomous() ? 0.4 : PathPlannerConstants.FEEDFORWARD_SCALAR);
+        final ChassisSpeeds combinedSpeeds = pidSpeeds.plus(scaledSpeeds);
         selfRelativeDrive(combinedSpeeds);
     }
 

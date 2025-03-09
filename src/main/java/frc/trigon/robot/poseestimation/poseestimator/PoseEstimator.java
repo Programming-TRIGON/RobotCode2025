@@ -188,7 +188,7 @@ public class PoseEstimator implements AutoCloseable {
 
     private void updateFromAprilTagCameras() {
         final AprilTagCamera[] newResultCameras = getCamerasWithResults();
-        sortCamerasByLatestResultTimestamp(newResultCameras);
+//        sortCamerasByLatestResultTimestamp(newResultCameras);
 
         for (AprilTagCamera aprilTagCamera : newResultCameras) {
             swerveDrivePoseEstimator.addVisionMeasurement(
