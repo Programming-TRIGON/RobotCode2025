@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
+import frc.trigon.robot.commands.commandclasses.CoralAlignmentCommand;
 import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
 import frc.trigon.robot.commands.commandclasses.LEDAutoSetupCommand;
 import frc.trigon.robot.commands.commandfactories.*;
@@ -104,7 +105,7 @@ public class RobotContainer {
         );
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.and(OperatorConstants.MULTIFUNCTION_TRIGGER).whileTrue(new CoralAutoDriveCommand());
 
-//        OperatorConstants.OPERATOR_CONTROLLER.f3().whileTrue(new CoralAlignmentCommand());
+        OperatorConstants.OPERATOR_CONTROLLER.f3().whileTrue(new CoralAlignmentCommand());
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
         OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionCommand());
         OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
