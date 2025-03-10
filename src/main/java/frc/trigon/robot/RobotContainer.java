@@ -6,6 +6,7 @@
 package frc.trigon.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -14,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandclasses.CoralAlignmentCommand;
 import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
+import frc.trigon.robot.commands.commandclasses.LEDAutoSetupCommand;
 import frc.trigon.robot.commands.commandfactories.*;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.OperatorConstants;
@@ -35,6 +37,8 @@ import frc.trigon.robot.subsystems.swerve.Swerve;
 import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
+
+import java.util.List;
 
 public class RobotContainer {
     public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator(
@@ -89,7 +93,7 @@ public class RobotContainer {
     }
 
     private void bindControllerCommands() {
-//        OperatorConstants.LED_AUTO_SETUP_TRIGGER.onTrue(new LEDAutoSetupCommand(() -> autoChooser.get().getName()));
+        OperatorConstants.LED_AUTO_SETUP_TRIGGER.onTrue(new LEDAutoSetupCommand(() -> autoChooser.get().getName()));
         OperatorConstants.RESET_HEADING_TRIGGER.onTrue(CommandConstants.RESET_HEADING_COMMAND);
         OperatorConstants.DRIVE_FROM_DPAD_TRIGGER.whileTrue(CommandConstants.SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND);
 //        OperatorConstants.TOGGLE_ROTATION_MODE_TRIGGER.onTrue(GeneralCommands.getToggleRotationModeCommand());
@@ -132,33 +136,32 @@ public class RobotContainer {
 
     @SuppressWarnings("All")
     private void buildAutoChooser() {
-        autoChooser = new LoggedDashboardChooser<>("AutoChooser", AutoBuilder.buildAutoChooser());
-//        autoChooser = new LoggedDashboardChooser<>("AutoChooser");
-//
-//        final List<String> autoNames = AutoBuilder.getAllAutoNames();
-//        boolean hasDefault = false;
-//
-//        for (String autoName : autoNames) {
-//            final PathPlannerAuto autoNonMirrored = new PathPlannerAuto(autoName);
-//            final PathPlannerAuto autoMirrored = new PathPlannerAuto(autoName, true);
-//
-//            if (!PathPlannerConstants.DEFAULT_AUTO_NAME.isEmpty() && PathPlannerConstants.DEFAULT_AUTO_NAME.equals(autoName)) {
-//                hasDefault = true;
-//                autoChooser.addDefaultOption(autoNonMirrored.getName(), autoNonMirrored);
-//                autoChooser.addOption(autoMirrored.getName() + "Mirrored", autoMirrored);
-//            } else if (!PathPlannerConstants.DEFAULT_AUTO_NAME.isEmpty() && PathPlannerConstants.DEFAULT_AUTO_NAME.equals(autoName + "Mirrored")) {
-//                hasDefault = true;
-//                autoChooser.addDefaultOption(autoMirrored.getName() + "Mirrored", autoMirrored);
-//                autoChooser.addOption(autoNonMirrored.getName(), autoNonMirrored);
-//            } else {
-//                autoChooser.addOption(autoNonMirrored.getName(), autoNonMirrored);
-//                autoChooser.addOption(autoMirrored.getName() + "Mirrored", autoMirrored);
-//            }
-//        }
-//
-//        if (!hasDefault)
-//            autoChooser.addDefaultOption("None", Commands.none());
-//        else
-//            autoChooser.addOption("None", Commands.none());
+        autoChooser = new LoggedDashboardChooser<>("AutoChooser");
+
+        final List<String> autoNames = AutoBuilder.getAllAutoNames();
+        boolean hasDefault = false;
+
+        for (String autoName : autoNames) {
+            final PathPlannerAuto autoNonMirrored = new PathPlannerAuto(autoName);
+            final PathPlannerAuto autoMirrored = new PathPlannerAuto(autoName, true);
+
+            if (!PathPlannerConstants.DEFAULT_AUTO_NAME.isEmpty() && PathPlannerConstants.DEFAULT_AUTO_NAME.equals(autoName)) {
+                hasDefault = true;
+                autoChooser.addDefaultOption(autoNonMirrored.getName(), autoNonMirrored);
+                autoChooser.addOption(autoMirrored.getName() + "Mirrored", autoMirrored);
+            } else if (!PathPlannerConstants.DEFAULT_AUTO_NAME.isEmpty() && PathPlannerConstants.DEFAULT_AUTO_NAME.equals(autoName + "Mirrored")) {
+                hasDefault = true;
+                autoChooser.addDefaultOption(autoMirrored.getName() + "Mirrored", autoMirrored);
+                autoChooser.addOption(autoNonMirrored.getName(), autoNonMirrored);
+            } else {
+                autoChooser.addOption(autoNonMirrored.getName(), autoNonMirrored);
+                autoChooser.addOption(autoMirrored.getName() + "Mirrored", autoMirrored);
+            }
+        }
+
+        if (!hasDefault)
+            autoChooser.addDefaultOption("None", Commands.none());
+        else
+            autoChooser.addOption("None", Commands.none());
     }
 }
