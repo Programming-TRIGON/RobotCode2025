@@ -1,6 +1,5 @@
 package frc.trigon.robot.subsystems.swerve;
 
-import com.pathplanner.lib.pathfinding.Pathfinding;
 import com.pathplanner.lib.util.DriveFeedforwards;
 import com.pathplanner.lib.util.swerve.SwerveSetpoint;
 import com.pathplanner.lib.util.swerve.SwerveSetpointGenerator;
@@ -34,7 +33,7 @@ public class Swerve extends MotorSubsystem {
     private final SwerveModule[] swerveModules = SwerveConstants.SWERVE_MODULES;
     private final Phoenix6SignalThread phoenix6SignalThread = Phoenix6SignalThread.getInstance();
     private final SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(PathPlannerConstants.ROBOT_CONFIG, SwerveModuleConstants.MAXIMUM_MODULE_ROTATIONAL_SPEED_RADIANS_PER_SECOND);
-    private Pose2d targetPathPlannerPose = new Pose2d();
+    public Pose2d targetPathPlannerPose = new Pose2d();
     public boolean isPathPlannerDriving = false;
     private SwerveSetpoint previousSetpoint;
 
@@ -73,8 +72,6 @@ public class Swerve extends MotorSubsystem {
         updatePoseEstimatorStates();
         RobotContainer.POSE_ESTIMATOR.periodic();
         updateNetworkTables();
-
-        Logger.recordOutput("HUHUH", Pathfinding.isNewPathAvailable());
     }
 
     @Override
@@ -154,11 +151,9 @@ public class Swerve extends MotorSubsystem {
         isPathPlannerDriving = !isStill(targetPathPlannerFeedforwardSpeeds);
         if (isFromPathPlanner && DriverStation.isAutonomous() && !isPathPlannerDriving)
             return;
-        if (atPose(new FlippablePose2d(targetPathPlannerPose, false)))
-            return;
         final ChassisSpeeds pidSpeeds = calculateSelfRelativePIDToPoseSpeeds(new FlippablePose2d(targetPathPlannerPose, false));
-        final ChassisSpeeds scaledSpeeds = targetPathPlannerFeedforwardSpeeds.times(DriverStation.isAutonomous() ? 0.4 : PathPlannerConstants.FEEDFORWARD_SCALAR);
-        final ChassisSpeeds combinedSpeeds = pidSpeeds.plus(scaledSpeeds);
+//        final ChassisSpeeds pidSpeeds = new ChassisSpeeds();
+        final ChassisSpeeds combinedSpeeds = targetPathPlannerFeedforwardSpeeds.plus(pidSpeeds);
         selfRelativeDrive(combinedSpeeds);
     }
 

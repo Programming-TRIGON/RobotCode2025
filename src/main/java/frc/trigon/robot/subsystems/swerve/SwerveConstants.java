@@ -28,10 +28,10 @@ public class SwerveConstants {
             REAR_LEFT_ID = 3,
             REAR_RIGHT_ID = 4;
     private static final double
-            FRONT_LEFT_STEER_ENCODER_OFFSET = 0.846436,
-            FRONT_RIGHT_STEER_ENCODER_OFFSET = 0.326172,
-            REAR_LEFT_STEER_ENCODER_OFFSET = 2.851074,
-            REAR_RIGHT_STEER_ENCODER_OFFSET = 0.881836;
+            FRONT_LEFT_STEER_ENCODER_OFFSET = -0.05859375 + 0.5,
+            FRONT_RIGHT_STEER_ENCODER_OFFSET = 0.210693359375 - 0.5,
+            REAR_LEFT_STEER_ENCODER_OFFSET = 0.3525390625 - 0.5,
+            REAR_RIGHT_STEER_ENCODER_OFFSET = 0.385498046875 - 0.5;
     private static final double
             FRONT_LEFT_WHEEL_DIAMETER = 0.047824629445622546 * 2,
             FRONT_RIGHT_WHEEL_DIAMETER = 0.048754331884527956 * 2,
@@ -61,7 +61,8 @@ public class SwerveConstants {
     private static final PIDConstants
             TRANSLATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
             new PIDConstants(5, 0, 0) :
-            new PIDConstants(5, 0, 0.24),
+//            new PIDConstants(5, 0, 0.24),
+            new PIDConstants(7.5, 0, 0.1),
             PROFILED_ROTATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
                     new PIDConstants(4, 0, 0) :
                     new PIDConstants(6, 0, 0.1);

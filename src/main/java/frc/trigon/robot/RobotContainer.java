@@ -7,6 +7,7 @@ package frc.trigon.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
@@ -19,6 +20,8 @@ import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.poseestimation.poseestimator.PoseEstimator;
 import frc.trigon.robot.subsystems.MotorSubsystem;
+import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulator;
+import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntake;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
@@ -29,6 +32,7 @@ import frc.trigon.robot.subsystems.gripper.Gripper;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.Swerve;
+import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
 import org.trigon.utilities.flippable.Flippable;
 
@@ -40,9 +44,11 @@ public class RobotContainer {
             CameraConstants.RIGHT_REEF_TAG_CAMERA
     );
     public static final Swerve SWERVE = new Swerve();
+    public static final AlgaeManipulator ALGAE_MANIPULATOR = new AlgaeManipulator();
     public static final CoralIntake CORAL_INTAKE = new CoralIntake();
     public static final Elevator ELEVATOR = new Elevator();
     public static final Gripper GRIPPER = new Gripper();
+    public static final LoggedPowerDistribution POWER_DISTRIBUTION = LoggedPowerDistribution.getInstance(1, PowerDistribution.ModuleType.kRev);
 
     private LoggedDashboardChooser<Command> autoChooser;
 
@@ -77,6 +83,7 @@ public class RobotContainer {
 
     private void bindDefaultCommands() {
         SWERVE.setDefaultCommand(GeneralCommands.getFieldRelativeDriveCommand());
+        ALGAE_MANIPULATOR.setDefaultCommand(AlgaeManipulatorCommands.getDefaultCommand());
         CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
         ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         GRIPPER.setDefaultCommand(GripperCommands.getGripperDefaultCommand());
@@ -99,7 +106,7 @@ public class RobotContainer {
         OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionCommand());
         OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
 
-        OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CoralIntakeCommands.getDebuggingCommand());
+        OperatorConstants.DEBUGGING_TRIGGER.whileTrue(GripperCommands.getDebuggingCommand());
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
         OperatorConstants.UNLOAD_CORAL_TRIGGER.whileTrue(CoralCollectionCommands.getUnloadCoralCommand());
         OperatorConstants.COLLECT_ALGAE_TRIGGER.whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());

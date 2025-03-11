@@ -1,6 +1,6 @@
 package frc.trigon.robot.subsystems.elevator;
 
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.math.geometry.Pose3d;
 import edu.wpi.first.math.geometry.Rotation3d;
@@ -22,7 +22,7 @@ public class Elevator extends MotorSubsystem {
             masterMotor = ElevatorConstants.MASTER_MOTOR,
             followerMotor = ElevatorConstants.FOLLOWER_MOTOR;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(ElevatorConstants.FOC_ENABLED);
-    private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(ElevatorConstants.FOC_ENABLED);
+    private final DynamicMotionMagicVoltage positionRequest = new DynamicMotionMagicVoltage(0, ElevatorConstants.DEFAULT_MAXIMUM_VELOCITY, ElevatorConstants.DEFAULT_MAXIMUM_ACCELERATION, ElevatorConstants.DEFAULT_MAXIMUM_ACCELERATION * 10).withEnableFOC(ElevatorConstants.FOC_ENABLED);
     private ElevatorConstants.ElevatorState targetState = ElevatorConstants.ElevatorState.REST;
 
     public Elevator() {
@@ -99,7 +99,14 @@ public class Elevator extends MotorSubsystem {
 
     void setTargetState(ElevatorConstants.ElevatorState targetState) {
         this.targetState = targetState;
+        scalePositionRequestSpeed(targetState.speedScalar);
         setTargetPositionRotations(metersToRotations(targetState.targetPositionMeters));
+    }
+
+    private void scalePositionRequestSpeed(double speedScalar) {
+        positionRequest.Velocity = ElevatorConstants.DEFAULT_MAXIMUM_VELOCITY * speedScalar;
+        positionRequest.Acceleration = ElevatorConstants.DEFAULT_MAXIMUM_ACCELERATION * speedScalar;
+        positionRequest.Jerk = positionRequest.Acceleration * 10;
     }
 
     void setTargetPositionRotations(double targetPositionRotations) {

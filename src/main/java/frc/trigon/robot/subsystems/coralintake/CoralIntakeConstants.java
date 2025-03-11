@@ -30,8 +30,8 @@ public class CoralIntakeConstants {
             FUNNEL_MOTOR_ID = 10,
             ANGLE_MOTOR_ID = 11,
             ANGLE_ENCODER_ID = 11,
-            BEAM_BREAK_CHANNEL = 0,
-            DISTANCE_SENSOR_CHANNEL = 1;
+            BEAM_BREAK_CHANNEL = 1,
+            DISTANCE_SENSOR_CHANNEL = 0;
     private static final String
             INTAKE_MOTOR_NAME = "CoralIntakeMotor",
             FUNNEL_MOTOR_NAME = "CoralFunnelMotor",
@@ -52,7 +52,7 @@ public class CoralIntakeConstants {
             INTAKE_MOTOR_GEAR_RATIO = 1.3,
             FUNNEL_MOTOR_GEAR_RATIO = 4;
     static final double ANGLE_MOTOR_GEAR_RATIO = 39.577227;
-    private static final double ANGLE_ENCODER_GRAVITY_OFFSET_VALUE = -0.024915 - 0.0067957;
+    private static final double ANGLE_ENCODER_GRAVITY_OFFSET_VALUE = -0.024915 - 0.0067957 - 0.013338;
     static final double ANGLE_ENCODER_POSITION_OFFSET_VALUE = RobotHardwareStats.isSimulation() ? 0 : -0.053944 - ANGLE_ENCODER_GRAVITY_OFFSET_VALUE;//0.213
     private static final double
             DISTANCE_SENSOR_SCALING_SLOPE = 0.0002,
@@ -160,7 +160,7 @@ public class CoralIntakeConstants {
             PULSING_OFF_PERIOD_SECONDS = 0.1,
             PULSING_INTAKE_MOTOR_VOLTAGE = 10,
             PULSING_FUNNEL_MOTOR_VOLTAGE = 2,
-            PULSING_ANGLE_DEGREES = 10;
+            PULSING_ANGLE_DEGREES = 90;
 
     static {
         configureIntakeMotor();
@@ -218,16 +218,16 @@ public class CoralIntakeConstants {
         config.Feedback.FeedbackRemoteSensorID = ANGLE_ENCODER.getID();
         config.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 38.561;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 75 : 30;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 1.6663 : 3.2127;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.1677;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 8.7544 : 4.971;
-        config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0.07;
-        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.59461;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 1.6663 : 1;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.074947 : 0.26083;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 8.7544 : 4.3;
+        config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0.04;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.50326;
 
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseClosedLoopSign;
+        config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
 
         config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 12 / config.Slot0.kV : 2;
         config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 6 : 8;
@@ -285,7 +285,8 @@ public class CoralIntakeConstants {
         COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(90)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
         REST(0, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
-        SCORE_L1(-3, 2, Rotation2d.fromDegrees(36)),
+        SCORE_L1_BOOST(-1, -3, Rotation2d.fromDegrees(36)),
+        SCORE_L1(-1, 3, Rotation2d.fromDegrees(36)),
         COLLECT_ALGAE_FROM_FLOOR(-6, 0, Rotation2d.fromDegrees(-40));
 
         public final double

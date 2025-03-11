@@ -1,6 +1,6 @@
 package frc.trigon.robot.subsystems.gripper;
 
-import com.ctre.phoenix6.controls.MotionMagicVoltage;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
 import edu.wpi.first.math.geometry.*;
@@ -25,7 +25,7 @@ public class Gripper extends MotorSubsystem {
     private final SimpleSensor beamBreak = GripperConstants.BEAM_BREAK;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(GripperConstants.FOC_ENABLED);
     private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(0).withMaxAbsDutyCycle(0.5);
-    private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(GripperConstants.FOC_ENABLED);
+    private final DynamicMotionMagicVoltage positionRequest = new DynamicMotionMagicVoltage(0, GripperConstants.DEFAULT_MAXIMUM_VELOCITY, GripperConstants.DEFAULT_MAXIMUM_ACCELERATION, GripperConstants.DEFAULT_MAXIMUM_ACCELERATION * 10).withEnableFOC(GripperConstants.FOC_ENABLED);
     private GripperConstants.GripperState targetState = GripperConstants.GripperState.REST;
 
     public Gripper() {
@@ -121,7 +121,7 @@ public class Gripper extends MotorSubsystem {
 
     @AutoLogOutput
     public boolean isMovingSlowly() {
-        return -grippingMotor.getSignal(TalonFXSignal.VELOCITY) < 4;
+        return Math.abs(grippingMotor.getSignal(TalonFXSignal.VELOCITY)) < 4;
     }
 
     /**
@@ -151,11 +151,21 @@ public class Gripper extends MotorSubsystem {
     }
 
     void setTargetState(Rotation2d targetAngle, double targetGrippingVoltage) {
+        scalePositionRequestSpeed(targetState.speedScalar);
+        positionRequest.Slot = 0;
         setTargetAngle(targetAngle);
         setTargetVoltage(targetGrippingVoltage);
     }
 
+    private void scalePositionRequestSpeed(double speedScalar) {
+        positionRequest.Velocity = GripperConstants.DEFAULT_MAXIMUM_VELOCITY * speedScalar;
+        positionRequest.Acceleration = GripperConstants.DEFAULT_MAXIMUM_ACCELERATION * speedScalar;
+        positionRequest.Jerk = positionRequest.Acceleration * 10;
+    }
+
     void setTargetStateWithCurrent(Rotation2d targetAngle, double targetGrippingCurrent) {
+        positionRequest.Slot = 1;
+        scalePositionRequestSpeed(targetState.speedScalar);
         setTargetAngle(targetAngle);
         grippingMotor.setControl(torqueCurrentRequest.withOutput(targetGrippingCurrent));
     }
@@ -187,7 +197,7 @@ public class Gripper extends MotorSubsystem {
         );
     }
 
-    private Rotation2d getCurrentEncoderAngle() {
+    public Rotation2d getCurrentEncoderAngle() {
         return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION) + GripperConstants.POSITION_OFFSET_FROM_GRAVITY_OFFSET);
     }
 
