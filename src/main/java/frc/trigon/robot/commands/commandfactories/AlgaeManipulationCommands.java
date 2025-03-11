@@ -49,8 +49,8 @@ public class AlgaeManipulationCommands {
 
     private static Command getCollectAlgaeFromReefManuallyCommand() {
         return GeneralCommands.getContinuousConditionalCommand(
-                getCollectAlgaeFromL2Command(),
-                getCollectAlgaeFromL3Command(),
+                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.COLLECT_ALGAE_FROM_L3),
+                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST_WITH_ALGAE),
                 () -> !OperatorConstants.LEFT_MULTIFUNCTION_TRIGGER.getAsBoolean()
         ).alongWith(
                 new WaitUntilCommand(OperatorConstants.SCORE_IN_NET_TRIGGER).andThen(new InstantCommand(() -> getScoreInNetCommand().schedule()))
