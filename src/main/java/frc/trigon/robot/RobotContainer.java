@@ -50,8 +50,6 @@ public class RobotContainer {
         initializeGeneralSystems();
         buildAutoChooser();
         configureBindings();
-
-//        new PowerDistribution(1, PowerDistribution.ModuleType.kRev);
     }
 
     /**
@@ -75,7 +73,6 @@ public class RobotContainer {
         bindDefaultCommands();
         bindControllerCommands();
         bindSetters();
-//        configureSysIdBindings(CORAL_INTAKE);
     }
 
     private void bindDefaultCommands() {
@@ -88,7 +85,6 @@ public class RobotContainer {
     private void bindControllerCommands() {
         OperatorConstants.RESET_HEADING_TRIGGER.onTrue(CommandConstants.RESET_HEADING_COMMAND);
         OperatorConstants.DRIVE_FROM_DPAD_TRIGGER.whileTrue(CommandConstants.SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND);
-        OperatorConstants.TOGGLE_ROTATION_MODE_TRIGGER.onTrue(GeneralCommands.getToggleRotationModeCommand());
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
         OperatorConstants.OPERATOR_CONTROLLER.v().whileTrue(
                 new SequentialCommandGroup(
@@ -96,7 +92,7 @@ public class RobotContainer {
                         ElevatorCommands.getSetTargetVoltageCommand(-3)
                 )
         );
-        OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.and(OperatorConstants.MULTIFUNCTION_TRIGGER).whileTrue(new CoralAutoDriveCommand());
+        OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.and(OperatorConstants.LEFT_MULTIFUNCTION_TRIGGER).whileTrue(new CoralAutoDriveCommand());
 
 //        OperatorConstants.OPERATOR_CONTROLLER.f3().whileTrue(new CoralAlignmentCommand());
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
@@ -106,7 +102,7 @@ public class RobotContainer {
         OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CoralIntakeCommands.getDebuggingCommand());
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
         OperatorConstants.UNLOAD_CORAL_TRIGGER.whileTrue(CoralCollectionCommands.getUnloadCoralCommand());
-        OperatorConstants.COLLECT_ALGAE_TRIGGER.or(OperatorConstants.DRIVER_CONTROLLER.a()).whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
+        OperatorConstants.COLLECT_ALGAE_TRIGGER.whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
         OperatorConstants.OPERATOR_CONTROLLER.s().whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromFloorCommand());
         OperatorConstants.FEEDER_CORAL_COLLECTION_WITH_GRIPPER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionFromGripperCommand());
     }

@@ -31,7 +31,8 @@ public class FieldConstants {
     public static final Translation2d BLUE_REEF_CENTER_TRANSLATION = new Translation2d(4.48945, FIELD_WIDTH_METERS / 2);
     public static final double
             REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS = 1.3,
-            REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS = 0.17;
+            REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS = 0.17,
+            REEF_CENTER_TO_TARGET_ALGAE_COLLECTION_POSITION_X_TRANSFORM_METERS = 1.5;
 
     private static AprilTagFieldLayout createAprilTagFieldLayout() {
         try {

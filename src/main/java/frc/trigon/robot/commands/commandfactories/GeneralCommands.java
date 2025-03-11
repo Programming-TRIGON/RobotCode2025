@@ -1,7 +1,6 @@
 package frc.trigon.robot.commands.commandfactories;
 
 import edu.wpi.first.wpilibj2.command.*;
-import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.MotorSubsystem;
@@ -20,24 +19,6 @@ public class GeneralCommands {
                 () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
                 () -> CommandConstants.calculateRotationStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getRightX())
         );
-    }
-
-    /**
-     * Creates a command that toggles between the swerve's default commands: joystick oriented rotation and normal rotation.
-     * Joystick oriented rotation is when the robot rotates directly to the angle of the joystick.
-     * Normal rotation is when the robot rotates at a speed depending on the axis value of the joystick.
-     *
-     * @return the command
-     */
-    public static Command getToggleRotationModeCommand() {
-        return new InstantCommand(() -> {
-            if (RobotContainer.SWERVE.getDefaultCommand().equals(CommandConstants.FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_TO_REEF_SECTIONS_COMMAND))
-                RobotContainer.SWERVE.setDefaultCommand(getFieldRelativeDriveCommand());
-            else
-                RobotContainer.SWERVE.setDefaultCommand(CommandConstants.FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_TO_REEF_SECTIONS_COMMAND);
-
-            RobotContainer.SWERVE.getDefaultCommand().schedule();
-        }).ignoringDisable(true);
     }
 
     public static Command getToggleBrakeCommand() {
