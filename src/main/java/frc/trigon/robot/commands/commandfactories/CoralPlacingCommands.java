@@ -40,7 +40,7 @@ public class CoralPlacingCommands {
                 new WaitUntilChangeCommand<>(REEF_CHOOSER::getScoringLevel),
                 new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition),
                 new WaitUntilChangeCommand<>(REEF_CHOOSER::getReefSide),
-                new WaitUntilChangeCommand<>(OperatorConstants.OVERRIDE_AUTO_SCORING_TO_CLOSEST_SCORING_LOCATION_TRIGGER::getAsBoolean)
+                new WaitUntilChangeCommand<>(OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER::getAsBoolean)
         );
     }
 
@@ -48,7 +48,7 @@ public class CoralPlacingCommands {
         return GeneralCommands.getContinuousConditionalCommand(
                 getAutonomouslyScoreInReefFromGripperCommand().asProxy(),
                 getManuallyScoreInReefFromGripperCommand().asProxy(),
-                () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.MULTIFUNCTION_TRIGGER.getAsBoolean() && REEF_CHOOSER.getScoringLevel() != ScoringLevel.L1_GRIPPER
+                () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.LEFT_MULTIFUNCTION_TRIGGER.getAsBoolean() && REEF_CHOOSER.getScoringLevel() != ScoringLevel.L1_GRIPPER
         );
     }
 
@@ -110,7 +110,7 @@ public class CoralPlacingCommands {
     }
 
     public static FlippablePose2d calculateTargetScoringPose() {
-        if (OperatorConstants.OVERRIDE_AUTO_SCORING_TO_CLOSEST_SCORING_LOCATION_TRIGGER.getAsBoolean())
+        if (OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean())
             return calculateClosestScoringPose();
         return REEF_CHOOSER.calculateTargetScoringPose();
     }
