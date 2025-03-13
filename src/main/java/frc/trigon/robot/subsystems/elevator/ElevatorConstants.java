@@ -97,7 +97,7 @@ public class ElevatorConstants {
 
         config.Slot0.kP = RobotHardwareStats.isSimulation() ? 40 : 6.5905;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0.22774 : 0.47602;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0.22774 : 0.2;
         config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.066659 : 0.25513;
         config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0.74502 : 0.52756;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
@@ -118,7 +118,7 @@ public class ElevatorConstants {
         config.SoftwareLimitSwitch.ReverseSoftLimitThreshold = 0;
 
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
-        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 6.6;
+        config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = 6.8;
 
         config.MotionMagic.MotionMagicCruiseVelocity = DEFAULT_MAXIMUM_VELOCITY;
         config.MotionMagic.MotionMagicAcceleration = DEFAULT_MAXIMUM_ACCELERATION;
@@ -154,10 +154,10 @@ public class ElevatorConstants {
         SCORE_L1(0, 1),
         SCORE_L2(0, 1),
         SCORE_L3(0.4, 1),
-        SCORE_L4(1.03, 1),
+        SCORE_L4(1.045, 1),
         COLLECT_ALGAE_FROM_L3(0.35, 1),
         REST_WITH_ALGAE(0, 0.3),
-        SCORE_NET(1.03, 0.3);
+        SCORE_NET(1.045, 0.3);
 
         public final double targetPositionMeters;
         final double speedScalar;
