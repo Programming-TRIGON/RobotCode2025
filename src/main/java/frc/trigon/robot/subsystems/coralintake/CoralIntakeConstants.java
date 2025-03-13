@@ -52,7 +52,7 @@ public class CoralIntakeConstants {
             INTAKE_MOTOR_GEAR_RATIO = 1.3,
             FUNNEL_MOTOR_GEAR_RATIO = 4;
     static final double ANGLE_MOTOR_GEAR_RATIO = 39.577227;
-    private static final double ANGLE_ENCODER_GRAVITY_OFFSET_VALUE = -0.024915 - 0.0067957 - 0.013338;
+    private static final double ANGLE_ENCODER_GRAVITY_OFFSET_VALUE = RobotHardwareStats.isSimulation() ? 0 : -0.024915 - 0.0067957 - 0.013338;
     static final double ANGLE_ENCODER_POSITION_OFFSET_VALUE = RobotHardwareStats.isSimulation() ? 0 : -0.053944 - ANGLE_ENCODER_GRAVITY_OFFSET_VALUE;//0.213
     private static final double
             DISTANCE_SENSOR_SCALING_SLOPE = 0.0002,
@@ -231,7 +231,7 @@ public class CoralIntakeConstants {
         config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.50326;
 
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
+        config.Slot0.StaticFeedforwardSign = RobotHardwareStats.isSimulation() ? StaticFeedforwardSignValue.UseClosedLoopSign : StaticFeedforwardSignValue.UseVelocitySign;
 
         config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 12 / config.Slot0.kV : 2;
         config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 6 : 8;
