@@ -44,6 +44,7 @@ public class AprilTagCamera {
 
     public void update() {
         aprilTagCameraIO.updateInputs(inputs);
+        Logger.processInputs("Cameras/" + name, inputs);
 
         estimatedRobotPose = calculateRobotPose();
         logCameraInfo();
@@ -120,10 +121,10 @@ public class AprilTagCamera {
     }
 
     private Pose2d chooseBestNormalSolvePNPPose() {
-        if (inputs.bestCameraSolvePNPPose.equals(inputs.alternateCameraSolvePNPPose))
-            return cameraPoseToRobotPose(inputs.bestCameraSolvePNPPose.toPose2d());
-
         final Pose2d bestPose = cameraPoseToRobotPose(inputs.bestCameraSolvePNPPose.toPose2d());
+
+        if (inputs.bestCameraSolvePNPPose.equals(inputs.alternateCameraSolvePNPPose))
+            return bestPose;
         if (inputs.alternateCameraSolvePNPPose.getTranslation().toTranslation2d().getDistance(FieldConstants.TAG_ID_TO_POSE.get(inputs.visibleTagIDs[0]).getTranslation().toTranslation2d()) < 0.1 || DriverStation.isDisabled())
             return bestPose;
 
@@ -149,7 +150,6 @@ public class AprilTagCamera {
     }
 
     private void logCameraInfo() {
-        Logger.processInputs("Cameras/" + name, inputs);
         if (!FieldConstants.TAG_ID_TO_POSE.isEmpty())
             logUsedTags();
 

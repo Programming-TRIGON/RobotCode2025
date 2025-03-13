@@ -99,6 +99,10 @@ public class PoseEstimator implements AutoCloseable {
             relativeRobotPoseSource.resetOffset(newPose);
     }
 
+    public void resetOdometry() {
+        swerveDriveOdometry.resetPose(getEstimatedRobotPose());
+    }
+
     /**
      * @return the estimated pose of the robot, relative to the blue alliance's driver station right corner
      */

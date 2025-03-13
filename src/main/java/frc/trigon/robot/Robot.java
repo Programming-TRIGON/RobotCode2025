@@ -42,6 +42,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void autonomousInit() {
         RobotContainer.SWERVE.initializeDrive(true);
+        RobotContainer.POSE_ESTIMATOR.resetOdometry();
         autonomousCommand = robotContainer.getAutonomousCommand();
 
         if (autonomousCommand != null)
