@@ -83,6 +83,8 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
         final ArrayList<SimulatedGamePiece> gamePiecesOnField = objectID == SimulatedGamePieceConstants.GamePieceType.CORAL.id ? SimulationFieldHandler.getSimulatedCoral() : SimulationFieldHandler.getSimulatedAlgae();
         final ArrayList<Pair<SimulatedGamePiece, Rotation3d>> visibleTargetObjects = new ArrayList<>();
         for (SimulatedGamePiece currentObject : gamePiecesOnField) {
+            if (currentObject.isScored())
+                continue;
             final Rotation3d cameraAngleToObject = calculateCameraAngleToObject(currentObject.getPose(), cameraPose);
 
             if (isWithinFOV(cameraAngleToObject))

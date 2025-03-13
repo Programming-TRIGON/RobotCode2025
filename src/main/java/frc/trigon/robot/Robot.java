@@ -5,7 +5,6 @@
 
 package frc.trigon.robot;
 
-import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.trigon.robot.constants.RobotConstants;
@@ -19,7 +18,6 @@ import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.phoenix6.Phoenix6Inputs;
-import org.trigon.utilities.flippable.FlippablePose2d;
 
 public class Robot extends LoggedRobot {
     public static final boolean IS_REAL = Robot.isReal();
@@ -73,10 +71,10 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        if (!RobotContainer.SWERVE.isPathPlannerDriving) {
-            if (!RobotContainer.SWERVE.atPose(new FlippablePose2d(RobotContainer.SWERVE.targetPathPlannerPose, false)))
-                RobotContainer.SWERVE.drivePathPlanner(new ChassisSpeeds(), false);
-        }
+//        if (!RobotContainer.SWERVE.isPathPlannerDriving) {
+//            if (!RobotContainer.SWERVE.atPose(new FlippablePose2d(RobotContainer.SWERVE.targetPathPlannerPose, false)))
+//                RobotContainer.SWERVE.drivePathPlanner(new ChassisSpeeds(), false);
+//        }
     }
 
     @Override

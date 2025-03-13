@@ -3,6 +3,7 @@ package frc.trigon.robot.commands.commandfactories;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.event.BooleanEvent;
@@ -10,6 +11,8 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
 import frc.trigon.robot.constants.CameraConstants;
+import frc.trigon.robot.constants.PathPlannerConstants;
+import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
@@ -17,6 +20,7 @@ import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
+import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.json.simple.parser.ParseException;
 import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableRotation2d;
@@ -31,6 +35,88 @@ import java.util.function.Supplier;
 public class AutonomousCommands {
     private static final BooleanEvent SWITCH_TO_CORAL_FEEDBACK = new BooleanEvent(CommandScheduler.getInstance().getActiveButtonLoop(), () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).rising();
     private static final BooleanEvent SWITCH_TO_PP_FEEDBACK = new BooleanEvent(CommandScheduler.getInstance().getActiveButtonLoop(), () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).falling();
+    private static final ObjectDetectionCamera CAMERA = CameraConstants.OBJECT_DETECTION_CAMERA;
+
+    public static Command getPOCCommand() {
+        return new SequentialCommandGroup(
+                getDriveToReefAndScoreCommand(),
+                getCollectCoralCommand(),
+                getDriveToReefAndScoreCommand(),
+                getCollectCoralCommand(),
+                getDriveToReefAndScoreCommand()
+        );
+    }
+
+    public static Command getDriveUntilCoralIsVisibleCommand() {
+        return new ParallelCommandGroup(
+                SwerveCommands.getDriveToPoseCommand(() -> new FlippablePose2d(3.5, 2, Rotation2d.fromDegrees(180), true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS));
+//        ).until(() -> CAMERA.getTrackedObjectFieldRelativePosition() != null);
+    }
+
+    public static Command getCollectCoralCommand() {
+        return new ParallelCommandGroup(
+                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST),
+                getDriveUntilCoralIsVisibleCommand().andThen(
+                        new CoralAutoDriveCommand()
+                ),
+                getIntakeUntilHasCoralCommand()
+        ).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
+    }
+
+    public static Command getDriveToReefAndScoreCommand() {
+        return new ParallelCommandGroup(
+                SwerveCommands.getDriveToPoseCommand(CoralPlacingCommands::calculateTargetScoringPose, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS),
+                getCoralSequenceCommand()
+        );
+    }
+
+    public static Command getIntakeUntilHasCoralCommand() {
+        return new SequentialCommandGroup(
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR)
+                        .until(RobotContainer.CORAL_INTAKE::isEarlyCoralCollectionDetected),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.CENTER_CORAL)
+        ).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
+    }
+
+    public static Command getCoralSequenceCommand() {
+        return new SequentialCommandGroup(
+                getLoadCoralCommand(),
+                getScoreCommand()
+        );
+    }
+
+    public static Command getLoadCoralCommand() {
+        return new ParallelCommandGroup(
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.LOAD_CORAL),
+                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK)//.onlyWhile(() -> RobotContainer.GRIPPER.atTargetAngle() && RobotContainer.ELEVATOR.atTargetState())
+        ).until(RobotContainer.GRIPPER::hasGamePiece);
+    }
+
+    public static Command getScoreCommand() {
+        return new SequentialCommandGroup(
+                getPrepareForScoreCommand().until(() ->
+                        RobotContainer.ELEVATOR.atTargetState() &&
+                                RobotContainer.GRIPPER.atTargetAngle() &&
+                                RobotContainer.SWERVE.atPose(CoralPlacingCommands.calculateTargetScoringPose())),
+                getFeedCoralCommand()
+        );
+    }
+
+    public static Command getPrepareForScoreCommand() {
+        return new ParallelCommandGroup(
+                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L4),
+                GripperCommands.getPrepareForStateCommand(GripperConstants.GripperState.SCORE_L4)
+        );
+    }
+
+    public static Command getFeedCoralCommand() {
+        return new ParallelCommandGroup(
+                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L4),
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L4)
+        ).withTimeout(0.5);
+    }
 
     public static Command getPrepareForScoringInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
         return CoralCollectionCommands.getLoadCoralCommand().andThen(

@@ -163,5 +163,6 @@ public class RobotContainer {
             autoChooser.addDefaultOption("None", Commands.none());
         else
             autoChooser.addOption("None", Commands.none());
+        autoChooser.addOption("POC", AutonomousCommands.getPOCCommand());
     }
 }
