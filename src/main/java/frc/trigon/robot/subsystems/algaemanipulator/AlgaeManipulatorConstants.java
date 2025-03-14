@@ -56,7 +56,7 @@ public class AlgaeManipulatorConstants {
     public static final double MAXIMUM_CURRENT_REQUEST_DUTY_CYCLE = 0.5;
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
     static final Rotation2d MAXIMUM_RESTING_GRIPPER_ANGLE = Rotation2d.fromDegrees(0);
-    static final double OPEN_TORQUE_CURRENT = 17;
+    static final double OPEN_TORQUE_CURRENT = 15;
 
     static {
         final TalonFXConfiguration config = new TalonFXConfiguration();

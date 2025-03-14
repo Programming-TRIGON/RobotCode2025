@@ -32,7 +32,7 @@ public class GripperConstants {
             GRIPPING_MOTOR_ID = 14,
             ANGLE_MOTOR_ID = 15,
             ANGLE_ENCODER_ID = 15,
-            BEAM_BREAK_CHANNEL = 2;
+            BEAM_BREAK_CHANNEL = 3;
     private static final String
             GRIPPING_MOTOR_NAME = "GripperGrippingMotor",
             ANGLE_MOTOR_NAME = "GripperAngleMotor",
@@ -239,7 +239,7 @@ public class GripperConstants {
         LOAD_CORAL(Rotation2d.fromDegrees(-56), 11, 1),
         UNLOAD_CORAL(Rotation2d.fromDegrees(-50), -3, 1),
         COLLECT_ALGAE_FROM_REEF(Rotation2d.fromDegrees(30), -50, 1),
-        HOLD_ALGAE(Rotation2d.fromDegrees(70), -40, 0.3),
+        HOLD_ALGAE(Rotation2d.fromDegrees(40), -40, 0.3),
         SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(60), 11, 1),
         PREPARE_FOR_SCORING_ALGAE_IN_NET(Rotation2d.fromDegrees(100), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage, 0.3),
         AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0, 1),
