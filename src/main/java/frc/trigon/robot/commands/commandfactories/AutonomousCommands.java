@@ -14,7 +14,6 @@ import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
-import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
@@ -24,13 +23,11 @@ import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.json.simple.parser.ParseException;
-import org.littletonrobotics.junction.Logger;
 import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -43,32 +40,41 @@ public class AutonomousCommands {
     private static final boolean[] BRANCHES_SCORED = new boolean[12];
 
     public static Command getPOCCommand() {
-        return new SequentialCommandGroup(
-                getDriveToReefAndScoreCommand(),
-                getCollectCoralCommand(),
-                getDriveToReefAndScoreCommand(),
-                getCollectCoralCommand(),
-                getDriveToReefAndScoreCommand(),
-                getCollectCoralCommand(),
-                getDriveToReefAndScoreCommand()
-        );
+        return getCycleCoralCommand().repeatedly();
     }
 
-    public static Command getDriveUntilCoralIsVisibleCommand() {
-        return new ParallelCommandGroup(
-                SwerveCommands.getDriveToPoseCommand(() -> new FlippablePose2d(3.5, 2, Rotation2d.fromDegrees(180), true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS));
-//        ).until(() -> CAMERA.getTrackedObjectFieldRelativePosition() != null);
+    public static Command getCycleCoralCommand() {
+        return new SequentialCommandGroup(
+                getDriveToReefAndScoreCommand(),
+                getCollectCoralCommand()
+        );
     }
 
     public static Command getCollectCoralCommand() {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST),
-                getDriveUntilCoralIsVisibleCommand().andThen(
-                        new CoralAutoDriveCommand()
-                ),
+                getDriveToCoralCommand(),
                 getIntakeUntilHasCoralCommand()
         ).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
+    }
+
+    public static Command getDriveToCoralCommand() {
+        return new SequentialCommandGroup(
+                new InstantCommand(CameraConstants.OBJECT_DETECTION_CAMERA::initializeTracking),
+                GeneralCommands.getContinuousConditionalCommand(
+                        getFindCoralCommand(),
+                        new CoralAutoDriveCommand(),
+                        () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() == null
+                )
+        );
+    }
+
+    public static Command getFindCoralCommand() {
+        return new ParallelCommandGroup(
+                new RunCommand(() -> CameraConstants.OBJECT_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL)),
+                SwerveCommands.getDriveToPoseCommand(() -> new FlippablePose2d(3, 2, Rotation2d.fromDegrees(180), true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS)
+        );
     }
 
     public static Command getDriveToReefAndScoreCommand() {
