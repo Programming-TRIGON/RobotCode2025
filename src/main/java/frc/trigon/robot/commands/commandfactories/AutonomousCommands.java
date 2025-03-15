@@ -24,11 +24,13 @@ import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.json.simple.parser.ParseException;
+import org.littletonrobotics.junction.Logger;
 import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Optional;
 import java.util.function.Supplier;
 
@@ -39,9 +41,12 @@ public class AutonomousCommands {
     private static final BooleanEvent SWITCH_TO_CORAL_FEEDBACK = new BooleanEvent(CommandScheduler.getInstance().getActiveButtonLoop(), () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).rising();
     private static final BooleanEvent SWITCH_TO_PP_FEEDBACK = new BooleanEvent(CommandScheduler.getInstance().getActiveButtonLoop(), () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).falling();
     private static final boolean[] BRANCHES_SCORED = new boolean[12];
+    private static final Pose2d[] B = new Pose2d[12];
 
     public static Command getPOCCommand() {
         return new SequentialCommandGroup(
+                getDriveToReefAndScoreCommand(),
+                getCollectCoralCommand(),
                 getDriveToReefAndScoreCommand(),
                 getCollectCoralCommand(),
                 getDriveToReefAndScoreCommand(),
@@ -117,11 +122,14 @@ public class AutonomousCommands {
     public static Command getFeedCoralCommand() {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L4),
-                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L4)
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L4),
+                new InstantCommand(() -> BRANCHES_SCORED[getBranchNumberFromScoringPose(calculateClosestScoringPose().get())] = true).andThen(new InstantCommand(() -> {
+                    System.out.println(Arrays.toString(BRANCHES_SCORED));
+                }))
         ).withTimeout(0.5);
     }
 
-    private static FlippablePose2d calculateClosestScoringPose() {
+    public static FlippablePose2d calculateClosestScoringPose() {
         final Translation2d robotPositionOnField = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
         final Translation2d reefCenterPosition = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
         final Rotation2d[] reefClockAngles = FieldConstants.REEF_CLOCK_ANGLES;
@@ -138,27 +146,37 @@ public class AutonomousCommands {
             }
         }
 
+        for (int i = 0; i < 12; i++) {
+            B[i] = new Pose2d(0, 0, new Rotation2d(0));
+        }
+
         double distanceFromClosestScoringPoseMeters = Double.POSITIVE_INFINITY;
         Pose2d closestScoringPose = new Pose2d();
         for (int i = 0; i < scoringPoses.length; i++) {
-            if (BRANCHES_SCORED[i])
+            if (BRANCHES_SCORED[i]) {
+                B[i] = scoringPoses[i];
                 continue;
+            }
             final double distance = scoringPoses[i].getTranslation().getDistance(robotPositionOnField);
             if (distance < distanceFromClosestScoringPoseMeters) {
                 distanceFromClosestScoringPoseMeters = distance;
                 closestScoringPose = scoringPoses[i];
             }
         }
+
+        Logger.recordOutput("LOL", scoringPoses);
+        Logger.recordOutput("LOL1", B);
+
         return new FlippablePose2d(closestScoringPose, false);
     }
 
-    private static int getBranchNumberFromScoringPose(Pose2d scoringPose) {
+    public static int getBranchNumberFromScoringPose(Pose2d scoringPose) {
         final Translation2d reefCenterTranslation = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
         final Rotation2d[] reefClockAngles = FieldConstants.REEF_CLOCK_ANGLES;
 
         for (int i = 0; i < reefClockAngles.length; i++) {
             if (reefClockAngles[i].equals(scoringPose.getRotation())) {
-                final Transform2d reefSideToRightScoringPositionTransform = new Transform2d(new Translation2d(0, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS), new Rotation2d());
+                final Transform2d reefSideToRightScoringPositionTransform = new Transform2d(new Translation2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS), new Rotation2d());
                 final Pose2d reefSideScoringPosition = new Pose2d(reefCenterTranslation, reefClockAngles[i]);
                 final Pose2d rightBranchScoringPositionOnField = reefSideScoringPosition.transformBy(reefSideToRightScoringPositionTransform);
 
