@@ -38,7 +38,6 @@ public class Robot extends LoggedRobot {
     public void robotPeriodic() {
         Phoenix6Inputs.refreshAllInputs();
         commandScheduler.run();
-        Logger.recordOutput("LOL", AutonomousCommands.getBranchNumberFromScoringPose(AutonomousCommands.calculateClosestScoringPose().get()));
     }
 
     @Override

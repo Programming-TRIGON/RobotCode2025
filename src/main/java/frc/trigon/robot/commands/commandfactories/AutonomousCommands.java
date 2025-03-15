@@ -41,7 +41,6 @@ public class AutonomousCommands {
     private static final BooleanEvent SWITCH_TO_CORAL_FEEDBACK = new BooleanEvent(CommandScheduler.getInstance().getActiveButtonLoop(), () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).rising();
     private static final BooleanEvent SWITCH_TO_PP_FEEDBACK = new BooleanEvent(CommandScheduler.getInstance().getActiveButtonLoop(), () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).falling();
     private static final boolean[] BRANCHES_SCORED = new boolean[12];
-    private static final Pose2d[] B = new Pose2d[12];
 
     public static Command getPOCCommand() {
         return new SequentialCommandGroup(
@@ -123,9 +122,7 @@ public class AutonomousCommands {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L4),
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L4),
-                new InstantCommand(() -> BRANCHES_SCORED[getBranchNumberFromScoringPose(calculateClosestScoringPose().get())] = true).andThen(new InstantCommand(() -> {
-                    System.out.println(Arrays.toString(BRANCHES_SCORED));
-                }))
+                new InstantCommand(() -> BRANCHES_SCORED[getBranchNumberFromScoringPose(calculateClosestScoringPose().get())] = true)
         ).withTimeout(0.5);
     }
 
@@ -146,15 +143,10 @@ public class AutonomousCommands {
             }
         }
 
-        for (int i = 0; i < 12; i++) {
-            B[i] = new Pose2d(0, 0, new Rotation2d(0));
-        }
-
         double distanceFromClosestScoringPoseMeters = Double.POSITIVE_INFINITY;
         Pose2d closestScoringPose = new Pose2d();
         for (int i = 0; i < scoringPoses.length; i++) {
             if (BRANCHES_SCORED[i]) {
-                B[i] = scoringPoses[i];
                 continue;
             }
             final double distance = scoringPoses[i].getTranslation().getDistance(robotPositionOnField);
@@ -163,9 +155,6 @@ public class AutonomousCommands {
                 closestScoringPose = scoringPoses[i];
             }
         }
-
-        Logger.recordOutput("LOL", scoringPoses);
-        Logger.recordOutput("LOL1", B);
 
         return new FlippablePose2d(closestScoringPose, false);
     }
