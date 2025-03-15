@@ -77,7 +77,7 @@ public class SwerveModuleConstants {
         config.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.1;
         config.OpenLoopRamps.VoltageOpenLoopRampPeriod = 0.1;
 
-        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 50 : 40;
+        config.Slot0.kP = RobotHardwareStats.isSimulation() ? 50 : 30;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.4708 : 5.2;
