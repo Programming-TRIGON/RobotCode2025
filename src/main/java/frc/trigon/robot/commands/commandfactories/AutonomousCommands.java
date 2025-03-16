@@ -56,7 +56,9 @@ public class AutonomousCommands {
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST),
                 getDriveToCoralCommand(),
                 getIntakeUntilHasCoralCommand()
-        ).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
+        )
+                .until(RobotContainer.CORAL_INTAKE::isEarlyCoralCollectionDetected)
+                .unless(() -> RobotContainer.CORAL_INTAKE.hasGamePiece() || RobotContainer.GRIPPER.hasGamePiece());
     }
 
     public static Command getDriveToCoralCommand() {
@@ -89,11 +91,12 @@ public class AutonomousCommands {
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR)
                         .until(RobotContainer.CORAL_INTAKE::isEarlyCoralCollectionDetected),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.CENTER_CORAL)
-        ).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
+        ).until(() -> RobotContainer.CORAL_INTAKE.hasGamePiece() || RobotContainer.GRIPPER.hasGamePiece());
     }
 
     public static Command getCoralSequenceCommand() {
         return new SequentialCommandGroup(
+                getIntakeUntilHasCoralCommand(),
                 getLoadCoralCommand(),
                 getScoreCommand()
         );
