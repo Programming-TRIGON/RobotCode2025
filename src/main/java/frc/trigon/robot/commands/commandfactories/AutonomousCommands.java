@@ -39,7 +39,6 @@ import java.util.function.Supplier;
 public class AutonomousCommands {
     private static final BooleanEvent SWITCH_TO_CORAL_FEEDBACK = new BooleanEvent(CommandScheduler.getInstance().getActiveButtonLoop(), () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).rising();
     private static final BooleanEvent SWITCH_TO_PP_FEEDBACK = new BooleanEvent(CommandScheduler.getInstance().getActiveButtonLoop(), () -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).falling();
-    private static final boolean[] BRANCHES_SCORED = new boolean[12];
 
     public static Command getPOCCommand() {
         return getCycleCoralCommand().repeatedly();
@@ -89,7 +88,7 @@ public class AutonomousCommands {
 
     public static Command getDriveToReefAndScoreCommand() {
         return new ParallelCommandGroup(
-                SwerveCommands.getDriveToPoseCommand(AutonomousCommands::calculateClosestScoringPose, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS),
+                SwerveCommands.getDriveToPoseCommand(() -> CoralPlacingCommands.calculateClosestScoringPose(true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS),
                 getCoralSequenceCommand()
         );
     }
@@ -123,7 +122,7 @@ public class AutonomousCommands {
                 getPrepareForScoreCommand().until(() ->
                         RobotContainer.ELEVATOR.atTargetState() &&
                                 RobotContainer.GRIPPER.atTargetAngle() &&
-                                RobotContainer.SWERVE.atPose(calculateClosestScoringPose())),
+                                RobotContainer.SWERVE.atPose(CoralPlacingCommands.calculateClosestScoringPose(true))),
                 getFeedCoralCommand()
         );
     }
@@ -144,7 +143,7 @@ public class AutonomousCommands {
 
     private static double calculateDistanceToTargetScoringPose() {
         final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
-        final Translation2d targetTranslation = calculateClosestScoringPose().get().getTranslation();
+        final Translation2d targetTranslation = CoralPlacingCommands.calculateClosestScoringPose(true).get().getTranslation();
         return currentTranslation.getDistance(targetTranslation);
     }
 
@@ -152,59 +151,8 @@ public class AutonomousCommands {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
                 GripperCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getGripperState()),
-                new InstantCommand(() -> BRANCHES_SCORED[getBranchNumberFromScoringPose(calculateClosestScoringPose().get())] = true)
+                CoralPlacingCommands.getAddCurrentScoringBranchToScoredBranches()
         ).withTimeout(0.5);//TODO: Calibrate
-    }
-
-    public static FlippablePose2d calculateClosestScoringPose() {
-        final Translation2d robotPositionOnField = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
-        final Translation2d reefCenterPosition = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
-        final Rotation2d[] reefClockAngles = FieldConstants.REEF_CLOCK_ANGLES;
-        final Transform2d
-                reefCenterToRightBranchScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d()),
-                reefCenterToLeftBranchScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, -FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d());
-
-        final Pose2d[] scoringPoses = new Pose2d[12];
-        for (int i = 0; i < reefClockAngles.length; i++) {
-            final Rotation2d targetRotation = reefClockAngles[i];
-            final Pose2d reefCenterAtTargetRotation = new Pose2d(reefCenterPosition, targetRotation);
-            for (int j = 0; j < 2; j++)
-                scoringPoses[i * 2 + j] = reefCenterAtTargetRotation.transformBy(j == 0 ? reefCenterToRightBranchScoringPose : reefCenterToLeftBranchScoringPose);
-        }
-
-        double distanceFromClosestScoringPoseMeters = Double.POSITIVE_INFINITY;
-        Pose2d closestScoringPose = new Pose2d();
-        for (int i = 0; i < scoringPoses.length; i++) {
-            if (BRANCHES_SCORED[i]) {
-                continue;
-            }
-            final double distance = scoringPoses[i].getTranslation().getDistance(robotPositionOnField);
-            if (distance < distanceFromClosestScoringPoseMeters) {
-                distanceFromClosestScoringPoseMeters = distance;
-                closestScoringPose = scoringPoses[i];
-            }
-        }
-
-        return new FlippablePose2d(closestScoringPose, false);
-    }
-
-    public static int getBranchNumberFromScoringPose(Pose2d scoringPose) {
-        final Translation2d reefCenterTranslation = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
-        final Rotation2d[] reefClockAngles = FieldConstants.REEF_CLOCK_ANGLES;
-
-        for (int i = 0; i < reefClockAngles.length; i++) {
-            if (reefClockAngles[i].equals(scoringPose.getRotation())) {
-                final Transform2d reefSideToRightScoringPositionTransform = new Transform2d(new Translation2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS), new Rotation2d());
-                final Pose2d reefSideScoringPosition = new Pose2d(reefCenterTranslation, reefClockAngles[i]);
-                final Pose2d rightBranchScoringPositionOnField = reefSideScoringPosition.transformBy(reefSideToRightScoringPositionTransform);
-
-                if (scoringPose.equals(rightBranchScoringPositionOnField))
-                    return i * 2;
-                else
-                    return i * 2 + 1;
-            }
-        }
-        return 0;
     }
 
     public static Command getPrepareForScoringInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
