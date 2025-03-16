@@ -77,7 +77,13 @@ public class AutonomousCommands {
     public static Command getFindCoralCommand() {
         return new ParallelCommandGroup(
                 new RunCommand(() -> CameraConstants.OBJECT_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL)),
-                SwerveCommands.getDriveToPoseCommand(() -> new FlippablePose2d(3, 2, Rotation2d.fromDegrees(180), true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS)
+                SwerveCommands.getDriveToPoseCommand(() -> new FlippablePose2d(3, 2, Rotation2d.fromDegrees(200), true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).andThen(
+                        SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+                                () -> 0,
+                                () -> 0,
+                                () -> -0.2
+                        )
+                )
         );
     }
 
