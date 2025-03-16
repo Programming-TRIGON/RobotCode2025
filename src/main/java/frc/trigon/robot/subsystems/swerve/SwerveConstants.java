@@ -62,10 +62,10 @@ public class SwerveConstants {
             TRANSLATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
             new PIDConstants(5, 0, 0) :
 //            new PIDConstants(5, 0, 0.24),
-            new PIDConstants(5, 0, 0.24),
+            new PIDConstants(4.5, 0, 0),
             PROFILED_ROTATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
                     new PIDConstants(4, 0, 0) :
-                    new PIDConstants(6, 0, 0.1);
+                    new PIDConstants(8, 0, 0.1);
     private static final double
             MAXIMUM_ROTATION_VELOCITY = RobotHardwareStats.isSimulation() ? 720 : Units.radiansToDegrees(MAXIMUM_ROTATIONAL_SPEED_RADIANS_PER_SECOND),
             MAXIMUM_ROTATION_ACCELERATION = RobotHardwareStats.isSimulation() ? 720 : 1200;
