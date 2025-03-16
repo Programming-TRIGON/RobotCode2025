@@ -5,6 +5,7 @@
 
 package frc.trigon.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -42,6 +43,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void autonomousInit() {
         RobotContainer.SWERVE.initializeDrive(true);
+        RobotContainer.POSE_ESTIMATOR.resetOdometry();
         autonomousCommand = robotContainer.getAutonomousCommand();
 
         if (autonomousCommand != null)
@@ -100,5 +102,6 @@ public class Robot extends LoggedRobot {
         }
 
         Logger.start();
+        SignalLogger.enableAutoLogging(false);
     }
 }
