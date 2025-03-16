@@ -33,7 +33,7 @@ public class CoralIntake extends MotorSubsystem {
             distanceSensor = CoralIntakeConstants.DISTANCE_SENSOR;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
-    private final LoggedNetworkBoolean overrideCoralCollection = new LoggedNetworkBoolean("/SmartDashboard/OverrideCoralCollection", false);
+    private final LoggedNetworkBoolean overrideCoralCollectionDetection = new LoggedNetworkBoolean("/SmartDashboard/OverrideCoralCollection", false);
     private CoralIntakeConstants.CoralIntakeState targetState = CoralIntakeConstants.CoralIntakeState.REST;
     private final Timer pulsingTimer = new Timer();
     private boolean isPulsingOn = false;
@@ -112,8 +112,8 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     public boolean hasGamePiece() {
-        return overrideCoralCollection.get() ?
-                CoralIntakeConstants.OVERRIDE_CORAL_COLLECTION_BOOLEAN_EVENT.getAsBoolean() :
+        return overrideCoralCollectionDetection.get() ?
+                CoralIntakeConstants.OVERRIDE_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean() :
                 CoralIntakeConstants.CORAL_COLLECTION_BOOLEAN_EVENT.getAsBoolean();
     }
 

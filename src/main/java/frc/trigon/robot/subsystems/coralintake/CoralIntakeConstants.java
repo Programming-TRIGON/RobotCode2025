@@ -153,7 +153,7 @@ public class CoralIntakeConstants {
 //            () -> EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean()
             BEAM_BREAK::getBinaryValue
     ).debounce(CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
-    static final BooleanEvent OVERRIDE_CORAL_COLLECTION_BOOLEAN_EVENT = new BooleanEvent(
+    static final BooleanEvent OVERRIDE_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT
     ).debounce(0.6);
