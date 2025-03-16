@@ -10,6 +10,7 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.RobotContainer;
@@ -36,6 +37,7 @@ public class Swerve extends MotorSubsystem {
     public Pose2d targetPathPlannerPose = new Pose2d();
     public boolean isPathPlannerDriving = false;
     private SwerveSetpoint previousSetpoint;
+    private double prevTracer = 0;
 
     public Swerve() {
         setName("Swerve");
@@ -152,7 +154,7 @@ public class Swerve extends MotorSubsystem {
         if (isFromPathPlanner && DriverStation.isAutonomous() && !isPathPlannerDriving)
             return;
         final ChassisSpeeds pidSpeeds = calculateSelfRelativePIDToPoseSpeeds(new FlippablePose2d(targetPathPlannerPose, false));
-        final ChassisSpeeds scaledSpeeds = targetPathPlannerFeedforwardSpeeds.times(DriverStation.isAutonomous() ? 0.4 : PathPlannerConstants.FEEDFORWARD_SCALAR);
+        final ChassisSpeeds scaledSpeeds = targetPathPlannerFeedforwardSpeeds.times(PathPlannerConstants.FEEDFORWARD_SCALAR);
         final ChassisSpeeds combinedSpeeds = pidSpeeds.plus(scaledSpeeds);
         selfRelativeDrive(combinedSpeeds);
     }

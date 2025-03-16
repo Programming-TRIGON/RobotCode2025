@@ -5,6 +5,7 @@
 
 package frc.trigon.robot;
 
+import com.ctre.phoenix6.SignalLogger;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.trigon.robot.commands.commandfactories.AutonomousCommands;
@@ -102,5 +103,6 @@ public class Robot extends LoggedRobot {
         }
 
         Logger.start();
+        SignalLogger.enableAutoLogging(false);
     }
 }

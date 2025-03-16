@@ -97,6 +97,10 @@ public class CoralIntake extends MotorSubsystem {
         angleMotor.stopMotor();
     }
 
+    public CoralIntakeConstants.CoralIntakeState getTargetState() {
+        return targetState;
+    }
+
     public boolean atState(CoralIntakeConstants.CoralIntakeState targetState) {
         return targetState == this.targetState && atTargetAngle();
     }

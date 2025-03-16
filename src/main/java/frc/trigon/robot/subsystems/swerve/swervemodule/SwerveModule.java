@@ -97,11 +97,11 @@ public class SwerveModule {
     }
 
     public void setDriveMotorTargetCurrent(double targetCurrent) {
-        driveMotor.setControl(driveTorqueCurrentFOCRequest.withOutput(targetCurrent));
+//        driveMotor.setControl(driveTorqueCurrentFOCRequest.withOutput(targetCurrent));
     }
 
     public void setTargetAngle(Rotation2d angle) {
-        steerMotor.setControl(steerPositionRequest.withPosition(angle.getRotations()));
+//        steerMotor.setControl(steerPositionRequest.withPosition(angle.getRotations()));
     }
 
     public SwerveModuleState getCurrentState() {
@@ -159,13 +159,13 @@ public class SwerveModule {
     private void setTargetClosedLoopVelocity(double targetVelocityMetersPerSecond, double targetForceNm) {
         final double targetVelocityRotationsPerSecond = metersToDriveWheelRotations(targetVelocityMetersPerSecond);
         final double targetAccelerationRotationsPerSecondSquared = metersToDriveWheelRotations(targetForceNm);
-        driveMotor.setControl(driveVelocityRequest.withVelocity(targetVelocityRotationsPerSecond).withAcceleration(targetAccelerationRotationsPerSecondSquared));
+//        driveMotor.setControl(driveVelocityRequest.withVelocity(targetVelocityRotationsPerSecond).withAcceleration(targetAccelerationRotationsPerSecondSquared));
     }
 
     private void setTargetOpenLoopVelocity(double targetVelocityMetersPerSecond) {
         final double power = targetVelocityMetersPerSecond / SwerveConstants.MAXIMUM_SPEED_METERS_PER_SECOND;
         final double voltage = Conversions.compensatedPowerToVoltage(power, SwerveModuleConstants.VOLTAGE_COMPENSATION_SATURATION);
-        driveMotor.setControl(driveVoltageRequest.withOutput(voltage));
+//        driveMotor.setControl(driveVoltageRequest.withOutput(voltage));
     }
 
     private Rotation2d getCurrentAngle() {

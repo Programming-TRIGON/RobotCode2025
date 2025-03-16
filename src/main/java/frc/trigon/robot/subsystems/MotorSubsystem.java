@@ -59,6 +59,7 @@ public abstract class MotorSubsystem extends edu.wpi.first.wpilibj2.command.Subs
      * @param brake whether the motors should brake or coast
      */
     public static void setAllSubsystemsBrakeAsync(boolean brake) {
+//        CompletableFuture.runAsync(() -> forEach((subsystem) -> subsystem.setBrake(brake)));
         BRAKE_MODE_EXECUTOR.execute(() -> forEach((subsystem) -> subsystem.setBrake(brake)));
     }
 

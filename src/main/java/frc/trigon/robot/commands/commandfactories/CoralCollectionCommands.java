@@ -89,8 +89,13 @@ public class CoralCollectionCommands {
                 CoralIntakeCommands.getCenterCoralWithPulsingCommand().until(RobotContainer.CORAL_INTAKE::hasGamePiece),
                 CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK).until(RobotContainer.CORAL_INTAKE::atTargetAngle),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK).raceWith(new WaitUntilCommand(() -> !RobotContainer.CORAL_INTAKE.hasGamePiece()).andThen(new WaitCommand(0.4))),
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK)
-        );
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK).withTimeout(0.5)
+        ).repeatedly();
+    }
+
+    private static boolean isMovingCoralToGripper() {
+        return RobotContainer.CORAL_INTAKE.getTargetState() == CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK ||
+                RobotContainer.CORAL_INTAKE.getTargetState() == CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK;
     }
 
     private static Command getCollectionConfirmationCommand() {
