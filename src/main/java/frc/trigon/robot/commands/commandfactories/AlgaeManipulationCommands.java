@@ -1,10 +1,17 @@
 package frc.trigon.robot.commands.commandfactories;
 
+import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.CommandConstants;
+import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
+import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
+import frc.trigon.robot.constants.PathPlannerConstants;
+import frc.trigon.robot.misc.ReefChooser;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
@@ -13,9 +20,14 @@ import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
+import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableRotation2d;
+import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 public class AlgaeManipulationCommands {
+    public static boolean SHOULD_ALIGN_TO_REEF = true;
+    private static final ReefChooser REEF_CHOOSER = OperatorConstants.REEF_CHOOSER;
+
     public static Command getCollectAlgaeFromFloorCommand() {
         return new SequentialCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_ALGAE_FROM_FLOOR)
@@ -23,6 +35,19 @@ public class AlgaeManipulationCommands {
     }
 
     public static Command getCollectAlgaeFromReefCommand() {
+        return new ParallelCommandGroup(
+                getCollectAlgaeFromReefManuallyCommand(),
+                GeneralCommands.getContinuousConditionalCommand(
+                        getAlignToReefCommand(),
+                        GeneralCommands.getFieldRelativeDriveCommand(),
+                        () -> SHOULD_ALIGN_TO_REEF && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()
+                )
+        ).raceWith(new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition)).andThen(
+                () -> getCollectAlgaeFromReefCommand().onlyWhile(OperatorConstants.COLLECT_ALGAE_TRIGGER).schedule()
+        );
+    }
+
+    private static Command getCollectAlgaeFromReefManuallyCommand() {
         return new ParallelCommandGroup(
                 getOpenElevatorForAlgaeCommand(),
                 getGripAlgaeCommand()
@@ -35,7 +60,32 @@ public class AlgaeManipulationCommands {
         return GeneralCommands.getContinuousConditionalCommand(
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.COLLECT_ALGAE_FROM_L3),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST_WITH_ALGAE),
-                OperatorConstants.MULTIFUNCTION_TRIGGER
+                OperatorConstants.LEFT_MULTIFUNCTION_TRIGGER
+        );
+    }
+
+    private static Command getGripAlgaeCommand() {
+        return new SequentialCommandGroup(
+                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF).raceWith(new WaitCommand(1).andThen(new WaitUntilCommand(RobotContainer.GRIPPER::isMovingSlowly))),
+                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.HOLD_ALGAE)
+        ).alongWith(
+                AlgaeManipulatorCommands.getOpenCommand()
+        );
+    }
+
+    private static Command getAlignToReefCommand() {
+        return new SequentialCommandGroup(
+                SwerveCommands.getDriveToPoseCommand(
+                        () -> new FlippablePose2d(calculateReefAlgaeCollectionPose(), false),
+                        PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
+                ),
+                SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+                        () -> fieldRelativePowersToSelfRelativeXPower(OperatorConstants.DRIVER_CONTROLLER.getLeftY(), OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
+                        () -> 0,
+                        AlgaeManipulationCommands::calculateTargetAngle
+                )
+        ).until(OperatorConstants.CONTINUE_TRIGGER).andThen(
+                GeneralCommands.getFieldRelativeDriveCommand()
         );
     }
 
@@ -55,12 +105,23 @@ public class AlgaeManipulationCommands {
         );
     }
 
-    private static Command getGripAlgaeCommand() {
-        return new SequentialCommandGroup(
-                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF).raceWith(new WaitCommand(1).andThen(new WaitUntilCommand(RobotContainer.GRIPPER::isMovingSlowly))),
-                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.HOLD_ALGAE)
-        ).alongWith(
-                AlgaeManipulatorCommands.getOpenCommand()
-        );
+    private static Pose2d calculateReefAlgaeCollectionPose() {
+        final Translation2d reefCenterPositionOnField = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
+        final Rotation2d targetAngle = calculateTargetAngle().get();
+        final Transform2d reefCenterToTargetPoseTranslation = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_ALGAE_COLLECTION_POSITION_X_TRANSFORM_METERS, 0, new Rotation2d());
+
+        return new Pose2d(reefCenterPositionOnField, targetAngle).transformBy(reefCenterToTargetPoseTranslation);
+    }
+
+    private static FlippableRotation2d calculateTargetAngle() {
+        return new FlippableRotation2d(REEF_CHOOSER.getClockPosition().clockAngle, true);
+    }
+
+    private static double fieldRelativePowersToSelfRelativeXPower(double xPower, double yPower) {
+        final Rotation2d robotHeading = RobotContainer.SWERVE.getDriveRelativeAngle();
+        final double xValue = CommandConstants.calculateDriveStickAxisValue(xPower);
+        final double yValue = CommandConstants.calculateDriveStickAxisValue(yPower);
+
+        return (xValue * robotHeading.getCos()) + (yValue * robotHeading.getSin());
     }
 }
