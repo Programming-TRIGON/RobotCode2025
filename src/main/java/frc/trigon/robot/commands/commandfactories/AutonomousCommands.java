@@ -108,7 +108,7 @@ public class AutonomousCommands {
         return new ParallelCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.LOAD_CORAL),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK)//.onlyWhile(() -> RobotContainer.GRIPPER.atTargetAngle() && RobotContainer.ELEVATOR.atTargetState())
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK).onlyWhile(() -> RobotContainer.GRIPPER.atTargetAngle() && RobotContainer.ELEVATOR.atTargetState())
         ).until(RobotContainer.GRIPPER::hasGamePiece);
     }
 
@@ -162,9 +162,8 @@ public class AutonomousCommands {
         for (int i = 0; i < reefClockAngles.length; i++) {
             final Rotation2d targetRotation = reefClockAngles[i];
             final Pose2d reefCenterAtTargetRotation = new Pose2d(reefCenterPosition, targetRotation);
-            for (int j = 0; j < 2; j++) {
+            for (int j = 0; j < 2; j++)
                 scoringPoses[i * 2 + j] = reefCenterAtTargetRotation.transformBy(j == 0 ? reefCenterToRightBranchScoringPose : reefCenterToLeftBranchScoringPose);
-            }
         }
 
         double distanceFromClosestScoringPoseMeters = Double.POSITIVE_INFINITY;
