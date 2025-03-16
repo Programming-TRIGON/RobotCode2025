@@ -125,7 +125,7 @@ public class AutonomousCommands {
     public static Command getPrepareForScoreCommand() {
         return new ParallelCommandGroup(
                 getOpenElevatorWhenCloseToReefCommand(),
-                GripperCommands.getPrepareForStateCommand(GripperConstants.GripperState.SCORE_L4)
+                GripperCommands.getPrepareForStateCommand(OperatorConstants.REEF_CHOOSER.getGripperState())
         );
     }
 
@@ -144,8 +144,8 @@ public class AutonomousCommands {
 
     public static Command getFeedCoralCommand() {
         return new ParallelCommandGroup(
-                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L4),
-                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L4),
+                ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
+                GripperCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getGripperState()),
                 new InstantCommand(() -> BRANCHES_SCORED[getBranchNumberFromScoringPose(calculateClosestScoringPose().get())] = true)
         ).withTimeout(0.5);//TODO: Calibrate
     }
