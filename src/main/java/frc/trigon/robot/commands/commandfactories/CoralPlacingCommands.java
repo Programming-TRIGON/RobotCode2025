@@ -18,13 +18,14 @@ import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
+import org.littletonrobotics.junction.Logger;
 import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 public class CoralPlacingCommands {
     public static boolean SHOULD_SCORE_AUTONOMOUSLY = true;
     private static final ReefChooser REEF_CHOOSER = OperatorConstants.REEF_CHOOSER;
-    private static final boolean[]
+    public static final boolean[]
             SCORED_L4S = new boolean[12],
             SCORED_L3S = new boolean[12],
             SCORED_L2S = new boolean[12];
@@ -139,7 +140,7 @@ public class CoralPlacingCommands {
             final Rotation2d targetRotation = reefClockAngles[i];
             final Pose2d reefCenterAtTargetRotation = new Pose2d(reefCenterPosition, targetRotation);
             for (int j = 0; j < 2; j++) {
-                if (getScoredBranchesAtCurrentLevel()[i] && shouldOnlyCheckOpenBranches)
+                if (getScoredBranchesAtCurrentLevel()[i * 2 + j] && shouldOnlyCheckOpenBranches)
                     continue;
 
                 final Pose2d currentScoringPose = reefCenterAtTargetRotation.transformBy(j == 0 ? reefCenterToRightBranchScoringPose : reefCenterToLeftBranchScoringPose);
