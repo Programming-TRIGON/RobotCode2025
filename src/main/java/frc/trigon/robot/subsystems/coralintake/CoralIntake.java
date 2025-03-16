@@ -15,6 +15,7 @@ import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 import org.trigon.hardware.misc.simplesensor.SimpleSensor;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
@@ -32,6 +33,7 @@ public class CoralIntake extends MotorSubsystem {
             distanceSensor = CoralIntakeConstants.DISTANCE_SENSOR;
     private final VoltageOut voltageRequest = new VoltageOut(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
     private final MotionMagicVoltage positionRequest = new MotionMagicVoltage(0).withEnableFOC(CoralIntakeConstants.FOC_ENABLED);
+    private final LoggedNetworkBoolean overrideCoralCollectionDetection = new LoggedNetworkBoolean("/SmartDashboard/OverrideCoralCollection", false);
     private CoralIntakeConstants.CoralIntakeState targetState = CoralIntakeConstants.CoralIntakeState.REST;
     private final Timer pulsingTimer = new Timer();
     private boolean isPulsingOn = false;
@@ -95,6 +97,10 @@ public class CoralIntake extends MotorSubsystem {
         angleMotor.stopMotor();
     }
 
+    public CoralIntakeConstants.CoralIntakeState getTargetState() {
+        return targetState;
+    }
+
     public boolean atState(CoralIntakeConstants.CoralIntakeState targetState) {
         return targetState == this.targetState && atTargetAngle();
     }
@@ -106,7 +112,9 @@ public class CoralIntake extends MotorSubsystem {
     }
 
     public boolean hasGamePiece() {
-        return CoralIntakeConstants.CORAL_COLLECTION_BOOLEAN_EVENT.getAsBoolean();
+        return overrideCoralCollectionDetection.get() ?
+                CoralIntakeConstants.OVERRIDE_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean() :
+                CoralIntakeConstants.CORAL_COLLECTION_BOOLEAN_EVENT.getAsBoolean();
     }
 
     public boolean isEarlyCoralCollectionDetected() {

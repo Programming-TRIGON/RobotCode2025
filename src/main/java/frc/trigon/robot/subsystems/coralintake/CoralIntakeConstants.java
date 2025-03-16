@@ -153,6 +153,10 @@ public class CoralIntakeConstants {
 //            () -> EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean()
             BEAM_BREAK::getBinaryValue
     ).debounce(CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
+    static final BooleanEvent OVERRIDE_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
+            CommandScheduler.getInstance().getActiveButtonLoop(),
+            EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT
+    ).debounce(0.6);
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1.5);
     static final double
@@ -227,7 +231,7 @@ public class CoralIntakeConstants {
         config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0.27712 : 0.50326;
 
         config.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-        config.Slot0.StaticFeedforwardSign = StaticFeedforwardSignValue.UseVelocitySign;
+        config.Slot0.StaticFeedforwardSign = RobotHardwareStats.isSimulation() ? StaticFeedforwardSignValue.UseClosedLoopSign : StaticFeedforwardSignValue.UseVelocitySign;
 
         config.MotionMagic.MotionMagicCruiseVelocity = RobotHardwareStats.isSimulation() ? 12 / config.Slot0.kV : 2;
         config.MotionMagic.MotionMagicAcceleration = RobotHardwareStats.isSimulation() ? 6 : 8;

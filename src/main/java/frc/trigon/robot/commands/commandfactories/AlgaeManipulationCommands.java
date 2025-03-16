@@ -96,7 +96,12 @@ public class AlgaeManipulationCommands {
                 new SequentialCommandGroup(
                         GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_NET).until(OperatorConstants.CONTINUE_TRIGGER),
                         GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_ALGAE_IN_NET)
-                )
+                ),
+                SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
+                        () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftY()),
+                        () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
+                        () -> new FlippableRotation2d(Rotation2d.k180deg, true)
+                ).asProxy()
         );
     }
 
