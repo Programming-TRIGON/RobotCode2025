@@ -147,7 +147,7 @@ public class AutonomousCommands {
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L4),
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_L4),
                 new InstantCommand(() -> BRANCHES_SCORED[getBranchNumberFromScoringPose(calculateClosestScoringPose().get())] = true)
-        ).withTimeout(0.5);
+        ).withTimeout(0.5);//TODO: Calibrate
     }
 
     public static FlippablePose2d calculateClosestScoringPose() {
