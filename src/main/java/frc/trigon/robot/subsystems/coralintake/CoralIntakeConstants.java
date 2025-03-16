@@ -99,7 +99,7 @@ public class CoralIntakeConstants {
     );
     private static final DoubleSupplier
             BEAM_BREAK_SIMULATION_VALUE_SUPPLIER = () -> SimulationFieldHandler.isHoldingCoral() && !SimulationFieldHandler.isCoralInGripper() ? 1 : 0,
-            DISTANCE_SENSOR_SIMULATION_VALUE_SUPPLIER = () -> SimulationFieldHandler.isHoldingCoral() && !SimulationFieldHandler.isCoralInGripper() ? 0 : 1000;
+            DISTANCE_SENSOR_SIMULATION_VALUE_SUPPLIER = () -> SimulationFieldHandler.isHoldingCoral() ? 0 : 1000;
 
     static final SysIdRoutine.Config ANGLE_SYSID_CONFIG = new SysIdRoutine.Config(
             Units.Volts.of(1).per(Units.Second),
@@ -153,7 +153,7 @@ public class CoralIntakeConstants {
 //            () -> EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean()
             BEAM_BREAK::getBinaryValue
     ).debounce(CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
-    static final BooleanEvent OVERRIDE_CORAL_COLLECTION_BOOLEAN_EVENT = new BooleanEvent(
+    static final BooleanEvent OVERRIDE_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
             EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT
     ).debounce(0.6);

@@ -27,7 +27,7 @@ public abstract class MotorSubsystem extends edu.wpi.first.wpilibj2.command.Subs
     private static final Trigger DISABLED_TRIGGER = new Trigger(DriverStation::isDisabled);
     private static final Executor BRAKE_MODE_EXECUTOR = Executors.newFixedThreadPool(8);
     //    private static final LoggedNetworkBoolean ENABLE_EXTENSIVE_LOGGING = new LoggedNetworkBoolean("/SmartDashboard/EnableExtensiveLogging", !DriverStation.isFMSAttached());
-    private static final LoggedNetworkBoolean ENABLE_EXTENSIVE_LOGGING = new LoggedNetworkBoolean("/SmartDashboard/EnableExtensiveLogging", true);
+    private static final LoggedNetworkBoolean ENABLE_EXTENSIVE_LOGGING = new LoggedNetworkBoolean("/SmartDashboard/EnableExtensiveLogging", false);
 
     static {
         DISABLED_TRIGGER.onTrue(new InstantCommand(() -> forEach(MotorSubsystem::stop)).ignoringDisable(true));
