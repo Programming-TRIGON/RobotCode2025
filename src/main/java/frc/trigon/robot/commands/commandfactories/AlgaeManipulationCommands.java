@@ -37,11 +37,7 @@ public class AlgaeManipulationCommands {
     public static Command getCollectAlgaeFromReefCommand() {
         return new ParallelCommandGroup(
                 getCollectAlgaeFromReefManuallyCommand(),
-                GeneralCommands.getContinuousConditionalCommand(
-                        getAlignToReefCommand(),
-                        GeneralCommands.getFieldRelativeDriveCommand(),
-                        () -> SHOULD_ALIGN_TO_REEF && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()
-                )
+                getAlignToReefCommand().onlyIf(() -> SHOULD_ALIGN_TO_REEF && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()).asProxy()
         ).raceWith(new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition)).andThen(
                 () -> getCollectAlgaeFromReefCommand().onlyWhile(OperatorConstants.COLLECT_ALGAE_TRIGGER).schedule()
         );
@@ -84,9 +80,7 @@ public class AlgaeManipulationCommands {
                         () -> 0,
                         AlgaeManipulationCommands::calculateTargetAngle
                 )
-        ).until(OperatorConstants.CONTINUE_TRIGGER).andThen(
-                GeneralCommands.getFieldRelativeDriveCommand()
-        );
+        ).until(OperatorConstants.CONTINUE_TRIGGER);
     }
 
     private static Command getScoreInNetCommand() {
