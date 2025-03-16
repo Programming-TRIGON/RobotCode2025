@@ -23,7 +23,7 @@ public class CoralCollectionCommands {
     }
 
     public static Command getFloorCoralCollectionCommand() {
-        return getInitiateFloorCoralCollectionCommand().unless(RobotContainer.GRIPPER::hasGamePiece);
+        return getInitiateFloorCoralCollectionCommand();
     }
 
     public static Command getFeederCoralCollectionCommand() {

@@ -117,7 +117,7 @@ public class CoralPlacingCommands {
 
     private static double calculateDistanceToTargetScoringPose() {
         final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
-        final Translation2d targetTranslation = REEF_CHOOSER.calculateTargetScoringPose().get().getTranslation();
+        final Translation2d targetTranslation = calculateTargetScoringPose().get().getTranslation();
         return currentTranslation.getDistance(targetTranslation);
     }
 

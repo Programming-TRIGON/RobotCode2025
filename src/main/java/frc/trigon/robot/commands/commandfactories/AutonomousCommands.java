@@ -13,7 +13,9 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
+import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
+import frc.trigon.robot.misc.ReefChooser;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
@@ -122,9 +124,22 @@ public class AutonomousCommands {
 
     public static Command getPrepareForScoreCommand() {
         return new ParallelCommandGroup(
-                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L4),
+                getOpenElevatorWhenCloseToReefCommand(),
                 GripperCommands.getPrepareForStateCommand(GripperConstants.GripperState.SCORE_L4)
         );
+    }
+
+    private static Command getOpenElevatorWhenCloseToReefCommand() {
+        return GeneralCommands.runWhen(
+                ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
+                () -> calculateDistanceToTargetScoringPose() < PathPlannerConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR
+        );
+    }
+
+    private static double calculateDistanceToTargetScoringPose() {
+        final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
+        final Translation2d targetTranslation = calculateClosestScoringPose().get().getTranslation();
+        return currentTranslation.getDistance(targetTranslation);
     }
 
     public static Command getFeedCoralCommand() {
