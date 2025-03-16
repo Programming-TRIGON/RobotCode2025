@@ -227,7 +227,6 @@ public class CoralIntake extends MotorSubsystem {
 
     /**
      * Logs the current match time and target reef placement for the dashboard.
-     * We use {@link SmartDashboard} instead of {@link Logger} because the {@link Logger} inputs don't show up in QDashboard for some reason.
      */
     private void logToDashboard() {
         Logger.recordOutput("GameTime", DriverStation.getMatchTime());
