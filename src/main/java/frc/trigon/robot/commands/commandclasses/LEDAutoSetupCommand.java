@@ -32,11 +32,8 @@ public class LEDAutoSetupCommand extends SequentialCommandGroup {
     public LEDAutoSetupCommand(Supplier<String> autoName) {
         this.autoName = autoName;
 
-        var a = getUpdateAutoStartPoseCommand();
-        a.setName("UPDATETHING");
-
         addCommands(
-                a
+                getUpdateAutoStartPoseCommand()
         );
     }
 
