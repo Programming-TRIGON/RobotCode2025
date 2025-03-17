@@ -104,7 +104,7 @@ public class AlgaeManipulationCommands {
         return new ParallelCommandGroup(
                 AlgaeManipulatorCommands.getOpenCommand(),
                 new SequentialCommandGroup(
-                        GripperCommands.getPrepareForStateCommand(GripperConstants.GripperState.SCORE_ALGAE_IN_PROCESSOR).until(OperatorConstants.CONTINUE_TRIGGER),
+                        GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_PROCESSOR).until(OperatorConstants.CONTINUE_TRIGGER),
                         GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_ALGAE_IN_PROCESSOR)
                 ),
                 SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
