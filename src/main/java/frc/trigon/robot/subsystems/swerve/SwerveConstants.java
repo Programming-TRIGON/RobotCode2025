@@ -46,9 +46,9 @@ public class SwerveConstants {
 
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(PathPlannerConstants.ROBOT_CONFIG.moduleLocations);
     static final double
-            TRANSLATION_TOLERANCE_METERS = 0.02,
+            TRANSLATION_TOLERANCE_METERS = 0.035,
             ROTATION_TOLERANCE_DEGREES = 1.5,
-            TRANSLATION_VELOCITY_TOLERANCE = 0.05,
+            TRANSLATION_VELOCITY_TOLERANCE = 0.15,
             ROTATION_VELOCITY_TOLERANCE = 0.3;
     static final double
             DRIVE_NEUTRAL_DEADBAND = 0.2,
@@ -65,7 +65,7 @@ public class SwerveConstants {
             new PIDConstants(4, 0, 0),
             PROFILED_ROTATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
                     new PIDConstants(4, 0, 0) :
-                    new PIDConstants(8, 0, 0.1);
+                    new PIDConstants(5, 0, 0.05);
     private static final double
             MAXIMUM_ROTATION_VELOCITY = RobotHardwareStats.isSimulation() ? 720 : Units.radiansToDegrees(MAXIMUM_ROTATIONAL_SPEED_RADIANS_PER_SECOND),
             MAXIMUM_ROTATION_ACCELERATION = RobotHardwareStats.isSimulation() ? 720 : 1200;
@@ -95,6 +95,7 @@ public class SwerveConstants {
     static {
         configureGyro();
         SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.enableContinuousInput(-SwerveConstants.MAXIMUM_PID_ANGLE, SwerveConstants.MAXIMUM_PID_ANGLE);
+        SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.setTolerance(ROTATION_TOLERANCE_DEGREES);
     }
 
     private static void configureGyro() {

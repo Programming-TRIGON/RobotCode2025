@@ -3,8 +3,7 @@
   "robotLength": 0.94,
   "holonomicMode": true,
   "pathFolders": [
-    "TwoL4CoralsFromFeeder",
-    "ScoreFourL4Corals"
+    "TwoL4CoralsFromFeeder"
   ],
   "autoFolders": [],
   "defaultMaxVel": 2.5,

@@ -67,6 +67,10 @@ public class RobotContainer {
         return autoChooser.get();
     }
 
+    public String getChosenAutonomousName() {
+        return autoChooser.get().getName();
+    }
+
     /**
      * Initializes the general systems of the robot.
      * Some systems need to be initialized at the start of the robot code so that others can use their functions.
@@ -113,7 +117,7 @@ public class RobotContainer {
         OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CommandConstants.WHEEL_RADIUS_CHARACTERIZATION_COMMAND);
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
         OperatorConstants.UNLOAD_CORAL_TRIGGER.whileTrue(CoralCollectionCommands.getUnloadCoralCommand());
-        OperatorConstants.COLLECT_ALGAE_TRIGGER.whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
+        OperatorConstants.COLLECT_ALGAE_TRIGGER.toggleOnTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
         OperatorConstants.OPERATOR_CONTROLLER.s().whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromFloorCommand());
         OperatorConstants.FEEDER_CORAL_COLLECTION_WITH_GRIPPER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionFromGripperCommand());
     }
@@ -162,6 +166,8 @@ public class RobotContainer {
             autoChooser.addDefaultOption("None", Commands.none());
         else
             autoChooser.addOption("None", Commands.none());
-        autoChooser.addOption("POC", AutonomousCommands.getPOCCommand());
+        
+        autoChooser.addOption("FloorAutonomousRight", AutonomousCommands.getFloorAutonomousCommand(true));
+        autoChooser.addOption("FloorAutonomousLeft", AutonomousCommands.getFloorAutonomousCommand(false));
     }
 }

@@ -2,7 +2,6 @@ package frc.trigon.robot.commands.commandfactories;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
@@ -31,32 +30,32 @@ import java.util.function.Supplier;
  * A class that contains command factories for preparation commands and commands used during the 15-second autonomous period at the start of each match.
  */
 public class AutonomousCommands {
-    public static Command getPOCCommand() {
-        return getCycleCoralCommand().repeatedly();
+    public static Command getFloorAutonomousCommand(boolean isRight) {
+        return getCycleCoralCommand(isRight).repeatedly();
     }
 
-    public static Command getCycleCoralCommand() {
+    public static Command getCycleCoralCommand(boolean isRight) {
         return new SequentialCommandGroup(
                 getDriveToReefAndScoreCommand(),
-                getCollectCoralCommand()
+                getCollectCoralCommand(isRight)
         );
     }
 
-    public static Command getCollectCoralCommand() {
+    public static Command getCollectCoralCommand(boolean isRight) {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
                 GripperCommands.getGripperDefaultCommand(),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
-                getDriveToCoralCommand()
+                getDriveToCoralCommand(isRight)
         )
                 .until(() -> RobotContainer.CORAL_INTAKE.isEarlyCoralCollectionDetected() || RobotContainer.CORAL_INTAKE.hasGamePiece())
                 .unless(() -> RobotContainer.CORAL_INTAKE.hasGamePiece() || RobotContainer.GRIPPER.hasGamePiece());
     }
 
-    public static Command getDriveToCoralCommand() {
+    public static Command getDriveToCoralCommand(boolean isRight) {
         return new SequentialCommandGroup(
                 new InstantCommand(CameraConstants.OBJECT_DETECTION_CAMERA::initializeTracking),
-                getFindCoralCommand().until(() -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null),
+                getFindCoralCommand(isRight).until(() -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null),
                 new ParallelCommandGroup(
                         CoralAutoDriveCommand.getDriveToCoralCommand(CoralAutoDriveCommand::calculateDistanceFromTrackedCoral),
                         new RunCommand(() -> {
@@ -67,10 +66,10 @@ public class AutonomousCommands {
         );
     }
 
-    public static Command getFindCoralCommand() {
+    public static Command getFindCoralCommand(boolean isRight) {
         return new ParallelCommandGroup(
                 new RunCommand(() -> CameraConstants.OBJECT_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL)),
-                SwerveCommands.getDriveToPoseCommand(() -> FieldConstants.AUTO_FIND_CORAL_POSE, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).andThen(
+                SwerveCommands.getDriveToPoseCommand(() -> isRight ? FieldConstants.AUTO_FIND_CORAL_POSE_RIGHT : FieldConstants.AUTO_FIND_CORAL_POSE_LEFT, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).andThen(
                         SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                                 () -> 0,
                                 () -> 0,
@@ -104,8 +103,8 @@ public class AutonomousCommands {
     }
 
     private static boolean canFeed() {
-        return RobotContainer.ELEVATOR.atTargetState() &&
-                RobotContainer.GRIPPER.atTargetAngle() &&
+        return RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L4) &&
+                RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L4) &&
                 RobotContainer.SWERVE.atPose(CoralPlacingCommands.calculateClosestScoringPose(true));
     }
 
@@ -119,7 +118,7 @@ public class AutonomousCommands {
     private static Command getOpenElevatorWhenCloseToReefCommand() {
         return GeneralCommands.runWhen(
                 ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
-                () -> calculateDistanceToTargetScoringPose() < PathPlannerConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR
+                () -> calculateDistanceToTargetScoringPose() < PathPlannerConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF)
         );
     }
 

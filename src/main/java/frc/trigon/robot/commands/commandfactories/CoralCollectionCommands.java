@@ -50,7 +50,7 @@ public class CoralCollectionCommands {
 
     private static Command getScheduleCoralLoadingCommand() {
         return new InstantCommand(() -> {
-            if (OperatorConstants.REEF_CHOOSER.getScoringLevel() == CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE)
+            if (OperatorConstants.REEF_CHOOSER.getScoringLevel() == CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE || RobotContainer.ALGAE_MANIPULATOR.isOpen())
                 getCenterCoralInIntakeCommand().schedule();
             else
                 getLoadCoralCommand().schedule();
@@ -89,7 +89,7 @@ public class CoralCollectionCommands {
                 CoralIntakeCommands.getCenterCoralWithPulsingCommand().until(RobotContainer.CORAL_INTAKE::hasGamePiece),
                 CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK).until(RobotContainer.CORAL_INTAKE::atTargetAngle),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK).raceWith(new WaitUntilCommand(() -> !RobotContainer.CORAL_INTAKE.hasGamePiece()).andThen(new WaitCommand(0.4))),
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK).withTimeout(0.5)
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK).withTimeout(0.3)
         ).repeatedly();
     }
 

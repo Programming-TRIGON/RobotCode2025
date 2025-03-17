@@ -35,10 +35,15 @@ public class AlgaeManipulationCommands {
     }
 
     public static Command getCollectAlgaeFromReefCommand() {
-        return new ParallelCommandGroup(
-                getCollectAlgaeFromReefManuallyCommand(),
-                getAlignToReefCommand().onlyIf(() -> SHOULD_ALIGN_TO_REEF && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()).asProxy()
-        ).raceWith(new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition)).repeatedly();
+//        return CoralCollectionCommands.getUnloadCoralCommand().onlyIf(RobotContainer.GRIPPER::hasGamePiece).asProxy().andThen(
+        return
+                new ParallelCommandGroup(
+                        getCollectAlgaeFromReefManuallyCommand(),
+                        getAlignToReefCommand().onlyIf(() -> SHOULD_ALIGN_TO_REEF && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()).asProxy()
+                ).raceWith(
+                        new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition)
+                ).repeatedly();
+//        );
     }
 
     private static Command getCollectAlgaeFromReefManuallyCommand() {
