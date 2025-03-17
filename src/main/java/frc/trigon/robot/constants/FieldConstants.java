@@ -7,6 +7,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
 import org.trigon.utilities.Conversions;
 import org.trigon.utilities.FilesHandler;
+import org.trigon.utilities.flippable.FlippablePose2d;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,6 +25,8 @@ public class FieldConstants {
     public static final AprilTagFieldLayout APRIL_TAG_FIELD_LAYOUT = createAprilTagFieldLayout();
     private static final Transform3d TAG_OFFSET = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
     public static final HashMap<Integer, Pose3d> TAG_ID_TO_POSE = fieldLayoutToTagIdToPoseMap();
+
+    public static final FlippablePose2d AUTO_FIND_CORAL_POSE = new FlippablePose2d(3.3, 5.5, Rotation2d.fromDegrees(125), true);
 
     public static final int REEF_CLOCK_POSITIONS = 6;
     public static final Rotation2d REEF_CLOCK_POSITION_DIFFERENCE = Rotation2d.fromDegrees(Conversions.DEGREES_PER_ROTATIONS / REEF_CLOCK_POSITIONS);

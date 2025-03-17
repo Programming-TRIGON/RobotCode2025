@@ -9,6 +9,7 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
 import frc.trigon.robot.constants.CameraConstants;
+import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
@@ -69,7 +70,7 @@ public class AutonomousCommands {
     public static Command getFindCoralCommand() {
         return new ParallelCommandGroup(
                 new RunCommand(() -> CameraConstants.OBJECT_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL)),
-                SwerveCommands.getDriveToPoseCommand(() -> new FlippablePose2d(3.3, 5.5, Rotation2d.fromDegrees(125), true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).andThen(
+                SwerveCommands.getDriveToPoseCommand(() -> FieldConstants.AUTO_FIND_CORAL_POSE, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).andThen(
                         SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                                 () -> 0,
                                 () -> 0,
