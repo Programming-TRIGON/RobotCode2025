@@ -97,6 +97,8 @@ public class AutonomousCommands {
         return new SequentialCommandGroup(
                 getPrepareForScoreCommand().until(AutonomousCommands::canFeed),
                 getFeedCoralCommand()
+        ).raceWith(
+                CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR)
         );
     }
 
