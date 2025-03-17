@@ -18,16 +18,17 @@ import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 public class CoralPlacingCommands {
     public static boolean SHOULD_SCORE_AUTONOMOUSLY = true;
     private static final ReefChooser REEF_CHOOSER = OperatorConstants.REEF_CHOOSER;
-    public static final boolean[]
-            SCORED_L4S = new boolean[12],
-            SCORED_L3S = new boolean[12],
-            SCORED_L2S = new boolean[12];
+    public static final LoggedNetworkBoolean[]
+            SCORED_L4S = getEmptyLoggedNetworkBooleanArray("ScoredL4s", false),
+            SCORED_L3S = getEmptyLoggedNetworkBooleanArray("ScoredL3s", false),
+            SCORED_L2S = getEmptyLoggedNetworkBooleanArray("ScoredL2s", false);
 
     public static Command getScoreInReefCommand() {
         return new ConditionalCommand(
@@ -156,11 +157,21 @@ public class CoralPlacingCommands {
 
     private static boolean[] getScoredBranchesAtCurrentLevel() {
         return switch (REEF_CHOOSER.getScoringLevel().level) {
-            case 2 -> SCORED_L2S;
-            case 3 -> SCORED_L3S;
-            case 4 -> SCORED_L4S;
+            case 2 -> loggedNetworkBooleanArrayToBooleanArray(SCORED_L2S);
+            case 3 -> loggedNetworkBooleanArrayToBooleanArray(SCORED_L3S);
+            case 4 -> loggedNetworkBooleanArrayToBooleanArray(SCORED_L4S);
             default -> null;
         };
+    }
+
+    private static boolean[] loggedNetworkBooleanArrayToBooleanArray(LoggedNetworkBoolean[] loggedNetworkBooleans) {
+        final boolean[] booleanArray = new boolean[loggedNetworkBooleans.length];
+
+        for (int i = 0; i < booleanArray.length; i++) {
+            booleanArray[i] = loggedNetworkBooleans[i].get();
+        }
+
+        return booleanArray;
     }
 
     public static Command getAddCurrentScoringBranchToScoredBranchesCommand() {
@@ -169,11 +180,11 @@ public class CoralPlacingCommands {
                     final int branchNumber = getBranchNumberFromScoringPose(calculateClosestScoringPose(false).get());
                     switch (REEF_CHOOSER.getScoringLevel().level) {
                         case 2:
-                            SCORED_L2S[branchNumber] = true;
+                            SCORED_L2S[branchNumber].set(true);
                         case 3:
-                            SCORED_L3S[branchNumber] = true;
+                            SCORED_L3S[branchNumber].set(true);
                         case 4:
-                            SCORED_L4S[branchNumber] = true;
+                            SCORED_L4S[branchNumber].set(true);
                     }
                 }
         );
@@ -196,6 +207,14 @@ public class CoralPlacingCommands {
             }
         }
         return 0;
+    }
+
+    public static LoggedNetworkBoolean[] getEmptyLoggedNetworkBooleanArray(String arrayName, boolean defaultValue) {
+        final LoggedNetworkBoolean[] array = new LoggedNetworkBoolean[12];
+        for (int i = 0; i < array.length; i++) {
+            array[i] = new LoggedNetworkBoolean(arrayName + "/" + i, defaultValue);
+        }
+        return array;
     }
 
     private static boolean canContinueScoringFromCoralIntake() {
