@@ -18,7 +18,6 @@ import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
-import org.littletonrobotics.junction.Logger;
 import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableTranslation2d;
 
@@ -93,7 +92,7 @@ public class CoralPlacingCommands {
                         .unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState()) || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L2 || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_GRIPPER)
                         .until(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())),
                 GripperCommands.getPrepareForStateCommand(REEF_CHOOSER::getGripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
-                GripperCommands.getSetTargetStateCommand(REEF_CHOOSER::getGripperState).alongWith(getAddCurrentScoringBranchToScoredBranches())
+                GripperCommands.getSetTargetStateCommand(REEF_CHOOSER::getGripperState).alongWith(getAddCurrentScoringBranchToScoredBranchesCommand())
         );
     }
 
@@ -164,7 +163,7 @@ public class CoralPlacingCommands {
         };
     }
 
-    public static Command getAddCurrentScoringBranchToScoredBranches() {
+    public static Command getAddCurrentScoringBranchToScoredBranchesCommand() {
         return new InstantCommand(
                 () -> {
                     final int branchNumber = getBranchNumberFromScoringPose(calculateClosestScoringPose(false).get());
