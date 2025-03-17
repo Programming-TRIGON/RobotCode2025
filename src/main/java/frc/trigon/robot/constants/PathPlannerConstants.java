@@ -34,7 +34,7 @@ public class PathPlannerConstants {
     public static final double MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR = 2.2;
     public static final String DEFAULT_AUTO_NAME = "None";
     public static final RobotConfig ROBOT_CONFIG = getRobotConfig();
-    public static final double FEEDFORWARD_SCALAR = 0.5;
+    public static final double FEEDFORWARD_SCALAR = 0.45;
 
     private static final PIDConstants
             AUTO_TRANSLATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?

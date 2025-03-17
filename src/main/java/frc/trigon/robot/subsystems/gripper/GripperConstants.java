@@ -171,7 +171,7 @@ public class GripperConstants {
 
         config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 60;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 3.5;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 2;
         config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.31291;
         config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 1.6;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
@@ -244,7 +244,7 @@ public class GripperConstants {
         PREPARE_FOR_SCORING_ALGAE_IN_NET(Rotation2d.fromDegrees(100), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage, 0.3),
         AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0, 1),
         COLLECT_CORAL_FROM_FEEDER(Rotation2d.fromDegrees(90), 8, 1),
-        OPEN_FOR_NOT_HITTING_REEF(Rotation2d.fromDegrees(110), 0.2, 1);
+        OPEN_FOR_NOT_HITTING_REEF(Rotation2d.fromDegrees(107), 0.2, 1);
 
         final Rotation2d targetAngle;
         final double targetGripperVoltage;

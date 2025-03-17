@@ -38,9 +38,7 @@ public class AlgaeManipulationCommands {
         return new ParallelCommandGroup(
                 getCollectAlgaeFromReefManuallyCommand(),
                 getAlignToReefCommand().onlyIf(() -> SHOULD_ALIGN_TO_REEF && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()).asProxy()
-        ).raceWith(new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition)).andThen(
-                () -> getCollectAlgaeFromReefCommand().onlyWhile(OperatorConstants.COLLECT_ALGAE_TRIGGER).schedule()
-        );
+        ).raceWith(new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition)).repeatedly();
     }
 
     private static Command getCollectAlgaeFromReefManuallyCommand() {

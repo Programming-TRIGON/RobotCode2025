@@ -35,9 +35,7 @@ public class CoralPlacingCommands {
                 getCoralIntakeScoringSequenceCommand().asProxy(),
                 getScoreInReefFromGripperCommand().asProxy(),
                 () -> REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_CORAL_INTAKE
-        ).raceWith(getWaitUntilScoringTargetChangesCommand()).andThen(
-                () -> getScoreInReefCommand().onlyWhile(OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER).schedule()
-        );
+        ).raceWith(getWaitUntilScoringTargetChangesCommand()).repeatedly();
     }
 
     private static Command getWaitUntilScoringTargetChangesCommand() {
