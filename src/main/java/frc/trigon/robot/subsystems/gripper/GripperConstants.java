@@ -243,6 +243,7 @@ public class GripperConstants {
         HOLD_ALGAE(Rotation2d.fromDegrees(40), -40, 0.3),
         SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(60), 11, 1),
         PREPARE_FOR_SCORING_ALGAE_IN_NET(Rotation2d.fromDegrees(100), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage, 0.3),
+        SCORE_ALGAE_IN_PROCESSOR(Rotation2d.fromDegrees(0), 11, 1),
         AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0, 1),
         COLLECT_CORAL_FROM_FEEDER(Rotation2d.fromDegrees(90), 8, 1),
         OPEN_FOR_NOT_HITTING_REEF(Rotation2d.fromDegrees(110), 0.2, 1);
