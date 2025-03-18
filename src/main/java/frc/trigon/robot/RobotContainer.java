@@ -119,6 +119,8 @@ public class RobotContainer {
     }
 
     private void bindSetters() {
+        OperatorConstants.ENABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER.onTrue(CommandConstants.ENABLE_IGNORE_LOLLIPOP_CORAL_COMMAND);
+        OperatorConstants.DISABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER.onTrue(CommandConstants.DISABLE_IGNORE_LOLLIPOP_CORAL_COMMAND);
         OperatorConstants.ENABLE_AUTO_CORAL_INTAKE_TRIGGER.onTrue(CommandConstants.ENABLE_AUTO_CORAL_INTAKE_COMMAND);
         OperatorConstants.DISABLE_AUTO_CORAL_INTAKE_TRIGGER.onTrue(CommandConstants.DISABLE_AUTO_CORAL_INTAKE_COMMAND);
         OperatorConstants.ENABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
