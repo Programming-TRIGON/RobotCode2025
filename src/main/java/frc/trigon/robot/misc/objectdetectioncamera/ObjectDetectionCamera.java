@@ -3,16 +3,20 @@ package frc.trigon.robot.misc.objectdetectioncamera;
 import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
 import frc.trigon.robot.misc.objectdetectioncamera.io.PhotonObjectDetectionCameraIO;
 import frc.trigon.robot.misc.objectdetectioncamera.io.SimulationObjectDetectionCameraIO;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.RobotHardwareStats;
 
+import java.util.ArrayList;
+
 /**
  * An object detection camera is a class that represents a camera that detects objects other than apriltags, most likely game pieces.
  */
 public class ObjectDetectionCamera extends SubsystemBase {
+    private static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
     private final ObjectDetectionCameraInputsAutoLogged objectDetectionCameraInputs = new ObjectDetectionCameraInputsAutoLogged();
     private final ObjectDetectionCameraIO objectDetectionCameraIO;
     private final String hostname;
@@ -52,18 +56,27 @@ public class ObjectDetectionCamera extends SubsystemBase {
     public Translation2d calculateBestObjectPositionOnField(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
         final Translation2d[] targetObjectsTranslation = getObjectPositionsOnField(targetGamePiece);
         final Translation2d currentRobotTranslation = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
+        if (targetObjectsTranslation.length == 0)
+            return null;
         Translation2d bestObjectTranslation = targetObjectsTranslation[0];
 
         for (int i = 1; i < targetObjectsTranslation.length; i++) {
             final Translation2d currentObjectTranslation = targetObjectsTranslation[i];
             final double bestObjectDifference = currentRobotTranslation.getDistance(bestObjectTranslation);
             final double currentObjectDifference = currentRobotTranslation.getDistance(currentObjectTranslation);
-
             if (currentObjectDifference < bestObjectDifference)
                 bestObjectTranslation = currentObjectTranslation;
         }
-
         return bestObjectTranslation;
+    }
+
+    private boolean isLollipop(Rotation2d objectYaw) {
+        for (Rotation3d algaeYaw : getTargetObjectsRotations(SimulatedGamePieceConstants.GamePieceType.ALGAE)) {
+            final double difference = Math.abs(algaeYaw.toRotation2d().minus(objectYaw).getDegrees());
+            if (difference < ANGLE_TOLERANCE.getDegrees())
+                return true;
+        }
+        return false;
     }
 
     /**
@@ -124,6 +137,14 @@ public class ObjectDetectionCamera extends SubsystemBase {
     }
 
     public Rotation3d[] getTargetObjectsRotations(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
+        if (targetGamePiece == SimulatedGamePieceConstants.GamePieceType.CORAL && CoralCollectionCommands.SHOULD_IGNORE_LOLLIPOP_CORAL) {
+            ArrayList<Rotation3d> rotations = new ArrayList<>();
+            for (Rotation3d rotation : objectDetectionCameraInputs.visibleObjectRotations[targetGamePiece.id]) {
+                if (!isLollipop(rotation.toRotation2d()))
+                    rotations.add(rotation);
+            }
+            return rotations.toArray(new Rotation3d[0]);
+        }
         return objectDetectionCameraInputs.visibleObjectRotations[targetGamePiece.id];
     }
 
@@ -149,7 +170,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
     }
 
     private Translation2d[] getObjectPositionsOnField(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
-        final Rotation3d[] visibleObjectsRotations = objectDetectionCameraInputs.visibleObjectRotations[targetGamePiece.id];
+        final Rotation3d[] visibleObjectsRotations = getTargetObjectsRotations(targetGamePiece);
         final Translation2d[] objectsPositionsOnField = new Translation2d[visibleObjectsRotations.length];
 
         for (int i = 0; i < visibleObjectsRotations.length; i++)
