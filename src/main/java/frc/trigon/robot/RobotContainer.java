@@ -67,10 +67,6 @@ public class RobotContainer {
         return autoChooser.get();
     }
 
-    public String getChosenAutonomousName() {
-        return autoChooser.get().getName();
-    }
-
     /**
      * Initializes the general systems of the robot.
      * Some systems need to be initialized at the start of the robot code so that others can use their functions.
@@ -166,7 +162,7 @@ public class RobotContainer {
             autoChooser.addDefaultOption("None", Commands.none());
         else
             autoChooser.addOption("None", Commands.none());
-        
+
         autoChooser.addOption("FloorAutonomousRight", AutonomousCommands.getFloorAutonomousCommand(true));
         autoChooser.addOption("FloorAutonomousLeft", AutonomousCommands.getFloorAutonomousCommand(false));
     }

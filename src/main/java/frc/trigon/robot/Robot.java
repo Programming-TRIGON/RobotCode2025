@@ -73,7 +73,7 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        if (robotContainer.getChosenAutonomousName().contains("Floor"))
+        if (autonomousCommand.getName().contains("Floor"))
             return;
 
         if (!RobotContainer.SWERVE.isPathPlannerDriving) {
