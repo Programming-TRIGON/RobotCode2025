@@ -122,7 +122,8 @@ public class ObjectDetectionCamera extends SubsystemBase {
             return;
 
         updateTrackedObjectPose(targetGamePiece);
-        Logger.recordOutput("ObjectDetectionCamera/TrackedObject", new Translation3d(trackedObjectFieldRelativePosition));
+        if (trackedObjectFieldRelativePosition != null)
+            Logger.recordOutput("ObjectDetectionCamera/TrackedObject", new Translation3d(trackedObjectFieldRelativePosition));
     }
 
     public boolean hasTargets(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {

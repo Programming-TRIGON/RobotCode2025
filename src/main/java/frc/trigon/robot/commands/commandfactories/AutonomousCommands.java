@@ -55,7 +55,7 @@ public class AutonomousCommands {
     public static Command getDriveToCoralCommand(boolean isRight) {
         return new SequentialCommandGroup(
                 new InstantCommand(CameraConstants.OBJECT_DETECTION_CAMERA::initializeTracking),
-                getFindCoralCommand(isRight).until(() -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null),
+                getFindCoralCommand(isRight).unless(() -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).until(() -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null),
                 new ParallelCommandGroup(
                         CoralAutoDriveCommand.getDriveToCoralCommand(CoralAutoDriveCommand::calculateDistanceFromTrackedCoral),
                         new RunCommand(() -> {
@@ -103,8 +103,8 @@ public class AutonomousCommands {
     }
 
     private static boolean canFeed() {
-        return RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L4) &&
-                RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L4) &&
+        return RobotContainer.ELEVATOR.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().elevatorState) &&
+                RobotContainer.GRIPPER.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().gripperState) &&
                 RobotContainer.SWERVE.atPose(CoralPlacingCommands.calculateClosestScoringPose(true));
     }
 
@@ -118,7 +118,7 @@ public class AutonomousCommands {
     private static Command getOpenElevatorWhenCloseToReefCommand() {
         return GeneralCommands.runWhen(
                 ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
-                () -> calculateDistanceToTargetScoringPose() < PathPlannerConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF)
+                () -> calculateDistanceToTargetScoringPose() < PathPlannerConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR
         );
     }
 
@@ -133,7 +133,7 @@ public class AutonomousCommands {
                 ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
                 GripperCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getGripperState()),
                 CoralPlacingCommands.getAddCurrentScoringBranchToScoredBranchesCommand()
-        ).withTimeout(0.5);
+        ).withTimeout(0.3);
     }
 
     public static Command getPrepareForScoringInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {

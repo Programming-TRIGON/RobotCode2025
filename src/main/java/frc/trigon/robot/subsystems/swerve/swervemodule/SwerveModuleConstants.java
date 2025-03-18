@@ -80,7 +80,7 @@ public class SwerveModuleConstants {
         config.Slot0.kP = RobotHardwareStats.isSimulation() ? 50 : 13;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.4708 : 5.2;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0.4708 : 5.1;
         config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : DRIVE_MOTOR_GEAR_RATIO / (1 / DCMotor.getKrakenX60Foc(1).KtNMPerAmp);
 

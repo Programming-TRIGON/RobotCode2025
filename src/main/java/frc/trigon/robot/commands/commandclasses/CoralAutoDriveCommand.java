@@ -60,11 +60,11 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
 
     public static Command getDriveToCoralCommand(Supplier<Translation2d> distanceFromTrackedCoral) {
         return new SequentialCommandGroup(
-                SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                        () -> 0,
-                        () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getY()),
-                        CoralAutoDriveCommand::calculateTargetAngle
-                ).until(() -> shouldMoveTowardsCoral(distanceFromTrackedCoral.get())),
+//                SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+//                        () -> 0,
+//                        () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getY()),
+//                        CoralAutoDriveCommand::calculateTargetAngle
+//                ).until(() -> shouldMoveTowardsCoral(distanceFromTrackedCoral.get())),
                 SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                         () -> X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getX()),
                         () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getY()),
