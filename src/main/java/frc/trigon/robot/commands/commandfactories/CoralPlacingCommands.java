@@ -65,21 +65,21 @@ public class CoralPlacingCommands {
     }
 
     private static Command getManuallyScoreInReefFromGripperCommand() {
-        return CoralCollectionCommands.getLoadCoralCommand().andThen(
+        return CoralCollectionCommands.getLoadCoralCommand().asProxy().andThen(
                 new ParallelCommandGroup(
                         ElevatorCommands.getSetTargetStateCommand(REEF_CHOOSER::getElevatorState),
                         getGripperScoringSequenceCommand()
-                )
+                ).asProxy()
         );
     }
 
     private static Command getAutonomouslyScoreInReefFromGripperCommand() {
         return new ParallelCommandGroup(
-                CoralCollectionCommands.getLoadCoralCommand().andThen(
+                CoralCollectionCommands.getLoadCoralCommand().asProxy().andThen(
                         new ParallelCommandGroup(
                                 getOpenElevatorWhenCloseToReefCommand(),
                                 getGripperScoringSequenceCommand()
-                        )
+                        ).asProxy()
                 ),
                 getAutonomousDriveToReefThenManualDriveCommand()
         );

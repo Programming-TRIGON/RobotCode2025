@@ -13,8 +13,6 @@ import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.misc.ReefChooser;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorCommands;
-import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
-import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
@@ -28,29 +26,24 @@ public class AlgaeManipulationCommands {
     public static boolean SHOULD_ALIGN_TO_REEF = true;
     private static final ReefChooser REEF_CHOOSER = OperatorConstants.REEF_CHOOSER;
 
-    public static Command getCollectAlgaeFromFloorCommand() {
+
+    public static Command getCollectAlgaeFromLollipopCommand() {
         return new SequentialCommandGroup(
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_ALGAE_FROM_FLOOR)
+                CoralCollectionCommands.getUnloadCoralCommand().asProxy(),
+                getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_LOLLIPOP).asProxy().until(() -> OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean() || OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean()),
+                getScoreAlgaeCommand().asProxy()
         );
     }
 
-    public static Command getCollectAlgaeFromLollipopCommand() {
-        return getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_LOLLIPOP)
-                .until(() -> OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean() || OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean()).andThen(
-                        getScoreAlgaeCommand()
-                );
-    }
-
     public static Command getCollectAlgaeFromReefCommand() {
-//        return CoralCollectionCommands.getUnloadCoralCommand().onlyIf(RobotContainer.GRIPPER::hasGamePiece).asProxy().andThen(
-        return
+        return CoralCollectionCommands.getUnloadCoralCommand().asProxy().andThen(
                 new ParallelCommandGroup(
-                        getCollectAlgaeFromReefManuallyCommand(),
+                        getCollectAlgaeFromReefManuallyCommand().asProxy(),
                         getAlignToReefCommand().onlyIf(() -> SHOULD_ALIGN_TO_REEF && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()).asProxy()
                 ).raceWith(
                         new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition)
-                ).repeatedly();
-//        );
+                ).repeatedly()
+        );
     }
 
     private static Command getCollectAlgaeFromReefManuallyCommand() {
