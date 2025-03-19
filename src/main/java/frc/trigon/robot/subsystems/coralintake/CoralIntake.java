@@ -238,7 +238,6 @@ public class CoralIntake extends MotorSubsystem {
         Logger.recordOutput("TargetCoralPlacementStates/IsTargetSideLeft", !OperatorConstants.REEF_CHOOSER.getReefSide().doesFlipYTransformWhenFacingDriverStation);
         Logger.recordOutput("TargetCoralPlacementStates/TargetLevel", OperatorConstants.REEF_CHOOSER.getScoringLevel().level);
         Logger.recordOutput("TargetCoralPlacementStates/TargetClockPositionForElastic", getClockPositionForElastic());
-        Logger.recordOutput("ShouldIntakeCoralAutonomously", CoralCollectionCommands.SHOULD_INTAKE_CORAL_AUTONOMOUSLY);
         Logger.recordOutput("ShouldIgnoreLollipopCoral", CoralCollectionCommands.SHOULD_IGNORE_LOLLIPOP_CORAL);
         Logger.recordOutput("ShouldScoreCoralAutonomously", CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY);
     }

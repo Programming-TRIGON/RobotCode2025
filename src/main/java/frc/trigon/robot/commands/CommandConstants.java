@@ -63,8 +63,6 @@ public class CommandConstants {
             );
 
     public static final Command
-            ENABLE_AUTO_CORAL_INTAKE_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_INTAKE_CORAL_AUTONOMOUSLY = true).ignoringDisable(true),
-            DISABLE_AUTO_CORAL_INTAKE_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_INTAKE_CORAL_AUTONOMOUSLY = false).ignoringDisable(true),
             ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = true).ignoringDisable(true),
             DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = false).ignoringDisable(true),
             ENABLE_IGNORE_LOLLIPOP_CORAL_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_IGNORE_LOLLIPOP_CORAL = true).ignoringDisable(true),
