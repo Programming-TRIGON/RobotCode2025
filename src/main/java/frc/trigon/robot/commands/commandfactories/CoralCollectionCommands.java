@@ -13,6 +13,7 @@ import frc.trigon.robot.subsystems.gripper.GripperConstants;
 
 public class CoralCollectionCommands {
     public static boolean SHOULD_INTAKE_CORAL_AUTONOMOUSLY = true;
+    public static boolean SHOULD_IGNORE_LOLLIPOP_CORAL = false;
 
     public static Command getFeederCoralCollectionFromGripperCommand() {
         return new ParallelCommandGroup(
