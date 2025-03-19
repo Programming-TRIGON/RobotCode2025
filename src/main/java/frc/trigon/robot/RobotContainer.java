@@ -113,7 +113,8 @@ public class RobotContainer {
         OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CommandConstants.WHEEL_RADIUS_CHARACTERIZATION_COMMAND);
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
         OperatorConstants.UNLOAD_CORAL_TRIGGER.whileTrue(CoralCollectionCommands.getUnloadCoralCommand());
-        OperatorConstants.COLLECT_ALGAE_TRIGGER.whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
+        OperatorConstants.COLLECT_ALGAE_FROM_REEF_TRIGGER.whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
+        OperatorConstants.COLLECT_ALGAE_FROM_LOLLIPOP_TRIGGER.whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromLollipopCommand());
         OperatorConstants.OPERATOR_CONTROLLER.s().whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromFloorCommand());
         OperatorConstants.FEEDER_CORAL_COLLECTION_WITH_GRIPPER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionFromGripperCommand());
     }
