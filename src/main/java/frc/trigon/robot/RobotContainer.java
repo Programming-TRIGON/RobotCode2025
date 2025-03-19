@@ -113,7 +113,8 @@ public class RobotContainer {
         OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CommandConstants.WHEEL_RADIUS_CHARACTERIZATION_COMMAND);
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
         OperatorConstants.UNLOAD_CORAL_TRIGGER.whileTrue(CoralCollectionCommands.getUnloadCoralCommand());
-        OperatorConstants.COLLECT_ALGAE_TRIGGER.toggleOnTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
+        OperatorConstants.COLLECT_ALGAE_FROM_REEF_TRIGGER.toggleOnTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
+        OperatorConstants.COLLECT_ALGAE_FROM_LOLLIPOP_TRIGGER.toggleOnTrue(AlgaeManipulationCommands.getCollectAlgaeFromLollipopCommand());
         OperatorConstants.OPERATOR_CONTROLLER.s().whileTrue(AlgaeManipulationCommands.getCollectAlgaeFromFloorCommand());
         OperatorConstants.FEEDER_CORAL_COLLECTION_WITH_GRIPPER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionFromGripperCommand());
     }
@@ -121,8 +122,6 @@ public class RobotContainer {
     private void bindSetters() {
         OperatorConstants.ENABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER.onTrue(CommandConstants.ENABLE_IGNORE_LOLLIPOP_CORAL_COMMAND);
         OperatorConstants.DISABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER.onTrue(CommandConstants.DISABLE_IGNORE_LOLLIPOP_CORAL_COMMAND);
-        OperatorConstants.ENABLE_AUTO_CORAL_INTAKE_TRIGGER.onTrue(CommandConstants.ENABLE_AUTO_CORAL_INTAKE_COMMAND);
-        OperatorConstants.DISABLE_AUTO_CORAL_INTAKE_TRIGGER.onTrue(CommandConstants.DISABLE_AUTO_CORAL_INTAKE_COMMAND);
         OperatorConstants.ENABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
         OperatorConstants.DISABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
     }

@@ -34,6 +34,13 @@ public class AlgaeManipulationCommands {
         );
     }
 
+    public static Command getCollectAlgaeFromLollipopCommand() {
+        return getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_LOLLIPOP)
+                .until(() -> OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean() || OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean()).andThen(
+                        getScoreAlgaeCommand()
+                );
+    }
+
     public static Command getCollectAlgaeFromReefCommand() {
 //        return CoralCollectionCommands.getUnloadCoralCommand().onlyIf(RobotContainer.GRIPPER::hasGamePiece).asProxy().andThen(
         return
@@ -48,10 +55,19 @@ public class AlgaeManipulationCommands {
 
     private static Command getCollectAlgaeFromReefManuallyCommand() {
         return new ParallelCommandGroup(
-                getOpenElevatorForAlgaeCommand(),
-                getGripAlgaeCommand()
-        ).until(OperatorConstants.SCORE_IN_NET_TRIGGER).andThen(
-                getScoreInNetCommand()
+                getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF),
+                getOpenElevatorForAlgaeCommand()
+        ).until(() -> OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean() || OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean()).andThen(
+                getScoreAlgaeCommand()
+        );
+    }
+
+    private static Command getGripAlgaeCommand(GripperConstants.GripperState targetGripState) {
+        return new SequentialCommandGroup(
+                GripperCommands.getSetTargetStateWithCurrentCommand(targetGripState).raceWith(new WaitCommand(1).andThen(new WaitUntilCommand(RobotContainer.GRIPPER::isMovingSlowly))),
+                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.HOLD_ALGAE)
+        ).alongWith(
+                AlgaeManipulatorCommands.getOpenCommand()
         );
     }
 
@@ -63,27 +79,12 @@ public class AlgaeManipulationCommands {
         );
     }
 
-    private static Command getGripAlgaeCommand() {
-        return new SequentialCommandGroup(
-                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF).raceWith(new WaitCommand(1).andThen(new WaitUntilCommand(RobotContainer.GRIPPER::isMovingSlowly))),
-                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.HOLD_ALGAE)
-        ).alongWith(
-                AlgaeManipulatorCommands.getOpenCommand()
+    private static Command getScoreAlgaeCommand() {
+        return new ConditionalCommand(
+                getScoreInNetCommand(),
+                getScoreInProcessorCommand(),
+                OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER
         );
-    }
-
-    private static Command getAlignToReefCommand() {
-        return new SequentialCommandGroup(
-                SwerveCommands.getDriveToPoseCommand(
-                        () -> new FlippablePose2d(calculateReefAlgaeCollectionPose(), false),
-                        PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
-                ),
-                SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                        () -> fieldRelativePowersToSelfRelativeXPower(OperatorConstants.DRIVER_CONTROLLER.getLeftY(), OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
-                        () -> 0,
-                        AlgaeManipulationCommands::calculateTargetAngle
-                )
-        ).until(OperatorConstants.CONTINUE_TRIGGER);
     }
 
     private static Command getScoreInNetCommand() {
@@ -100,6 +101,36 @@ public class AlgaeManipulationCommands {
                         () -> new FlippableRotation2d(Rotation2d.k180deg, true)
                 ).asProxy()
         );
+    }
+
+    private static Command getScoreInProcessorCommand() {
+        return new ParallelCommandGroup(
+                AlgaeManipulatorCommands.getOpenCommand().until(OperatorConstants.CONTINUE_TRIGGER),
+                new SequentialCommandGroup(
+                        GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_PROCESSOR).until(OperatorConstants.CONTINUE_TRIGGER),
+                        GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_ALGAE_IN_PROCESSOR)
+                ),
+                SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
+
+                        () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftY()),
+                        () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
+                        () -> new FlippableRotation2d(Rotation2d.fromDegrees(90), true)
+                ).asProxy()
+        );
+    }
+
+    private static Command getAlignToReefCommand() {
+        return new SequentialCommandGroup(
+                SwerveCommands.getDriveToPoseCommand(
+                        () -> new FlippablePose2d(calculateReefAlgaeCollectionPose(), false),
+                        PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
+                ),
+                SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+                        () -> fieldRelativePowersToSelfRelativeXPower(OperatorConstants.DRIVER_CONTROLLER.getLeftY(), OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
+                        () -> 0,
+                        AlgaeManipulationCommands::calculateTargetAngle
+                )
+        ).until(OperatorConstants.CONTINUE_TRIGGER);
     }
 
     private static Pose2d calculateReefAlgaeCollectionPose() {
