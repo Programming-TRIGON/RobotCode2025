@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * An object detection camera is a class that represents a camera that detects objects other than apriltags, most likely game pieces.
  */
 public class ObjectDetectionCamera extends SubsystemBase {
-    private static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
+    private static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(3.14);
     private final ObjectDetectionCameraInputsAutoLogged objectDetectionCameraInputs = new ObjectDetectionCameraInputsAutoLogged();
     private final ObjectDetectionCameraIO objectDetectionCameraIO;
     private final String hostname;
