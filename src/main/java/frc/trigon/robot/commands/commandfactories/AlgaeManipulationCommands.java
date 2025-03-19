@@ -102,12 +102,13 @@ public class AlgaeManipulationCommands {
 
     private static Command getScoreInProcessorCommand() {
         return new ParallelCommandGroup(
-                AlgaeManipulatorCommands.getOpenCommand(),
+                AlgaeManipulatorCommands.getOpenCommand().until(OperatorConstants.CONTINUE_TRIGGER),
                 new SequentialCommandGroup(
                         GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_PROCESSOR).until(OperatorConstants.CONTINUE_TRIGGER),
                         GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_ALGAE_IN_PROCESSOR)
                 ),
                 SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
+
                         () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftY()),
                         () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
                         () -> new FlippableRotation2d(Rotation2d.fromDegrees(90), true)
