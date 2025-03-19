@@ -111,7 +111,7 @@ public class AutonomousCommands {
     public static Command getPrepareForScoreCommand() {
         return new ParallelCommandGroup(
                 getOpenElevatorWhenCloseToReefCommand(),
-                getGripperScoringSequenceCommand(OperatorConstants.REEF_CHOOSER.getScoringLevel())
+                GripperCommands.getPrepareForStateCommand(OperatorConstants.REEF_CHOOSER.getScoringLevel().gripperState)
         );
     }
 
