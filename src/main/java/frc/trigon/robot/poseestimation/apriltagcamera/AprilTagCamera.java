@@ -154,7 +154,7 @@ public class AprilTagCamera {
             logUsedTags();
 
         if (hasValidResult()) {
-            Logger.recordOutput("Poses/Robot/Cameras/" + name + "Pose", estimatedRobotPose);
+            Logger.recordOutput("Poses/Robot/Cameras/" + name + "Pose", new Pose2d[]{estimatedRobotPose});
             return;
         }
 
