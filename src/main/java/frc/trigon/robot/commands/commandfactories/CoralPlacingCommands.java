@@ -153,7 +153,7 @@ public class CoralPlacingCommands {
         return new FlippablePose2d(closestScoringPose, false);
     }
 
-    public static FlippablePose2d calculateClosestScoringPose(boolean shouldOnlyCheckOpenBranches, Rotation2d[] reefClockAngles) {
+    public static FlippablePose2d calculateClosestScoringPose(boolean shouldOnlyCheckOpenBranches, FieldConstants.ReefClockPosition[] reefClockPositions) {
         final Translation2d robotPositionOnField = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
         final Translation2d reefCenterPosition = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
         final Transform2d
@@ -162,11 +162,11 @@ public class CoralPlacingCommands {
 
         double distanceFromClosestScoringPoseMeters = Double.POSITIVE_INFINITY;
         Pose2d closestScoringPose = new Pose2d();
-        for (int i = 0; i < reefClockAngles.length; i++) {
-            final Rotation2d targetRotation = reefClockAngles[i];
-            final Pose2d reefCenterAtTargetRotation = new Pose2d(reefCenterPosition, targetRotation);
+        for (int i = 0; i < reefClockPositions.length; i++) {
+            final FieldConstants.ReefClockPosition targetReefPosition = reefClockPositions[i];
+            final Pose2d reefCenterAtTargetRotation = new Pose2d(reefCenterPosition, targetReefPosition.clockAngle);
             for (int j = 0; j < 2; j++) {
-                if (getScoredBranchesAtCurrentLevel()[i * 2 + j] && shouldOnlyCheckOpenBranches)
+                if (getScoredBranchesAtCurrentLevel()[targetReefPosition.ordinal() * 2 + j] && shouldOnlyCheckOpenBranches)
                     continue;
 
                 final Pose2d currentScoringPose = reefCenterAtTargetRotation.transformBy(j == 0 ? reefCenterToRightBranchScoringPose : reefCenterToLeftBranchScoringPose);

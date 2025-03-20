@@ -7,7 +7,6 @@ package frc.trigon.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
-import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -167,10 +166,10 @@ public class RobotContainer {
 
         autoChooser.addOption("FloorAutonomousRight", AutonomousCommands.getFloorAutonomousCommand(true));
         autoChooser.addOption("FloorAutonomousLeft", AutonomousCommands.getFloorAutonomousCommand(false));
-        Rotation2d[]
-                rightReefAngles = {FieldConstants.ReefClockPosition.REEF_2_OCLOCK.clockAngle, FieldConstants.ReefClockPosition.REEF_4_OCLOCK.clockAngle},
-                leftReefAngles = {FieldConstants.ReefClockPosition.REEF_8_OCLOCK.clockAngle, FieldConstants.ReefClockPosition.REEF_10_OCLOCK.clockAngle};
-        autoChooser.addOption("FloorAutonomousRight4Branches", AutonomousCommands.getFloorAutonomousCommand(true, rightReefAngles));
-        autoChooser.addOption("FloorAutonomousLeft4Branches", AutonomousCommands.getFloorAutonomousCommand(false, leftReefAngles));
+        FieldConstants.ReefClockPosition[]
+                rightReefPositions = {FieldConstants.ReefClockPosition.REEF_2_OCLOCK, FieldConstants.ReefClockPosition.REEF_4_OCLOCK},
+                leftReefPositions = {FieldConstants.ReefClockPosition.REEF_8_OCLOCK, FieldConstants.ReefClockPosition.REEF_10_OCLOCK};
+        autoChooser.addOption("FloorAutonomousRight4Branches", AutonomousCommands.getFloorAutonomousCommand(true, rightReefPositions));
+        autoChooser.addOption("FloorAutonomousLeft4Branches", AutonomousCommands.getFloorAutonomousCommand(false, leftReefPositions));
     }
 }
