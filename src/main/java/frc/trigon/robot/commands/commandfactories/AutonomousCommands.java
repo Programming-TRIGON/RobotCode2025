@@ -36,9 +36,20 @@ public class AutonomousCommands {
         return getCycleCoralCommand(isRight).repeatedly();
     }
 
+    public static Command getFloorAutonomousCommand(boolean isRight, FieldConstants.ReefClockPosition[] reefClockPositions) {
+        return getCycleCoralCommand(isRight, reefClockPositions).repeatedly();
+    }
+
     public static Command getCycleCoralCommand(boolean isRight) {
         return new SequentialCommandGroup(
                 getDriveToReefAndScoreCommand(),
+                getCollectCoralCommand(isRight)
+        );
+    }
+
+    public static Command getCycleCoralCommand(boolean isRight, FieldConstants.ReefClockPosition[] reefClockPositions) {
+        return new SequentialCommandGroup(
+                getDriveToReefAndScoreCommand(reefClockPositions),
                 getCollectCoralCommand(isRight)
         );
     }
@@ -84,6 +95,13 @@ public class AutonomousCommands {
     public static Command getDriveToReefAndScoreCommand() {
         return new ParallelCommandGroup(
                 SwerveCommands.getDriveToPoseCommand(() -> CoralPlacingCommands.calculateClosestScoringPose(true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed),
+                getCoralSequenceCommand()
+        );
+    }
+
+    public static Command getDriveToReefAndScoreCommand(FieldConstants.ReefClockPosition[] reefClockPositions) {
+        return new ParallelCommandGroup(
+                SwerveCommands.getDriveToPoseCommand(() -> CoralPlacingCommands.calculateClosestScoringPose(true, reefClockPositions), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed),
                 getCoralSequenceCommand()
         );
     }

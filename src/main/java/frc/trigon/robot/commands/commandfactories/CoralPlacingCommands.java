@@ -153,6 +153,34 @@ public class CoralPlacingCommands {
         return new FlippablePose2d(closestScoringPose, false);
     }
 
+    public static FlippablePose2d calculateClosestScoringPose(boolean shouldOnlyCheckOpenBranches, FieldConstants.ReefClockPosition[] reefClockPositions) {
+        final Translation2d robotPositionOnField = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
+        final Translation2d reefCenterPosition = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
+        final Transform2d
+                reefCenterToRightBranchScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d()),
+                reefCenterToLeftBranchScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, -FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d());
+
+        double distanceFromClosestScoringPoseMeters = Double.POSITIVE_INFINITY;
+        Pose2d closestScoringPose = new Pose2d();
+        for (int i = 0; i < reefClockPositions.length; i++) {
+            final FieldConstants.ReefClockPosition targetReefPosition = reefClockPositions[i];
+            final Pose2d reefCenterAtTargetRotation = new Pose2d(reefCenterPosition, targetReefPosition.clockAngle);
+            for (int j = 0; j < 2; j++) {
+                if (getScoredBranchesAtCurrentLevel()[targetReefPosition.ordinal() * 2 + j] && shouldOnlyCheckOpenBranches)
+                    continue;
+
+                final Pose2d currentScoringPose = reefCenterAtTargetRotation.transformBy(j == 0 ? reefCenterToRightBranchScoringPose : reefCenterToLeftBranchScoringPose);
+                final double distanceFromCurrentScoringPoseMeters = currentScoringPose.getTranslation().getDistance(robotPositionOnField);
+                if (distanceFromCurrentScoringPoseMeters < distanceFromClosestScoringPoseMeters) {
+                    distanceFromClosestScoringPoseMeters = distanceFromCurrentScoringPoseMeters;
+                    closestScoringPose = currentScoringPose;
+                }
+            }
+        }
+
+        return new FlippablePose2d(closestScoringPose, false);
+    }
+
     private static boolean[] getScoredBranchesAtCurrentLevel() {
         return switch (REEF_CHOOSER.getScoringLevel().level) {
             case 2 -> loggedNetworkBooleanArrayToBooleanArray(SCORED_L2S);

@@ -18,6 +18,7 @@ import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
 import frc.trigon.robot.commands.commandclasses.LEDAutoSetupCommand;
 import frc.trigon.robot.commands.commandfactories.*;
 import frc.trigon.robot.constants.CameraConstants;
+import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.poseestimation.poseestimator.PoseEstimator;
@@ -165,5 +166,10 @@ public class RobotContainer {
 
         autoChooser.addOption("FloorAutonomousRight", AutonomousCommands.getFloorAutonomousCommand(true));
         autoChooser.addOption("FloorAutonomousLeft", AutonomousCommands.getFloorAutonomousCommand(false));
+        FieldConstants.ReefClockPosition[]
+                rightReefPositions = {FieldConstants.ReefClockPosition.REEF_2_OCLOCK, FieldConstants.ReefClockPosition.REEF_4_OCLOCK},
+                leftReefPositions = {FieldConstants.ReefClockPosition.REEF_8_OCLOCK, FieldConstants.ReefClockPosition.REEF_10_OCLOCK};
+        autoChooser.addOption("FloorAutonomousRight4Branches", AutonomousCommands.getFloorAutonomousCommand(true, rightReefPositions));
+        autoChooser.addOption("FloorAutonomousLeft4Branches", AutonomousCommands.getFloorAutonomousCommand(false, leftReefPositions));
     }
 }
