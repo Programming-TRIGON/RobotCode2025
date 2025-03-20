@@ -25,7 +25,6 @@ import org.trigon.utilities.flippable.FlippableTranslation2d;
 public class AlgaeManipulationCommands {
     public static boolean SHOULD_ALIGN_TO_REEF = true;
     private static final ReefChooser REEF_CHOOSER = OperatorConstants.REEF_CHOOSER;
-    private static Rotation2d TARGET_REEF_CLOCK_POSITION = REEF_CHOOSER.getClockPosition().clockAngle;
 
     public static Command getCollectAlgaeFromLollipopCommand() {
         return new SequentialCommandGroup(
@@ -125,7 +124,7 @@ public class AlgaeManipulationCommands {
                 SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                         () -> fieldRelativePowersToSelfRelativeXPower(OperatorConstants.DRIVER_CONTROLLER.getLeftY(), OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
                         () -> 0,
-                        () -> new FlippableRotation2d(TARGET_REEF_CLOCK_POSITION, true)
+                        () -> calculateClosestAlgaeCollectionPose().getRotation()
                 )
         ).until(OperatorConstants.CONTINUE_TRIGGER);
     }
@@ -157,7 +156,6 @@ public class AlgaeManipulationCommands {
             if (distanceFromCurrentScoringPoseMeters < distanceFromClosestScoringPoseMeters) {
                 distanceFromClosestScoringPoseMeters = distanceFromCurrentScoringPoseMeters;
                 closestScoringPose = currentScoringPose;
-                TARGET_REEF_CLOCK_POSITION = targetRotation.plus(Rotation2d.k180deg);
             }
         }
 
