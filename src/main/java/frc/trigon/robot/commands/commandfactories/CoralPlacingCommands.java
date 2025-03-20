@@ -238,7 +238,7 @@ public class CoralPlacingCommands {
     public static LoggedNetworkBoolean[] getEmptyLoggedNetworkBooleanArray(String arrayName, boolean defaultValue) {
         final LoggedNetworkBoolean[] array = new LoggedNetworkBoolean[12];
         for (int i = 0; i < array.length; i++) {
-            array[i] = new LoggedNetworkBoolean(arrayName + "/" + i, !(i > 1 && i < 6));
+            array[i] = new LoggedNetworkBoolean(arrayName + "/" + i, defaultValue);
         }
         return array;
     }
