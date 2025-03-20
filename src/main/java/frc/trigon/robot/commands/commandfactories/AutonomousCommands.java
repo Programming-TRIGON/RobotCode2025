@@ -2,6 +2,7 @@ package frc.trigon.robot.commands.commandfactories;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
@@ -34,9 +35,20 @@ public class AutonomousCommands {
         return getCycleCoralCommand(isRight).repeatedly();
     }
 
+    public static Command getFloorAutonomousCommand(boolean isRight, Rotation2d[] reefClockAngles) {
+        return getCycleCoralCommand(isRight, reefClockAngles).repeatedly();
+    }
+
     public static Command getCycleCoralCommand(boolean isRight) {
         return new SequentialCommandGroup(
                 getDriveToReefAndScoreCommand(),
+                getCollectCoralCommand(isRight)
+        );
+    }
+
+    public static Command getCycleCoralCommand(boolean isRight, Rotation2d[] reefClockAngles) {
+        return new SequentialCommandGroup(
+                getDriveToReefAndScoreCommand(reefClockAngles),
                 getCollectCoralCommand(isRight)
         );
     }
@@ -82,6 +94,13 @@ public class AutonomousCommands {
     public static Command getDriveToReefAndScoreCommand() {
         return new ParallelCommandGroup(
                 SwerveCommands.getDriveToPoseCommand(() -> CoralPlacingCommands.calculateClosestScoringPose(true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed),
+                getCoralSequenceCommand()
+        );
+    }
+
+    public static Command getDriveToReefAndScoreCommand(Rotation2d[] reefClockAngles) {
+        return new ParallelCommandGroup(
+                SwerveCommands.getDriveToPoseCommand(() -> CoralPlacingCommands.calculateClosestScoringPose(true, reefClockAngles), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed),
                 getCoralSequenceCommand()
         );
     }
