@@ -1,8 +1,10 @@
 package frc.trigon.robot.commands.commandfactories;
 
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
@@ -69,7 +71,7 @@ public class AutonomousCommands {
     public static Command getFindCoralCommand(boolean isRight) {
         return new ParallelCommandGroup(
                 new RunCommand(() -> CameraConstants.OBJECT_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL)),
-                SwerveCommands.getDriveToPoseCommand(() -> isRight ? FieldConstants.AUTO_FIND_CORAL_POSE_RIGHT : FieldConstants.AUTO_FIND_CORAL_POSE_LEFT, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).andThen(
+                SwerveCommands.getDriveToPoseCommand(() -> isRight ? FieldConstants.AUTO_FIND_CORAL_POSE_RIGHT : FieldConstants.AUTO_FIND_CORAL_POSE_LEFT, new PathConstraints(2.5, 4, Units.degreesToRadians(900), Units.degreesToRadians(1200))).andThen(
                         SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                                 () -> 0,
                                 () -> 0,
@@ -118,7 +120,7 @@ public class AutonomousCommands {
     private static Command getOpenElevatorWhenCloseToReefCommand() {
         return GeneralCommands.runWhen(
                 ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
-                () -> calculateDistanceToTargetScoringPose() < PathPlannerConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR
+                () -> true
         );
     }
 
@@ -133,7 +135,7 @@ public class AutonomousCommands {
                 ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
                 GripperCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getGripperState()),
                 CoralPlacingCommands.getAddCurrentScoringBranchToScoredBranchesCommand()
-        ).withTimeout(0.3);
+        ).withTimeout(0.25);
     }
 
     public static Command getPrepareForScoringInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {

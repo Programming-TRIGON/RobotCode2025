@@ -32,7 +32,7 @@ public class AlgaeManipulationCommands {
                 CoralCollectionCommands.getUnloadCoralCommand().asProxy(),
                 getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_LOLLIPOP).asProxy().until(() -> OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean() || OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean()),
                 getScoreAlgaeCommand().asProxy()
-        );
+        ).raceWith(getEndingConditionCommand());
     }
 
     public static Command getCollectAlgaeFromReefCommand() {
@@ -43,7 +43,11 @@ public class AlgaeManipulationCommands {
                 ).raceWith(
                         new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition)
                 ).repeatedly()
-        );
+        ).raceWith(getEndingConditionCommand());
+    }
+
+    private static Command getEndingConditionCommand() {
+        return new WaitUntilCommand(OperatorConstants.CONTINUE_TRIGGER).andThen(new WaitCommand(1));
     }
 
     private static Command getCollectAlgaeFromReefManuallyCommand() {
@@ -93,7 +97,7 @@ public class AlgaeManipulationCommands {
                         () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
                         () -> new FlippableRotation2d(Rotation2d.k180deg, true)
                 ).asProxy()
-        );
+        ).withTimeout(1.5);
     }
 
     private static Command getScoreInProcessorCommand() {

@@ -22,7 +22,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
     private static final PIDController
             X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new PIDController(0.5, 0, 0) :
-            new PIDController(0.5, 0, 0),
+            new PIDController(0.55, 0, 0),
             Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
                     new PIDController(0.5, 0, 0) :
                     new PIDController(0.4, 0, 0.03);

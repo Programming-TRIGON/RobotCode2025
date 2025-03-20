@@ -16,7 +16,7 @@ import java.util.ArrayList;
  * An object detection camera is a class that represents a camera that detects objects other than apriltags, most likely game pieces.
  */
 public class ObjectDetectionCamera extends SubsystemBase {
-    private static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
+
     private final ObjectDetectionCameraInputsAutoLogged objectDetectionCameraInputs = new ObjectDetectionCameraInputsAutoLogged();
     private final ObjectDetectionCameraIO objectDetectionCameraIO;
     private final String hostname;
@@ -73,7 +73,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
     private boolean isLollipop(Rotation2d objectYaw) {
         for (Rotation3d algaeYaw : getTargetObjectsRotations(SimulatedGamePieceConstants.GamePieceType.ALGAE)) {
             final double difference = Math.abs(algaeYaw.toRotation2d().minus(objectYaw).getDegrees());
-            if (difference < ANGLE_TOLERANCE.getDegrees())
+            if (difference < ObjectDetectionCameraConstants.LOLLIPOP_TOLERANCE.getDegrees())
                 return true;
         }
         return false;
