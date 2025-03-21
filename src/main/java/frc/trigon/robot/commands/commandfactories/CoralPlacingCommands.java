@@ -129,10 +129,9 @@ public class CoralPlacingCommands {
         final Translation2d reefCenterPosition = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
         final Rotation2d[] reefClockAngles = FieldConstants.REEF_CLOCK_ANGLES;
         final Transform2d
-                ToRightBranchScoringPose = new Transform2d(0, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d()),
-                ToLeftBranchScoringPose = new Transform2d(0, -FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d());
-        var j = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, 0, new Rotation2d());
-        final boolean rightSide = REEF_CHOOSER.getReefSide().doesFlipYTransformWhenFacingDriverStation;
+                reefCenterToScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, 0, new Rotation2d()),
+                scoringPoseToRightBranch = new Transform2d(0, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d());
+        final boolean shouldScoreOnRightBranch = REEF_CHOOSER.getReefSide().doesFlipYTransformWhenFacingDriverStation;
 
         double distanceFromClosestScoringPoseMeters = Double.POSITIVE_INFINITY;
         Pose2d closestScoringPose = new Pose2d();
@@ -140,7 +139,7 @@ public class CoralPlacingCommands {
             final Rotation2d targetRotation = reefClockAngles[i];
             final Pose2d reefCenterAtTargetRotation = new Pose2d(reefCenterPosition, targetRotation);
 
-            final Pose2d currentScoringPose = reefCenterAtTargetRotation.transformBy(j);
+            final Pose2d currentScoringPose = reefCenterAtTargetRotation.transformBy(reefCenterToScoringPose);
             final double distanceFromCurrentScoringPoseMeters = currentScoringPose.getTranslation().getDistance(robotPositionOnField);
             if (distanceFromCurrentScoringPoseMeters < distanceFromClosestScoringPoseMeters) {
                 distanceFromClosestScoringPoseMeters = distanceFromCurrentScoringPoseMeters;
@@ -148,7 +147,7 @@ public class CoralPlacingCommands {
             }
         }
 
-        return new FlippablePose2d(closestScoringPose.transformBy(rightSide ? ToRightBranchScoringPose : ToLeftBranchScoringPose), false);
+        return new FlippablePose2d(closestScoringPose.transformBy(shouldScoreOnRightBranch ? scoringPoseToRightBranch : scoringPoseToRightBranch.inverse()), false);
     }
 
     public static FlippablePose2d calculateClosestScoringPose(boolean shouldOnlyCheckOpenBranches, FieldConstants.ReefClockPosition[] reefClockPositions) {
