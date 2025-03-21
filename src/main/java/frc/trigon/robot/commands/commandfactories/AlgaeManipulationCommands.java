@@ -31,7 +31,7 @@ public class AlgaeManipulationCommands {
                 CoralCollectionCommands.getUnloadCoralCommand().asProxy(),
                 getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_LOLLIPOP).asProxy().until(() -> OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean() || OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean()),
                 getScoreAlgaeCommand().asProxy()
-        ).raceWith(getNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
+        ).raceWith(getScoreNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
     }
 
     public static Command getCollectAlgaeFromReefCommand() {
@@ -42,14 +42,14 @@ public class AlgaeManipulationCommands {
                 ).raceWith(
                         new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition)
                 ).repeatedly()
-        ).raceWith(getNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
+        ).raceWith(getScoreNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
     }
 
     private static void reloadAfterScore() {
         new WaitUntilCommand(() -> RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.REST)).andThen(CoralCollectionCommands.getLoadCoralCommand().asProxy()).schedule();
     }
 
-    private static Command getNetEndingConditionCommand() {
+    private static Command getScoreNetEndingConditionCommand() {
         return new WaitUntilCommand(() -> OperatorConstants.CONTINUE_TRIGGER.getAsBoolean() && RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_NET)).andThen(new WaitCommand(0.5));
     }
 
@@ -122,7 +122,7 @@ public class AlgaeManipulationCommands {
     private static Command getAlignToReefCommand() {
         return new SequentialCommandGroup(
                 SwerveCommands.getDriveToPoseCommand(
-                        () -> new FlippablePose2d(calculateReefAlgaeCollectionPose(), false),
+                        AlgaeManipulationCommands::calculateClosestAlgaeCollectionPose,
                         PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
                 ),
                 SwerveCommands.getClosedLoopSelfRelativeDriveCommand(

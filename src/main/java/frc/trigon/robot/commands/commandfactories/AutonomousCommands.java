@@ -94,13 +94,13 @@ public class AutonomousCommands {
 
     public static Command getDriveToReefAndScoreCommand() {
         return new ParallelCommandGroup(
-                SwerveCommands.getDriveToPoseCommand(() -> CoralPlacingCommands.calculateClosestScoringPose(true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed),
+//                SwerveCommands.getDriveToPoseCommand(() -> CoralPlacingCommands.calculateClosestScoringPose(true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed),
                 getCoralSequenceCommand()
         );
     }
 
     public static Command getDriveToReefAndScoreCommand(FieldConstants.ReefClockPosition[] reefClockPositions) {
-        return new ParallelCommandGroup(
+        return new ParallelCommandGroup(//TODO: fix to use custom and not CoralPlacingCommands
                 SwerveCommands.getDriveToPoseCommand(() -> CoralPlacingCommands.calculateClosestScoringPose(true, reefClockPositions), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed),
                 getCoralSequenceCommand()
         );
@@ -125,7 +125,7 @@ public class AutonomousCommands {
     private static boolean canFeed() {
         return RobotContainer.ELEVATOR.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().elevatorState) &&
                 RobotContainer.GRIPPER.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().gripperState) &&
-                RobotContainer.SWERVE.atPose(CoralPlacingCommands.calculateClosestScoringPose(true));
+                RobotContainer.SWERVE.atPose(CoralPlacingCommands.calculateClosestScoringPose());
     }
 
     public static Command getPrepareForScoreCommand() {
@@ -144,7 +144,7 @@ public class AutonomousCommands {
 
     private static double calculateDistanceToTargetScoringPose() {
         final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
-        final Translation2d targetTranslation = CoralPlacingCommands.calculateClosestScoringPose(true).get().getTranslation();
+        final Translation2d targetTranslation = CoralPlacingCommands.calculateClosestScoringPose().get().getTranslation();
         return currentTranslation.getDistance(targetTranslation);
     }
 
