@@ -8,24 +8,24 @@
       },
       "prevControl": null,
       "nextControl": {
-        "x": 2.4086255052773407,
-        "y": 6.642425050527734
+        "x": 3.2200124915787107,
+        "y": 6.792681899842803
       },
       "isLocked": false,
       "linkedName": "TwoL4CoralsFromFeeder2"
     },
     {
       "anchor": {
-        "x": 3.69,
-        "y": 5.07
+        "x": 3.99,
+        "y": 5.24
       },
       "prevControl": {
-        "x": 3.0438955479452052,
-        "y": 5.926464041095891
+        "x": 3.2086643835616435,
+        "y": 6.291797945205479
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "TwoL4CoralsFromFeeder3"
+      "linkedName": "TwoL4CoralsFromFeeder5"
     }
   ],
   "rotationTargets": [],
@@ -47,8 +47,8 @@
   "globalConstraints": {
     "maxVelocity": 2.5,
     "maxAcceleration": 4.0,
-    "maxAngularVelocity": 400.0,
-    "maxAngularAcceleration": 400.0,
+    "maxAngularVelocity": 450.0,
+    "maxAngularAcceleration": 900.0,
     "nominalVoltage": 12.0,
     "unlimited": false
   },

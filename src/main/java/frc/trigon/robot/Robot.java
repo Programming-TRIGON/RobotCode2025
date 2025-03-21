@@ -73,6 +73,9 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void autonomousPeriodic() {
+        if (autonomousCommand.getName().contains("Floor"))
+            return;
+
         if (!RobotContainer.SWERVE.isPathPlannerDriving) {
 //            if (!RobotContainer.SWERVE.atPose(new FlippablePose2d(RobotContainer.SWERVE.targetPathPlannerPose, false)))
             RobotContainer.SWERVE.drivePathPlanner(new ChassisSpeeds(), false);

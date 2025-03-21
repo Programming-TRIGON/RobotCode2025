@@ -51,6 +51,10 @@ public class SimulatedGamePiece {
         return fieldRelativePose.minus(pose).getTranslation().getNorm();
     }
 
+    public boolean isScored() {
+        return isScored;
+    }
+
     private void applyGravity() {
         if (poseAtRelease == null)
             return;
