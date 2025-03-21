@@ -46,7 +46,7 @@ public class AlgaeManipulationCommands {
     }
 
     private static void reloadAfterScore() {
-        new WaitUntilCommand(() -> RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.REST)).andThen(CoralCollectionCommands.getLoadCoralCommand().asProxy()).schedule();
+        new WaitUntilCommand(() -> RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.REST)).andThen(CoralCollectionCommands.getLoadCoralCommand().asProxy()).onlyIf(() -> RobotContainer.CORAL_INTAKE.hasGamePiece() && REEF_CHOOSER.getScoringLevel() != CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE).schedule();
     }
 
     private static Command getScoreNetEndingConditionCommand() {
