@@ -114,7 +114,7 @@ public class CoralPlacingCommands {
 
     public static FlippablePose2d calculateTargetScoringPose() {
         if (OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean())
-            return calculateClosestScoringPose(true);
+            return calculateClosestScoringPose(false);
         return REEF_CHOOSER.calculateTargetScoringPose();
     }
 

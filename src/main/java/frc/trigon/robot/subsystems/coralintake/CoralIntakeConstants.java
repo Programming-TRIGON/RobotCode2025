@@ -162,7 +162,7 @@ public class CoralIntakeConstants {
     static final double
             PULSING_ON_PERIOD_SECONDS = 0.2,
             PULSING_OFF_PERIOD_SECONDS = 0.1,
-            PULSING_INTAKE_MOTOR_VOLTAGE = 10,
+            PULSING_INTAKE_MOTOR_VOLTAGE = 8,
             PULSING_FUNNEL_MOTOR_VOLTAGE = CoralIntakeState.COLLECT_FROM_FLOOR.targetFunnelVoltage,
             PULSING_ANGLE_DEGREES = 90;
 
@@ -243,6 +243,8 @@ public class CoralIntakeConstants {
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Rotation2d.fromDegrees(145).minus(Rotation2d.fromRotations(ANGLE_ENCODER_POSITION_OFFSET_VALUE)).getRotations();
 
+        config.CurrentLimits.SupplyCurrentLimit = 60;
+
         config.Feedback.VelocityFilterTimeConstant = 0;
 
         ANGLE_MOTOR.applyConfiguration(config);
@@ -285,7 +287,7 @@ public class CoralIntakeConstants {
         LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
         UNLOAD_CORAL_FROM_GRIPPER(6, 2, Rotation2d.fromDegrees(141)),
         CENTER_CORAL(8, 2, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
-        COLLECT_FROM_FLOOR(9, 4, Rotation2d.fromDegrees(-46)),
+        COLLECT_FROM_FLOOR(7, 4, Rotation2d.fromDegrees(-46)),
         COLLECT_FROM_FEEDER(6, COLLECT_FROM_FLOOR.targetFunnelVoltage, Rotation2d.fromDegrees(90)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
         REST(0, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),

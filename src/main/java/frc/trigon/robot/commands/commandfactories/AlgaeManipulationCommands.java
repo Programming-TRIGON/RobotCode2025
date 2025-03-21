@@ -7,6 +7,7 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.CommandConstants;
+import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
@@ -30,7 +31,7 @@ public class AlgaeManipulationCommands {
                 CoralCollectionCommands.getUnloadCoralCommand().asProxy(),
                 getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_LOLLIPOP).asProxy().until(() -> OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean() || OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean()),
                 getScoreAlgaeCommand().asProxy()
-        ).raceWith(getEndingConditionCommand());
+        ).raceWith(getNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
     }
 
     public static Command getCollectAlgaeFromReefCommand() {
@@ -38,12 +39,18 @@ public class AlgaeManipulationCommands {
                 new ParallelCommandGroup(
                         getCollectAlgaeFromReefManuallyCommand().asProxy(),
                         getAlignToReefCommand().onlyIf(() -> SHOULD_ALIGN_TO_REEF && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()).asProxy()
-                )
-        ).raceWith(getEndingConditionCommand());
+                ).raceWith(
+                        new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition)
+                ).repeatedly()
+        ).raceWith(getNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
     }
 
-    private static Command getEndingConditionCommand() {
-        return new WaitUntilCommand(OperatorConstants.CONTINUE_TRIGGER).andThen(new WaitCommand(1));
+    private static void reloadAfterScore() {
+        new WaitUntilCommand(() -> RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.REST)).andThen(CoralCollectionCommands.getLoadCoralCommand().asProxy()).schedule();
+    }
+
+    private static Command getNetEndingConditionCommand() {
+        return new WaitUntilCommand(() -> OperatorConstants.CONTINUE_TRIGGER.getAsBoolean() && RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_NET)).andThen(new WaitCommand(0.5));
     }
 
     private static Command getCollectAlgaeFromReefManuallyCommand() {
@@ -93,7 +100,7 @@ public class AlgaeManipulationCommands {
                         () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
                         () -> new FlippableRotation2d(Rotation2d.k180deg, true)
                 ).asProxy()
-        ).withTimeout(1.5);
+        );
     }
 
     private static Command getScoreInProcessorCommand() {
@@ -115,7 +122,7 @@ public class AlgaeManipulationCommands {
     private static Command getAlignToReefCommand() {
         return new SequentialCommandGroup(
                 SwerveCommands.getDriveToPoseCommand(
-                        AlgaeManipulationCommands::calculateClosestAlgaeCollectionPose,
+                        () -> new FlippablePose2d(calculateReefAlgaeCollectionPose(), false),
                         PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
                 ),
                 SwerveCommands.getClosedLoopSelfRelativeDriveCommand(

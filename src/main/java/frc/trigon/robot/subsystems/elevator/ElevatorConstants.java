@@ -153,7 +153,7 @@ public class ElevatorConstants {
         REST(0, 0.7),
         SCORE_L1(0, 1),
         SCORE_L2(0, 1),
-        SCORE_L3(0.42, 1),
+        SCORE_L3(0.4, 1),
         SCORE_L4(1.045, 1),
         COLLECT_ALGAE_FROM_L3(0.35, 1),
         REST_WITH_ALGAE(0, 0.3),
