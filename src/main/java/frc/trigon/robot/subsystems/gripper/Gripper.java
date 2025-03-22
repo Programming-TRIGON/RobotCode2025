@@ -151,16 +151,10 @@ public class Gripper extends MotorSubsystem {
     }
 
     void setTargetState(Rotation2d targetAngle, double targetGrippingVoltage) {
-        scalePositionRequestSpeed(targetState.speedScalar);
         positionRequest.Slot = 0;
+        scalePositionRequestSpeed(targetState.speedScalar);
         setTargetAngle(targetAngle);
         setTargetVoltage(targetGrippingVoltage);
-    }
-
-    private void scalePositionRequestSpeed(double speedScalar) {
-        positionRequest.Velocity = GripperConstants.DEFAULT_MAXIMUM_VELOCITY * speedScalar;
-        positionRequest.Acceleration = GripperConstants.DEFAULT_MAXIMUM_ACCELERATION * speedScalar;
-        positionRequest.Jerk = positionRequest.Acceleration * 10;
     }
 
     void setTargetStateWithCurrent(Rotation2d targetAngle, double targetGrippingCurrent) {
@@ -168,6 +162,12 @@ public class Gripper extends MotorSubsystem {
         scalePositionRequestSpeed(targetState.speedScalar);
         setTargetAngle(targetAngle);
         grippingMotor.setControl(torqueCurrentRequest.withOutput(targetGrippingCurrent));
+    }
+
+    private void scalePositionRequestSpeed(double speedScalar) {
+        positionRequest.Velocity = GripperConstants.DEFAULT_MAXIMUM_VELOCITY * speedScalar;
+        positionRequest.Acceleration = GripperConstants.DEFAULT_MAXIMUM_ACCELERATION * speedScalar;
+        positionRequest.Jerk = positionRequest.Acceleration * 10;
     }
 
     private void setTargetAngle(Rotation2d targetAngle) {
