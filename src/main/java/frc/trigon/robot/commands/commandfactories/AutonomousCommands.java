@@ -79,8 +79,8 @@ public class AutonomousCommands {
                             CameraConstants.OBJECT_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL);
                             Logger.recordOutput("Distance", CoralAutoDriveCommand.calculateDistanceFromTrackedCoral());
                         })
-                ).withTimeout(3).repeatedly()
-        );
+                ).withTimeout(3)
+        ).repeatedly();
     }
 
     public static Command getFindCoralCommand(boolean isRight) {
