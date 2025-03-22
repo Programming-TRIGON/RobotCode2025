@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.CommandConstants;
-import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
@@ -35,14 +34,12 @@ public class AlgaeManipulationCommands {
     }
 
     public static Command getCollectAlgaeFromReefCommand() {
-        return CoralCollectionCommands.getUnloadCoralCommand().asProxy().andThen(
-                new ParallelCommandGroup(
-                        getCollectAlgaeFromReefManuallyCommand().asProxy(),
-                        getAlignToReefCommand().onlyIf(() -> SHOULD_ALIGN_TO_REEF && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()).asProxy()
-                ).raceWith(
-                        new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition)
-                ).repeatedly()
-        ).raceWith(getScoreNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
+        return new SequentialCommandGroup(
+                CoralCollectionCommands.getUnloadCoralCommand().asProxy(),
+                getCollectAlgaeFromReefManuallyCommand().asProxy()
+        )
+                .alongWith(getAlignToReefCommand().onlyIf(() -> SHOULD_ALIGN_TO_REEF && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()).asProxy())
+                .raceWith(getScoreNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
     }
 
     private static void reloadAfterScore() {
