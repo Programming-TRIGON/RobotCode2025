@@ -46,7 +46,7 @@ public class GripperConstants {
 
     static final double ANGLE_MOTOR_GEAR_RATIO = 20.5;
     private static final double GRIPPING_MOTOR_GEAR_RATIO = 4;
-    private static final double ANGLE_ENCODER_GRAVITY_OFFSET = -0.12331 + Conversions.degreesToRotations(60) - 0.063537;
+    private static final double ANGLE_ENCODER_GRAVITY_OFFSET = -0.12331 + 0.10867 + Conversions.degreesToRotations(60) - 0.063537;
     static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = RobotHardwareStats.isSimulation() ? 0 : -0.044444 + Conversions.degreesToRotations(60) - ANGLE_ENCODER_GRAVITY_OFFSET;
     static final double
             DEFAULT_MAXIMUM_VELOCITY = RobotHardwareStats.isSimulation() ? 5 : 6,
@@ -172,10 +172,10 @@ public class GripperConstants {
         config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 60;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
         config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 3;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.31291;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 1.6;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.31059;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 1.4312;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0 : 0.39472;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0 : 0.44675;
 
         config.Slot1.kP = RobotHardwareStats.isSimulation() ? 100 : 35;
         config.Slot1.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
