@@ -3,6 +3,8 @@ package frc.trigon.robot.commands.commandfactories;
 import com.pathplanner.lib.commands.PathPlannerAuto;
 import com.pathplanner.lib.path.PathConstraints;
 import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Transform2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
@@ -24,6 +26,7 @@ import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.utilities.flippable.FlippablePose2d;
+import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 import java.io.IOException;
 import java.util.function.Supplier;
@@ -94,14 +97,14 @@ public class AutonomousCommands {
 
     public static Command getDriveToReefAndScoreCommand() {
         return new ParallelCommandGroup(
-//                SwerveCommands.getDriveToPoseCommand(() -> CoralPlacingCommands.calculateClosestScoringPose(true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed),
+                SwerveCommands.getDriveToPoseCommand(() -> calculateClosestScoringPose(true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed),
                 getCoralSequenceCommand()
         );
     }
 
     public static Command getDriveToReefAndScoreCommand(FieldConstants.ReefClockPosition[] reefClockPositions) {
-        return new ParallelCommandGroup(//TODO: fix to use custom and not CoralPlacingCommands
-                SwerveCommands.getDriveToPoseCommand(() -> CoralPlacingCommands.calculateClosestScoringPose(true, reefClockPositions), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed),
+        return new ParallelCommandGroup(
+                SwerveCommands.getDriveToPoseCommand(() -> calculateClosestScoringPose(true, reefClockPositions), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed),
                 getCoralSequenceCommand()
         );
     }
@@ -122,30 +125,11 @@ public class AutonomousCommands {
         );
     }
 
-    private static boolean canFeed() {
-        return RobotContainer.ELEVATOR.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().elevatorState) &&
-                RobotContainer.GRIPPER.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().gripperState) &&
-                RobotContainer.SWERVE.atPose(CoralPlacingCommands.calculateClosestScoringPose());
-    }
-
     public static Command getPrepareForScoreCommand() {
         return new ParallelCommandGroup(
-                getOpenElevatorWhenCloseToReefCommand(),
+                ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
                 GripperCommands.getPrepareForStateCommand(OperatorConstants.REEF_CHOOSER.getScoringLevel().gripperState)
         );
-    }
-
-    private static Command getOpenElevatorWhenCloseToReefCommand() {
-        return GeneralCommands.runWhen(
-                ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
-                () -> true
-        );
-    }
-
-    private static double calculateDistanceToTargetScoringPose() {
-        final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
-        final Translation2d targetTranslation = CoralPlacingCommands.calculateClosestScoringPose().get().getTranslation();
-        return currentTranslation.getDistance(targetTranslation);
     }
 
     public static Command getFeedCoralCommand() {
@@ -154,6 +138,16 @@ public class AutonomousCommands {
                 GripperCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getGripperState()),
                 CoralPlacingCommands.getAddCurrentScoringBranchToScoredBranchesCommand()
         ).withTimeout(0.25);
+    }
+
+    public static Command getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
+        return new SequentialCommandGroup(
+                getPrepareForScoringInReefFromGripperCommand(scoringLevel)
+                        .unless(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState) && RobotContainer.GRIPPER.atState(scoringLevel.gripperState))
+                        .until(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState) && RobotContainer.GRIPPER.atState(scoringLevel.gripperState)),
+                new WaitCommand(0.1),
+                GripperCommands.getSetTargetStateCommand(scoringLevel.gripperState).withTimeout(0.6)
+        );
     }
 
     public static Command getPrepareForScoringInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
@@ -166,14 +160,67 @@ public class AutonomousCommands {
         );
     }
 
-    public static Command getScoreInReefFromGripperCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
-        return new SequentialCommandGroup(
-                getPrepareForScoringInReefFromGripperCommand(scoringLevel)
-                        .unless(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState) && RobotContainer.GRIPPER.atState(scoringLevel.gripperState))
-                        .until(() -> RobotContainer.ELEVATOR.atState(scoringLevel.elevatorState) && RobotContainer.GRIPPER.atState(scoringLevel.gripperState)),
-                new WaitCommand(0.1),
-                GripperCommands.getSetTargetStateCommand(scoringLevel.gripperState).withTimeout(0.6)
-        );
+    public static FlippablePose2d calculateClosestScoringPose(boolean shouldOnlyCheckOpenBranches) {
+        final FieldConstants.ReefClockPosition[] reefClockPositions = FieldConstants.ReefClockPosition.values();
+        final Translation2d robotPositionOnField = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
+        final Translation2d reefCenterPosition = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
+        final Transform2d
+                reefCenterToRightBranchScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d()),
+                reefCenterToLeftBranchScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, -FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d());
+
+        double distanceFromClosestScoringPoseMeters = Double.POSITIVE_INFINITY;
+        Pose2d closestScoringPose = new Pose2d();
+        for (int i = 0; i < reefClockPositions.length; i++) {
+            final FieldConstants.ReefClockPosition targetReefPosition = reefClockPositions[i];
+            final Pose2d reefCenterAtTargetRotation = new Pose2d(reefCenterPosition, targetReefPosition.clockAngle);
+            for (int j = 0; j < 2; j++) {
+                if (CoralPlacingCommands.getScoredBranchesAtCurrentLevel()[targetReefPosition.ordinal() * 2 + j] && shouldOnlyCheckOpenBranches)
+                    continue;
+
+                final Pose2d currentScoringPose = reefCenterAtTargetRotation.transformBy(j == 0 ? reefCenterToRightBranchScoringPose : reefCenterToLeftBranchScoringPose);
+                final double distanceFromCurrentScoringPoseMeters = currentScoringPose.getTranslation().getDistance(robotPositionOnField);
+                if (distanceFromCurrentScoringPoseMeters < distanceFromClosestScoringPoseMeters) {
+                    distanceFromClosestScoringPoseMeters = distanceFromCurrentScoringPoseMeters;
+                    closestScoringPose = currentScoringPose;
+                }
+            }
+        }
+
+        return new FlippablePose2d(closestScoringPose, false);
+    }
+
+    public static FlippablePose2d calculateClosestScoringPose(boolean shouldOnlyCheckOpenBranches, FieldConstants.ReefClockPosition[] reefClockPositions) {
+        final Translation2d robotPositionOnField = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
+        final Translation2d reefCenterPosition = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
+        final Transform2d
+                reefCenterToRightBranchScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d()),
+                reefCenterToLeftBranchScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, -FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d());
+
+        double distanceFromClosestScoringPoseMeters = Double.POSITIVE_INFINITY;
+        Pose2d closestScoringPose = new Pose2d();
+        for (int i = 0; i < reefClockPositions.length; i++) {
+            final FieldConstants.ReefClockPosition targetReefPosition = reefClockPositions[i];
+            final Pose2d reefCenterAtTargetRotation = new Pose2d(reefCenterPosition, targetReefPosition.clockAngle);
+            for (int j = 0; j < 2; j++) {
+                if (CoralPlacingCommands.getScoredBranchesAtCurrentLevel()[targetReefPosition.ordinal() * 2 + j] && shouldOnlyCheckOpenBranches)
+                    continue;
+
+                final Pose2d currentScoringPose = reefCenterAtTargetRotation.transformBy(j == 0 ? reefCenterToRightBranchScoringPose : reefCenterToLeftBranchScoringPose);
+                final double distanceFromCurrentScoringPoseMeters = currentScoringPose.getTranslation().getDistance(robotPositionOnField);
+                if (distanceFromCurrentScoringPoseMeters < distanceFromClosestScoringPoseMeters) {
+                    distanceFromClosestScoringPoseMeters = distanceFromCurrentScoringPoseMeters;
+                    closestScoringPose = currentScoringPose;
+                }
+            }
+        }
+
+        return new FlippablePose2d(closestScoringPose, false);
+    }
+
+    private static boolean canFeed() {
+        return RobotContainer.ELEVATOR.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().elevatorState) &&
+                RobotContainer.GRIPPER.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().gripperState) &&
+                RobotContainer.SWERVE.atPose(CoralPlacingCommands.calculateClosestScoringPose());
     }
 
     private static Command getGripperScoringSequenceCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
