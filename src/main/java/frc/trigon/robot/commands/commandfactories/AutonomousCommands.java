@@ -220,7 +220,7 @@ public class AutonomousCommands {
     private static boolean canFeed() {
         return RobotContainer.ELEVATOR.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().elevatorState) &&
                 RobotContainer.GRIPPER.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().gripperState) &&
-                RobotContainer.SWERVE.atPose(CoralPlacingCommands.calculateClosestScoringPose());
+                RobotContainer.SWERVE.atPose(calculateClosestScoringPose(false));
     }
 
     private static Command getGripperScoringSequenceCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
