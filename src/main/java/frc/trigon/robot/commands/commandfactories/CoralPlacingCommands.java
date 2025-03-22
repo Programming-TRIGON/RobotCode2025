@@ -171,7 +171,7 @@ public class CoralPlacingCommands {
     public static Command getAddCurrentScoringBranchToScoredBranchesCommand() {
         return new InstantCommand(
                 () -> {
-                    final int branchNumber = getBranchNumberFromScoringPose(AutonomousCommands.calculateClosestScoringPose(false).get());
+                    final int branchNumber = getBranchNumberFromScoringPose(AutonomousCommands.calculateClosestScoringPose(false, false).get());
                     switch (REEF_CHOOSER.getScoringLevel().level) {
                         case 2:
                             SCORED_L2S[branchNumber].set(true);
