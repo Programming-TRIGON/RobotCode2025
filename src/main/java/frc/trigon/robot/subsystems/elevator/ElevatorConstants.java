@@ -79,7 +79,7 @@ public class ElevatorConstants {
     static final double
             GRIPPER_HITTING_ELEVATOR_BASE_LOWER_BOUND_POSITION_ROTATIONS = 0.29,
             GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS = 0.7,
-            GRIPPER_HITTING_ALGAE_UPPER_BOUND_POSITION_ROTATIONS = 1;
+            GRIPPER_HITTING_ALGAE_UPPER_BOUND_POSITION_ROTATIONS = 0.6;
 
     static {
         configureMasterMotor();
