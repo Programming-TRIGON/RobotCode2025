@@ -40,7 +40,6 @@ public class CoralPlacingCommands {
 
     private static Command getWaitUntilScoringTargetChangesCommand() {
         return new ParallelRaceGroup(
-                new WaitUntilChangeCommand<>(REEF_CHOOSER::getScoringLevel),
                 new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition),
                 new WaitUntilChangeCommand<>(REEF_CHOOSER::getReefSide),
                 new WaitUntilChangeCommand<>(OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER::getAsBoolean)
@@ -52,7 +51,7 @@ public class CoralPlacingCommands {
                 getAutonomouslyScoreInReefFromGripperCommand().asProxy(),
                 getManuallyScoreInReefFromGripperCommand().asProxy(),
                 () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.LEFT_MULTIFUNCTION_TRIGGER.getAsBoolean() && REEF_CHOOSER.getScoringLevel() != ScoringLevel.L1_GRIPPER
-        );
+        ).until(() -> REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_CORAL_INTAKE);
     }
 
     private static Command getCoralIntakeScoringSequenceCommand() {
@@ -61,13 +60,13 @@ public class CoralPlacingCommands {
                 CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1).until(CoralPlacingCommands::canContinueScoringFromCoralIntake),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1_BOOST).withTimeout(0.5),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1)
-        );
+        ).until(() -> REEF_CHOOSER.getScoringLevel() != ScoringLevel.L1_CORAL_INTAKE);
     }
 
     private static Command getManuallyScoreInReefFromGripperCommand() {
         return CoralCollectionCommands.getLoadCoralCommand().asProxy().andThen(
                 new ParallelCommandGroup(
-                        ElevatorCommands.getSetTargetStateCommand(REEF_CHOOSER::getElevatorState),
+                        ElevatorCommands.getSetTargetStateCommand(REEF_CHOOSER::getElevatorState).raceWith(new WaitUntilChangeCommand<>(REEF_CHOOSER::getElevatorState)).repeatedly(),
                         getGripperScoringSequenceCommand()
                 ).asProxy()
         );
@@ -77,7 +76,7 @@ public class CoralPlacingCommands {
         return new ParallelCommandGroup(
                 CoralCollectionCommands.getLoadCoralCommand().asProxy().andThen(
                         new ParallelCommandGroup(
-                                getOpenElevatorWhenCloseToReefCommand(),
+                                getOpenElevatorWhenCloseToReefCommand().raceWith(new WaitUntilChangeCommand<>(REEF_CHOOSER::getElevatorState)).repeatedly(),
                                 getGripperScoringSequenceCommand()
                         ).asProxy()
                 ),
