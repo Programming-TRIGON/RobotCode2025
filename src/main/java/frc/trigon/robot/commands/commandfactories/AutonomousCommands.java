@@ -33,11 +33,11 @@ import java.util.function.Supplier;
  */
 public class AutonomousCommands {
     public static Command getFloorAutonomousCommand(boolean isRight) {
-        return getCycleCoralCommand(isRight).repeatedly();
+        return getCycleCoralCommand(isRight).repeatedly().withName("FloorAutonomous" + (isRight ? "Right" : "Left"));
     }
 
     public static Command getFloorAutonomousCommand(boolean isRight, FieldConstants.ReefClockPosition[] reefClockPositions) {
-        return getCycleCoralCommand(isRight, reefClockPositions).repeatedly();
+        return getCycleCoralCommand(isRight, reefClockPositions).repeatedly().withName("FloorAutonomous" + (isRight ? "Right" : "Left") + "4Branches");
     }
 
     public static Command getCycleCoralCommand(boolean isRight) {
