@@ -23,7 +23,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
     private static final double AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS = 2.2;
     private static final PIDController Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new PIDController(0.5, 0, 0) :
-            new PIDController(0.4, 0, 0.03);
+            new PIDController(0.3, 0, 0.03);
     private static final ProfiledPIDController X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(0.5, 0.5)) :
             new ProfiledPIDController(0.7, 0, 0, new TrapezoidProfile.Constraints(0.7, 2));

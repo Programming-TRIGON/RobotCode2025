@@ -53,7 +53,7 @@ public class CoralPlacingCommands {
         return new SequentialCommandGroup(
                 CoralCollectionCommands.getUnloadCoralCommand(),
                 CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1).until(CoralPlacingCommands::canContinueScoringFromCoralIntake),
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1_BOOST).withTimeout(0.08),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1_BOOST).withTimeout(0.05),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1)
         ).until(() -> REEF_CHOOSER.getScoringLevel() != ScoringLevel.L1_CORAL_INTAKE);
     }

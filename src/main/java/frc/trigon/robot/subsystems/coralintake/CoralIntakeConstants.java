@@ -291,8 +291,8 @@ public class CoralIntakeConstants {
         COLLECT_FROM_FEEDER(6, COLLECT_FROM_FLOOR.targetFunnelVoltage, Rotation2d.fromDegrees(90)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
         REST(0, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
-        SCORE_L1_BOOST(-3, -3, Rotation2d.fromDegrees(36)),
-        SCORE_L1(-1, 3, Rotation2d.fromDegrees(36)),
+        SCORE_L1_BOOST(-4, -3, Rotation2d.fromDegrees(30)),
+        SCORE_L1(-2, 3, Rotation2d.fromDegrees(30)),
         COLLECT_ALGAE_FROM_FLOOR(-6, 0, Rotation2d.fromDegrees(-40));
 
         public final double
