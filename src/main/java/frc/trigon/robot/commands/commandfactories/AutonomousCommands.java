@@ -26,8 +26,8 @@ import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 import org.trigon.utilities.flippable.FlippablePose2d;
-import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 import java.io.IOException;
 import java.util.function.Supplier;
@@ -36,19 +36,15 @@ import java.util.function.Supplier;
  * A class that contains command factories for preparation commands and commands used during the 15-second autonomous period at the start of each match.
  */
 public class AutonomousCommands {
+    public static final LoggedNetworkBoolean[] SCORED_L4S = getEmptyL4LoggedNetworkBooleanArray();
+    private static FlippablePose2d TARGET_SCORING_POSE = null;
+
     public static Command getFloorAutonomousCommand(boolean isRight) {
-        return getCycleCoralCommand(isRight).repeatedly().withName("FloorAutonomous" + (isRight ? "Right" : "Left"));
+        return getFloorAutonomousCommand(isRight, FieldConstants.ReefClockPosition.values());
     }
 
     public static Command getFloorAutonomousCommand(boolean isRight, FieldConstants.ReefClockPosition[] reefClockPositions) {
-        return getCycleCoralCommand(isRight, reefClockPositions).repeatedly().withName("FloorAutonomous" + (isRight ? "Right" : "Left") + "4Branches");
-    }
-
-    public static Command getCycleCoralCommand(boolean isRight) {
-        return new SequentialCommandGroup(
-                getDriveToReefAndScoreCommand(),
-                getCollectCoralCommand(isRight)
-        );
+        return getCycleCoralCommand(isRight, reefClockPositions).repeatedly().withName("FloorAutonomous" + (isRight ? "Right" : "Left") + (reefClockPositions.length * 2) + "Branches");
     }
 
     public static Command getCycleCoralCommand(boolean isRight, FieldConstants.ReefClockPosition[] reefClockPositions) {
@@ -96,13 +92,6 @@ public class AutonomousCommands {
         );
     }
 
-    public static Command getDriveToReefAndScoreCommand() {
-        return new ParallelCommandGroup(
-                getDriveToReefWithoutHittingAlgaeCommand(),
-                getCoralSequenceCommand()
-        );
-    }
-
     public static Command getDriveToReefAndScoreCommand(FieldConstants.ReefClockPosition[] reefClockPositions) {
         return new ParallelCommandGroup(
                 getDriveToReefWithoutHittingAlgaeCommand(reefClockPositions),
@@ -110,18 +99,13 @@ public class AutonomousCommands {
         );
     }
 
-    public static Command getDriveToReefWithoutHittingAlgaeCommand() {
-        return SwerveCommands.getDriveToPoseCommand(() -> calculateClosestScoringPose(true, true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS)
-                .repeatedly().until(RobotContainer.ELEVATOR::isElevatorOverAlgaeHitRange).andThen(
-                        SwerveCommands.getDriveToPoseCommand(() -> calculateClosestScoringPose(true, false), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed)
-                );
-    }
-
     public static Command getDriveToReefWithoutHittingAlgaeCommand(FieldConstants.ReefClockPosition[] reefClockPositions) {
-        return SwerveCommands.getDriveToPoseCommand(() -> calculateClosestScoringPose(true, reefClockPositions, true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS)
-                .repeatedly().until(RobotContainer.ELEVATOR::isElevatorOverAlgaeHitRange).andThen(
-                        SwerveCommands.getDriveToPoseCommand(() -> calculateClosestScoringPose(true, reefClockPositions, false), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed)
-                );
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> TARGET_SCORING_POSE = calculateClosestScoringPose(true, reefClockPositions, false)),
+                new WaitUntilCommand(() -> TARGET_SCORING_POSE != null),
+                SwerveCommands.getDriveToPoseCommand(() -> calculateClosestScoringPose(true, reefClockPositions, true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(RobotContainer.ELEVATOR::isElevatorOverAlgaeHitRange),
+                SwerveCommands.getDriveToPoseCommand(() -> TARGET_SCORING_POSE, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed)
+        );
     }
 
     public static Command getCoralSequenceCommand() {
@@ -151,7 +135,7 @@ public class AutonomousCommands {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
                 GripperCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getGripperState()),
-                CoralPlacingCommands.getAddCurrentScoringBranchToScoredBranchesCommand()
+                getAddCurrentScoringBranchToScoredBranchesCommand()
         ).withTimeout(0.25);
     }
 
@@ -175,68 +159,36 @@ public class AutonomousCommands {
         );
     }
 
-    public static FlippablePose2d calculateClosestScoringPose(boolean shouldOnlyCheckOpenBranches, boolean shouldStayBehindAlgae) {
-        final FieldConstants.ReefClockPosition[] reefClockPositions = FieldConstants.ReefClockPosition.values();
-        final Translation2d robotPositionOnField = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
-        final Translation2d reefCenterPosition = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
-        final Transform2d
-                reefCenterToRightBranchScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS + (shouldStayBehindAlgae ? 0 : 0.05), FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d()),
-                reefCenterToLeftBranchScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS + (shouldStayBehindAlgae ? 0 : 0.05), -FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d());
-
-        double distanceFromClosestScoringPoseMeters = Double.POSITIVE_INFINITY;
-        Pose2d closestScoringPose = new Pose2d();
-        for (int i = 0; i < reefClockPositions.length; i++) {
-            final FieldConstants.ReefClockPosition targetReefPosition = reefClockPositions[i];
-            final Pose2d reefCenterAtTargetRotation = new Pose2d(reefCenterPosition, targetReefPosition.clockAngle);
-            for (int j = 0; j < 2; j++) {
-                if (CoralPlacingCommands.getScoredBranchesAtCurrentLevel()[targetReefPosition.ordinal() * 2 + j] && shouldOnlyCheckOpenBranches)
-                    continue;
-
-                final Pose2d currentScoringPose = reefCenterAtTargetRotation.transformBy(j == 0 ? reefCenterToRightBranchScoringPose : reefCenterToLeftBranchScoringPose);
-                final double distanceFromCurrentScoringPoseMeters = currentScoringPose.getTranslation().getDistance(robotPositionOnField);
-                if (distanceFromCurrentScoringPoseMeters < distanceFromClosestScoringPoseMeters) {
-                    distanceFromClosestScoringPoseMeters = distanceFromCurrentScoringPoseMeters;
-                    closestScoringPose = currentScoringPose;
-                }
-            }
-        }
-
-        return new FlippablePose2d(closestScoringPose, false);
-    }
-
     public static FlippablePose2d calculateClosestScoringPose(boolean shouldOnlyCheckOpenBranches, FieldConstants.ReefClockPosition[] reefClockPositions, boolean shouldStayBehindAlgae) {
-        final Translation2d robotPositionOnField = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
-        final Translation2d reefCenterPosition = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
-        final Transform2d
-                reefCenterToRightBranchScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS + (shouldStayBehindAlgae ? 0 : 0.05), FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d()),
-                reefCenterToLeftBranchScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS + (shouldStayBehindAlgae ? 0 : 0.05), -FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d());
+        final boolean[] scoredBranchesAtL4 = getScoredBranchesAtL4();
+        final Pose2d currentRobotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
 
-        double distanceFromClosestScoringPoseMeters = Double.POSITIVE_INFINITY;
-        Pose2d closestScoringPose = new Pose2d();
-        for (int i = 0; i < reefClockPositions.length; i++) {
-            final FieldConstants.ReefClockPosition targetReefPosition = reefClockPositions[i];
-            final Pose2d reefCenterAtTargetRotation = new Pose2d(reefCenterPosition, targetReefPosition.clockAngle);
-            for (int j = 0; j < 2; j++) {
-                if (CoralPlacingCommands.getScoredBranchesAtCurrentLevel()[targetReefPosition.ordinal() * 2 + j] && shouldOnlyCheckOpenBranches)
+        double closestDistance = Double.POSITIVE_INFINITY;
+        Pose2d closestScoringPose = null;
+        for (FieldConstants.ReefClockPosition currentClockPosition : reefClockPositions) {
+            for (FieldConstants.ReefSide currentSide : FieldConstants.ReefSide.values()) {
+                if (shouldOnlyCheckOpenBranches && scoredBranchesAtL4[currentClockPosition.ordinal() * 2 + currentSide.ordinal()])
                     continue;
-
-                final Pose2d currentScoringPose = reefCenterAtTargetRotation.transformBy(j == 0 ? reefCenterToRightBranchScoringPose : reefCenterToLeftBranchScoringPose);
-                final double distanceFromCurrentScoringPoseMeters = currentScoringPose.getTranslation().getDistance(robotPositionOnField);
-                if (distanceFromCurrentScoringPoseMeters < distanceFromClosestScoringPoseMeters) {
-                    distanceFromClosestScoringPoseMeters = distanceFromCurrentScoringPoseMeters;
-                    closestScoringPose = currentScoringPose;
+                final Pose2d reefSideScoringPose = CoralPlacingCommands.ScoringLevel.L4.calculateTargetPlacingPosition(currentClockPosition, currentSide).get();
+                final double distance = currentRobotPose.getTranslation().getDistance(reefSideScoringPose.getTranslation());
+                if (distance < closestDistance) {
+                    closestDistance = distance;
+                    if (shouldStayBehindAlgae)
+                        closestScoringPose = reefSideScoringPose.transformBy(new Transform2d(new Translation2d(0.05, 0), new Rotation2d()));
+                    else
+                        closestScoringPose = reefSideScoringPose;
                 }
             }
         }
 
-        return new FlippablePose2d(closestScoringPose, false);
+        return closestScoringPose == null ? null : new FlippablePose2d(closestScoringPose, false);
     }
 
     @AutoLogOutput
     private static boolean canFeed() {
         return RobotContainer.ELEVATOR.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().elevatorState) &&
                 RobotContainer.GRIPPER.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().gripperState) &&
-                RobotContainer.SWERVE.atPose(calculateClosestScoringPose(false, false));
+                RobotContainer.SWERVE.atPose(TARGET_SCORING_POSE);
     }
 
     private static Command getGripperScoringSequenceCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
@@ -254,6 +206,43 @@ public class AutonomousCommands {
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
                 GripperCommands.getGripperDefaultCommand()
         ).until(() -> RobotContainer.CORAL_INTAKE.isEarlyCoralCollectionDetected() || RobotContainer.CORAL_INTAKE.hasGamePiece());
+    }
+
+    private static boolean[] getScoredBranchesAtL4() {
+        final boolean[] booleanArray = new boolean[SCORED_L4S.length];
+
+        for (int i = 0; i < booleanArray.length; i++)
+            booleanArray[i] = SCORED_L4S[i].get();
+
+        return booleanArray;
+    }
+
+    private static Command getAddCurrentScoringBranchToScoredBranchesCommand() {
+        return new InstantCommand(
+                () -> {
+                    final int branchNumber = getBranchNumberFromScoringPose(TARGET_SCORING_POSE.get());
+                    SCORED_L4S[branchNumber].set(true);
+                }
+        );
+    }
+
+    private static int getBranchNumberFromScoringPose(Pose2d scoringPose) {
+        for (FieldConstants.ReefClockPosition currentClockPosition : FieldConstants.ReefClockPosition.values()) {
+            for (FieldConstants.ReefSide currentSide : FieldConstants.ReefSide.values()) {
+                final Pose2d reefSideScoringPose = CoralPlacingCommands.ScoringLevel.L4.calculateTargetPlacingPosition(currentClockPosition, currentSide).get();
+                if (reefSideScoringPose.getTranslation().getDistance(scoringPose.getTranslation()) < 0.01)
+                    return currentClockPosition.ordinal() * 2 + currentSide.ordinal();
+            }
+        }
+
+        return 0;
+    }
+
+    private static LoggedNetworkBoolean[] getEmptyL4LoggedNetworkBooleanArray() {
+        final LoggedNetworkBoolean[] array = new LoggedNetworkBoolean[12];
+        for (int i = 0; i < array.length; i++)
+            array[i] = new LoggedNetworkBoolean("ScoredL4s/" + i, false);
+        return array;
     }
 
     /**

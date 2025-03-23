@@ -108,7 +108,7 @@ public class CommandConstants {
      *
      * @return the rotation value
      */
-    private static FlippableRotation2d calculateJoystickOrientedToReefSectionsTargetAngle() {
+    public static FlippableRotation2d calculateJoystickOrientedToReefSectionsTargetAngle() {
         final double
                 xPower = DRIVER_CONTROLLER.getRightX(),
                 yPower = DRIVER_CONTROLLER.getRightY();
@@ -117,8 +117,7 @@ public class CommandConstants {
         if (joystickPower < JOYSTICK_ORIENTED_ROTATION_DEADBAND)
             return null;
 
-        final double targetAngleRadians = Math.atan2(xPower, yPower) + Math.PI;
-        return roundAngleToClosestReefAngle(Rotation2d.fromRadians(targetAngleRadians));
+        return new FlippableRotation2d(new Rotation2d(xPower, yPower), true);
     }
 
     private static FlippableRotation2d roundAngleToClosestReefAngle(Rotation2d targetAngle) {

@@ -68,7 +68,7 @@ public class SwerveConstants {
                     new PIDConstants(5, 0, 0.05);
     private static final double
             MAXIMUM_ROTATION_VELOCITY = RobotHardwareStats.isSimulation() ? 720 : Units.radiansToDegrees(MAXIMUM_ROTATIONAL_SPEED_RADIANS_PER_SECOND),
-            MAXIMUM_ROTATION_ACCELERATION = RobotHardwareStats.isSimulation() ? 720 : 1200;
+            MAXIMUM_ROTATION_ACCELERATION = RobotHardwareStats.isSimulation() ? 720 : 1000;
     private static final TrapezoidProfile.Constraints ROTATION_CONSTRAINTS = new TrapezoidProfile.Constraints(
             MAXIMUM_ROTATION_VELOCITY,
             MAXIMUM_ROTATION_ACCELERATION

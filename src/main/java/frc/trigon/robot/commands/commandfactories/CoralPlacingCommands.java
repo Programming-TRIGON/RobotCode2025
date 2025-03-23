@@ -18,17 +18,12 @@ import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
-import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 public class CoralPlacingCommands {
     public static boolean SHOULD_SCORE_AUTONOMOUSLY = true;
     private static final ReefChooser REEF_CHOOSER = OperatorConstants.REEF_CHOOSER;
-    public static final LoggedNetworkBoolean[]
-            SCORED_L4S = getEmptyLoggedNetworkBooleanArray("ScoredL4s", false),
-            SCORED_L3S = getEmptyLoggedNetworkBooleanArray("ScoredL3s", false),
-            SCORED_L2S = getEmptyLoggedNetworkBooleanArray("ScoredL2s", false);
 
     public static Command getScoreInReefCommand() {
         return new ConditionalCommand(
@@ -90,7 +85,7 @@ public class CoralPlacingCommands {
                         .unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState()) || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L2 || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_GRIPPER)
                         .until(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())),
                 GripperCommands.getPrepareForStateCommand(REEF_CHOOSER::getGripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
-                GripperCommands.getSetTargetStateCommand(REEF_CHOOSER::getGripperState).alongWith(getAddCurrentScoringBranchToScoredBranchesCommand())
+                GripperCommands.getSetTargetStateCommand(REEF_CHOOSER::getGripperState)
         );
     }
 
@@ -134,8 +129,7 @@ public class CoralPlacingCommands {
 
         double distanceFromClosestScoringPoseMeters = Double.POSITIVE_INFINITY;
         Pose2d closestScoringPose = new Pose2d();
-        for (int i = 0; i < reefClockAngles.length; i++) {
-            final Rotation2d targetRotation = reefClockAngles[i];
+        for (final Rotation2d targetRotation : reefClockAngles) {
             final Pose2d reefCenterAtTargetRotation = new Pose2d(reefCenterPosition, targetRotation);
 
             final Pose2d currentScoringPose = reefCenterAtTargetRotation.transformBy(reefCenterToScoringPose);
@@ -147,68 +141,6 @@ public class CoralPlacingCommands {
         }
 
         return new FlippablePose2d(closestScoringPose.transformBy(shouldScoreOnRightBranch ? scoringPoseToRightBranch : scoringPoseToRightBranch.inverse()), false);
-    }
-
-    public static boolean[] getScoredBranchesAtCurrentLevel() {
-        return switch (REEF_CHOOSER.getScoringLevel().level) {
-            case 2 -> loggedNetworkBooleanArrayToBooleanArray(SCORED_L2S);
-            case 3 -> loggedNetworkBooleanArrayToBooleanArray(SCORED_L3S);
-            case 4 -> loggedNetworkBooleanArrayToBooleanArray(SCORED_L4S);
-            default -> null;
-        };
-    }
-
-    private static boolean[] loggedNetworkBooleanArrayToBooleanArray(LoggedNetworkBoolean[] loggedNetworkBooleans) {
-        final boolean[] booleanArray = new boolean[loggedNetworkBooleans.length];
-
-        for (int i = 0; i < booleanArray.length; i++) {
-            booleanArray[i] = loggedNetworkBooleans[i].get();
-        }
-
-        return booleanArray;
-    }
-
-    public static Command getAddCurrentScoringBranchToScoredBranchesCommand() {
-        return new InstantCommand(
-                () -> {
-                    final int branchNumber = getBranchNumberFromScoringPose(AutonomousCommands.calculateClosestScoringPose(false, false).get());
-                    switch (REEF_CHOOSER.getScoringLevel().level) {
-                        case 2:
-                            SCORED_L2S[branchNumber].set(true);
-                        case 3:
-                            SCORED_L3S[branchNumber].set(true);
-                        case 4:
-                            SCORED_L4S[branchNumber].set(true);
-                    }
-                }
-        );
-    }
-
-    public static int getBranchNumberFromScoringPose(Pose2d scoringPose) {
-        final Translation2d reefCenterTranslation = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
-        final Rotation2d[] reefClockAngles = FieldConstants.REEF_CLOCK_ANGLES;
-
-        for (int i = 0; i < reefClockAngles.length; i++) {
-            if (reefClockAngles[i].equals(scoringPose.getRotation())) {
-                final Transform2d reefSideToRightScoringPositionTransform = new Transform2d(new Translation2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS), new Rotation2d());
-                final Pose2d reefSideScoringPosition = new Pose2d(reefCenterTranslation, reefClockAngles[i]);
-                final Pose2d rightBranchScoringPositionOnField = reefSideScoringPosition.transformBy(reefSideToRightScoringPositionTransform);
-
-                if (scoringPose.equals(rightBranchScoringPositionOnField))
-                    return i * 2;
-                else
-                    return i * 2 + 1;
-            }
-        }
-        return 0;
-    }
-
-    public static LoggedNetworkBoolean[] getEmptyLoggedNetworkBooleanArray(String arrayName, boolean defaultValue) {
-        final LoggedNetworkBoolean[] array = new LoggedNetworkBoolean[12];
-        for (int i = 0; i < array.length; i++) {
-            array[i] = new LoggedNetworkBoolean(arrayName + "/" + i, defaultValue);
-        }
-        return array;
     }
 
     private static boolean canContinueScoringFromCoralIntake() {

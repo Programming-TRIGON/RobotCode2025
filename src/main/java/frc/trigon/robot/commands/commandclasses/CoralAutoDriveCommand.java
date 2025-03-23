@@ -1,9 +1,11 @@
 package frc.trigon.robot.commands.commandclasses;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
@@ -19,13 +21,12 @@ import java.util.function.Supplier;
 
 public class CoralAutoDriveCommand extends ParallelCommandGroup {
     private static final double AUTO_COLLECTION_OPENING_CHECK_DISTANCE_METERS = 2.2;
-    private static final PIDController
-            X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
+    private static final PIDController Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new PIDController(0.5, 0, 0) :
-            new PIDController(0.55, 0, 0),
-            Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
-                    new PIDController(0.5, 0, 0) :
-                    new PIDController(0.4, 0, 0.03);
+            new PIDController(0.4, 0, 0.03);
+    private static final ProfiledPIDController X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
+            new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(0.5, 0.5)) :
+            new ProfiledPIDController(1.5, 0, 0, new TrapezoidProfile.Constraints(1, 2));
     private static final ObjectDetectionCamera CAMERA = CameraConstants.OBJECT_DETECTION_CAMERA;
     private Translation2d distanceFromTrackedCoral;
 
@@ -66,7 +67,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
 //                        CoralAutoDriveCommand::calculateTargetAngle
 //                ).until(() -> shouldMoveTowardsCoral(distanceFromTrackedCoral.get())),
                 SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                        () -> X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getX()),
+                        () -> X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getX(), -0.4),
                         () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getY()),
                         CoralAutoDriveCommand::calculateTargetAngle
                 )

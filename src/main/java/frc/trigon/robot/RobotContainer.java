@@ -169,7 +169,7 @@ public class RobotContainer {
         FieldConstants.ReefClockPosition[]
                 rightReefPositions = {FieldConstants.ReefClockPosition.REEF_2_OCLOCK, FieldConstants.ReefClockPosition.REEF_4_OCLOCK},
                 leftReefPositions = {FieldConstants.ReefClockPosition.REEF_8_OCLOCK, FieldConstants.ReefClockPosition.REEF_10_OCLOCK};
-        autoChooser.addOption("FloorAutonomousRight4Branches", AutonomousCommands.getFloorAutonomousCommand(true, leftReefPositions));
-        autoChooser.addOption("FloorAutonomousLeft4Branches", AutonomousCommands.getFloorAutonomousCommand(false, rightReefPositions));
+        autoChooser.addOption("FloorAutonomousRight4Branches", AutonomousCommands.getFloorAutonomousCommand(true, rightReefPositions));
+        autoChooser.addOption("FloorAutonomousLeft4Branches", AutonomousCommands.getFloorAutonomousCommand(false, leftReefPositions));
     }
 }
