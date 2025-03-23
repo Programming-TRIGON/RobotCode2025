@@ -58,7 +58,7 @@ public class AutonomousCommands {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
                 new SequentialCommandGroup(
-                        GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.EJECT).until(() -> RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.REST)),
+                        GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.EJECT_UPWARDS).until(() -> RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.REST)),
                         GripperCommands.getGripperDefaultCommand()
                 ),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
