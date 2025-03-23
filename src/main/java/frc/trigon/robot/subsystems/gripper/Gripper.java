@@ -91,12 +91,13 @@ public class Gripper extends MotorSubsystem {
 
     private Rotation2d calculateTargetAngleForL4(Pose2d targetScoringPose) {
         final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
-        final Translation2d scoringDistance = targetScoringPose.getTranslation().minus(currentPose.getTranslation());
-        final double xDistance = scoringDistance.rotateBy(targetScoringPose.getRotation()).getY();
+        var x = currentPose.relativeTo(targetScoringPose);
+        final double xDistance = x.getX();
         return calculateTargetAngleForL4(xDistance);
     }
 
     private Rotation2d calculateTargetAngleForL4(double xDistanceFromScorePose) {
+        Logger.recordOutput("XDistanceFromScoredPose", xDistanceFromScorePose);
         final double t = xDistanceFromScorePose / GripperConstants.SCORE_L4_FAR_DISTANCE_METERS;
         return GripperConstants.GripperState.SCORE_L4_CLOSE.targetAngle.interpolate(GripperConstants.GripperState.SCORE_L4_FAR.targetAngle, t);
     }
