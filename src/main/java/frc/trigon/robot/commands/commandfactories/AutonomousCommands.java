@@ -102,7 +102,7 @@ public class AutonomousCommands {
     public static Command getDriveToReefWithoutHittingAlgaeCommand(FieldConstants.ReefClockPosition[] reefClockPositions) {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> TARGET_SCORING_POSE = calculateClosestScoringPose(true, reefClockPositions, false)),
-                new WaitUntilCommand(() -> TARGET_SCORING_POSE != null),
+                new WaitUntilCommand(() -> TARGET_SCORING_POSE != null).raceWith(SwerveCommands.getClosedLoopSelfRelativeDriveCommand(() -> 0, () -> 0, () -> 0)),
                 SwerveCommands.getDriveToPoseCommand(() -> calculateClosestScoringPose(true, reefClockPositions, true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(RobotContainer.ELEVATOR::isElevatorOverAlgaeHitRange),
                 SwerveCommands.getDriveToPoseCommand(() -> TARGET_SCORING_POSE, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed)
         );
@@ -111,6 +111,7 @@ public class AutonomousCommands {
     public static Command getCoralSequenceCommand() {
         return new SequentialCommandGroup(
                 CoralCollectionCommands.getLoadCoralCommand(),
+                new WaitUntilCommand(() -> TARGET_SCORING_POSE != null),
                 getScoreCommand()
         );
     }
@@ -174,7 +175,7 @@ public class AutonomousCommands {
                 if (distance < closestDistance) {
                     closestDistance = distance;
                     if (shouldStayBehindAlgae)
-                        closestScoringPose = reefSideScoringPose.transformBy(new Transform2d(new Translation2d(0.05, 0), new Rotation2d()));
+                        closestScoringPose = reefSideScoringPose.transformBy(new Transform2d(new Translation2d(0.1, 0), new Rotation2d()));
                     else
                         closestScoringPose = reefSideScoringPose;
                 }
@@ -188,6 +189,7 @@ public class AutonomousCommands {
     private static boolean canFeed() {
         return RobotContainer.ELEVATOR.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().elevatorState) &&
                 RobotContainer.GRIPPER.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().gripperState) &&
+                TARGET_SCORING_POSE != null &&
                 RobotContainer.SWERVE.atPose(TARGET_SCORING_POSE);
     }
 

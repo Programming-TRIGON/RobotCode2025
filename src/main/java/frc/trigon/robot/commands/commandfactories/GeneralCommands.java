@@ -17,7 +17,7 @@ public class GeneralCommands {
         return SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
                 () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftY()),
                 () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
-                CommandConstants::calculateJoystickOrientedToReefSectionsTargetAngle
+                () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getRightX())
         );
     }
 

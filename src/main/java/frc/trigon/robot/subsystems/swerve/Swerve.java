@@ -154,7 +154,7 @@ public class Swerve extends MotorSubsystem {
             pidToPose(new FlippablePose2d(targetPathPlannerPose, false));
             return;
         }
-        
+
         if (isFromPathPlanner && DriverStation.isAutonomous() && !isPathPlannerDriving)
             return;
         final ChassisSpeeds pidSpeeds = calculateSelfRelativePIDToPoseSpeeds(new FlippablePose2d(targetPathPlannerPose, false));
@@ -198,8 +198,7 @@ public class Swerve extends MotorSubsystem {
     }
 
     void resetRotationController() {
-        SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.reset(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getRotation().getDegrees());
-        SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.setGoal(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getRotation().getDegrees());
+        SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.reset(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getRotation().getDegrees(), getSelfRelativeVelocity().omegaRadiansPerSecond);
     }
 
     /**
@@ -361,6 +360,9 @@ public class Swerve extends MotorSubsystem {
         final Rotation2d currentAngle = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getRotation();
         Logger.recordOutput("Swerve/ProfiledRotationPIDController/Setpoint", SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.getSetpoint().position);
         Logger.recordOutput("Swerve/ProfiledRotationPIDController/Current", currentAngle.getDegrees());
+        if (SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.atGoal())
+            return 0;
+
         return Units.degreesToRadians(SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.calculate(currentAngle.getDegrees()));
     }
 

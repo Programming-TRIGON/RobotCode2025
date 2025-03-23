@@ -117,7 +117,7 @@ public class CommandConstants {
         if (joystickPower < JOYSTICK_ORIENTED_ROTATION_DEADBAND)
             return null;
 
-        return new FlippableRotation2d(new Rotation2d(xPower, yPower), true);
+        return new FlippableRotation2d(Math.atan2(xPower, yPower), true);
     }
 
     private static FlippableRotation2d roundAngleToClosestReefAngle(Rotation2d targetAngle) {
