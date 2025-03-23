@@ -17,6 +17,7 @@ import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.utilities.Conversions;
+import org.trigon.utilities.flippable.FlippablePose2d;
 
 public class Gripper extends MotorSubsystem {
     private final TalonFXMotor grippingMotor = GripperConstants.GRIPPING_MOTOR;
@@ -27,6 +28,7 @@ public class Gripper extends MotorSubsystem {
     private final TorqueCurrentFOC torqueCurrentRequest = new TorqueCurrentFOC(0).withMaxAbsDutyCycle(0.5);
     private final DynamicMotionMagicVoltage positionRequest = new DynamicMotionMagicVoltage(0, GripperConstants.DEFAULT_MAXIMUM_VELOCITY, GripperConstants.DEFAULT_MAXIMUM_ACCELERATION, GripperConstants.DEFAULT_MAXIMUM_ACCELERATION * 10).withEnableFOC(GripperConstants.FOC_ENABLED);
     private GripperConstants.GripperState targetState = GripperConstants.GripperState.REST;
+    private Rotation2d targetAngle = targetState.targetAngle;
 
     public Gripper() {
         setName("Gripper");
@@ -80,6 +82,26 @@ public class Gripper extends MotorSubsystem {
         Logger.recordOutput("Poses/Components/GripperPose", calculateVisualizationPose());
     }
 
+    public void setTargetAngleToL4(FlippablePose2d targetScoringPose) {
+        this.targetState = GripperConstants.GripperState.SCORE_L4_CLOSE;
+        this.targetAngle = calculateTargetAngleForL4(targetScoringPose.get());
+
+        setTargetAngle(this.targetAngle);
+    }
+
+    private Rotation2d calculateTargetAngleForL4(Pose2d targetScoringPose) {
+        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
+        final Translation2d scoringDistance = targetScoringPose.getTranslation().minus(currentPose.getTranslation());
+        final double xDistance = scoringDistance.rotateBy(targetScoringPose.getRotation()).getY();
+        System.out.println(xDistance);
+        return calculateTargetAngleForL4(xDistance);
+    }
+
+    private Rotation2d calculateTargetAngleForL4(double xDistanceFromScorePose) {
+        final double t = xDistanceFromScorePose / GripperConstants.SCORE_L4_FAR_DISTANCE_METERS;
+        return GripperConstants.GripperState.SCORE_L4_CLOSE.targetAngle.interpolate(GripperConstants.GripperState.SCORE_L4_FAR.targetAngle, t);
+    }
+
     public boolean isEjecting() {
         return grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE) <= GripperConstants.MINIMUM_VOLTAGE_FOR_EJECTING;
     }
@@ -99,7 +121,7 @@ public class Gripper extends MotorSubsystem {
 
     @AutoLogOutput(key = "Gripper/AtTargetAngle")
     public boolean atTargetAngle() {
-        final double currentToTargetStateDifference = Math.abs(getCurrentEncoderAngle().getDegrees() - targetState.targetAngle.getDegrees());
+        final double currentToTargetStateDifference = Math.abs(getCurrentEncoderAngle().getDegrees() - targetAngle.getDegrees());
         return currentToTargetStateDifference < GripperConstants.ANGLE_TOLERANCE.getDegrees();
     }
 
@@ -124,16 +146,9 @@ public class Gripper extends MotorSubsystem {
         return Math.abs(grippingMotor.getSignal(TalonFXSignal.VELOCITY)) < 4;
     }
 
-    /**
-     * This will set the gripper to the score in reef state,
-     * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
-     */
-    void scoreInReefForAuto() {
-        setTargetState(targetState.targetAngle, GripperConstants.SCORE_IN_REEF_FOR_AUTO_VOLTAGE);
-    }
-
     void prepareForState(GripperConstants.GripperState targetState) {
         this.targetState = targetState;
+        this.targetAngle = targetState.targetAngle;
 
         setTargetState(
                 targetState.targetAngle,
@@ -143,6 +158,7 @@ public class Gripper extends MotorSubsystem {
 
     void setTargetState(GripperConstants.GripperState targetState) {
         this.targetState = targetState;
+        this.targetAngle = targetState.targetAngle;
 
         setTargetState(
                 targetState.targetAngle,
@@ -174,7 +190,7 @@ public class Gripper extends MotorSubsystem {
         angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations() - GripperConstants.POSITION_OFFSET_FROM_GRAVITY_OFFSET));
     }
 
-    private void setTargetVoltage(double targetGrippingVoltage) {
+    void setTargetVoltage(double targetGrippingVoltage) {
         GripperConstants.GRIPPING_MECHANISM.setTargetVelocity(targetGrippingVoltage);
         grippingMotor.setControl(voltageRequest.withOutput(targetGrippingVoltage));
     }

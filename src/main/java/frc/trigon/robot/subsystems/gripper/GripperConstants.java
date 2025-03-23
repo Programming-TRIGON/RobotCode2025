@@ -127,6 +127,7 @@ public class GripperConstants {
             CommandScheduler.getInstance().getActiveButtonLoop(),
             BEAM_BREAK::getBinaryValue
     ).debounce(COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
+    static final double SCORE_L4_FAR_DISTANCE_METERS = 0.1;
 
     static {
         configureGrippingMotor();
@@ -233,8 +234,9 @@ public class GripperConstants {
     public enum GripperState {
         REST(Rotation2d.fromDegrees(-56), 0, 1),
         EJECT(Rotation2d.fromDegrees(55), -3, 1),
-        SCORE_L4(Rotation2d.fromDegrees(49), -6, 1),
-        SCORE_L3_OR_L2(Rotation2d.fromDegrees(60), SCORE_L4.targetGripperVoltage, 1),
+        SCORE_L4_CLOSE(Rotation2d.fromDegrees(49), -6, 1),
+        SCORE_L4_FAR(Rotation2d.fromDegrees(55), -6, 1),
+        SCORE_L3_OR_L2(Rotation2d.fromDegrees(60), SCORE_L4_CLOSE.targetGripperVoltage, 1),
         SCORE_L1(Rotation2d.fromDegrees(93), -3, 1),
         LOAD_CORAL(Rotation2d.fromDegrees(-56), 11, 1),
         UNLOAD_CORAL(Rotation2d.fromDegrees(-50), -3, 1),

@@ -72,7 +72,7 @@ public class CoralPlacingCommands {
                 CoralCollectionCommands.getLoadCoralCommand().asProxy().andThen(
                         new ParallelCommandGroup(
                                 getOpenElevatorWhenCloseToReefCommand().raceWith(new WaitUntilChangeCommand<>(REEF_CHOOSER::getElevatorState)).repeatedly(),
-                                getGripperScoringSequenceCommand()
+                                getAutoGripperScoringSequenceCommand()
                         ).asProxy()
                 ),
                 getAutonomousDriveToReefThenManualDriveCommand()
@@ -84,8 +84,34 @@ public class CoralPlacingCommands {
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF)
                         .unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState()) || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L2 || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_GRIPPER)
                         .until(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())),
+                scoreFromGripperReefChooserCommand()
+        );
+    }
+
+    private static Command getAutoGripperScoringSequenceCommand() {
+        return new SequentialCommandGroup(
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF)
+                        .unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState()) || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L2 || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_GRIPPER)
+                        .until(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())),
+                new ConditionalCommand(
+                        scoreFromGripperInL4Command(),
+                        scoreFromGripperReefChooserCommand(),
+                        () -> REEF_CHOOSER.getScoringLevel() == ScoringLevel.L4
+                )
+        );
+    }
+
+    private static Command scoreFromGripperReefChooserCommand() {
+        return new SequentialCommandGroup(
                 GripperCommands.getPrepareForStateCommand(REEF_CHOOSER::getGripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
                 GripperCommands.getSetTargetStateCommand(REEF_CHOOSER::getGripperState)
+        );
+    }
+
+    private static Command scoreFromGripperInL4Command() {
+        return new SequentialCommandGroup(
+                GripperCommands.getPrepareForScoringInL4Command(CoralPlacingCommands::calculateTargetScoringPose).until(CoralPlacingCommands::canContinueScoringFromGripper),
+                GripperCommands.getScoreInL4Command(CoralPlacingCommands::calculateTargetScoringPose)
         );
     }
 
@@ -226,7 +252,7 @@ public class CoralPlacingCommands {
                 case 0 -> null;
                 case 1 -> GripperConstants.GripperState.SCORE_L1;
                 case 2, 3 -> GripperConstants.GripperState.SCORE_L3_OR_L2;
-                case 4 -> GripperConstants.GripperState.SCORE_L4;
+                case 4 -> GripperConstants.GripperState.SCORE_L4_CLOSE;
                 default -> throw new IllegalStateException("Unexpected value: " + ordinal());
             };
         }
