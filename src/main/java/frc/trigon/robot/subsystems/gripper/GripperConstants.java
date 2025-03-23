@@ -234,6 +234,7 @@ public class GripperConstants {
     public enum GripperState {
         REST(Rotation2d.fromDegrees(-56), 0, 1),
         EJECT(Rotation2d.fromDegrees(55), -3, 1),
+        EJECT_UPWARDS(Rotation2d.fromDegrees(100), -3, 1),
         SCORE_L4_CLOSE(Rotation2d.fromDegrees(49), -6, 1),
         SCORE_L4_FAR(Rotation2d.fromDegrees(55), -6, 1),
         SCORE_L3_OR_L2(Rotation2d.fromDegrees(60), SCORE_L4_CLOSE.targetGripperVoltage, 1),
