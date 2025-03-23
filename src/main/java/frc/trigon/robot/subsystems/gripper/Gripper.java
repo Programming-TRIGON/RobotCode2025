@@ -93,7 +93,6 @@ public class Gripper extends MotorSubsystem {
         final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
         final Translation2d scoringDistance = targetScoringPose.getTranslation().minus(currentPose.getTranslation());
         final double xDistance = scoringDistance.rotateBy(targetScoringPose.getRotation()).getY();
-        System.out.println(xDistance);
         return calculateTargetAngleForL4(xDistance);
     }
 
