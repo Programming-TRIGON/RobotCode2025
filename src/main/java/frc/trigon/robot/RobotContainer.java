@@ -10,7 +10,6 @@ import com.pathplanner.lib.commands.PathPlannerAuto;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandclasses.CoralAlignmentCommand;
@@ -33,7 +32,6 @@ import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.Gripper;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
-import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.Swerve;
 import org.littletonrobotics.junction.inputs.LoggedPowerDistribution;
 import org.littletonrobotics.junction.networktables.LoggedDashboardChooser;
@@ -98,12 +96,7 @@ public class RobotContainer {
 //        OperatorConstants.DRIVE_FROM_DPAD_TRIGGER.whileTrue(CommandConstants.SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND);
 //        OperatorConstants.TOGGLE_ROTATION_MODE_TRIGGER.onTrue(GeneralCommands.getToggleRotationModeCommand());
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
-        OperatorConstants.OPERATOR_CONTROLLER.v().whileTrue(
-                new SequentialCommandGroup(
-                        GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF).until(() -> GRIPPER.atState(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF)),
-                        ElevatorCommands.getSetTargetVoltageCommand(-3)
-                )
-        );
+        OperatorConstants.RESET_AMP_ALIGNER_TRIGGER.whileTrue(AlgaeManipulationCommands.getResetAmpAlignerCommand());
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.and(OperatorConstants.LEFT_MULTIFUNCTION_TRIGGER).whileTrue(new CoralAutoDriveCommand());
 
         OperatorConstants.OPERATOR_CONTROLLER.f3().whileTrue(new CoralAlignmentCommand());
