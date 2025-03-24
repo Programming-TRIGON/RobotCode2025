@@ -138,19 +138,19 @@ public class SwerveCommands {
     private static Command getCurrentDriveToPoseCommand(FlippablePose2d targetPose, PathConstraints constraints) {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> RobotContainer.SWERVE.initializeDrive(true)),
-                getPathfindToPoseCommand(targetPose, constraints),
+                AutoBuilder.pathfindToPose(targetPose.get(), constraints),
                 getPIDToPoseCommand(targetPose)
         );
     }
 
-    private static Command getPathfindToPoseCommand(FlippablePose2d targetPose, PathConstraints pathConstraints) {
-        return AutoBuilder.pathfindToPose(targetPose.get(), pathConstraints);
-    }
-
     private static Command getPIDToPoseCommand(FlippablePose2d targetPose) {
-        return new InstantCommand(RobotContainer.SWERVE::resetRotationController)
-                .andThen(new RunCommand(() -> RobotContainer.SWERVE.pidToPose(targetPose))
-                        .until(() -> RobotContainer.SWERVE.atPose(targetPose)));
+        return new FunctionalCommand(
+                RobotContainer.SWERVE::resetRotationController,
+                () -> RobotContainer.SWERVE.pidToPose(targetPose),
+                (interrupted) -> {
+                },
+                () -> RobotContainer.SWERVE.atPose(targetPose)
+        );
     }
 
     private static Command createOnTheFlyPathCommand(FlippablePose2d targetPose, PathConstraints constraints) {

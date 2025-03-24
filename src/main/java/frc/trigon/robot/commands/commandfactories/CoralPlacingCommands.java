@@ -111,7 +111,7 @@ public class CoralPlacingCommands {
     private static Command scoreFromGripperInL4Command() {
         return new SequentialCommandGroup(
                 GripperCommands.getPrepareForScoringInL4Command(CoralPlacingCommands::calculateTargetScoringPose).until(CoralPlacingCommands::canContinueScoringFromGripper),
-                GripperCommands.getScoreInL4Command(CoralPlacingCommands::calculateTargetScoringPose)
+                GripperCommands.getScoreInL4Command(CoralPlacingCommands::calculateTargetScoringPose).alongWith(new InstantCommand(OperatorConstants.REEF_CHOOSER::switchReefSide))
         );
     }
 

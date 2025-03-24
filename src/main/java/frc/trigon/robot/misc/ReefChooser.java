@@ -29,6 +29,10 @@ public class ReefChooser {
         return scoringLevel;
     }
 
+    public void switchReefSide() {
+        reefSide = reefSide == FieldConstants.ReefSide.LEFT ? FieldConstants.ReefSide.RIGHT : FieldConstants.ReefSide.LEFT;
+    }
+
     public FieldConstants.ReefClockPosition getClockPosition() {
         return clockPosition;
     }
