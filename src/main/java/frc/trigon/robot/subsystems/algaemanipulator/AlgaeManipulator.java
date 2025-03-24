@@ -79,8 +79,16 @@ public class AlgaeManipulator extends MotorSubsystem {
         return difference < AlgaeManipulatorConstants.ANGLE_TOLERANCE.getDegrees();
     }
 
+    boolean hasHitReverseLimit() {
+        return angleMotor.getSignal(TalonFXSignal.REVERSE_LIMIT) == 1;
+    }
+
     void open() {
         angleMotor.setControl(torqueRequest.withOutput(AlgaeManipulatorConstants.OPEN_TORQUE_CURRENT));
+    }
+
+    void closeToLimit() {
+        angleMotor.setControl(torqueRequest.withOutput(AlgaeManipulatorConstants.CLOSE_TO_LIMIT_TORQUE_CURRENT));
     }
 
     void setTargetState(AlgaeManipulatorConstants.AlgaeManipulatorState targetState) {

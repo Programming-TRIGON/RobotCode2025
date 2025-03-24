@@ -42,6 +42,13 @@ public class AlgaeManipulationCommands {
                 .raceWith(getScoreNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
     }
 
+    public static Command getResetAmpAlignerCommand() {
+        return new ParallelRaceGroup(
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST),
+                AlgaeManipulatorCommands.getPressLimitSwitchCommand()
+        );
+    }
+
     private static void reloadAfterScore() {
         new WaitUntilCommand(() -> RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.REST)).andThen(CoralCollectionCommands.getLoadCoralCommand().asProxy()).onlyIf(() -> RobotContainer.CORAL_INTAKE.hasGamePiece() && REEF_CHOOSER.getScoringLevel() != CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE).schedule();
     }
