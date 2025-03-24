@@ -3,47 +3,35 @@
   "waypoints": [
     {
       "anchor": {
-        "x": 1.6423155737704918,
-        "y": 7.33360655737705
-      },
-      "prevControl": null,
-      "nextControl": {
-        "x": 2.4086255052773407,
-        "y": 6.642425050527734
-      },
-      "isLocked": false,
-      "linkedName": "TwoL4CoralsFromFeeder2"
-    },
-    {
-      "anchor": {
         "x": 3.591138698630137,
         "y": 5.249593321917807
       },
+      "prevControl": null,
+      "nextControl": {
+        "x": 3.7029420975051277,
+        "y": 5.025986524167829
+      },
+      "isLocked": false,
+      "linkedName": "TwoL4CoralsFromFeeder2.5"
+    },
+    {
+      "anchor": {
+        "x": 3.69,
+        "y": 5.07
+      },
       "prevControl": {
-        "x": 2.945034246575342,
-        "y": 6.106057363013698
+        "x": 3.5745128417428123,
+        "y": 5.291726670199323
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "TwoL4CoralsFromFeeder2.5"
+      "linkedName": "TwoL4CoralsFromFeeder3"
     }
   ],
   "rotationTargets": [],
   "constraintZones": [],
   "pointTowardsZones": [],
-  "eventMarkers": [
-    {
-      "name": "PrepareL4",
-      "waypointRelativePos": 0.0,
-      "endWaypointRelativePos": null,
-      "command": {
-        "type": "named",
-        "data": {
-          "name": "PrepareL4"
-        }
-      }
-    }
-  ],
+  "eventMarkers": [],
   "globalConstraints": {
     "maxVelocity": 2.5,
     "maxAcceleration": 4.0,
@@ -60,7 +48,7 @@
   "folder": "TwoL4CoralsFromFeeder",
   "idealStartingState": {
     "velocity": 0,
-    "rotation": 125.00000000000001
+    "rotation": 119.99999999999999
   },
   "useDefaultConstraints": true
 }
