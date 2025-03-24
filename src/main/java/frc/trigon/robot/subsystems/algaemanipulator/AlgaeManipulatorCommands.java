@@ -2,7 +2,6 @@ package frc.trigon.robot.subsystems.algaemanipulator;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
@@ -42,8 +41,11 @@ public class AlgaeManipulatorCommands {
     }
 
     public static Command getPressLimitSwitchCommand() {
-        return new RunCommand(RobotContainer.ALGAE_MANIPULATOR::closeToLimit)
-                .until(RobotContainer.ALGAE_MANIPULATOR::hasHitReverseLimit);
+        return new StartEndCommand(
+                RobotContainer.ALGAE_MANIPULATOR::closeToLimit,
+                RobotContainer.ALGAE_MANIPULATOR::stop,
+                RobotContainer.ALGAE_MANIPULATOR
+        ).until(RobotContainer.ALGAE_MANIPULATOR::hasHitReverseLimit);
     }
 
     public static Command getSetTargetStateCommand(AlgaeManipulatorConstants.AlgaeManipulatorState targetState) {

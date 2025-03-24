@@ -45,7 +45,7 @@ public class AlgaeManipulationCommands {
     public static Command getResetAmpAlignerCommand() {
         return new ParallelRaceGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST),
-                AlgaeManipulatorCommands.getPressLimitSwitchCommand()
+                GeneralCommands.runWhen(AlgaeManipulatorCommands.getPressLimitSwitchCommand(), () -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.REST))
         );
     }
 

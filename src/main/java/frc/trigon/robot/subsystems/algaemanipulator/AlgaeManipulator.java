@@ -80,7 +80,7 @@ public class AlgaeManipulator extends MotorSubsystem {
     }
 
     boolean hasHitReverseLimit() {
-        return angleMotor.getSignal(TalonFXSignal.REVERSE_LIMIT) == 1;
+        return angleMotor.getSignal(TalonFXSignal.REVERSE_LIMIT) == 0;
     }
 
     void open() {
