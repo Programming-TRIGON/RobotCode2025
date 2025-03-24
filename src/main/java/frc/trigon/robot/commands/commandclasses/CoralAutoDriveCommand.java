@@ -67,7 +67,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
 //                        CoralAutoDriveCommand::calculateTargetAngle
 //                ).until(() -> shouldMoveTowardsCoral(distanceFromTrackedCoral.get())),
                 SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                        () -> X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getX(), -0.4),
+                        () -> X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getX(), -0.5),
                         () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getY()),
                         CoralAutoDriveCommand::calculateTargetAngle
                 )

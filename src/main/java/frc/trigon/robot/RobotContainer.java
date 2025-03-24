@@ -7,6 +7,7 @@ package frc.trigon.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.commands.PathPlannerAuto;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
@@ -57,6 +58,7 @@ public class RobotContainer {
         initializeGeneralSystems();
         buildAutoChooser();
         configureBindings();
+        DriverStation.silenceJoystickConnectionWarning(true);
     }
 
     /**
@@ -157,12 +159,18 @@ public class RobotContainer {
         else
             autoChooser.addOption("None", Commands.none());
 
-        autoChooser.addOption("FloorAutonomousRight", AutonomousCommands.getFloorAutonomousCommand(true));
-        autoChooser.addOption("FloorAutonomousLeft", AutonomousCommands.getFloorAutonomousCommand(false));
-        FieldConstants.ReefClockPosition[]
-                rightReefPositions = {FieldConstants.ReefClockPosition.REEF_2_OCLOCK, FieldConstants.ReefClockPosition.REEF_4_OCLOCK},
-                leftReefPositions = {FieldConstants.ReefClockPosition.REEF_8_OCLOCK, FieldConstants.ReefClockPosition.REEF_10_OCLOCK};
-        autoChooser.addOption("FloorAutonomousRight4Branches", AutonomousCommands.getFloorAutonomousCommand(true, rightReefPositions));
-        autoChooser.addOption("FloorAutonomousLeft4Branches", AutonomousCommands.getFloorAutonomousCommand(false, leftReefPositions));
+        addCommandsToChooser(
+                AutonomousCommands.getFloorAutonomousCommand(true),
+                AutonomousCommands.getFloorAutonomousCommand(false),
+                AutonomousCommands.getFloorAutonomousCommand(true, FieldConstants.ReefClockPosition.REEF_2_OCLOCK, FieldConstants.ReefClockPosition.REEF_4_OCLOCK),
+                AutonomousCommands.getFloorAutonomousCommand(false, FieldConstants.ReefClockPosition.REEF_8_OCLOCK, FieldConstants.ReefClockPosition.REEF_10_OCLOCK),
+                AutonomousCommands.getFloorAutonomousCommand(true, FieldConstants.ReefClockPosition.REEF_2_OCLOCK, FieldConstants.ReefClockPosition.REEF_4_OCLOCK, FieldConstants.ReefClockPosition.REEF_6_OCLOCK),
+                AutonomousCommands.getFloorAutonomousCommand(false, FieldConstants.ReefClockPosition.REEF_8_OCLOCK, FieldConstants.ReefClockPosition.REEF_10_OCLOCK, FieldConstants.ReefClockPosition.REEF_6_OCLOCK)
+        );
+    }
+
+    private void addCommandsToChooser(Command... commands) {
+        for (Command command : commands)
+            autoChooser.addOption(command.getName(), command);
     }
 }

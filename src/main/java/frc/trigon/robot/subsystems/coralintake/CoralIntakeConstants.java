@@ -143,7 +143,7 @@ public class CoralIntakeConstants {
             COLLECTION_RUMBLE_POWER = 1;
     private static final double
             CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.1,
-            EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.03;
+            EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.06;
     private static final double EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETRES = 15;
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),

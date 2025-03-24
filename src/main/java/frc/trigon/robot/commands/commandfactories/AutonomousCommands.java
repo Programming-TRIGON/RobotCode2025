@@ -43,7 +43,7 @@ public class AutonomousCommands {
         return getFloorAutonomousCommand(isRight, FieldConstants.ReefClockPosition.values());
     }
 
-    public static Command getFloorAutonomousCommand(boolean isRight, FieldConstants.ReefClockPosition[] reefClockPositions) {
+    public static Command getFloorAutonomousCommand(boolean isRight, FieldConstants.ReefClockPosition... reefClockPositions) {
         return getCycleCoralCommand(isRight, reefClockPositions).repeatedly().withName("FloorAutonomous" + (isRight ? "Right" : "Left") + (reefClockPositions.length * 2) + "Branches");
     }
 
@@ -78,7 +78,7 @@ public class AutonomousCommands {
                             CameraConstants.OBJECT_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL);
                             Logger.recordOutput("Distance", CoralAutoDriveCommand.calculateDistanceFromTrackedCoral());
                         })
-                ).withTimeout(3)
+                ).withTimeout(1.5)
         ).repeatedly();
     }
 
@@ -96,7 +96,7 @@ public class AutonomousCommands {
     }
 
     public static Command getDriveToReefAndScoreCommand(FieldConstants.ReefClockPosition[] reefClockPositions) {
-        return new ParallelCommandGroup(
+        return new ParallelRaceGroup(
                 getDriveToReefWithoutHittingAlgaeCommand(reefClockPositions),
                 getCoralSequenceCommand()
         );
@@ -106,8 +106,8 @@ public class AutonomousCommands {
         return new SequentialCommandGroup(
                 new InstantCommand(() -> TARGET_SCORING_POSE = calculateClosestScoringPose(true, reefClockPositions, false)),
                 new WaitUntilCommand(() -> TARGET_SCORING_POSE != null).raceWith(SwerveCommands.getClosedLoopSelfRelativeDriveCommand(() -> 0, () -> 0, () -> 0)),
-                SwerveCommands.getDriveToPoseCommand(() -> calculateClosestScoringPose(true, reefClockPositions, true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(RobotContainer.ELEVATOR::isElevatorOverAlgaeHitRange).unless(AutonomousCommands::isFirst),
-                SwerveCommands.getDriveToPoseCommand(() -> TARGET_SCORING_POSE, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(AutonomousCommands::canFeed)
+                SwerveCommands.getDriveToPoseCommand(() -> calculateClosestScoringPose(true, reefClockPositions, true), PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(RobotContainer.ELEVATOR::isElevatorOverAlgaeHitRange),
+                SwerveCommands.getDriveToPoseCommand(() -> TARGET_SCORING_POSE, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly()
         );
     }
 
@@ -141,14 +141,14 @@ public class AutonomousCommands {
     public static Command getPrepareForScoreCommand() {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
-                GripperCommands.getPrepareForStateCommand(OperatorConstants.REEF_CHOOSER.getScoringLevel().gripperState)
+                GripperCommands.getPrepareForScoringInL4Command(() -> TARGET_SCORING_POSE)
         );
     }
 
     public static Command getFeedCoralCommand() {
         return new ParallelCommandGroup(
                 ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
-                GripperCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getGripperState()),
+                GripperCommands.getScoreInL4Command(() -> TARGET_SCORING_POSE),
                 getAddCurrentScoringBranchToScoredBranchesCommand()
         ).withTimeout(0.25);
     }
@@ -203,7 +203,8 @@ public class AutonomousCommands {
         return RobotContainer.ELEVATOR.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().elevatorState) &&
                 RobotContainer.GRIPPER.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().gripperState) &&
                 TARGET_SCORING_POSE != null &&
-                RobotContainer.SWERVE.atPose(TARGET_SCORING_POSE);
+                Math.abs(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().relativeTo(TARGET_SCORING_POSE.get()).getX()) < 0.085 &&
+                Math.abs(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().relativeTo(TARGET_SCORING_POSE.get()).getY()) < 0.03;
     }
 
     private static Command getGripperScoringSequenceCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
