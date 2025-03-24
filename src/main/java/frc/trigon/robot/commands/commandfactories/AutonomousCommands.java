@@ -124,7 +124,10 @@ public class AutonomousCommands {
                 getPrepareForScoreCommand().until(AutonomousCommands::canFeed),
                 getFeedCoralCommand()
         ).raceWith(
-                CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR)
+                new SequentialCommandGroup(
+                        new WaitUntilCommand(() -> TARGET_SCORING_POSE.get().getTranslation().getDistance(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation()) < 0.15),
+                        CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR)
+                )
         );
     }
 
