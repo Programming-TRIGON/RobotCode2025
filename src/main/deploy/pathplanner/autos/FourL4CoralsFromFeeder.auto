@@ -42,6 +42,12 @@
           }
         },
         {
+          "type": "path",
+          "data": {
+            "pathName": "FourL4CoralsFromFeeder3.5"
+          }
+        },
+        {
           "type": "named",
           "data": {
             "name": "ScoreL4"
@@ -70,6 +76,12 @@
           "type": "path",
           "data": {
             "pathName": "FourL4CoralsFromFeeder5"
+          }
+        },
+        {
+          "type": "path",
+          "data": {
+            "pathName": "FourL4CoralsFromFeeder5.5"
           }
         },
         {
