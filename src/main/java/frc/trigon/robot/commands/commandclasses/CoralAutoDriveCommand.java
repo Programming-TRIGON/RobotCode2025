@@ -26,7 +26,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
             new PIDController(0.3, 0, 0.03);
     private static final ProfiledPIDController X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(0.5, 0.5)) :
-            new ProfiledPIDController(0.85, 0, 0, new TrapezoidProfile.Constraints(0.8, 2.3));
+            new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(0.8, 2.3));
     private static final ObjectDetectionCamera CAMERA = CameraConstants.OBJECT_DETECTION_CAMERA;
     private Translation2d distanceFromTrackedCoral;
 
@@ -67,7 +67,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
 //                        CoralAutoDriveCommand::calculateTargetAngle
 //                ).until(() -> shouldMoveTowardsCoral(distanceFromTrackedCoral.get())),
                 SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                        () -> X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getX(), -0.5),
+                        () -> X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getX(), -0.65),
                         () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getY()),
                         CoralAutoDriveCommand::calculateTargetAngle
                 )
