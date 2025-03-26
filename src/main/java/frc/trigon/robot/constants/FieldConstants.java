@@ -7,6 +7,7 @@ import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.geometry.*;
 import org.trigon.utilities.Conversions;
 import org.trigon.utilities.FilesHandler;
+import org.trigon.utilities.flippable.FlippablePose2d;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -25,6 +26,9 @@ public class FieldConstants {
     private static final Transform3d TAG_OFFSET = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
     public static final HashMap<Integer, Pose3d> TAG_ID_TO_POSE = fieldLayoutToTagIdToPoseMap();
 
+    public static final FlippablePose2d AUTO_FIND_CORAL_POSE_LEFT = new FlippablePose2d(3.3, 5.5, Rotation2d.fromDegrees(130), true);
+    public static final FlippablePose2d AUTO_FIND_CORAL_POSE_RIGHT = new FlippablePose2d(3.3, FieldConstants.FIELD_WIDTH_METERS - 5.5, Rotation2d.fromDegrees(-130), true);
+
     public static final int REEF_CLOCK_POSITIONS = 6;
     public static final Rotation2d REEF_CLOCK_POSITION_DIFFERENCE = Rotation2d.fromDegrees(Conversions.DEGREES_PER_ROTATIONS / REEF_CLOCK_POSITIONS);
     public static final Rotation2d[] REEF_CLOCK_ANGLES = ReefClockPosition.getClockAngles();
@@ -32,7 +36,7 @@ public class FieldConstants {
     public static final double
             REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS = 1.3,
             REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS = 0.17,
-            REEF_CENTER_TO_TARGET_ALGAE_COLLECTION_POSITION_X_TRANSFORM_METERS = 1.5;
+            REEF_CENTER_TO_TARGET_ALGAE_COLLECTION_POSITION_X_TRANSFORM_METERS = 1.6;
 
     private static AprilTagFieldLayout createAprilTagFieldLayout() {
         try {

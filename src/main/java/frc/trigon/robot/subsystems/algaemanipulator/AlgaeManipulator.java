@@ -11,6 +11,7 @@ import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
+import org.trigon.utilities.Conversions;
 
 public class AlgaeManipulator extends MotorSubsystem {
     private final TalonFXMotor angleMotor = AlgaeManipulatorConstants.ANGLE_MOTOR;
@@ -64,6 +65,10 @@ public class AlgaeManipulator extends MotorSubsystem {
         angleMotor.stopMotor();
     }
 
+    public boolean isOpen() {
+        return angleMotor.getSignal(TalonFXSignal.POSITION) > Conversions.degreesToRotations(70);
+    }
+
     public boolean atState(AlgaeManipulatorConstants.AlgaeManipulatorState state) {
         return targetState == state && atTargetAngle();
     }
@@ -74,8 +79,16 @@ public class AlgaeManipulator extends MotorSubsystem {
         return difference < AlgaeManipulatorConstants.ANGLE_TOLERANCE.getDegrees();
     }
 
+    boolean hasHitReverseLimit() {
+        return angleMotor.getSignal(TalonFXSignal.REVERSE_LIMIT) == 0;
+    }
+
     void open() {
         angleMotor.setControl(torqueRequest.withOutput(AlgaeManipulatorConstants.OPEN_TORQUE_CURRENT));
+    }
+
+    void closeToLimit() {
+        angleMotor.setControl(torqueRequest.withOutput(AlgaeManipulatorConstants.CLOSE_TO_LIMIT_TORQUE_CURRENT));
     }
 
     void setTargetState(AlgaeManipulatorConstants.AlgaeManipulatorState targetState) {

@@ -3,14 +3,13 @@
   "robotLength": 0.94,
   "holonomicMode": true,
   "pathFolders": [
-    "TwoL4CoralsFromFeeder",
-    "ScoreFourL4Corals"
+    "TwoL4CoralsFromFeeder"
   ],
   "autoFolders": [],
   "defaultMaxVel": 2.5,
   "defaultMaxAccel": 4.0,
-  "defaultMaxAngVel": 400.0,
-  "defaultMaxAngAccel": 400.0,
+  "defaultMaxAngVel": 450.0,
+  "defaultMaxAngAccel": 900.0,
   "defaultNominalVoltage": 12.0,
   "robotMass": 65.5,
   "robotMOI": 7.9,
@@ -19,7 +18,7 @@
   "driveGearing": 7.13,
   "maxDriveSpeed": 3.759,
   "driveMotorType": "krakenX60FOC",
-  "driveCurrentLimit": 90.0,
+  "driveCurrentLimit": 80.0,
   "wheelCOF": 1.1,
   "flModuleX": 0.333,
   "flModuleY": 0.288,

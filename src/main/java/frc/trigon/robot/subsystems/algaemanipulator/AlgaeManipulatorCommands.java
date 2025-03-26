@@ -40,6 +40,14 @@ public class AlgaeManipulatorCommands {
         );
     }
 
+    public static Command getPressLimitSwitchCommand() {
+        return new StartEndCommand(
+                RobotContainer.ALGAE_MANIPULATOR::closeToLimit,
+                RobotContainer.ALGAE_MANIPULATOR::stop,
+                RobotContainer.ALGAE_MANIPULATOR
+        ).until(RobotContainer.ALGAE_MANIPULATOR::hasHitReverseLimit);
+    }
+
     public static Command getSetTargetStateCommand(AlgaeManipulatorConstants.AlgaeManipulatorState targetState) {
         return new StartEndCommand(
                 () -> RobotContainer.ALGAE_MANIPULATOR.setTargetState(targetState),

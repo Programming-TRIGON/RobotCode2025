@@ -46,6 +46,7 @@ public class CoralIntakeConstants {
     static final CANcoderEncoder ANGLE_ENCODER = new CANcoderEncoder(ANGLE_ENCODER_ID, ANGLE_ENCODER_NAME);
     static final SimpleSensor
             BEAM_BREAK = SimpleSensor.createDigitalSensor(BEAM_BREAK_CHANNEL, BEAM_BREAK_NAME),
+            BACKUP_BEAM_BREAK = SimpleSensor.createDigitalSensor(3, "CoralBackupBeamBreak"),
             DISTANCE_SENSOR = SimpleSensor.createDutyCycleSensor(DISTANCE_SENSOR_CHANNEL, DISTANCE_SENSOR_NAME);
 
     private static final double
@@ -141,7 +142,7 @@ public class CoralIntakeConstants {
             COLLECTION_RUMBLE_DURATION_SECONDS = 0.7,
             COLLECTION_RUMBLE_POWER = 1;
     private static final double
-            CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.32,
+            CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.1,
             EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.06;
     private static final double EARLY_COLLECTION_DETECTION_DISTANCE_CENTIMETRES = 15;
     static final BooleanEvent EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
@@ -150,8 +151,7 @@ public class CoralIntakeConstants {
     ).debounce(EARLY_CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
     static final BooleanEvent CORAL_COLLECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
-//            () -> EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean()
-            BEAM_BREAK::getBinaryValue
+            () -> BEAM_BREAK.getBinaryValue() && BACKUP_BEAM_BREAK.getBinaryValue()
     ).debounce(CORAL_COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
     static final BooleanEvent OVERRIDE_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT = new BooleanEvent(
             CommandScheduler.getInstance().getActiveButtonLoop(),
@@ -160,10 +160,10 @@ public class CoralIntakeConstants {
 
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1.5);
     static final double
-            PULSING_ON_PERIOD_SECONDS = 0.15,
+            PULSING_ON_PERIOD_SECONDS = 0.22,
             PULSING_OFF_PERIOD_SECONDS = 0.1,
-            PULSING_INTAKE_MOTOR_VOLTAGE = 10,
-            PULSING_FUNNEL_MOTOR_VOLTAGE = 2,
+            PULSING_INTAKE_MOTOR_VOLTAGE = 8,
+            PULSING_FUNNEL_MOTOR_VOLTAGE = CoralIntakeState.COLLECT_FROM_FLOOR.targetFunnelVoltage,
             PULSING_ANGLE_DEGREES = 90;
 
     static {
@@ -243,6 +243,8 @@ public class CoralIntakeConstants {
         config.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
         config.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Rotation2d.fromDegrees(145).minus(Rotation2d.fromRotations(ANGLE_ENCODER_POSITION_OFFSET_VALUE)).getRotations();
 
+        config.CurrentLimits.SupplyCurrentLimit = 60;
+
         config.Feedback.VelocityFilterTimeConstant = 0;
 
         ANGLE_MOTOR.applyConfiguration(config);
@@ -281,16 +283,16 @@ public class CoralIntakeConstants {
     }
 
     public enum CoralIntakeState {
-        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, -1, Rotation2d.fromDegrees(143)),
+        LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, -4, Rotation2d.fromDegrees(143)),
         LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK(-4.5, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
         UNLOAD_CORAL_FROM_GRIPPER(6, 2, Rotation2d.fromDegrees(141)),
         CENTER_CORAL(8, 2, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
-        COLLECT_FROM_FLOOR(8, 2, Rotation2d.fromDegrees(-46)),
-        COLLECT_FROM_FEEDER(6, 2, Rotation2d.fromDegrees(90)),
+        COLLECT_FROM_FLOOR(7, 5, Rotation2d.fromDegrees(-46)),
+        COLLECT_FROM_FEEDER(6, COLLECT_FROM_FLOOR.targetFunnelVoltage, Rotation2d.fromDegrees(90)),
         EJECT(-3, -1, Rotation2d.fromDegrees(45)),
         REST(0, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
-        SCORE_L1_BOOST(-1, -3, Rotation2d.fromDegrees(36)),
-        SCORE_L1(-1, 3, Rotation2d.fromDegrees(36)),
+        SCORE_L1_BOOST(-3, -3, Rotation2d.fromDegrees(33)),
+        SCORE_L1(-2, 3, Rotation2d.fromDegrees(33)),
         COLLECT_ALGAE_FROM_FLOOR(-6, 0, Rotation2d.fromDegrees(-40));
 
         public final double
