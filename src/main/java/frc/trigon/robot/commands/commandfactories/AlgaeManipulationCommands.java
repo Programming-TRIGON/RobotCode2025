@@ -26,7 +26,7 @@ public class AlgaeManipulationCommands {
 
     public static Command getCollectAlgaeFromLollipopCommand() {
         return new SequentialCommandGroup(
-                CoralCollectionCommands.getUnloadCoralCommand().asProxy(),
+                CoralCollectionCommands.getUnloadCoralCommand().onlyIf(RobotContainer.GRIPPER::hasGamePiece).asProxy(),
                 getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_LOLLIPOP).asProxy().until(() -> OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean() || OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean()),
                 getScoreAlgaeCommand().asProxy()
         ).raceWith(getScoreNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
@@ -34,7 +34,7 @@ public class AlgaeManipulationCommands {
 
     public static Command getCollectAlgaeFromReefCommand() {
         return new SequentialCommandGroup(
-                CoralCollectionCommands.getUnloadCoralCommand().asProxy(),
+                CoralCollectionCommands.getUnloadCoralCommand().onlyIf(RobotContainer.GRIPPER::hasGamePiece).asProxy(),
                 getCollectAlgaeFromReefManuallyCommand().asProxy()
         )
                 .alongWith(getAlignToReefCommand().onlyIf(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()).asProxy())

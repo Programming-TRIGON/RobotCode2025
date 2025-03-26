@@ -77,7 +77,7 @@ public class CoralCollectionCommands {
                         GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.UNLOAD_CORAL)
                 ),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.UNLOAD_CORAL_FROM_GRIPPER)
-        ).unless(() -> RobotContainer.CORAL_INTAKE.hasGamePiece() || !RobotContainer.GRIPPER.hasGamePiece()).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
+        ).unless(RobotContainer.CORAL_INTAKE::hasGamePiece).until(RobotContainer.CORAL_INTAKE::hasGamePiece);
     }
 
     private static boolean shouldStopLoadingCoral() {
