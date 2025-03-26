@@ -16,16 +16,16 @@
     },
     {
       "anchor": {
-        "x": 3.591138698630137,
-        "y": 5.249593321917807
+        "x": 3.69,
+        "y": 5.07
       },
       "prevControl": {
-        "x": 2.945034246575342,
-        "y": 6.106057363013698
+        "x": 3.0438955479452052,
+        "y": 5.926464041095891
       },
       "nextControl": null,
       "isLocked": false,
-      "linkedName": "TwoL4CoralsFromFeeder2.5"
+      "linkedName": "TwoL4CoralsFromFeeder3"
     }
   ],
   "rotationTargets": [],
