@@ -36,7 +36,6 @@ public class Swerve extends MotorSubsystem {
     public Pose2d targetPathPlannerPose = new Pose2d();
     public boolean isPathPlannerDriving = false;
     private SwerveSetpoint previousSetpoint = new SwerveSetpoint(getSelfRelativeVelocity(), getModuleStates(), DriveFeedforwards.zeros(PathPlannerConstants.ROBOT_CONFIG.numModules));
-    private double prevTracer = 0;
 
     public Swerve() {
         setName("Swerve");
@@ -201,7 +200,7 @@ public class Swerve extends MotorSubsystem {
     }
 
     void resetRotationController() {
-        SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.reset(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getRotation().getDegrees(), Units.radiansToDegrees(getSelfRelativeVelocity().omegaRadiansPerSecond));
+        SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.reset(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getRotation().getDegrees());
     }
 
     /**
