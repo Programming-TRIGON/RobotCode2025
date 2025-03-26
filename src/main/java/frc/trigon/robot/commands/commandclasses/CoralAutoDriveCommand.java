@@ -27,7 +27,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
             new PIDController(0.3, 0, 0.03);
     private static final ProfiledPIDController X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(2.8, 5)) :
-            new ProfiledPIDController(2.3, 0, 0, new TrapezoidProfile.Constraints(2.8, 5));
+            new ProfiledPIDController(2.3, 0, 0, new TrapezoidProfile.Constraints(2.6, 5.5));
     private static final ObjectDetectionCamera CAMERA = CameraConstants.OBJECT_DETECTION_CAMERA;
     private Translation2d distanceFromTrackedCoral;
 

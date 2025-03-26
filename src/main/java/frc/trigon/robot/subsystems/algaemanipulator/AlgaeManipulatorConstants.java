@@ -57,7 +57,7 @@ public class AlgaeManipulatorConstants {
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
     static final Rotation2d MAXIMUM_RESTING_GRIPPER_ANGLE = Rotation2d.fromDegrees(0);
     static final double
-            OPEN_TORQUE_CURRENT = 18,
+            OPEN_TORQUE_CURRENT = 20,
             CLOSE_TO_LIMIT_TORQUE_CURRENT = -20;
 
     static {

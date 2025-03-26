@@ -177,7 +177,7 @@ public class Gripper extends MotorSubsystem {
         positionRequest.Slot = 1;
         scalePositionRequestSpeed(targetState.speedScalar);
         setTargetAngle(targetAngle);
-        grippingMotor.setControl(torqueCurrentRequest.withOutput(targetGrippingCurrent));
+        grippingMotor.setControl(voltageRequest.withOutput(targetGrippingCurrent));
     }
 
     private void scalePositionRequestSpeed(double speedScalar) {
