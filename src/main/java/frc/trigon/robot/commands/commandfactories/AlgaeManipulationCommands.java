@@ -22,7 +22,6 @@ import org.trigon.utilities.flippable.FlippableRotation2d;
 import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 public class AlgaeManipulationCommands {
-    public static boolean SHOULD_ALIGN_TO_REEF = true;
     private static final ReefChooser REEF_CHOOSER = OperatorConstants.REEF_CHOOSER;
 
     public static Command getCollectAlgaeFromLollipopCommand() {
@@ -38,7 +37,7 @@ public class AlgaeManipulationCommands {
                 CoralCollectionCommands.getUnloadCoralCommand().asProxy(),
                 getCollectAlgaeFromReefManuallyCommand().asProxy()
         )
-                .alongWith(getAlignToReefCommand().onlyIf(() -> SHOULD_ALIGN_TO_REEF && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()).asProxy())
+                .alongWith(getAlignToReefCommand().onlyIf(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()).asProxy())
                 .raceWith(getScoreNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
     }
 

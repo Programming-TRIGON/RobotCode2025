@@ -127,7 +127,7 @@ public class GripperConstants {
             CommandScheduler.getInstance().getActiveButtonLoop(),
             BEAM_BREAK::getBinaryValue
     ).debounce(COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
-    static final double SCORE_L4_FAR_DISTANCE_METERS = 0.1;
+    static final double SCORE_L4_FAR_DISTANCE_METERS = 0.085;
 
     static {
         configureGrippingMotor();

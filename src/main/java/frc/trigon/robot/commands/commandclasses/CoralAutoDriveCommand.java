@@ -14,6 +14,7 @@ import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
+import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 
@@ -25,8 +26,8 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
             new PIDController(0.5, 0, 0) :
             new PIDController(0.3, 0, 0.03);
     private static final ProfiledPIDController X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
-            new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(0.5, 0.5)) :
-            new ProfiledPIDController(1, 0, 0, new TrapezoidProfile.Constraints(0.8, 2.3));
+            new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(2.8, 5)) :
+            new ProfiledPIDController(2.3, 0, 0, new TrapezoidProfile.Constraints(2.8, 5));
     private static final ObjectDetectionCamera CAMERA = CameraConstants.OBJECT_DETECTION_CAMERA;
     private Translation2d distanceFromTrackedCoral;
 
@@ -56,7 +57,10 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
             return null;
 
         final Translation2d difference = robotPose.getTranslation().minus(trackedObjectPositionOnField);
-        return difference.rotateBy(robotPose.getRotation().unaryMinus());
+        var a = difference.rotateBy(robotPose.getRotation().unaryMinus());
+        Logger.recordOutput("Distance", a);
+        Logger.recordOutput("TargetXDistance", X_PID_CONTROLLER.getSetpoint().position);
+        return a;
     }
 
     public static Command getDriveToCoralCommand(Supplier<Translation2d> distanceFromTrackedCoral) {
@@ -66,6 +70,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
 //                        () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getY()),
 //                        CoralAutoDriveCommand::calculateTargetAngle
 //                ).until(() -> shouldMoveTowardsCoral(distanceFromTrackedCoral.get())),
+                new InstantCommand(() -> X_PID_CONTROLLER.reset(distanceFromTrackedCoral.get().getX())),
                 SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                         () -> X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getX(), -0.65),
                         () -> Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.get().getY()),

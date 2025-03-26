@@ -25,7 +25,6 @@ import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.json.simple.parser.ParseException;
 import org.littletonrobotics.junction.AutoLogOutput;
-import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.LoggedNetworkBoolean;
 import org.trigon.utilities.flippable.FlippablePose2d;
 
@@ -74,10 +73,7 @@ public class AutonomousCommands {
                 getFindCoralCommand(isRight).unless(() -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null).until(() -> CameraConstants.OBJECT_DETECTION_CAMERA.getTrackedObjectFieldRelativePosition() != null),
                 new ParallelCommandGroup(
                         CoralAutoDriveCommand.getDriveToCoralCommand(CoralAutoDriveCommand::calculateDistanceFromTrackedCoral),
-                        new RunCommand(() -> {
-                            CameraConstants.OBJECT_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL);
-                            Logger.recordOutput("Distance", CoralAutoDriveCommand.calculateDistanceFromTrackedCoral());
-                        })
+                        new RunCommand(() -> CameraConstants.OBJECT_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL))
                 ).withTimeout(1.5)
         ).repeatedly();
     }
