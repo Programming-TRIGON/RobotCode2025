@@ -11,6 +11,8 @@ import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import org.trigon.utilities.flippable.FlippablePose2d;
 
+import java.util.function.Supplier;
+
 public class ReefChooser {
     private final CommandGenericHID hid;
     private FieldConstants.ReefClockPosition clockPosition = FieldConstants.ReefClockPosition.REEF_6_OCLOCK;
@@ -25,6 +27,10 @@ public class ReefChooser {
 
     public CoralPlacingCommands.ScoringLevel getScoringLevel() {
         return scoringLevel;
+    }
+
+    public void switchReefSide() {
+        reefSide = reefSide == FieldConstants.ReefSide.LEFT ? FieldConstants.ReefSide.RIGHT : FieldConstants.ReefSide.LEFT;
     }
 
     public FieldConstants.ReefClockPosition getClockPosition() {
@@ -54,16 +60,18 @@ public class ReefChooser {
     }
 
     private void configureScoringLevelBindings() {
-        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L1_FROM_GRIPPER_TRIGGER.onTrue(getSetTargetLevelCommand(CoralPlacingCommands.ScoringLevel.L1_GRIPPER));
-        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L1_FROM_CORAL_INTAKE_TRIGGER.onTrue(getSetTargetLevelCommand(CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE));
-        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L2_TRIGGER.onTrue(getSetTargetLevelCommand(CoralPlacingCommands.ScoringLevel.L2));
-        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L3_TRIGGER.onTrue(getSetTargetLevelCommand(CoralPlacingCommands.ScoringLevel.L3));
-        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L4_TRIGGER.onTrue(getSetTargetLevelCommand(CoralPlacingCommands.ScoringLevel.L4));
+        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L1_FROM_GRIPPER_TRIGGER.onTrue(getSetTargetLevelCommand(() -> CoralPlacingCommands.ScoringLevel.L1_GRIPPER));
+        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L1_FROM_CORAL_INTAKE_TRIGGER.onTrue(getSetTargetLevelCommand(() -> CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE));
+        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L2_TRIGGER.onTrue(getSetTargetLevelCommand(() -> CoralPlacingCommands.ScoringLevel.L2));
+        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L3_TRIGGER.onTrue(getSetTargetLevelCommand(() -> CoralPlacingCommands.ScoringLevel.L3));
+        OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L4_TRIGGER.onTrue(getSetTargetLevelCommand(() -> CoralPlacingCommands.ScoringLevel.L4));
+        OperatorConstants.INCREMENT_TARGET_SCORING_LEVEL_TRIGGER.onTrue(getSetTargetLevelCommand(this::getIncrementedScoringLevel));
+        OperatorConstants.DECREMENT_TARGET_SCORING_LEVEL_TRIGGER.onTrue(getSetTargetLevelCommand(this::getDecrementedScoringLevel));
     }
 
-    private Command getSetTargetLevelCommand(CoralPlacingCommands.ScoringLevel scoringLevel) {
+    private Command getSetTargetLevelCommand(Supplier<CoralPlacingCommands.ScoringLevel> scoringLevel) {
         return new InstantCommand(
-                () -> this.scoringLevel = scoringLevel
+                () -> this.scoringLevel = scoringLevel.get()
         ).ignoringDisable(true);
     }
 
@@ -105,5 +113,21 @@ public class ReefChooser {
         return new InstantCommand(
                 () -> this.reefSide = reefSide
         ).ignoringDisable(true);
+    }
+
+    private CoralPlacingCommands.ScoringLevel getIncrementedScoringLevel() {
+        return switch (scoringLevel) {
+            case L2 -> CoralPlacingCommands.ScoringLevel.L3;
+            case L1_CORAL_INTAKE -> CoralPlacingCommands.ScoringLevel.L2;
+            default -> CoralPlacingCommands.ScoringLevel.L4;
+        };
+    }
+
+    private CoralPlacingCommands.ScoringLevel getDecrementedScoringLevel() {
+        return switch (scoringLevel) {
+            case L4 -> CoralPlacingCommands.ScoringLevel.L3;
+            case L3 -> CoralPlacingCommands.ScoringLevel.L2;
+            default -> CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE;
+        };
     }
 }

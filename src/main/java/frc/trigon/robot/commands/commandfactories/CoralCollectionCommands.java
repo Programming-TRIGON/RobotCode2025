@@ -12,8 +12,7 @@ import frc.trigon.robot.subsystems.gripper.GripperConstants;
 
 
 public class CoralCollectionCommands {
-    public static boolean SHOULD_INTAKE_CORAL_AUTONOMOUSLY = true;
-    public static boolean SHOULD_IGNORE_LOLLIPOP_CORAL = false;
+    public static boolean SHOULD_IGNORE_LOLLIPOP_CORAL = true;
 
     public static Command getFeederCoralCollectionFromGripperCommand() {
         return new ParallelCommandGroup(
@@ -24,7 +23,7 @@ public class CoralCollectionCommands {
     }
 
     public static Command getFloorCoralCollectionCommand() {
-        return getInitiateFloorCoralCollectionCommand().unless(RobotContainer.GRIPPER::hasGamePiece);
+        return getInitiateFloorCoralCollectionCommand();
     }
 
     public static Command getFeederCoralCollectionCommand() {
@@ -51,7 +50,7 @@ public class CoralCollectionCommands {
 
     private static Command getScheduleCoralLoadingCommand() {
         return new InstantCommand(() -> {
-            if (OperatorConstants.REEF_CHOOSER.getScoringLevel() == CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE)
+            if (OperatorConstants.REEF_CHOOSER.getScoringLevel() == CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE || RobotContainer.ALGAE_MANIPULATOR.isOpen())
                 getCenterCoralInIntakeCommand().schedule();
             else
                 getLoadCoralCommand().schedule();
@@ -88,9 +87,9 @@ public class CoralCollectionCommands {
     private static Command getCoralIntakeLoadingSequenceCommand() {
         return new SequentialCommandGroup(
                 CoralIntakeCommands.getCenterCoralWithPulsingCommand().until(RobotContainer.CORAL_INTAKE::hasGamePiece),
-                CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK).until(RobotContainer.CORAL_INTAKE::atTargetAngle),
+                CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK).until(() -> RobotContainer.CORAL_INTAKE.atTargetAngle() && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.LOAD_CORAL) && RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.REST)),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK).raceWith(new WaitUntilCommand(() -> !RobotContainer.CORAL_INTAKE.hasGamePiece()).andThen(new WaitCommand(0.4))),
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK).withTimeout(0.5)
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK).withTimeout(0.3)
         ).repeatedly();
     }
 

@@ -33,10 +33,10 @@ public class SwerveConstants {
             REAR_LEFT_STEER_ENCODER_OFFSET = 0.3525390625 - 0.5,
             REAR_RIGHT_STEER_ENCODER_OFFSET = 0.385498046875 - 0.5;
     private static final double
-            FRONT_LEFT_WHEEL_DIAMETER = 0.046820512231028774 * 2,
-            FRONT_RIGHT_WHEEL_DIAMETER = 0.04970578534013391 * 2,
-            REAR_LEFT_WHEEL_DIAMETER = 0.04439747411839345 * 2,
-            REAR_RIGHT_WHEEL_DIAMETER = 0.04580481274752353 * 2;
+            FRONT_LEFT_WHEEL_DIAMETER = 0.04901073913952087 * 2,
+            FRONT_RIGHT_WHEEL_DIAMETER = 0.051617950549480936 * 2,
+            REAR_LEFT_WHEEL_DIAMETER = 0.045265666572064094 * 2,
+            REAR_RIGHT_WHEEL_DIAMETER = 0.047717884481733634 * 2;
     static final SwerveModule[] SWERVE_MODULES = new SwerveModule[]{
             new SwerveModule(FRONT_LEFT_ID, FRONT_LEFT_STEER_ENCODER_OFFSET, FRONT_LEFT_WHEEL_DIAMETER),
             new SwerveModule(FRONT_RIGHT_ID, FRONT_RIGHT_STEER_ENCODER_OFFSET, FRONT_RIGHT_WHEEL_DIAMETER),
@@ -46,9 +46,9 @@ public class SwerveConstants {
 
     public static final SwerveDriveKinematics KINEMATICS = new SwerveDriveKinematics(PathPlannerConstants.ROBOT_CONFIG.moduleLocations);
     static final double
-            TRANSLATION_TOLERANCE_METERS = 0.02,
+            TRANSLATION_TOLERANCE_METERS = 0.035,
             ROTATION_TOLERANCE_DEGREES = 1.5,
-            TRANSLATION_VELOCITY_TOLERANCE = 0.05,
+            TRANSLATION_VELOCITY_TOLERANCE = 0.15,
             ROTATION_VELOCITY_TOLERANCE = 0.3;
     static final double
             DRIVE_NEUTRAL_DEADBAND = 0.2,
@@ -62,13 +62,13 @@ public class SwerveConstants {
             TRANSLATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
             new PIDConstants(5, 0, 0) :
 //            new PIDConstants(5, 0, 0.24),
-            new PIDConstants(4.5, 0, 0),
+            new PIDConstants(4.2, 0, 0),
             PROFILED_ROTATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
                     new PIDConstants(4, 0, 0) :
-                    new PIDConstants(8, 0, 0.1);
+                    new PIDConstants(13, 0, 0.25);
     private static final double
             MAXIMUM_ROTATION_VELOCITY = RobotHardwareStats.isSimulation() ? 720 : Units.radiansToDegrees(MAXIMUM_ROTATIONAL_SPEED_RADIANS_PER_SECOND),
-            MAXIMUM_ROTATION_ACCELERATION = RobotHardwareStats.isSimulation() ? 720 : 1200;
+            MAXIMUM_ROTATION_ACCELERATION = RobotHardwareStats.isSimulation() ? 720 : 900;
     private static final TrapezoidProfile.Constraints ROTATION_CONSTRAINTS = new TrapezoidProfile.Constraints(
             MAXIMUM_ROTATION_VELOCITY,
             MAXIMUM_ROTATION_ACCELERATION
@@ -95,6 +95,7 @@ public class SwerveConstants {
     static {
         configureGyro();
         SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.enableContinuousInput(-SwerveConstants.MAXIMUM_PID_ANGLE, SwerveConstants.MAXIMUM_PID_ANGLE);
+        SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.setTolerance(1);
     }
 
     private static void configureGyro() {

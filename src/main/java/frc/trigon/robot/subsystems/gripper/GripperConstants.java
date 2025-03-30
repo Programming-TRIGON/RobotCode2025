@@ -46,7 +46,7 @@ public class GripperConstants {
 
     static final double ANGLE_MOTOR_GEAR_RATIO = 20.5;
     private static final double GRIPPING_MOTOR_GEAR_RATIO = 4;
-    private static final double ANGLE_ENCODER_GRAVITY_OFFSET = -0.12331 + Conversions.degreesToRotations(60) - 0.063537;
+    private static final double ANGLE_ENCODER_GRAVITY_OFFSET = -0.12331 + 0.10867 + Conversions.degreesToRotations(60) - 0.063537;
     static final double POSITION_OFFSET_FROM_GRAVITY_OFFSET = RobotHardwareStats.isSimulation() ? 0 : -0.044444 + Conversions.degreesToRotations(60) - ANGLE_ENCODER_GRAVITY_OFFSET;
     static final double
             DEFAULT_MAXIMUM_VELOCITY = RobotHardwareStats.isSimulation() ? 5 : 6,
@@ -127,6 +127,7 @@ public class GripperConstants {
             CommandScheduler.getInstance().getActiveButtonLoop(),
             BEAM_BREAK::getBinaryValue
     ).debounce(COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS);
+    static final double SCORE_L4_FAR_DISTANCE_METERS = 0.085;
 
     static {
         configureGrippingMotor();
@@ -171,11 +172,11 @@ public class GripperConstants {
 
         config.Slot0.kP = RobotHardwareStats.isSimulation() ? 100 : 60;
         config.Slot0.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 3.5;
-        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.31291;
-        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 1.6;
+        config.Slot0.kD = RobotHardwareStats.isSimulation() ? 0 : 3;
+        config.Slot0.kS = RobotHardwareStats.isSimulation() ? 0 : 0.31059;
+        config.Slot0.kV = RobotHardwareStats.isSimulation() ? 0 : 1.4312;
         config.Slot0.kA = RobotHardwareStats.isSimulation() ? 0 : 0;
-        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0 : 0.39472;
+        config.Slot0.kG = RobotHardwareStats.isSimulation() ? 0 : 0.44675;
 
         config.Slot1.kP = RobotHardwareStats.isSimulation() ? 100 : 35;
         config.Slot1.kI = RobotHardwareStats.isSimulation() ? 0 : 0;
@@ -233,21 +234,22 @@ public class GripperConstants {
     public enum GripperState {
         REST(Rotation2d.fromDegrees(-56), 0, 1),
         EJECT(Rotation2d.fromDegrees(55), -3, 1),
-        SCORE_L4(Rotation2d.fromDegrees(49), -6, 1),
-        SCORE_L3_OR_L2(Rotation2d.fromDegrees(55), SCORE_L4.targetGripperVoltage, 1),
+        EJECT_UPWARDS(Rotation2d.fromDegrees(107), -3, 1),
+        SCORE_L4_CLOSE(Rotation2d.fromDegrees(49), -6, 1),
+        SCORE_L4_FAR(Rotation2d.fromDegrees(55), -6, 1),
+        SCORE_L3_OR_L2(Rotation2d.fromDegrees(60), SCORE_L4_CLOSE.targetGripperVoltage, 1),
         SCORE_L1(Rotation2d.fromDegrees(93), -3, 1),
         LOAD_CORAL(Rotation2d.fromDegrees(-56), 11, 1),
         UNLOAD_CORAL(Rotation2d.fromDegrees(-50), -3, 1),
-        COLLECT_ALGAE_FROM_REEF(Rotation2d.fromDegrees(30), -50, 1),
-        COLLECT_ALGAE_FROM_LOLLIPOP(Rotation2d.fromDegrees(-35), -50, 1),
+        COLLECT_ALGAE_FROM_REEF(Rotation2d.fromDegrees(30), -4, 1),
+        COLLECT_ALGAE_FROM_LOLLIPOP(Rotation2d.fromDegrees(-35), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage, 1),
         HOLD_ALGAE(Rotation2d.fromDegrees(40), -40, 0.3),
         SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(60), 11, 1),
         PREPARE_FOR_SCORING_ALGAE_IN_NET(Rotation2d.fromDegrees(100), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage, 0.3),
         SCORE_ALGAE_IN_PROCESSOR(Rotation2d.fromDegrees(-35), 11, 1),
         PREPARE_FOR_SCORING_ALGAE_IN_PROCESSOR(Rotation2d.fromDegrees(-35), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage, 0.3),
-        AFTER_ELEVATOR_OPEN_POSITION(Rotation2d.fromDegrees(0), 0, 1),
         COLLECT_CORAL_FROM_FEEDER(Rotation2d.fromDegrees(90), 8, 1),
-        OPEN_FOR_NOT_HITTING_REEF(Rotation2d.fromDegrees(110), 0.2, 1);
+        OPEN_FOR_NOT_HITTING_REEF(Rotation2d.fromDegrees(107), 0.4, 1);
 
         final Rotation2d targetAngle;
         final double targetGripperVoltage;

@@ -56,7 +56,9 @@ public class AlgaeManipulatorConstants {
     public static final double MAXIMUM_CURRENT_REQUEST_DUTY_CYCLE = 0.5;
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(1);
     static final Rotation2d MAXIMUM_RESTING_GRIPPER_ANGLE = Rotation2d.fromDegrees(0);
-    static final double OPEN_TORQUE_CURRENT = 15;
+    static final double
+            OPEN_TORQUE_CURRENT = 20,
+            CLOSE_TO_LIMIT_TORQUE_CURRENT = -20;
 
     static {
         final TalonFXConfiguration config = new TalonFXConfiguration();
@@ -99,6 +101,7 @@ public class AlgaeManipulatorConstants {
         ANGLE_MOTOR.registerSignal(TalonFXSignal.POSITION, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
+        ANGLE_MOTOR.registerSignal(TalonFXSignal.TORQUE_CURRENT, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.REVERSE_LIMIT, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
         ANGLE_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);

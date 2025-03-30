@@ -75,10 +75,11 @@ public class ElevatorConstants {
 
     static final double FIRST_ELEVATOR_COMPONENT_EXTENDED_LENGTH_METERS = 0.6;
     static final double DRUM_DIAMETER_METERS = DRUM_RADIUS_METERS * 2;
-    static final double POSITION_TOLERANCE_METERS = 0.04;
+    static final double POSITION_TOLERANCE_METERS = 0.07;
     static final double
             GRIPPER_HITTING_ELEVATOR_BASE_LOWER_BOUND_POSITION_ROTATIONS = 0.29,
-            GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS = 0.7;
+            GRIPPER_HITTING_ELEVATOR_BASE_UPPER_BOUND_POSITION_ROTATIONS = 0.7,
+            GRIPPER_HITTING_ALGAE_UPPER_BOUND_POSITION_ROTATIONS = 3;
 
     static {
         configureMasterMotor();

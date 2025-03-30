@@ -63,8 +63,6 @@ public class CommandConstants {
             );
 
     public static final Command
-            ENABLE_AUTO_CORAL_INTAKE_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_INTAKE_CORAL_AUTONOMOUSLY = true).ignoringDisable(true),
-            DISABLE_AUTO_CORAL_INTAKE_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_INTAKE_CORAL_AUTONOMOUSLY = false).ignoringDisable(true),
             ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = true).ignoringDisable(true),
             DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = false).ignoringDisable(true),
             ENABLE_IGNORE_LOLLIPOP_CORAL_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_IGNORE_LOLLIPOP_CORAL = true).ignoringDisable(true),
@@ -110,7 +108,7 @@ public class CommandConstants {
      *
      * @return the rotation value
      */
-    private static FlippableRotation2d calculateJoystickOrientedToReefSectionsTargetAngle() {
+    public static FlippableRotation2d calculateJoystickOrientedToReefSectionsTargetAngle() {
         final double
                 xPower = DRIVER_CONTROLLER.getRightX(),
                 yPower = DRIVER_CONTROLLER.getRightY();
@@ -119,8 +117,7 @@ public class CommandConstants {
         if (joystickPower < JOYSTICK_ORIENTED_ROTATION_DEADBAND)
             return null;
 
-        final double targetAngleRadians = Math.atan2(xPower, yPower) + Math.PI;
-        return roundAngleToClosestReefAngle(Rotation2d.fromRadians(targetAngleRadians));
+        return new FlippableRotation2d(Math.atan2(xPower, yPower), true);
     }
 
     private static FlippableRotation2d roundAngleToClosestReefAngle(Rotation2d targetAngle) {

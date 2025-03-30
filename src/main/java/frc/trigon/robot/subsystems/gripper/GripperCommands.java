@@ -5,8 +5,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
+import org.trigon.commands.ExecuteEndCommand;
 import org.trigon.commands.GearRatioCalculationCommand;
 import org.trigon.commands.NetworkTablesCommand;
+import org.trigon.utilities.flippable.FlippablePose2d;
 
 import java.util.Set;
 import java.util.function.Supplier;
@@ -48,20 +50,6 @@ public class GripperCommands {
         );
     }
 
-    /**
-     * Creates a command that will set the gripper to the score in reef state,
-     * which means the gripper will eject the coral into the reef, while maintaining the current target angle.
-     *
-     * @return the command
-     */
-    public static Command getScoreInReefForAutoCommand() {
-        return new StartEndCommand(
-                RobotContainer.GRIPPER::scoreInReefForAuto,
-                RobotContainer.GRIPPER::stop,
-                RobotContainer.GRIPPER
-        );
-    }
-
     public static Command getPrepareForStateCommand(Supplier<GripperConstants.GripperState> targetStateSupplier) {
         return new StartEndCommand(
                 () -> RobotContainer.GRIPPER.prepareForState(targetStateSupplier.get()),
@@ -89,6 +77,28 @@ public class GripperCommands {
     public static Command getSetTargetStateCommand(GripperConstants.GripperState targetState) {
         return new StartEndCommand(
                 () -> RobotContainer.GRIPPER.setTargetState(targetState),
+                RobotContainer.GRIPPER::stop,
+                RobotContainer.GRIPPER
+        );
+    }
+
+    public static Command getPrepareForScoringInL4Command(Supplier<FlippablePose2d> targetPoseSupplier) {
+        return new ExecuteEndCommand(
+                () -> {
+                    RobotContainer.GRIPPER.setTargetAngleToL4(targetPoseSupplier.get());
+                    RobotContainer.GRIPPER.setTargetVoltage(0);
+                },
+                RobotContainer.GRIPPER::stop,
+                RobotContainer.GRIPPER
+        );
+    }
+
+    public static Command getScoreInL4Command(Supplier<FlippablePose2d> targetPoseSupplier) {
+        return new ExecuteEndCommand(
+                () -> {
+                    RobotContainer.GRIPPER.setTargetAngleToL4(targetPoseSupplier.get());
+                    RobotContainer.GRIPPER.setTargetVoltage(GripperConstants.GripperState.SCORE_L4_CLOSE.targetGripperVoltage);
+                },
                 RobotContainer.GRIPPER::stop,
                 RobotContainer.GRIPPER
         );

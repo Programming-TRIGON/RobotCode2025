@@ -60,7 +60,9 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
     }
 
     private void updateHasResultInputs(AprilTagCameraInputsAutoLogged inputs, PhotonPipelineResult latestResult) {
-        final PhotonTrackedTarget bestTag = getBestTag(latestResult);
+        final PhotonTrackedTarget[] visibleNotHatefulTags = getVisibleNotHatefulTags(latestResult);
+        final PhotonTrackedTarget bestTag = visibleNotHatefulTags.length == 0 ? null : visibleNotHatefulTags[0];
+
         if (bestTag == null) {
             updateNoResultInputs(inputs);
             inputs.hasResult = false;
@@ -74,16 +76,17 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
         }
 
         inputs.latestResultTimestampSeconds = latestResult.getTimestampSeconds();
-        inputs.visibleTagIDs = getVisibleTagIDs(latestResult);
+        inputs.visibleTagIDs = getVisibleTagIDs(visibleNotHatefulTags);
         inputs.poseAmbiguity = latestResult.getMultiTagResult().isPresent() ? 0 : bestTag.getPoseAmbiguity();
-        inputs.distancesFromTags = getDistancesFromTags(latestResult);
+        inputs.distancesFromTags = getDistancesFromTags(visibleNotHatefulTags);
         inputs.hasConstrainedResult = false;
     }
 
     private PhotonTrackedTarget getBestTag(PhotonPipelineResult result) {
-        for (PhotonTrackedTarget tag : result.getTargets())
+        for (PhotonTrackedTarget tag : result.getTargets()) {
             if (FieldConstants.TAG_ID_TO_POSE.containsKey(tag.getFiducialId()))
                 return tag;
+        }
         return null;
     }
 
@@ -154,27 +157,35 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
         return pnpResult.map(value -> Pose3d.kZero.plus(value.best).transformBy(robotToCamera)).orElse(null);
     }
 
-    private int[] getVisibleTagIDs(PhotonPipelineResult result) {
+    private PhotonTrackedTarget[] getVisibleNotHatefulTags(PhotonPipelineResult result) {
         final List<PhotonTrackedTarget> targets = result.getTargets();
-        final int[] visibleTagIDs = new int[targets.size()];
-        int indx = 0;
+        final PhotonTrackedTarget[] visibleTagIDs = new PhotonTrackedTarget[targets.size()];
+        int index = 0;
 
         for (PhotonTrackedTarget target : targets) {
             if (FieldConstants.TAG_ID_TO_POSE.containsKey(target.getFiducialId())) {
-                visibleTagIDs[indx] = target.getFiducialId();
-                indx++;
+                visibleTagIDs[index] = target;
+                index++;
             }
         }
 
-        return Arrays.copyOf(visibleTagIDs, indx);
+        return Arrays.copyOf(visibleTagIDs, index);
     }
 
-    private double[] getDistancesFromTags(PhotonPipelineResult result) {
-        final List<PhotonTrackedTarget> targets = result.getTargets();
-        final double[] distances = new double[targets.size()];
+    private int[] getVisibleTagIDs(PhotonTrackedTarget[] targets) {
+        final int[] visibleTagIDs = new int[targets.length];
 
-        for (int i = 0; i < targets.size(); i++)
-            distances[i] = getDistanceFromTarget(targets.get(i));
+        for (int i = 0; i < visibleTagIDs.length; i++)
+            visibleTagIDs[i] = targets[i].getFiducialId();
+
+        return visibleTagIDs;
+    }
+
+    private double[] getDistancesFromTags(PhotonTrackedTarget[] targets) {
+        final double[] distances = new double[targets.length];
+
+        for (int i = 0; i < targets.length; i++)
+            distances[i] = getDistanceFromTarget(targets[i]);
 
         return distances;
     }

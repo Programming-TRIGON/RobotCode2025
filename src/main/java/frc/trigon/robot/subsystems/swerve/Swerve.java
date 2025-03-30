@@ -10,7 +10,6 @@ import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.kinematics.SwerveModuleState;
 import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
-import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.RobotContainer;
@@ -36,8 +35,7 @@ public class Swerve extends MotorSubsystem {
     private final SwerveSetpointGenerator setpointGenerator = new SwerveSetpointGenerator(PathPlannerConstants.ROBOT_CONFIG, SwerveModuleConstants.MAXIMUM_MODULE_ROTATIONAL_SPEED_RADIANS_PER_SECOND);
     public Pose2d targetPathPlannerPose = new Pose2d();
     public boolean isPathPlannerDriving = false;
-    private SwerveSetpoint previousSetpoint;
-    private double prevTracer = 0;
+    private SwerveSetpoint previousSetpoint = new SwerveSetpoint(getSelfRelativeVelocity(), getModuleStates(), DriveFeedforwards.zeros(PathPlannerConstants.ROBOT_CONFIG.numModules));
 
     public Swerve() {
         setName("Swerve");
@@ -151,6 +149,11 @@ public class Swerve extends MotorSubsystem {
 
     public void drivePathPlanner(ChassisSpeeds targetPathPlannerFeedforwardSpeeds, boolean isFromPathPlanner) {
         isPathPlannerDriving = !isStill(targetPathPlannerFeedforwardSpeeds);
+        if (!isPathPlannerDriving) {
+            pidToPose(new FlippablePose2d(targetPathPlannerPose, false));
+            return;
+        }
+
         if (isFromPathPlanner && DriverStation.isAutonomous() && !isPathPlannerDriving)
             return;
         final ChassisSpeeds pidSpeeds = calculateSelfRelativePIDToPoseSpeeds(new FlippablePose2d(targetPathPlannerPose, false));
@@ -187,15 +190,17 @@ public class Swerve extends MotorSubsystem {
         return Flippable.isRedAlliance() ? currentAngle.rotateBy(Rotation2d.fromDegrees(180)) : currentAngle;
     }
 
-    public void initializeDrive(boolean shouldUseClosedLoop) {
+    public void resetSetpoint() {
         previousSetpoint = new SwerveSetpoint(getSelfRelativeVelocity(), getModuleStates(), DriveFeedforwards.zeros(PathPlannerConstants.ROBOT_CONFIG.numModules));
+    }
+
+    public void initializeDrive(boolean shouldUseClosedLoop) {
         setClosedLoop(shouldUseClosedLoop);
         resetRotationController();
     }
 
     void resetRotationController() {
         SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.reset(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getRotation().getDegrees());
-        SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.setGoal(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getRotation().getDegrees());
     }
 
     /**
@@ -355,9 +360,16 @@ public class Swerve extends MotorSubsystem {
             SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.setGoal(targetAngle.get().getDegrees());
 
         final Rotation2d currentAngle = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getRotation();
+        final double output = Units.degreesToRadians(SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.calculate(currentAngle.getDegrees()));
+        final boolean atGoal = SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.atGoal();
         Logger.recordOutput("Swerve/ProfiledRotationPIDController/Setpoint", SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.getSetpoint().position);
         Logger.recordOutput("Swerve/ProfiledRotationPIDController/Current", currentAngle.getDegrees());
-        return Units.degreesToRadians(SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.calculate(currentAngle.getDegrees()));
+        Logger.recordOutput("Swerve/ProfiledRotationPIDController/AtGoal", atGoal);
+        Logger.recordOutput("Swerve/ProfiledRotationPIDController/Output", output);
+        if (atGoal)
+            return 0;
+
+        return output;
     }
 
     private ChassisSpeeds selfRelativeSpeedsFromFieldRelativePowers(double xPower, double yPower, double thetaPower) {

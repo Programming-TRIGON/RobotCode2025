@@ -40,7 +40,8 @@ public class CoralIntakeCommands {
                 RobotContainer.CORAL_INTAKE::initializePulsing,
                 RobotContainer.CORAL_INTAKE::pulseIntake,
                 (interrupted) -> RobotContainer.CORAL_INTAKE.stopPulsing(),
-                () -> false
+                () -> false,
+                RobotContainer.CORAL_INTAKE
         );
     }
 
