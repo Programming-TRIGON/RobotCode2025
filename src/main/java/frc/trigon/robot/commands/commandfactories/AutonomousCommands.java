@@ -11,7 +11,6 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
-import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
@@ -134,14 +133,27 @@ public class AutonomousCommands {
 
     public static Command getPrepareForScoreCommand() {
         return new ParallelCommandGroup(
-                ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
+                getOpenElevatorWhenCloseToReefCommand(),
                 GripperCommands.getPrepareForScoringInL4Command(() -> TARGET_SCORING_POSE)
         );
     }
 
+    private static Command getOpenElevatorWhenCloseToReefCommand() {
+        return GeneralCommands.runWhen(
+                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L4),
+                () -> calculateDistanceToTargetScoringPose() < PathPlannerConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR
+        );
+    }
+
+    private static double calculateDistanceToTargetScoringPose() {
+        final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
+        final Translation2d targetTranslation = TARGET_SCORING_POSE.get().getTranslation();
+        return currentTranslation.getDistance(targetTranslation);
+    }
+
     public static Command getFeedCoralCommand() {
         return new ParallelCommandGroup(
-                ElevatorCommands.getSetTargetStateCommand(OperatorConstants.REEF_CHOOSER.getElevatorState()),
+                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_L4),
                 GripperCommands.getScoreInL4Command(() -> TARGET_SCORING_POSE),
                 getAddCurrentScoringBranchToScoredBranchesCommand()
         ).withTimeout(0.25);
@@ -194,8 +206,8 @@ public class AutonomousCommands {
 
     @AutoLogOutput
     private static boolean canFeed() {
-        return RobotContainer.ELEVATOR.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().elevatorState) &&
-                RobotContainer.GRIPPER.atState(OperatorConstants.REEF_CHOOSER.getScoringLevel().gripperState) &&
+        return RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_L4) &&
+                RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_L4_CLOSE) &&
                 TARGET_SCORING_POSE != null &&
                 Math.abs(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().relativeTo(TARGET_SCORING_POSE.get()).getX()) < 0.085 &&
                 Math.abs(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().relativeTo(TARGET_SCORING_POSE.get()).getY()) < 0.03;
