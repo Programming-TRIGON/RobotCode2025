@@ -76,15 +76,15 @@ public class AutonomousCommands {
     }
 
     public static Command getFindCoralCommand(boolean isRight) {
-        return new ParallelCommandGroup(
-                new RunCommand(() -> CameraConstants.OBJECT_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL)),
-                SwerveCommands.getDriveToPoseCommand(() -> isRight ? FieldConstants.AUTO_FIND_CORAL_POSE_RIGHT : FieldConstants.AUTO_FIND_CORAL_POSE_LEFT, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS).andThen(
-                        SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                                () -> 0,
-                                () -> 0,
-                                () -> 0.2
-                        )
+        return new SequentialCommandGroup(
+                SwerveCommands.getDriveToPoseCommand(() -> isRight ? FieldConstants.AUTO_FIND_CORAL_POSE_RIGHT : FieldConstants.AUTO_FIND_CORAL_POSE_LEFT, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS, 1.5),
+                SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+                        () -> 0,
+                        () -> 0,
+                        () -> 0.2
                 )
+        ).alongWith(
+                new RunCommand(() -> CameraConstants.OBJECT_DETECTION_CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL))
         );
     }
 

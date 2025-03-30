@@ -83,7 +83,7 @@ public class CoralPlacingCommands {
         return new SequentialCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF)
                         .unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState()) || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L2 || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_GRIPPER)
-                        .until(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())),
+                        .until(RobotContainer.ELEVATOR::isCloseEnoughToOpenGripper),
                 scoreFromGripperReefChooserCommand()
         );
     }
@@ -92,7 +92,7 @@ public class CoralPlacingCommands {
         return new SequentialCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF)
                         .unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState()) || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L2 || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_GRIPPER)
-                        .until(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())),
+                        .until(RobotContainer.ELEVATOR::isCloseEnoughToOpenGripper),
                 new ConditionalCommand(
                         scoreFromGripperInL4Command(),
                         scoreFromGripperReefChooserCommand(),
