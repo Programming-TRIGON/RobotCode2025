@@ -76,7 +76,7 @@ public class Elevator extends MotorSubsystem {
     }
 
     public boolean isCloseEnoughToOpenGripper() {
-        return calculateTargetStateDistance() < 0.25;
+        return calculateTargetStateDistance() < 0.3;
     }
 
     public boolean willCurrentMovementMoveThroughHitRange() {
