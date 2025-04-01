@@ -83,7 +83,11 @@ public class Elevator extends MotorSubsystem {
         return willMovementMoveThroughHitRange(metersToRotations(targetState.targetPositionMeters));
     }
 
-    public boolean isElevatorOverAlgaeHitRange() {
+    public boolean isOverQuickNetScoreReleaseHeight() {
+        return getPositionRotations() > ElevatorConstants.QUICK_SCORE_NET_HEIGHT_LOWER_BOUND_POSITION_ROTATIONS;
+    }
+
+    public boolean isOverAlgaeHitRange() {
         return getPositionRotations() > ElevatorConstants.GRIPPER_HITTING_ALGAE_UPPER_BOUND_POSITION_ROTATIONS;
     }
 

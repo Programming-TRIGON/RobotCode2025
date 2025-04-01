@@ -244,6 +244,7 @@ public class GripperConstants {
         COLLECT_ALGAE_FROM_REEF(Rotation2d.fromDegrees(30), -4, 1),
         COLLECT_ALGAE_FROM_LOLLIPOP(Rotation2d.fromDegrees(-35), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage, 1),
         HOLD_ALGAE(Rotation2d.fromDegrees(40), -40, 0.3),
+        QUICK_SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(60), 11, 1),
         SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(60), 11, 1),
         PREPARE_FOR_SCORING_ALGAE_IN_NET(Rotation2d.fromDegrees(100), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage, 0.3),
         SCORE_ALGAE_IN_PROCESSOR(Rotation2d.fromDegrees(-35), 11, 1),

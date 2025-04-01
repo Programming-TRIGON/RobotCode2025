@@ -21,13 +21,16 @@ import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableRotation2d;
 import org.trigon.utilities.flippable.FlippableTranslation2d;
 
+import java.util.Map;
+
 public class AlgaeManipulationCommands {
     private static final ReefChooser REEF_CHOOSER = OperatorConstants.REEF_CHOOSER;
 
     public static Command getCollectAlgaeFromLollipopCommand() {
         return new SequentialCommandGroup(
                 CoralCollectionCommands.getUnloadCoralCommand().onlyIf(RobotContainer.GRIPPER::hasGamePiece).asProxy(),
-                getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_LOLLIPOP).asProxy().until(() -> OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean() || OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean()),
+                getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_LOLLIPOP).asProxy()
+                        .until(AlgaeManipulationCommands::isScoreAlgaeButtonPressed),
                 getScoreAlgaeCommand().asProxy()
         ).raceWith(getScoreNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
     }
@@ -53,14 +56,14 @@ public class AlgaeManipulationCommands {
     }
 
     private static Command getScoreNetEndingConditionCommand() {
-        return new WaitUntilCommand(() -> OperatorConstants.CONTINUE_TRIGGER.getAsBoolean() && RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.SCORE_NET)).andThen(new WaitCommand(0.5));
+        return new WaitUntilCommand(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_ALGAE_IN_NET) || RobotContainer.GRIPPER.atState(GripperConstants.GripperState.QUICK_SCORE_ALGAE_IN_NET)).andThen(new WaitCommand(0.1));
     }
 
     private static Command getCollectAlgaeFromReefManuallyCommand() {
         return new ParallelCommandGroup(
                 getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF),
                 getOpenElevatorForAlgaeCommand()
-        ).until(() -> OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean() || OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean()).andThen(
+        ).until(AlgaeManipulationCommands::isScoreAlgaeButtonPressed).andThen(
                 getScoreAlgaeCommand()
         );
     }
@@ -83,11 +86,36 @@ public class AlgaeManipulationCommands {
     }
 
     private static Command getScoreAlgaeCommand() {
-        return new ConditionalCommand(
-                getScoreInNetCommand(),
-                getScoreInProcessorCommand(),
-                OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER
+        return new SelectCommand<>(
+                Map.of(
+                        1, getQuickScoreInNetCommand(),
+                        2, getScoreInNetCommand(),
+                        3, getScoreInProcessorCommand()
+                ),
+                AlgaeManipulationCommands::getAlgaeScoreMethodSelector
         );
+    }
+
+    private static int getAlgaeScoreMethodSelector() {
+        if (OperatorConstants.QUICK_SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean())
+            return 1;
+        else if (OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean())
+            return 2;
+        else if (OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean())
+            return 3;
+        return 0;
+    }
+
+    private static Command getQuickScoreInNetCommand() {
+        return new ParallelCommandGroup(
+                new WaitCommand(0.3).andThen(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.QUICK_SCORE_NET)),
+                AlgaeManipulatorCommands.getOpenCommand(),
+                new SequentialCommandGroup(
+                        GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_NET)
+                                .until(RobotContainer.ELEVATOR::isOverQuickNetScoreReleaseHeight),
+                        GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.QUICK_SCORE_ALGAE_IN_NET)
+                )
+        ).until(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.QUICK_SCORE_ALGAE_IN_NET));
     }
 
     private static Command getScoreInNetCommand() {
@@ -114,7 +142,6 @@ public class AlgaeManipulationCommands {
                         GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_ALGAE_IN_PROCESSOR)
                 ),
                 SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
-
                         () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftY()),
                         () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
                         () -> new FlippableRotation2d(Rotation2d.fromDegrees(90), true)
@@ -136,19 +163,13 @@ public class AlgaeManipulationCommands {
         ).until(OperatorConstants.CONTINUE_TRIGGER);
     }
 
-    private static Pose2d calculateReefAlgaeCollectionPose() {
-        final Translation2d reefCenterPositionOnField = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
-        final Rotation2d targetAngle = calculateTargetAngle().get();
-        final Transform2d reefCenterToTargetPoseTranslation = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_ALGAE_COLLECTION_POSITION_X_TRANSFORM_METERS, 0, new Rotation2d());
-
-        return new Pose2d(reefCenterPositionOnField, targetAngle).transformBy(reefCenterToTargetPoseTranslation);
+    private static boolean isScoreAlgaeButtonPressed() {
+        return OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean() ||
+                OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean() ||
+                OperatorConstants.QUICK_SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean();
     }
 
-    private static FlippableRotation2d calculateTargetAngle() {
-        return new FlippableRotation2d(REEF_CHOOSER.getClockPosition().clockAngle, true);
-    }
-
-    public static FlippablePose2d calculateClosestAlgaeCollectionPose() {
+    private static FlippablePose2d calculateClosestAlgaeCollectionPose() {
         final Translation2d robotPositionOnField = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
         final Translation2d reefCenterPosition = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
         final Rotation2d[] reefClockAngles = FieldConstants.REEF_CLOCK_ANGLES;
