@@ -2,6 +2,7 @@ package frc.trigon.robot.constants;
 
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.misc.ReefChooser;
 import org.trigon.hardware.misc.KeyboardController;
 import org.trigon.hardware.misc.XboxController;
@@ -35,7 +36,7 @@ public class OperatorConstants {
             BACKWARD_DYNAMIC_CHARACTERIZATION_TRIGGER = OPERATOR_CONTROLLER.down(),
             FLOOR_CORAL_COLLECTION_TRIGGER = DRIVER_CONTROLLER.leftTrigger().or(OPERATOR_CONTROLLER.c()),
             FEEDER_CORAL_COLLECTION_TRIGGER = OPERATOR_CONTROLLER.f().or(DRIVER_CONTROLLER.start()),
-            SCORE_CORAL_IN_REEF_TRIGGER = DRIVER_CONTROLLER.rightBumper().or(OPERATOR_CONTROLLER.q()),
+            SCORE_CORAL_IN_REEF_TRIGGER = DRIVER_CONTROLLER.rightBumper().and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()).or(OPERATOR_CONTROLLER.q()),
             CONTINUE_TRIGGER = OPERATOR_CONTROLLER.k().or(DRIVER_CONTROLLER.leftBumper()),
             EJECT_CORAL_TRIGGER = OPERATOR_CONTROLLER.e().or(DRIVER_CONTROLLER.x()),
             DEBUGGING_TRIGGER = OPERATOR_CONTROLLER.f2(),
@@ -43,7 +44,7 @@ public class OperatorConstants {
             COLLECT_ALGAE_FROM_REEF_TRIGGER = OPERATOR_CONTROLLER.a().or(DRIVER_CONTROLLER.a()),
             COLLECT_ALGAE_FROM_LOLLIPOP_TRIGGER = OPERATOR_CONTROLLER.l().or(DRIVER_CONTROLLER.y()),
             FEEDER_CORAL_COLLECTION_WITH_GRIPPER = OPERATOR_CONTROLLER.d(),
-            QUICK_SCORE_ALGAE_IN_NET_TRIGGER = OPERATOR_CONTROLLER.x(),
+            QUICK_SCORE_ALGAE_IN_NET_TRIGGER = OPERATOR_CONTROLLER.x().or(DRIVER_CONTROLLER.rightBumper().and(RobotContainer.ALGAE_MANIPULATOR::isOpen)),
             SCORE_ALGAE_IN_NET_TRIGGER = OPERATOR_CONTROLLER.n().or(DRIVER_CONTROLLER.b()),
             SCORE_ALGAE_IN_PROCESSOR_TRIGGER = OPERATOR_CONTROLLER.j(),
             INCREMENT_TARGET_SCORING_LEVEL_TRIGGER = DRIVER_CONTROLLER.povUp(),
