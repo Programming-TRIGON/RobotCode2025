@@ -356,8 +356,7 @@ public class Swerve extends MotorSubsystem {
     }
 
     private double calculateProfiledAngleSpeedToTargetAngle(FlippableRotation2d targetAngle) {
-        if (targetAngle != null)
-            SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.setGoal(targetAngle.get().getDegrees());
+        SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.setGoal(targetAngle == null ? getHeading().getDegrees() : targetAngle.get().getDegrees());
 
         final Rotation2d currentAngle = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getRotation();
         final double output = Units.degreesToRadians(SwerveConstants.PROFILED_ROTATION_PID_CONTROLLER.calculate(currentAngle.getDegrees()));
