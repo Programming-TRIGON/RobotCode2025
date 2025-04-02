@@ -146,7 +146,7 @@ public class AlgaeManipulationCommands {
                         () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
                         () -> new FlippableRotation2d(Rotation2d.fromDegrees(90), true)
                 ).asProxy()
-        );
+        ).until(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_ALGAE_IN_PROCESSOR) && OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean());
     }
 
     private static Command getAlignToReefCommand() {
