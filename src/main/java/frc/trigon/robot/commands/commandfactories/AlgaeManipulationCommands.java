@@ -70,8 +70,8 @@ public class AlgaeManipulationCommands {
 
     private static Command getGripAlgaeCommand(GripperConstants.GripperState targetGripState) {
         return new SequentialCommandGroup(
-                GripperCommands.getSetTargetStateWithCurrentCommand(targetGripState).raceWith(new WaitCommand(1).andThen(new WaitUntilCommand(RobotContainer.GRIPPER::isMovingSlowly))),
-                GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.HOLD_ALGAE)
+                GripperCommands.getSetTargetStateWhileHoldingAlgaeCommand(targetGripState).raceWith(new WaitCommand(1).andThen(new WaitUntilCommand(RobotContainer.GRIPPER::isMovingSlowly))),
+                GripperCommands.getSetTargetStateWhileHoldingAlgaeCommand(GripperConstants.GripperState.HOLD_ALGAE)
         ).alongWith(
                 AlgaeManipulatorCommands.getOpenCommand()
         );
@@ -123,7 +123,7 @@ public class AlgaeManipulationCommands {
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_NET),
                 AlgaeManipulatorCommands.getOpenCommand(),
                 new SequentialCommandGroup(
-                        GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_NET).until(OperatorConstants.CONTINUE_TRIGGER),
+                        GripperCommands.getSetTargetStateWhileHoldingAlgaeCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_NET).until(OperatorConstants.CONTINUE_TRIGGER),
                         GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_ALGAE_IN_NET)
                 ),
                 SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
@@ -138,7 +138,7 @@ public class AlgaeManipulationCommands {
         return new ParallelCommandGroup(
                 AlgaeManipulatorCommands.getOpenCommand().until(OperatorConstants.CONTINUE_TRIGGER),
                 new SequentialCommandGroup(
-                        GripperCommands.getSetTargetStateWithCurrentCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_PROCESSOR).until(OperatorConstants.CONTINUE_TRIGGER),
+                        GripperCommands.getSetTargetStateWhileHoldingAlgaeCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_PROCESSOR).until(OperatorConstants.CONTINUE_TRIGGER),
                         GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_ALGAE_IN_PROCESSOR)
                 ),
                 SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
