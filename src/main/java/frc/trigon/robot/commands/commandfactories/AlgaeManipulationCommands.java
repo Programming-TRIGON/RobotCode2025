@@ -12,6 +12,8 @@ import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.misc.ReefChooser;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorCommands;
+import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
+import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
@@ -42,6 +44,17 @@ public class AlgaeManipulationCommands {
         )
                 .alongWith(getAlignToReefCommand().onlyIf(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()).asProxy())
                 .raceWith(getScoreNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
+    }
+
+    public static Command getCollectAlgaeFromFloorCommand() {
+        return new SequentialCommandGroup(
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_ALGAE_FROM_FLOOR)
+                        .raceWith(new WaitCommand(1).andThen(new WaitUntilCommand(() -> RobotContainer.CORAL_INTAKE.isMovingSlowly() || OperatorConstants.CONTINUE_TRIGGER.getAsBoolean()))),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.PREPARE_SCORE_ALGAE_IN_PROCESSOR)
+                        .raceWith(new WaitCommand(1).andThen(new WaitUntilCommand(OperatorConstants.CONTINUE_TRIGGER))),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_ALGAE_IN_PROCESSOR)
+                        .until(OperatorConstants.CONTINUE_TRIGGER.negate())
+        );
     }
 
     public static Command getResetAmpAlignerCommand() {

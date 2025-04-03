@@ -122,6 +122,11 @@ public class CoralIntake extends MotorSubsystem {
         return CoralIntakeConstants.EARLY_CORAL_COLLECTION_DETECTION_BOOLEAN_EVENT.getAsBoolean();
     }
 
+    @AutoLogOutput
+    public boolean isMovingSlowly() {
+        return Math.abs(intakeMotor.getSignal(TalonFXSignal.VELOCITY)) < 4;
+    }
+
     /**
      * Calculates the pose where the coral should actually be collected from relative to the robot.
      *

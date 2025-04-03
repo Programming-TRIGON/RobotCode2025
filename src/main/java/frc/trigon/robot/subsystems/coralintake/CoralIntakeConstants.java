@@ -189,6 +189,7 @@ public class CoralIntakeConstants {
         INTAKE_MOTOR.setPhysicsSimulation(INTAKE_SIMULATION);
 
         INTAKE_MOTOR.registerSignal(TalonFXSignal.MOTOR_VOLTAGE, 100);
+        INTAKE_MOTOR.registerSignal(TalonFXSignal.VELOCITY, 100);
         INTAKE_MOTOR.registerSignal(TalonFXSignal.STATOR_CURRENT, 100);
     }
 
@@ -293,7 +294,9 @@ public class CoralIntakeConstants {
         REST(0, 0, LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK.targetAngle),
         SCORE_L1_BOOST(-3, -3, Rotation2d.fromDegrees(33)),
         SCORE_L1(-2, 3, Rotation2d.fromDegrees(33)),
-        COLLECT_ALGAE_FROM_FLOOR(-6, 0, Rotation2d.fromDegrees(-40));
+        COLLECT_ALGAE_FROM_FLOOR(5, 0, Rotation2d.fromDegrees(-15)),
+        PREPARE_SCORE_ALGAE_IN_PROCESSOR(5, 0, Rotation2d.fromDegrees(15)),
+        SCORE_ALGAE_IN_PROCESSOR(-2, 0, PREPARE_SCORE_ALGAE_IN_PROCESSOR.targetAngle);
 
         public final double
                 targetIntakeVoltage,
