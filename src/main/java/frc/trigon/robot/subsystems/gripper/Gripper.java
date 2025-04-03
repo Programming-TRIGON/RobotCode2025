@@ -173,11 +173,11 @@ public class Gripper extends MotorSubsystem {
         setTargetVoltage(targetGrippingVoltage);
     }
 
-    void setTargetStateWithCurrent(Rotation2d targetAngle, double targetGrippingCurrent) {
+    void setTargetStateWhileHoldingAlgae(Rotation2d targetAngle, double targetGrippingVoltage) {
         positionRequest.Slot = 1;
         scalePositionRequestSpeed(targetState.speedScalar);
         setTargetAngle(targetAngle);
-        grippingMotor.setControl(voltageRequest.withOutput(targetGrippingCurrent));
+        setTargetVoltage(targetGrippingVoltage);
     }
 
     private void scalePositionRequestSpeed(double speedScalar) {
