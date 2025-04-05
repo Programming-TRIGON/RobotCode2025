@@ -57,6 +57,11 @@ public class AlgaeManipulationCommands {
         );
     }
 
+    public static Command getRollAlgaeOnFloorCommand() {
+        return CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.ROLL_ALGAE_ON_FLOOR)
+                .until(OperatorConstants.CONTINUE_TRIGGER);
+    }
+
     public static Command getResetAmpAlignerCommand() {
         return new ParallelRaceGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.REST),
