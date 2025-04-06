@@ -106,8 +106,16 @@ public class Gripper extends MotorSubsystem {
         return grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE) <= GripperConstants.MINIMUM_VOLTAGE_FOR_EJECTING;
     }
 
+    public boolean isReleasingAlgae() {
+        return grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE) > -2;
+    }
+
     public boolean isOpenForElevator() {
         return getCurrentEncoderAngle().getDegrees() > GripperConstants.MINIMUM_OPEN_FOR_ELEVATOR_ANGLE.getDegrees();
+    }
+
+    public Translation3d calculateAlgaeReleaseVelocity() {
+        return new Translation3d(3, 0, 0).rotateBy(new Rotation3d(0, getCurrentEncoderAngle().getRadians() + 2, 0));
     }
 
     @AutoLogOutput(key = "Gripper/HasGamePiece")
@@ -144,6 +152,11 @@ public class Gripper extends MotorSubsystem {
     @AutoLogOutput
     public boolean isMovingSlowly() {
         return Math.abs(grippingMotor.getSignal(TalonFXSignal.VELOCITY)) < 4;
+    }
+
+    public Pose3d calculateAlgaeCollectionPose() {
+        return calculateVisualizationPose()
+                .transformBy(GripperConstants.GRIPPER_TO_HELD_ALGAE);
     }
 
     void prepareForState(GripperConstants.GripperState targetState) {
@@ -195,7 +208,7 @@ public class Gripper extends MotorSubsystem {
         grippingMotor.setControl(voltageRequest.withOutput(targetGrippingVoltage));
     }
 
-    private Pose3d calculateVisualizationPose() {
+    public Pose3d calculateVisualizationPose() {
         final Pose3d currentElevatorPose = RobotContainer.ELEVATOR.getFirstStageComponentPose();
         final Pose3d gripperOrigin = currentElevatorPose.transformBy(GripperConstants.ELEVATOR_TO_GRIPPER);
 

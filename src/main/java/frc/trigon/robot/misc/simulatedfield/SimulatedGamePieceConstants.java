@@ -14,7 +14,7 @@ public class SimulatedGamePieceConstants {
     public static final double
             CORAL_INTAKE_TOLERANCE_METERS = 0.3,
             CORAL_FEEDER_INTAKE_TOLERANCE_METERS = 1,
-            ALGAE_INTAKE_TOLERANCE_METERS = 0.4,
+            ALGAE_INTAKE_TOLERANCE_METERS = 0.3,
             CORAL_SCORING_TOLERANCE_METERS = 0.1,
             ALGAE_SCORING_TOLERANCE_METERS = 0.2;
 
@@ -42,8 +42,8 @@ public class SimulatedGamePieceConstants {
                     createNewAlgae(new Pose3d(1.22, FIELD_WIDTH_METERS / 2 + 1.83, 0.5, new Rotation3d())),
                     createNewAlgae(new Pose3d(FIELD_LENGTH_METERS - 1.22, FIELD_WIDTH_METERS / 2, 0.5, new Rotation3d())),
                     createNewAlgae(new Pose3d(FIELD_LENGTH_METERS - 1.22, FIELD_WIDTH_METERS / 2 - 1.83, 0.5, new Rotation3d())),
-                    createNewAlgae(new Pose3d(FIELD_LENGTH_METERS - 1.22, FIELD_WIDTH_METERS / 2 + 1.83, 0.5, new Rotation3d()))
-            ));
+                    createNewAlgae(new Pose3d(FIELD_LENGTH_METERS - 1.22, FIELD_WIDTH_METERS / 2 + 1.83, 0.5, new Rotation3d())),
+                    ));
 
     private static final Translation3d
             REEF_CENTER_TO_L1_VECTOR = new Translation3d(0.652, 0.1643, 0.46),
@@ -118,7 +118,7 @@ public class SimulatedGamePieceConstants {
     }
 
     public enum GamePieceType {
-        ALGAE(0.15, 0),
+        ALGAE(0.2, 0),
         CORAL(0.06, 1);
 
         public final double originPointHeightOffGroundMeters;

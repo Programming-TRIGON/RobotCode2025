@@ -2,7 +2,7 @@ package frc.trigon.robot.subsystems.algaemanipulator;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.signals.*;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.math.system.plant.DCMotor;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.util.Color;
@@ -45,6 +45,16 @@ public class AlgaeManipulatorConstants {
             Units.Volts.of(1).per(Units.Seconds),
             Units.Volts.of(3),
             Units.Second.of(1000)
+    );
+
+    static final Pose3d ALGAE_MANIPULATOR_VISUALIZATION_ORIGIN_POINT = new Pose3d(
+            new Translation3d(0, 0, 0),
+            new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(0), 0)
+    );
+    static final Transform3d
+            GRIPPER_TO_ALGAE_MANIPULATOR = new Transform3d(
+            GripperConstants.GRIPPER_VISUALIZATION_ORIGIN_POINT,
+            ALGAE_MANIPULATOR_VISUALIZATION_ORIGIN_POINT
     );
 
     static final SingleJointedArmMechanism2d ANGLE_MECHANISM = new SingleJointedArmMechanism2d(
