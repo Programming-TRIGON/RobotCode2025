@@ -31,10 +31,10 @@ public class CommandConstants {
     private static final double JOYSTICK_ORIENTED_ROTATION_DEADBAND = 0.07;
 
     public static final Command
-            FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_TO_REEF_SECTIONS_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
+            FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
             () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftY()),
             () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftX()),
-            CommandConstants::calculateJoystickOrientedToReefSectionsTargetAngle
+            CommandConstants::calculateTargetHeadingFromJoystickAngle
     ),
             SELF_RELATIVE_DRIVE_COMMAND = SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                     () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftY()),
@@ -106,9 +106,9 @@ public class CommandConstants {
      * Calculates the target rotation value from the joystick's angle. Used for joystick oriented rotation.
      * Joystick oriented rotation is when the robot rotates directly to the joystick's angle.
      *
-     * @return the rotation value
+     * @return the target heading
      */
-    public static FlippableRotation2d calculateJoystickOrientedToReefSectionsTargetAngle() {
+    private static FlippableRotation2d calculateTargetHeadingFromJoystickAngle() {
         final double
                 xPower = DRIVER_CONTROLLER.getRightX(),
                 yPower = DRIVER_CONTROLLER.getRightY();

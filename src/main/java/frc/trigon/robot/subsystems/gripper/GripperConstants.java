@@ -99,7 +99,7 @@ public class GripperConstants {
             GRIPPER_LENGTH_METERS,
             Color.kRed
     );
-    private static final Pose3d GRIPPER_VISUALIZATION_ORIGIN_POINT = new Pose3d(
+    public static final Pose3d GRIPPER_VISUALIZATION_ORIGIN_POINT = new Pose3d(
             new Translation3d(-0.224, 0, 0.8622),
             new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(62), 0)
     );
@@ -115,11 +115,14 @@ public class GripperConstants {
             GRIPPER_TO_HELD_CORAL = new Transform3d(
                     new Translation3d(0.05, 0, -0.1),
                     new Rotation3d(0, 0, 0)
+            ),
+            GRIPPER_TO_HELD_ALGAE = new Transform3d(
+                    new Translation3d(-0.1, 0, -0.35),
+                    new Rotation3d(0, edu.wpi.first.math.util.Units.degreesToRadians(0), 0)
             );
 
     static final double WHEEL_DIAMETER_METERS = edu.wpi.first.math.util.Units.inchesToMeters(2.5);
     static final Rotation2d ANGLE_TOLERANCE = Rotation2d.fromDegrees(2);
-    static final double SCORE_IN_REEF_FOR_AUTO_VOLTAGE = -5;
     static final double MINIMUM_VOLTAGE_FOR_EJECTING = -3;
     static final Rotation2d MINIMUM_OPEN_FOR_ELEVATOR_ANGLE = Rotation2d.fromDegrees(-34);
     private static final double COLLECTION_DETECTION_DEBOUNCE_TIME_SECONDS = 0.10;
@@ -243,11 +246,12 @@ public class GripperConstants {
         UNLOAD_CORAL(Rotation2d.fromDegrees(-50), -3, 1),
         COLLECT_ALGAE_FROM_REEF(Rotation2d.fromDegrees(30), -4, 1),
         COLLECT_ALGAE_FROM_LOLLIPOP(Rotation2d.fromDegrees(-35), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage, 1),
-        HOLD_ALGAE(Rotation2d.fromDegrees(40), -40, 0.3),
+        HOLD_ALGAE(Rotation2d.fromDegrees(40), -2, 0.3),
+        QUICK_SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(60), 11, 1),
         SCORE_ALGAE_IN_NET(Rotation2d.fromDegrees(60), 11, 1),
         PREPARE_FOR_SCORING_ALGAE_IN_NET(Rotation2d.fromDegrees(100), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage, 0.3),
         SCORE_ALGAE_IN_PROCESSOR(Rotation2d.fromDegrees(-35), 11, 1),
-        PREPARE_FOR_SCORING_ALGAE_IN_PROCESSOR(Rotation2d.fromDegrees(-35), COLLECT_ALGAE_FROM_REEF.targetGripperVoltage, 0.3),
+        PREPARE_FOR_SCORING_ALGAE_IN_PROCESSOR(Rotation2d.fromDegrees(-35), -3, 0.3),
         COLLECT_CORAL_FROM_FEEDER(Rotation2d.fromDegrees(90), 8, 1),
         OPEN_FOR_NOT_HITTING_REEF(Rotation2d.fromDegrees(107), 0.4, 1);
 
