@@ -296,7 +296,7 @@ public class CoralIntakeConstants {
         SCORE_L1(-2, 3, Rotation2d.fromDegrees(33)),
         ROLL_ALGAE_ON_FLOOR(-2, 0, Rotation2d.fromDegrees(-45)),
         COLLECT_ALGAE_FROM_FLOOR(5, 0, Rotation2d.fromDegrees(-15)),
-        PREPARE_SCORE_ALGAE_IN_PROCESSOR(5, 0, Rotation2d.fromDegrees(15)),
+        PREPARE_SCORE_ALGAE_IN_PROCESSOR(5, 0, Rotation2d.fromDegrees(-15)),
         SCORE_ALGAE_IN_PROCESSOR(-2, 0, PREPARE_SCORE_ALGAE_IN_PROCESSOR.targetAngle);
 
         public final double
