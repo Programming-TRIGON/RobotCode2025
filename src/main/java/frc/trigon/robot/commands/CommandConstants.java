@@ -108,7 +108,7 @@ public class CommandConstants {
      *
      * @return the target heading
      */
-    private static FlippableRotation2d calculateTargetHeadingFromJoystickAngle() {
+    public static FlippableRotation2d calculateTargetHeadingFromJoystickAngle() {
         final double
                 xPower = DRIVER_CONTROLLER.getRightX(),
                 yPower = DRIVER_CONTROLLER.getRightY();
