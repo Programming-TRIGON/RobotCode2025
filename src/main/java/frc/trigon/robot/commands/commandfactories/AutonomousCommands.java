@@ -77,7 +77,7 @@ public class AutonomousCommands {
 
     public static Command getFindCoralCommand(boolean isRight) {
         return new SequentialCommandGroup(
-                SwerveCommands.getDriveToPoseCommand(() -> isRight ? FieldConstants.AUTO_FIND_CORAL_POSE_RIGHT : FieldConstants.AUTO_FIND_CORAL_POSE_LEFT, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS, 1.5),
+                SwerveCommands.getDriveToPoseCommand(() -> isRight ? FieldConstants.AUTO_FIND_CORAL_POSE_RIGHT : FieldConstants.AUTO_FIND_CORAL_POSE_LEFT, PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS, 2.3),
                 SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                         () -> 0,
                         () -> 0,
