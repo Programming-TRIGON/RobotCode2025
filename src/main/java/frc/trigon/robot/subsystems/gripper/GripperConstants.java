@@ -237,7 +237,7 @@ public class GripperConstants {
     public enum GripperState {
         REST(Rotation2d.fromDegrees(-56), 0, 1),
         EJECT(Rotation2d.fromDegrees(55), -3, 1),
-        EJECT_UPWARDS(Rotation2d.fromDegrees(107), -3, 1),
+        EJECT_UPWARDS(Rotation2d.fromDegrees(106), -3, 1),
         SCORE_L4_CLOSE(Rotation2d.fromDegrees(49), -6, 1),
         SCORE_L4_FAR(Rotation2d.fromDegrees(55), -6, 1),
         SCORE_L3_OR_L2(Rotation2d.fromDegrees(60), SCORE_L4_CLOSE.targetGripperVoltage, 1),
@@ -253,7 +253,7 @@ public class GripperConstants {
         SCORE_ALGAE_IN_PROCESSOR(Rotation2d.fromDegrees(-35), 11, 1),
         PREPARE_FOR_SCORING_ALGAE_IN_PROCESSOR(Rotation2d.fromDegrees(-35), -3, 0.3),
         COLLECT_CORAL_FROM_FEEDER(Rotation2d.fromDegrees(90), 8, 1),
-        OPEN_FOR_NOT_HITTING_REEF(Rotation2d.fromDegrees(107), 0.4, 1);
+        OPEN_FOR_NOT_HITTING_REEF(EJECT_UPWARDS.targetAngle, 0.4, 1);
 
         final Rotation2d targetAngle;
         final double targetGripperVoltage;

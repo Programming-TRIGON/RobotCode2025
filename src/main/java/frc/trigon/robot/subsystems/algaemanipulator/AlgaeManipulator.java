@@ -73,6 +73,10 @@ public class AlgaeManipulator extends MotorSubsystem {
         return angleMotor.getSignal(TalonFXSignal.POSITION) > Conversions.degreesToRotations(70);
     }
 
+    public void resetPosition() {
+        angleMotor.setPosition(0);
+    }
+
     public boolean atState(AlgaeManipulatorConstants.AlgaeManipulatorState state) {
         return targetState == state && atTargetAngle();
     }
