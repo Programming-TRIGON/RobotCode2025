@@ -172,6 +172,7 @@ public class CoralIntakeConstants {
         configureAngleMotor();
         configureAngleEncoder();
         configureBeamBreak();
+        configureBackupBeamBreak();
         configureDistanceSensor();
     }
 
@@ -276,6 +277,10 @@ public class CoralIntakeConstants {
 
     private static void configureBeamBreak() {
         BEAM_BREAK.setSimulationSupplier(BEAM_BREAK_SIMULATION_VALUE_SUPPLIER);
+    }
+
+    private static void configureBackupBeamBreak() {
+        BACKUP_BEAM_BREAK.setSimulationSupplier(BEAM_BREAK_SIMULATION_VALUE_SUPPLIER);
     }
 
     private static void configureDistanceSensor() {
