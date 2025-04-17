@@ -41,6 +41,11 @@ public class CoralCollectionCommands {
         return new ParallelCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
                 getScheduleCoralLoadingWhenCollectedCommand()
+//                SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
+//                        () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftY()),
+//                        () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
+//                        CommandConstants::calculateTargetHeadingFromJoystickAngle
+//                ).asProxy()
         );
     }
 

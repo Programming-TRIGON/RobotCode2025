@@ -14,7 +14,7 @@ public class SimulatedGamePieceConstants {
     public static final double
             CORAL_INTAKE_TOLERANCE_METERS = 0.3,
             CORAL_FEEDER_INTAKE_TOLERANCE_METERS = 1,
-            ALGAE_INTAKE_TOLERANCE_METERS = 0.4,
+            ALGAE_INTAKE_TOLERANCE_METERS = 0.3,
             CORAL_SCORING_TOLERANCE_METERS = 0.1,
             ALGAE_SCORING_TOLERANCE_METERS = 0.2;
 
@@ -118,7 +118,7 @@ public class SimulatedGamePieceConstants {
     }
 
     public enum GamePieceType {
-        ALGAE(0.15, 0),
+        ALGAE(0.2, 0),
         CORAL(0.06, 1);
 
         public final double originPointHeightOffGroundMeters;
