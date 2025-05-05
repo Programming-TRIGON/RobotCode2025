@@ -12,9 +12,11 @@ public class OperatorConstants {
     private static final int
             DRIVER_CONTROLLER_PORT = 0,
             REEF_CHOOSER_PORT = 1;
-    private static final int DRIVER_CONTROLLER_EXPONENT = 2;
+    private static final int
+            CONTROLLER_TRANSLATION_EXPONENT = 2,
+            CONTROLLER_ROTATION_EXPONENT = 1;
     public static final XboxController DRIVER_CONTROLLER = new XboxController(
-            DRIVER_CONTROLLER_PORT, DRIVER_CONTROLLER_EXPONENT, DRIVER_CONTROLLER_DEADBAND
+            DRIVER_CONTROLLER_PORT, CONTROLLER_ROTATION_EXPONENT, CONTROLLER_TRANSLATION_EXPONENT, DRIVER_CONTROLLER_DEADBAND
     );
     public static final KeyboardController OPERATOR_CONTROLLER = new KeyboardController();
     public static final ReefChooser REEF_CHOOSER = new ReefChooser(REEF_CHOOSER_PORT);
