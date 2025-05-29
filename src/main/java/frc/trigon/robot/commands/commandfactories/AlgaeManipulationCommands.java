@@ -42,7 +42,7 @@ public class AlgaeManipulationCommands {
                 CoralCollectionCommands.getUnloadCoralCommand().onlyIf(RobotContainer.GRIPPER::hasGamePiece).asProxy(),
                 getCollectAlgaeFromReefManuallyCommand().asProxy()
         )
-                .alongWith(getAlignToReefCommand().onlyIf(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean()).asProxy())
+                .alongWith(getAlignToReefCommand().onlyIf(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY).asProxy())
                 .raceWith(getScoreNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
     }
 
@@ -82,7 +82,7 @@ public class AlgaeManipulationCommands {
                 getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF),
                 getOpenElevatorForAlgaeCommand()
         ).until(AlgaeManipulationCommands::isScoreAlgaeButtonPressed).andThen(
-                getScoreAlgaeCommand()
+                getScoreAlgaeCommand().asProxy()
         );
     }
 
@@ -99,7 +99,7 @@ public class AlgaeManipulationCommands {
         return GeneralCommands.getContinuousConditionalCommand(
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.COLLECT_ALGAE_FROM_L3),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST_WITH_ALGAE),
-                OperatorConstants.LEFT_MULTIFUNCTION_TRIGGER
+                OperatorConstants.LEFT_SCORE_TRIGGER
         );
     }
 
@@ -137,12 +137,12 @@ public class AlgaeManipulationCommands {
     }
 
     private static Command getScoreInNetCommand() {
-        return new ParallelCommandGroup(
+        return new ParallelRaceGroup(
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.SCORE_NET),
                 AlgaeManipulatorCommands.getOpenCommand(),
                 new SequentialCommandGroup(
                         GripperCommands.getSetTargetStateWhileHoldingAlgaeCommand(GripperConstants.GripperState.PREPARE_FOR_SCORING_ALGAE_IN_NET).until(OperatorConstants.CONTINUE_TRIGGER),
-                        GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_ALGAE_IN_NET)
+                        GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.SCORE_ALGAE_IN_NET).withTimeout(0.5)
                 ),
                 SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
                         () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftY()),
