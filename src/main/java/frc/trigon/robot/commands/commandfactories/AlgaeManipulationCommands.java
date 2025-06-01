@@ -35,7 +35,7 @@ public class AlgaeManipulationCommands {
                 getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_LOLLIPOP).asProxy()
                         .until(AlgaeManipulationCommands::isScoreAlgaeButtonPressed),
                 getScoreAlgaeCommand().asProxy()
-        ).raceWith(getScoreNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
+        ).raceWith(getScoreNetEndingConditionCommand(), getScoreProcessorEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
     }
 
     public static Command getCollectAlgaeFromReefCommand() {
@@ -44,7 +44,7 @@ public class AlgaeManipulationCommands {
                 getCollectAlgaeFromReefManuallyCommand().asProxy()
         )
                 .alongWith(getAlignToReefCommand().onlyIf(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY).asProxy())
-                .raceWith(getScoreNetEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
+                .raceWith(getScoreNetEndingConditionCommand(), getScoreProcessorEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
     }
 
     public static Command getCollectAlgaeFromFloorCommand() {
@@ -78,11 +78,15 @@ public class AlgaeManipulationCommands {
         return new WaitUntilCommand(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_ALGAE_IN_NET) || RobotContainer.GRIPPER.atState(GripperConstants.GripperState.QUICK_SCORE_ALGAE_IN_NET)).andThen(new WaitCommand(0.1));
     }
 
+    private static Command getScoreProcessorEndingConditionCommand() {
+        return new WaitUntilCommand(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_ALGAE_IN_PROCESSOR) && !OperatorConstants.CONTINUE_TRIGGER.getAsBoolean());
+    }
+
     private static Command getCollectAlgaeFromReefManuallyCommand() {
         return new ParallelCommandGroup(
                 getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF),
                 getOpenElevatorForAlgaeCommand()
-        ).until(AlgaeManipulationCommands::isScoreAlgaeButtonPressed).andThen(
+        ).until(() -> isScoreAlgaeButtonPressed() && RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.REST_WITH_ALGAE) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.HOLD_ALGAE)).andThen(
                 getScoreAlgaeCommand().asProxy()
         );
     }
@@ -100,7 +104,7 @@ public class AlgaeManipulationCommands {
         return GeneralCommands.getContinuousConditionalCommand(
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.COLLECT_ALGAE_FROM_L3),
                 ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST_WITH_ALGAE),
-                OperatorConstants.LEFT_SCORE_TRIGGER
+                OperatorConstants.COLLECT_ALGAE_FROM_L3_OVERRIDE_TRIGGER
         );
     }
 
@@ -112,7 +116,7 @@ public class AlgaeManipulationCommands {
                         2, getScoreInProcessorCommand()
                 ),
                 AlgaeManipulationCommands::getAlgaeScoreMethodSelector
-        ).raceWith(new WaitUntilChangeCommand<>(AlgaeManipulationCommands::isScoreAlgaeButtonPressed)).onlyIf(RobotContainer.GRIPPER::isMovingSlowly).repeatedly();
+        ).raceWith(new WaitUntilChangeCommand<>(AlgaeManipulationCommands::isScoreAlgaeButtonPressed)).repeatedly();
     }
 
     private static int getAlgaeScoreMethodSelector() {
@@ -173,7 +177,10 @@ public class AlgaeManipulationCommands {
                         () -> 0,
                         () -> calculateClosestAlgaeCollectionPose().getRotation()
                 )
-        ).until(RobotContainer.GRIPPER::isMovingSlowly);
+        ).raceWith(
+                new WaitCommand(1).andThen(new WaitUntilCommand(RobotContainer.GRIPPER::isMovingSlowly)),
+                new WaitUntilCommand(OperatorConstants.CONTINUE_TRIGGER)
+                );
     }
 
     private static boolean isScoreAlgaeButtonPressed() {
