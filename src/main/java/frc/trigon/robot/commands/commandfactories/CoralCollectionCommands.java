@@ -36,9 +36,7 @@ public class CoralCollectionCommands {
                 getInitiateFeederCoralCollectionCommand().unless(RobotContainer.GRIPPER::hasGamePiece),
                 getFeederCoralCollectionFromGripperCommand(),
                 CoralCollectionCommands::isIntakeFacingFeeder
-        ).alongWith(new InstantCommand(() -> {
-            System.out.println(isIntakeFacingFeeder());
-        }).repeatedly());
+        );
     }
 
     private static boolean isIntakeFacingFeeder() {
