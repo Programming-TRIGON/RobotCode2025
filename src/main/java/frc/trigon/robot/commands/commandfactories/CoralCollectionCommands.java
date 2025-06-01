@@ -1,7 +1,10 @@
 package frc.trigon.robot.commands.commandfactories;
 
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
@@ -9,6 +12,8 @@ import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
+import org.trigon.utilities.flippable.FlippablePose2d;
+import org.trigon.utilities.flippable.FlippableRotation2d;
 
 
 public class CoralCollectionCommands {
@@ -27,7 +32,24 @@ public class CoralCollectionCommands {
     }
 
     public static Command getFeederCoralCollectionCommand() {
-        return getInitiateFeederCoralCollectionCommand().unless(RobotContainer.GRIPPER::hasGamePiece);
+        return new ConditionalCommand(
+                getInitiateFeederCoralCollectionCommand().unless(RobotContainer.GRIPPER::hasGamePiece),
+                getFeederCoralCollectionFromGripperCommand(),
+                CoralCollectionCommands::isIntakeFacingFeeder
+        ).alongWith(new InstantCommand(() -> {
+            System.out.println(isIntakeFacingFeeder());
+        }).repeatedly());
+    }
+
+    private static boolean isIntakeFacingFeeder() {
+        final Pose2d robotPose = new FlippablePose2d(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose(), true).get();
+        final Rotation2d
+                robotHeading = robotPose.getRotation(),
+                leftFeederAngle = FieldConstants.LEFT_FEEDER_ANGLE;
+
+        if (robotPose.getY() > FieldConstants.FIELD_WIDTH_METERS / 2)
+            return robotHeading.plus(leftFeederAngle).plus(Rotation2d.kCW_90deg).getDegrees() > 0;
+        return robotHeading.minus(leftFeederAngle).plus(Rotation2d.kCCW_90deg).getDegrees() < 0;
     }
 
     private static Command getInitiateFeederCoralCollectionCommand() {

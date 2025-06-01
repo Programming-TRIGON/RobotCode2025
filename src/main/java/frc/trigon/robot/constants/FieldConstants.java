@@ -29,6 +29,8 @@ public class FieldConstants {
     public static final FlippablePose2d AUTO_FIND_CORAL_POSE_LEFT = new FlippablePose2d(3.3, 5.5, Rotation2d.fromDegrees(130), true);
     public static final FlippablePose2d AUTO_FIND_CORAL_POSE_RIGHT = new FlippablePose2d(3.3, FieldConstants.FIELD_WIDTH_METERS - 5.5, Rotation2d.fromDegrees(-130), true);
 
+    public static final Rotation2d LEFT_FEEDER_ANGLE = Rotation2d.fromDegrees(54);
+
     public static final int REEF_CLOCK_POSITIONS = 6;
     public static final Rotation2d REEF_CLOCK_POSITION_DIFFERENCE = Rotation2d.fromDegrees(Conversions.DEGREES_PER_ROTATIONS / REEF_CLOCK_POSITIONS);
     public static final Rotation2d[] REEF_CLOCK_ANGLES = ReefClockPosition.getClockAngles();

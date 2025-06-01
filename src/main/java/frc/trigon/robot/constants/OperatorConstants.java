@@ -44,7 +44,6 @@ public class OperatorConstants {
             RESET_AMP_ALIGNER_TRIGGER = OPERATOR_CONTROLLER.v(),
             FLOOR_CORAL_COLLECTION_TRIGGER = DRIVER_CONTROLLER.leftTrigger().or(OPERATOR_CONTROLLER.c()),
             FEEDER_CORAL_COLLECTION_TRIGGER = OPERATOR_CONTROLLER.f().or(DRIVER_CONTROLLER.start()),
-            FEEDER_CORAL_COLLECTION_WITH_GRIPPER = OPERATOR_CONTROLLER.d(),
             LEFT_SCORE_TRIGGER = DRIVER_CONTROLLER.leftStick().or(OPERATOR_CONTROLLER.b()).and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()).and(() -> !IS_RIGHT_SCORE_BUTTON_PRESSED).onTrue(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = true)).onFalse(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = false)),
             RIGHT_SCORE_TRIGGER = DRIVER_CONTROLLER.rightStick().or(OPERATOR_CONTROLLER.m()).and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()).and(() -> !IS_LEFT_SCORE_BUTTON_PRESSED).onTrue(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = true)).onFalse(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = false)),
             EJECT_CORAL_TRIGGER = OPERATOR_CONTROLLER.e().or(() -> DRIVER_CONTROLLER.x().getAsBoolean() && !RobotContainer.ALGAE_MANIPULATOR.isOpen()),

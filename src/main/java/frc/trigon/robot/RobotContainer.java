@@ -104,7 +104,6 @@ public class RobotContainer {
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
 //        OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.and(OperatorConstants.LEFT_MULTIFUNCTION_TRIGGER).whileTrue(new CoralAutoDriveCommand());
         OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionCommand());
-        OperatorConstants.FEEDER_CORAL_COLLECTION_WITH_GRIPPER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionFromGripperCommand());
         OperatorConstants.RIGHT_SCORE_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand(true));
         OperatorConstants.LEFT_SCORE_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand(false));
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
