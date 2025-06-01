@@ -46,7 +46,7 @@ public class OperatorConstants {
             FEEDER_CORAL_COLLECTION_TRIGGER = OPERATOR_CONTROLLER.f().or(DRIVER_CONTROLLER.start()),
             LEFT_SCORE_TRIGGER = DRIVER_CONTROLLER.leftStick().or(OPERATOR_CONTROLLER.b()).and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()).and(() -> !IS_RIGHT_SCORE_BUTTON_PRESSED).onTrue(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = true)).onFalse(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = false)),
             RIGHT_SCORE_TRIGGER = DRIVER_CONTROLLER.rightStick().or(OPERATOR_CONTROLLER.m()).and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()).and(() -> !IS_LEFT_SCORE_BUTTON_PRESSED).onTrue(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = true)).onFalse(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = false)),
-            EJECT_CORAL_TRIGGER = OPERATOR_CONTROLLER.e().or(() -> DRIVER_CONTROLLER.x().getAsBoolean() && !RobotContainer.ALGAE_MANIPULATOR.isOpen()),
+            EJECT_CORAL_TRIGGER = OPERATOR_CONTROLLER.e().or(DRIVER_CONTROLLER.x()),
             UNLOAD_CORAL_TRIGGER = OPERATOR_CONTROLLER.z().or(DRIVER_CONTROLLER.back()),
             COLLECT_ALGAE_FROM_REEF_TRIGGER = OPERATOR_CONTROLLER.a().or(DRIVER_CONTROLLER.a()),
             COLLECT_ALGAE_FROM_L3_OVERRIDE_TRIGGER = DRIVER_CONTROLLER.leftStick().or(DRIVER_CONTROLLER.rightStick()),
