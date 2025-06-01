@@ -8,9 +8,11 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.misc.simulatedfield.SimulationFieldHandler;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.misc.simplesensor.SimpleSensor;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
@@ -151,7 +153,7 @@ public class Gripper extends MotorSubsystem {
 
     @AutoLogOutput
     public boolean isMovingSlowly() {
-        return Math.abs(grippingMotor.getSignal(TalonFXSignal.VELOCITY)) < 4;
+        return Math.abs(grippingMotor.getSignal(TalonFXSignal.VELOCITY)) < 4 || (RobotHardwareStats.isSimulation() && SimulationFieldHandler.isHoldingAlgae());
     }
 
     public Pose3d calculateAlgaeCollectionPose() {

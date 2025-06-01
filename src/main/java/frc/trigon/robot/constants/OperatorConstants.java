@@ -1,6 +1,7 @@
 package frc.trigon.robot.constants;
 
 import edu.wpi.first.wpilibj.RobotController;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.misc.ReefChooser;
@@ -20,6 +21,9 @@ public class OperatorConstants {
     );
     public static final KeyboardController OPERATOR_CONTROLLER = new KeyboardController();
     public static final ReefChooser REEF_CHOOSER = new ReefChooser(REEF_CHOOSER_PORT);
+    private static boolean
+            IS_LEFT_SCORE_BUTTON_PRESSED = false,
+            IS_RIGHT_SCORE_BUTTON_PRESSED = false;
 
     public static final double
             POV_DIVIDER = 2,
@@ -35,23 +39,22 @@ public class OperatorConstants {
             BACKWARD_QUASISTATIC_CHARACTERIZATION_TRIGGER = OPERATOR_CONTROLLER.left(),
             FORWARD_DYNAMIC_CHARACTERIZATION_TRIGGER = OPERATOR_CONTROLLER.up(),
             BACKWARD_DYNAMIC_CHARACTERIZATION_TRIGGER = OPERATOR_CONTROLLER.down(),
-            CONTINUE_TRIGGER = OPERATOR_CONTROLLER.k().or(DRIVER_CONTROLLER.leftBumper());
+            CONTINUE_TRIGGER = OPERATOR_CONTROLLER.k().or(DRIVER_CONTROLLER.rightStick().and(DRIVER_CONTROLLER.leftStick()));
     public static final Trigger
             RESET_AMP_ALIGNER_TRIGGER = OPERATOR_CONTROLLER.v(),
             FLOOR_CORAL_COLLECTION_TRIGGER = DRIVER_CONTROLLER.leftTrigger().or(OPERATOR_CONTROLLER.c()),
             FEEDER_CORAL_COLLECTION_TRIGGER = OPERATOR_CONTROLLER.f().or(DRIVER_CONTROLLER.start()),
             FEEDER_CORAL_COLLECTION_WITH_GRIPPER = OPERATOR_CONTROLLER.d(),
-            LEFT_SCORE_TRIGGER = DRIVER_CONTROLLER.leftStick().or(OPERATOR_CONTROLLER.b()).and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()),
-            RIGHT_SCORE_TRIGGER = DRIVER_CONTROLLER.rightStick().or(OPERATOR_CONTROLLER.m()).and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()),
+            LEFT_SCORE_TRIGGER = DRIVER_CONTROLLER.leftStick().or(OPERATOR_CONTROLLER.b()).and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()).and(() -> !IS_RIGHT_SCORE_BUTTON_PRESSED).onTrue(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = true)).onFalse(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = false)),
+            RIGHT_SCORE_TRIGGER = DRIVER_CONTROLLER.rightStick().or(OPERATOR_CONTROLLER.m()).and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()).and(() -> !IS_LEFT_SCORE_BUTTON_PRESSED).onTrue(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = true)).onFalse(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = false)),
             EJECT_CORAL_TRIGGER = OPERATOR_CONTROLLER.e().or(() -> DRIVER_CONTROLLER.x().getAsBoolean() && !RobotContainer.ALGAE_MANIPULATOR.isOpen()),
             UNLOAD_CORAL_TRIGGER = OPERATOR_CONTROLLER.z().or(DRIVER_CONTROLLER.back()),
             COLLECT_ALGAE_FROM_REEF_TRIGGER = OPERATOR_CONTROLLER.a().or(DRIVER_CONTROLLER.a()),
             COLLECT_ALGAE_FROM_LOLLIPOP_TRIGGER = OPERATOR_CONTROLLER.l().or(DRIVER_CONTROLLER.y()),
             COLLECT_ALGAE_FROM_FLOOR_TRIGGER = OPERATOR_CONTROLLER.s(),
             ROLL_ALGAE_ON_FLOOR_TRIGGER = OPERATOR_CONTROLLER.w(),
-            QUICK_SCORE_ALGAE_IN_NET_TRIGGER = OPERATOR_CONTROLLER.x().or(DRIVER_CONTROLLER.rightBumper().and(RobotContainer.ALGAE_MANIPULATOR::isOpen)),
-            SCORE_ALGAE_IN_NET_TRIGGER = OPERATOR_CONTROLLER.n().or(DRIVER_CONTROLLER.b()),
-            SCORE_ALGAE_IN_PROCESSOR_TRIGGER = OPERATOR_CONTROLLER.j().or(() -> DRIVER_CONTROLLER.x().getAsBoolean() && RobotContainer.ALGAE_MANIPULATOR.isOpen());
+            SCORE_ALGAE_IN_NET_TRIGGER = OPERATOR_CONTROLLER.n().or(DRIVER_CONTROLLER.rightStick()).and(() -> !IS_LEFT_SCORE_BUTTON_PRESSED).onTrue(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = true)).onFalse(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = false)),
+            SCORE_ALGAE_IN_PROCESSOR_TRIGGER = OPERATOR_CONTROLLER.j().or(() -> DRIVER_CONTROLLER.leftStick().getAsBoolean() && RobotContainer.ALGAE_MANIPULATOR.isOpen()).and(() -> !IS_RIGHT_SCORE_BUTTON_PRESSED).onTrue(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = true)).onFalse(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = false));
     public static final Trigger
             ENABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER = OPERATOR_CONTROLLER.o(),
             DISABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER = OPERATOR_CONTROLLER.p(),
@@ -69,6 +72,6 @@ public class OperatorConstants {
             SET_TARGET_SCORING_REEF_CLOCK_POSITION_8_OCLOCK_TRIGGER = OPERATOR_CONTROLLER.numpad4(),
             SET_TARGET_SCORING_REEF_CLOCK_POSITION_10_OCLOCK_TRIGGER = OPERATOR_CONTROLLER.numpad7(),
             SET_TARGET_SCORING_REEF_CLOCK_POSITION_12_OCLOCK_TRIGGER = OPERATOR_CONTROLLER.numpad8(),
-            SET_TARGET_REEF_SCORING_SIDE_LEFT_TRIGGER = OPERATOR_CONTROLLER.left().or(DRIVER_CONTROLLER.povLeft()),
-            SET_TARGET_REEF_SCORING_SIDE_RIGHT_TRIGGER = OPERATOR_CONTROLLER.right().or(DRIVER_CONTROLLER.povRight());
+            SET_TARGET_REEF_SCORING_SIDE_LEFT_TRIGGER = OPERATOR_CONTROLLER.left(),
+            SET_TARGET_REEF_SCORING_SIDE_RIGHT_TRIGGER = OPERATOR_CONTROLLER.right();
 }

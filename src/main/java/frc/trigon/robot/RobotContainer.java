@@ -14,7 +14,6 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandclasses.CoralAlignmentCommand;
-import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
 import frc.trigon.robot.commands.commandclasses.LEDAutoSetupCommand;
 import frc.trigon.robot.commands.commandfactories.*;
 import frc.trigon.robot.constants.CameraConstants;
