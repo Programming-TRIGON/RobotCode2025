@@ -31,7 +31,7 @@ public class OperatorConstants {
 
     public static final Trigger
             LED_AUTO_SETUP_TRIGGER = OPERATOR_CONTROLLER.backtick(),
-            RESET_HEADING_TRIGGER = DRIVER_CONTROLLER.leftBumper().and(DRIVER_CONTROLLER.rightBumper()),
+            RESET_HEADING_TRIGGER = DRIVER_CONTROLLER.y(),
             TOGGLE_BRAKE_TRIGGER = OPERATOR_CONTROLLER.g().or(RobotController::getUserButton),
             DEBUGGING_TRIGGER = OPERATOR_CONTROLLER.f2(),
             FORWARD_QUASISTATIC_CHARACTERIZATION_TRIGGER = OPERATOR_CONTROLLER.right(),
