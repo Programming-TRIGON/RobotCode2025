@@ -86,7 +86,7 @@ public class AlgaeManipulationCommands {
         return new ParallelCommandGroup(
                 getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF),
                 getOpenElevatorForAlgaeCommand()
-        ).until(() -> isScoreAlgaeButtonPressed() && RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.REST_WITH_ALGAE) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.HOLD_ALGAE)).andThen(
+        ).until(() -> isScoreAlgaeButtonPressed() && RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.REST_WITH_ALGAE) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.HOLD_ALGAE) && RobotContainer.GRIPPER.isMovingSlowly()).andThen(
                 getScoreAlgaeCommand().asProxy()
         );
     }
