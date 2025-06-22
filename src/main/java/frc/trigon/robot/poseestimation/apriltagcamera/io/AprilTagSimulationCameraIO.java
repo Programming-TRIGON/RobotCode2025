@@ -5,7 +5,6 @@ import frc.trigon.robot.poseestimation.apriltagcamera.AprilTagCameraConstants;
 import org.photonvision.simulation.PhotonCameraSim;
 
 public class AprilTagSimulationCameraIO extends AprilTagPhotonCameraIO {
-
     public AprilTagSimulationCameraIO(String cameraName, Transform3d robotToCamera) {
         super(cameraName, robotToCamera);
 
