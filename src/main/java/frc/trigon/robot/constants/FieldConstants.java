@@ -26,8 +26,13 @@ public class FieldConstants {
     private static final Transform3d TAG_OFFSET = new Transform3d(0, 0, 0, new Rotation3d(0, 0, 0));
     public static final HashMap<Integer, Pose3d> TAG_ID_TO_POSE = fieldLayoutToTagIdToPoseMap();
 
-    public static final FlippablePose2d AUTO_FIND_CORAL_POSE_LEFT = new FlippablePose2d(3.3, 5.5, Rotation2d.fromDegrees(130), true);
-    public static final FlippablePose2d AUTO_FIND_CORAL_POSE_RIGHT = new FlippablePose2d(3.3, FieldConstants.FIELD_WIDTH_METERS - 5.5, Rotation2d.fromDegrees(-130), true);
+    private static final double
+            AUTO_FIND_CORAL_POSE_X = 3.3,
+            AUTO_FIND_CORAL_POSE_LEFT_Y = 5.5;
+    private static final Rotation2d AUTO_FIND_CORAL_POSE_LEFT_ROTATION = Rotation2d.fromDegrees(130);
+    public static final FlippablePose2d
+            AUTO_FIND_CORAL_POSE_LEFT = new FlippablePose2d(AUTO_FIND_CORAL_POSE_X, AUTO_FIND_CORAL_POSE_LEFT_Y, AUTO_FIND_CORAL_POSE_LEFT_ROTATION, true),
+            AUTO_FIND_CORAL_POSE_RIGHT = new FlippablePose2d(AUTO_FIND_CORAL_POSE_X, FieldConstants.FIELD_WIDTH_METERS - AUTO_FIND_CORAL_POSE_LEFT_Y, AUTO_FIND_CORAL_POSE_LEFT_ROTATION.unaryMinus(), true);
 
     public static final Rotation2d LEFT_FEEDER_ANGLE = Rotation2d.fromDegrees(54);
 

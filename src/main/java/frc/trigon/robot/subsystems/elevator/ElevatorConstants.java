@@ -159,7 +159,6 @@ public class ElevatorConstants {
         SCORE_L4(1.045, 1),
         COLLECT_ALGAE_FROM_L3(0.35, 1),
         REST_WITH_ALGAE(0, 0.3),
-        QUICK_SCORE_NET(1, 0.3),
         SCORE_NET(1.045, 0.3);
 
         public final double targetPositionMeters;

@@ -43,8 +43,8 @@ public class OperatorConstants {
             RESET_AMP_ALIGNER_TRIGGER = OPERATOR_CONTROLLER.v(),
             FLOOR_CORAL_COLLECTION_TRIGGER = DRIVER_CONTROLLER.leftTrigger().or(OPERATOR_CONTROLLER.c()),
             FEEDER_CORAL_COLLECTION_TRIGGER = OPERATOR_CONTROLLER.f().or(DRIVER_CONTROLLER.start()),
-            LEFT_SCORE_TRIGGER = DRIVER_CONTROLLER.leftStick().or(OPERATOR_CONTROLLER.b()).and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()).and(() -> !IS_RIGHT_SCORE_BUTTON_PRESSED).onTrue(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = true)).onFalse(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = false)),
-            RIGHT_SCORE_TRIGGER = DRIVER_CONTROLLER.rightStick().or(OPERATOR_CONTROLLER.m()).and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()).and(() -> !IS_LEFT_SCORE_BUTTON_PRESSED).onTrue(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = true)).onFalse(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = false)),
+            RIGHT_SCORE_TRIGGER = OPERATOR_CONTROLLER.m().or(createScoreTrigger(DRIVER_CONTROLLER.rightStick().and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()), true)),
+            LEFT_SCORE_TRIGGER = OPERATOR_CONTROLLER.b().or(createScoreTrigger(DRIVER_CONTROLLER.leftStick().and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()), false)),
             EJECT_CORAL_TRIGGER = OPERATOR_CONTROLLER.e().or(DRIVER_CONTROLLER.x()),
             UNLOAD_CORAL_TRIGGER = OPERATOR_CONTROLLER.z().or(DRIVER_CONTROLLER.back()),
             COLLECT_ALGAE_FROM_REEF_TRIGGER = OPERATOR_CONTROLLER.a().or(DRIVER_CONTROLLER.rightBumper()),
@@ -52,8 +52,8 @@ public class OperatorConstants {
             COLLECT_ALGAE_FROM_LOLLIPOP_TRIGGER = OPERATOR_CONTROLLER.l().or(DRIVER_CONTROLLER.leftBumper()),
             COLLECT_ALGAE_FROM_FLOOR_TRIGGER = OPERATOR_CONTROLLER.s(),
             ROLL_ALGAE_ON_FLOOR_TRIGGER = OPERATOR_CONTROLLER.w(),
-            SCORE_ALGAE_IN_NET_TRIGGER = OPERATOR_CONTROLLER.n().or(DRIVER_CONTROLLER.rightStick()).and(() -> !IS_LEFT_SCORE_BUTTON_PRESSED).onTrue(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = true)).onFalse(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = false)),
-            SCORE_ALGAE_IN_PROCESSOR_TRIGGER = OPERATOR_CONTROLLER.j().or(() -> DRIVER_CONTROLLER.leftStick().getAsBoolean() && RobotContainer.ALGAE_MANIPULATOR.isOpen()).and(() -> !IS_RIGHT_SCORE_BUTTON_PRESSED).onTrue(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = true)).onFalse(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = false));
+            SCORE_ALGAE_IN_NET_TRIGGER = OPERATOR_CONTROLLER.n().or(createScoreTrigger(DRIVER_CONTROLLER.rightStick().and(RobotContainer.ALGAE_MANIPULATOR::isOpen), true)),
+            SCORE_ALGAE_IN_PROCESSOR_TRIGGER = OPERATOR_CONTROLLER.j().or(createScoreTrigger(DRIVER_CONTROLLER.leftStick().and(RobotContainer.ALGAE_MANIPULATOR::isOpen), false));
     public static final Trigger
             ENABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER = OPERATOR_CONTROLLER.o(),
             DISABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER = OPERATOR_CONTROLLER.p(),
@@ -73,4 +73,16 @@ public class OperatorConstants {
             SET_TARGET_SCORING_REEF_CLOCK_POSITION_12_OCLOCK_TRIGGER = OPERATOR_CONTROLLER.numpad8(),
             SET_TARGET_REEF_SCORING_SIDE_LEFT_TRIGGER = OPERATOR_CONTROLLER.left(),
             SET_TARGET_REEF_SCORING_SIDE_RIGHT_TRIGGER = OPERATOR_CONTROLLER.right();
+
+    private static Trigger createScoreTrigger(Trigger button, boolean isRight) {
+        if (isRight)
+            return button
+                    .and(() -> !IS_LEFT_SCORE_BUTTON_PRESSED)
+                    .onTrue(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = true))
+                    .onFalse(new InstantCommand(() -> IS_RIGHT_SCORE_BUTTON_PRESSED = false));
+        return button
+                .and(() -> !IS_RIGHT_SCORE_BUTTON_PRESSED)
+                .onTrue(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = true))
+                .onFalse(new InstantCommand(() -> IS_LEFT_SCORE_BUTTON_PRESSED = false));
+    }
 }

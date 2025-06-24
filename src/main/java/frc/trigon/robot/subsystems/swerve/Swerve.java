@@ -71,7 +71,7 @@ public class Swerve extends MotorSubsystem {
 
         updatePoseEstimatorStates();
         RobotContainer.POSE_ESTIMATOR.periodic();
-//        updateNetworkTables();
+        updateNetworkTables();
     }
 
     @Override

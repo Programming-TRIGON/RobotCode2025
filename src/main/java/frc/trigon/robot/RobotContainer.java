@@ -101,8 +101,7 @@ public class RobotContainer {
 
         OperatorConstants.RESET_AMP_ALIGNER_TRIGGER.whileTrue(AlgaeManipulationCommands.getResetAmpAlignerCommand());
 
-        OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
-//        OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.and(OperatorConstants.LEFT_MULTIFUNCTION_TRIGGER).whileTrue(new CoralAutoDriveCommand());
+        OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());//TODO: Add collection assist
         OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionCommand());
         OperatorConstants.RIGHT_SCORE_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand(true));
         OperatorConstants.LEFT_SCORE_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand(false));
