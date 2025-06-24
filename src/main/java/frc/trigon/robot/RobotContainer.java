@@ -21,7 +21,7 @@ import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
-import frc.trigon.robot.poseestimation.poseestimator.PoseEstimator;
+import frc.trigon.robot.poseestimation.poseestimator.RobotPoseEstimator;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulator;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorCommands;
@@ -41,7 +41,7 @@ import org.trigon.utilities.flippable.Flippable;
 import java.util.List;
 
 public class RobotContainer {
-    public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator(
+    public static final RobotPoseEstimator POSE_ESTIMATOR = new RobotPoseEstimator(
             CameraConstants.LEFT_REEF_TAG_CAMERA,
             CameraConstants.RIGHT_REEF_TAG_CAMERA
     );

@@ -163,7 +163,7 @@ public class ObjectDetectionCamera extends SubsystemBase {
             trackedObjectFieldRelativePosition = closestObjectToTrackedObjectPositionOnField;
     }
 
-    private Translation2d[] getObjectPositionsOnField(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
+    public Translation2d[] getObjectPositionsOnField(SimulatedGamePieceConstants.GamePieceType targetGamePiece) {
         final Rotation3d[] visibleObjectsRotations = getTargetObjectsRotations(targetGamePiece);
         final Translation2d[] objectsPositionsOnField = new Translation2d[visibleObjectsRotations.length];
 
