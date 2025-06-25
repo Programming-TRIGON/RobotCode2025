@@ -139,13 +139,13 @@ public class CoralPlacingCommands {
     }
 
     private static double calculateDistanceToTargetScoringPose() {
-        final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
+        final Translation2d currentTranslation = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
         final Translation2d targetTranslation = calculateTargetScoringPose().get().getTranslation();
         return currentTranslation.getDistance(targetTranslation);
     }
 
     public static FlippablePose2d calculateClosestScoringPose() {
-        final Translation2d robotPositionOnField = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
+        final Translation2d robotPositionOnField = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
         final Translation2d reefCenterPosition = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
         final Rotation2d[] reefClockAngles = FieldConstants.REEF_CLOCK_ANGLES;
         final Transform2d

@@ -5,6 +5,8 @@ import edu.wpi.first.math.geometry.Transform3d;
 import edu.wpi.first.math.geometry.Translation3d;
 import edu.wpi.first.math.util.Units;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
+import frc.trigon.robot.misc.objectdetectioncamera.ObjectPoseEstimator;
+import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.poseestimation.apriltagcamera.AprilTagCamera;
 import frc.trigon.robot.poseestimation.apriltagcamera.AprilTagCameraConstants;
 import frc.trigon.robot.poseestimation.poseestimator.StandardDeviations;
@@ -41,6 +43,11 @@ public class CameraConstants {
     public static final ObjectDetectionCamera OBJECT_DETECTION_CAMERA = new ObjectDetectionCamera(
             "ObjectDetectionCamera",
             ROBOT_CENTER_TO_OBJECT_DETECTION_CAMERA
+    );
+    public static final ObjectPoseEstimator OBJECT_POSE_ESTIMATOR = new ObjectPoseEstimator(
+            0.5,
+            SimulatedGamePieceConstants.GamePieceType.CORAL,
+            OBJECT_DETECTION_CAMERA
     );
     public static final AprilTagCamera
             LEFT_REEF_TAG_CAMERA = new AprilTagCamera(
