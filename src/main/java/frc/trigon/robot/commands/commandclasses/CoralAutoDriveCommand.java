@@ -32,11 +32,12 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
 
     public CoralAutoDriveCommand() {
         addCommands(
+                new InstantCommand(POSE_ESTIMATOR::startTrackingClosestObjectToRobot),
                 getTrackCoralCommand(),
                 GeneralCommands.getContinuousConditionalCommand(
                         getDriveToCoralCommand(() -> distanceFromTrackedCoral),
                         GeneralCommands.getFieldRelativeDriveCommand(),
-                        () -> POSE_ESTIMATOR.getClosestObjectToRobot() != null
+                        () -> POSE_ESTIMATOR.getTrackedObjectPosition() != null
                 )
         );
     }
@@ -49,7 +50,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
 
     public static Translation2d calculateDistanceFromTrackedCoral() {
         final Pose2d robotPose = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose();
-        final Translation2d trackedObjectPositionOnField = POSE_ESTIMATOR.getClosestObjectToRobot();
+        final Translation2d trackedObjectPositionOnField = POSE_ESTIMATOR.getTrackedObjectPosition();
         if (trackedObjectPositionOnField == null)
             return null;
 
@@ -84,7 +85,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
 
     public static FlippableRotation2d calculateTargetAngle() {
         final Pose2d robotPose = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose();
-        final Translation2d trackedObjectFieldRelativePosition = POSE_ESTIMATOR.getClosestObjectToRobot();
+        final Translation2d trackedObjectFieldRelativePosition = POSE_ESTIMATOR.getTrackedObjectPosition();
         if (trackedObjectFieldRelativePosition == null)
             return null;
 
