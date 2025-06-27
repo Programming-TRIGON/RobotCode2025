@@ -66,8 +66,7 @@ public class AutonomousCommands {
 
     public static Command getDriveToCoralCommand(boolean isRight) {
         return new SequentialCommandGroup(
-                new InstantCommand(CameraConstants.OBJECT_POSE_ESTIMATOR::startTrackingClosestObjectToRobot),
-                getFindCoralCommand(isRight).unless(() -> CameraConstants.OBJECT_POSE_ESTIMATOR.getTrackedObjectPosition() != null).until(() -> CameraConstants.OBJECT_POSE_ESTIMATOR.getClosestObjectToRobot() != null),
+                getFindCoralCommand(isRight).unless(() -> CameraConstants.OBJECT_POSE_ESTIMATOR.getClosestObjectToRobot() != null).until(() -> CameraConstants.OBJECT_POSE_ESTIMATOR.getClosestObjectToRobot() != null),
                 new ParallelCommandGroup(
                         CoralAutoDriveCommand.getDriveToCoralCommand(CoralAutoDriveCommand::calculateDistanceFromTrackedCoral)
                 ).withTimeout(1.5)

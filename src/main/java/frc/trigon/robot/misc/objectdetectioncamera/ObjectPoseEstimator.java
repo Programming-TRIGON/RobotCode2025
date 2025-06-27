@@ -16,7 +16,6 @@ public class ObjectPoseEstimator extends SubsystemBase {
     private final ObjectDetectionCamera[] cameras;
     private final double deletionThresholdSeconds;
     private final SimulatedGamePieceConstants.GamePieceType gamePieceType;
-    private Translation2d trackedObjectPosition = null;
 
     /**
      * Constructs an ObjectPoseEstimator for estimating the positions of objects detected by cameras.
@@ -49,42 +48,6 @@ public class ObjectPoseEstimator extends SubsystemBase {
      */
     public ArrayList<Translation2d> getObjectsOnField() {
         return new ArrayList<>(knownObjectPositions.keySet());
-    }
-
-    /**
-     * Starts tracking the closest object to the robot.
-     */
-    public void startTrackingClosestObjectToRobot() {
-        trackedObjectPosition = getClosestObjectToRobot();
-    }
-
-    /**
-     * Starts tracking the closest object to the intake.
-     *
-     * @param intakeTransform the transform of the intake relative to the robot
-     */
-    public void startTrackingClosestObjectToIntake(Transform2d intakeTransform) {
-        final Pose2d robotPose = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose();
-        final Translation2d intakePosition = robotPose.transformBy(intakeTransform).getTranslation();
-        trackedObjectPosition = getClosestObjectToPose(intakePosition);
-    }
-
-    /**
-     * Starts tracking the closest object to a given pose.
-     *
-     * @param pose the pose to which the tracked object should be closest to
-     */
-    public void startTrackingClosestObjectToPose(Translation2d pose) {
-        trackedObjectPosition = getClosestObjectToPose(pose);
-    }
-
-    /**
-     * Gets the position of the object currently being tracked.
-     *
-     * @return the position of the tracked object, or null if no object is being tracked
-     */
-    public Translation2d getTrackedObjectPosition() {
-        return trackedObjectPosition;
     }
 
     /**
@@ -174,11 +137,8 @@ public class ObjectPoseEstimator extends SubsystemBase {
                     }
                 }
 
-                if (closestObjectToVisibleObjectDistanceMeters < ObjectDetectionCameraConstants.TRACKED_OBJECT_TOLERANCE_METERS && knownObjectPositions.get(closestObjectToVisibleObject) != currentTimestamp) {
+                if (closestObjectToVisibleObjectDistanceMeters < ObjectDetectionCameraConstants.TRACKED_OBJECT_TOLERANCE_METERS && knownObjectPositions.get(closestObjectToVisibleObject) != currentTimestamp)
                     knownObjectPositions.remove(closestObjectToVisibleObject);
-                    if (closestObjectToVisibleObject == trackedObjectPosition)
-                        trackedObjectPosition = visibleObject;
-                }
                 knownObjectPositions.put(visibleObject, currentTimestamp);
             }
         }
@@ -186,8 +146,6 @@ public class ObjectPoseEstimator extends SubsystemBase {
 
     private void removeOldObjects() {
         knownObjectPositions.entrySet().removeIf(entry -> isTooOld(entry.getValue()));
-        if (!knownObjectPositions.containsKey(trackedObjectPosition))
-            trackedObjectPosition = null;
     }
 
     private boolean isTooOld(double timestamp) {
