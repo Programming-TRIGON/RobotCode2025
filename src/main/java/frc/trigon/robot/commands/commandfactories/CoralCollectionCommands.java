@@ -16,7 +16,9 @@ import org.trigon.utilities.flippable.FlippablePose2d;
 
 
 public class CoralCollectionCommands {
-    public static boolean SHOULD_IGNORE_LOLLIPOP_CORAL = true;
+    public static boolean
+            SHOULD_IGNORE_LOLLIPOP_CORAL = true,
+            SHOULD_KEEP_INTAKE_OPEN = true;
 
     public static Command getFloorCoralCollectionCommand() {
         return new ParallelCommandGroup(
@@ -33,8 +35,8 @@ public class CoralCollectionCommands {
     public static Command getFeederCoralCollectionCommand() {
         return new ConditionalCommand(
                 getInitiateFeederCoralCollectionCommand().unless(RobotContainer.GRIPPER::hasGamePiece),
-                getFeederCoralCollectionFromGripperCommand(),
-                CoralCollectionCommands::isIntakeFacingFeeder
+                getFeederCoralCollectionFromGripperCommand().asProxy(),
+                () -> CoralCollectionCommands.isIntakeFacingFeeder() || RobotContainer.ALGAE_MANIPULATOR.isOpen()
         );
     }
 

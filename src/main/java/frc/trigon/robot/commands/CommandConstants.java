@@ -65,7 +65,8 @@ public class CommandConstants {
             ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = true).ignoringDisable(true),
             DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = false).ignoringDisable(true),
             ENABLE_IGNORE_LOLLIPOP_CORAL_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_IGNORE_LOLLIPOP_CORAL = true).ignoringDisable(true),
-            DISABLE_IGNORE_LOLLIPOP_CORAL_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_IGNORE_LOLLIPOP_CORAL = false).ignoringDisable(true);
+            DISABLE_IGNORE_LOLLIPOP_CORAL_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_IGNORE_LOLLIPOP_CORAL = false).ignoringDisable(true),
+            TOGGLE_SHOULD_KEEP_INTAKE_OPEN_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_KEEP_INTAKE_OPEN = !CoralCollectionCommands.SHOULD_KEEP_INTAKE_OPEN);
 
     /**
      * Calculates the target drive power from an axis value by dividing it by the shift mode value.

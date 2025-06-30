@@ -6,7 +6,6 @@ import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
@@ -235,16 +234,13 @@ public class CoralIntake extends MotorSubsystem {
         return Rotation2d.fromRotations(angleEncoder.getSignal(CANcoderSignal.POSITION) + CoralIntakeConstants.ANGLE_ENCODER_POSITION_OFFSET_VALUE);
     }
 
-    /**
-     * Logs the current match time and target reef placement for the dashboard.
-     * We use {@link SmartDashboard} instead of {@link Logger} because the {@link Logger} inputs don't show up in QDashboard for some reason.
-     */
     private void logToDashboard() {
         Logger.recordOutput("GameTime", DriverStation.getMatchTime());
         Logger.recordOutput("TargetCoralPlacementStates/IsTargetSideLeft", !OperatorConstants.REEF_CHOOSER.getReefSide().doesFlipYTransformWhenFacingDriverStation);
         Logger.recordOutput("TargetCoralPlacementStates/TargetLevel", OperatorConstants.REEF_CHOOSER.getScoringLevel().level);
         Logger.recordOutput("TargetCoralPlacementStates/TargetClockPositionForElastic", getClockPositionForElastic());
         Logger.recordOutput("ShouldIgnoreLollipopCoral", CoralCollectionCommands.SHOULD_IGNORE_LOLLIPOP_CORAL);
+        Logger.recordOutput("ShouldKeepIntakeOpen", CoralCollectionCommands.SHOULD_KEEP_INTAKE_OPEN);
         Logger.recordOutput("ShouldScoreCoralAutonomously", CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY);
     }
 

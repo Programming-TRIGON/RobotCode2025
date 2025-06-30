@@ -26,7 +26,6 @@ import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulator;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntake;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
-import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.Elevator;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
@@ -86,7 +85,7 @@ public class RobotContainer {
     private void bindDefaultCommands() {
         SWERVE.setDefaultCommand(GeneralCommands.getFieldRelativeDriveCommand());
         ALGAE_MANIPULATOR.setDefaultCommand(AlgaeManipulatorCommands.getDefaultCommand());
-        CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
+        CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getCoralIntakeDefaultCommand());
         ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         GRIPPER.setDefaultCommand(GripperCommands.getGripperDefaultCommand());
     }
@@ -119,6 +118,7 @@ public class RobotContainer {
         OperatorConstants.DISABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER.onTrue(CommandConstants.DISABLE_IGNORE_LOLLIPOP_CORAL_COMMAND);
         OperatorConstants.ENABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
         OperatorConstants.DISABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
+        OperatorConstants.TOGGLE_SHOULD_KEEP_INTAKE_OPEN_TRIGGER.onTrue(CommandConstants.TOGGLE_SHOULD_KEEP_INTAKE_OPEN_COMMAND);
     }
 
     private void configureSysIdBindings(MotorSubsystem subsystem) {
