@@ -13,22 +13,21 @@ import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
 import frc.trigon.robot.subsystems.gripper.GripperCommands;
 import frc.trigon.robot.subsystems.gripper.GripperConstants;
 import org.trigon.utilities.flippable.FlippablePose2d;
-import org.trigon.utilities.flippable.FlippableRotation2d;
 
 
 public class CoralCollectionCommands {
     public static boolean SHOULD_IGNORE_LOLLIPOP_CORAL = true;
 
-    public static Command getFeederCoralCollectionFromGripperCommand() {
-        return new ParallelCommandGroup(
-                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.COLLECT_CORAL_FROM_FEEDER),
-                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
-                getScheduleCoralLoadingWhenCollectedCommand()
-        ).until(RobotContainer.GRIPPER::hasGamePiece);
-    }
-
     public static Command getFloorCoralCollectionCommand() {
-        return getInitiateFloorCoralCollectionCommand();
+        return new ParallelCommandGroup(
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
+                getScheduleCoralLoadingWhenCollectedCommand()
+//                SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
+//                        () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftY()),
+//                        () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
+//                        CommandConstants::calculateTargetHeadingFromJoystickAngle
+//                ).asProxy()
+        );
     }
 
     public static Command getFeederCoralCollectionCommand() {
@@ -37,6 +36,21 @@ public class CoralCollectionCommands {
                 getFeederCoralCollectionFromGripperCommand(),
                 CoralCollectionCommands::isIntakeFacingFeeder
         );
+    }
+
+    private static Command getInitiateFeederCoralCollectionCommand() {
+        return new ParallelCommandGroup(
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FEEDER),
+                getScheduleCoralLoadingWhenCollectedCommand()
+        );
+    }
+
+    public static Command getFeederCoralCollectionFromGripperCommand() {
+        return new ParallelCommandGroup(
+                GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.COLLECT_CORAL_FROM_FEEDER),
+                ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST),
+                getScheduleCoralLoadingWhenCollectedCommand()
+        ).until(RobotContainer.GRIPPER::hasGamePiece);
     }
 
     private static boolean isIntakeFacingFeeder() {
@@ -50,27 +64,14 @@ public class CoralCollectionCommands {
         return robotHeading.minus(leftFeederAngle).plus(Rotation2d.kCCW_90deg).getDegrees() < 0;
     }
 
-    private static Command getInitiateFeederCoralCollectionCommand() {
-        return new ParallelCommandGroup(
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FEEDER),
-                getScheduleCoralLoadingWhenCollectedCommand()
-        );
-    }
-
-    private static Command getInitiateFloorCoralCollectionCommand() {
-        return new ParallelCommandGroup(
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
-                getScheduleCoralLoadingWhenCollectedCommand()
-//                SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
-//                        () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftY()),
-//                        () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
-//                        CommandConstants::calculateTargetHeadingFromJoystickAngle
-//                ).asProxy()
-        );
-    }
-
     private static Command getScheduleCoralLoadingWhenCollectedCommand() {
-        return GeneralCommands.runWhen(getCollectionConfirmationCommand().alongWith(getScheduleCoralLoadingCommand()), CoralCollectionCommands::didCollectCoral);
+        return GeneralCommands.runWhen(
+                new ParallelCommandGroup(
+                        getCollectionConfirmationCommand(),
+                        getScheduleCoralLoadingCommand()
+                ),
+                CoralCollectionCommands::didCollectCoral
+        );
     }
 
     private static Command getScheduleCoralLoadingCommand() {
@@ -116,11 +117,6 @@ public class CoralCollectionCommands {
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK).raceWith(new WaitUntilCommand(() -> !RobotContainer.CORAL_INTAKE.hasGamePiece()).andThen(new WaitCommand(0.4))),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK).withTimeout(0.3)
         ).repeatedly();
-    }
-
-    private static boolean isMovingCoralToGripper() {
-        return RobotContainer.CORAL_INTAKE.getTargetState() == CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_SEEING_GAME_PIECE_WITH_BEAM_BREAK ||
-                RobotContainer.CORAL_INTAKE.getTargetState() == CoralIntakeConstants.CoralIntakeState.LOAD_CORAL_TO_GRIPPER_NOT_SEEING_GAME_PIECE_WITH_BEAM_BREAK;
     }
 
     private static Command getCollectionConfirmationCommand() {
