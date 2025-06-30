@@ -180,7 +180,7 @@ public class AlgaeManipulationCommands {
         ).raceWith(
                 new WaitCommand(1).andThen(new WaitUntilCommand(RobotContainer.GRIPPER::isMovingSlowly)),
                 new WaitUntilCommand(OperatorConstants.CONTINUE_TRIGGER)
-                );
+        );
     }
 
     private static boolean isScoreAlgaeButtonPressed() {
