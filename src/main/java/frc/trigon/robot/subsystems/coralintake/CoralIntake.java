@@ -240,6 +240,7 @@ public class CoralIntake extends MotorSubsystem {
         Logger.recordOutput("TargetCoralPlacementStates/TargetLevel", OperatorConstants.REEF_CHOOSER.getScoringLevel().level);
         Logger.recordOutput("TargetCoralPlacementStates/TargetClockPositionForElastic", getClockPositionForElastic());
         Logger.recordOutput("ShouldIgnoreLollipopCoral", CoralCollectionCommands.SHOULD_IGNORE_LOLLIPOP_CORAL);
+        Logger.recordOutput("ShouldAssistIntake", CoralCollectionCommands.SHOULD_ASSIST_INTAKE);
         Logger.recordOutput("ShouldKeepIntakeOpen", CoralCollectionCommands.SHOULD_KEEP_INTAKE_OPEN);
         Logger.recordOutput("ShouldScoreCoralAutonomously", CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY);
     }

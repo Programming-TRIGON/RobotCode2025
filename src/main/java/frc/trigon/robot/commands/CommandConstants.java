@@ -9,9 +9,9 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
+import frc.trigon.robot.constants.AutonomousConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
-import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.commands.CameraPositionCalculationCommand;
 import org.trigon.commands.WheelRadiusCharacterizationCommand;
@@ -48,7 +48,7 @@ public class CommandConstants {
                     () -> 0
             ),
             WHEEL_RADIUS_CHARACTERIZATION_COMMAND = new WheelRadiusCharacterizationCommand(
-                    PathPlannerConstants.ROBOT_CONFIG.moduleLocations,
+                    AutonomousConstants.ROBOT_CONFIG.moduleLocations,
                     RobotContainer.SWERVE::getDriveWheelPositionsRadians,
                     () -> RobotContainer.SWERVE.getHeading().getRadians(),
                     (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),
@@ -64,8 +64,8 @@ public class CommandConstants {
     public static final Command
             ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = true).ignoringDisable(true),
             DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = false).ignoringDisable(true),
-            ENABLE_IGNORE_LOLLIPOP_CORAL_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_IGNORE_LOLLIPOP_CORAL = true).ignoringDisable(true),
-            DISABLE_IGNORE_LOLLIPOP_CORAL_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_IGNORE_LOLLIPOP_CORAL = false).ignoringDisable(true),
+            ENABLE_INTAKE_ASSIST_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_ASSIST_INTAKE = true).ignoringDisable(true),
+            DISABLE_INTAKE_ASSIST_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_ASSIST_INTAKE = false).ignoringDisable(true),
             TOGGLE_SHOULD_KEEP_INTAKE_OPEN_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_KEEP_INTAKE_OPEN = !CoralCollectionCommands.SHOULD_KEEP_INTAKE_OPEN);
 
     /**

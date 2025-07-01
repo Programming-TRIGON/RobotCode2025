@@ -1,0 +1,147 @@
+package frc.trigon.robot.commands.commandclasses;
+
+import edu.wpi.first.math.controller.ProfiledPIDController;
+import edu.wpi.first.math.geometry.Pose2d;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.trajectory.TrapezoidProfile;
+import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.RunCommand;
+import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.commands.CommandConstants;
+import frc.trigon.robot.commands.commandfactories.GeneralCommands;
+import frc.trigon.robot.constants.AutonomousConstants;
+import frc.trigon.robot.constants.CameraConstants;
+import frc.trigon.robot.constants.OperatorConstants;
+import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
+import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
+import frc.trigon.robot.subsystems.swerve.SwerveCommands;
+import org.littletonrobotics.junction.Logger;
+import org.trigon.hardware.RobotHardwareStats;
+
+import java.util.function.Supplier;
+
+public class IntakeAssistCommand extends ParallelCommandGroup {
+    private static final ObjectDetectionCamera CAMERA = CameraConstants.OBJECT_DETECTION_CAMERA;
+    private static final ProfiledPIDController
+            X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
+            new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(2.8, 5)) :
+            new ProfiledPIDController(2.4, 0, 0, new TrapezoidProfile.Constraints(2.65, 5.5)),
+            Y_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
+                    new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(2.8, 5)) :
+                    new ProfiledPIDController(0.3, 0, 0.03, new TrapezoidProfile.Constraints(2.65, 5.5)),
+            THETA_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
+                    new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(2.8, 5)) :
+                    new ProfiledPIDController(2.4, 0, 0, new TrapezoidProfile.Constraints(2.65, 5.5));
+    private Translation2d distanceFromTrackedCoral;
+
+    public IntakeAssistCommand() {
+        addCommands(
+                new InstantCommand(CAMERA::initializeTracking),
+                getTrackCoralCommand(),
+                GeneralCommands.getContinuousConditionalCommand(
+                        GeneralCommands.getFieldRelativeDriveCommand(),
+                        getAssistIntakeCommand(() -> distanceFromTrackedCoral),
+                        () -> distanceFromTrackedCoral == null
+                )
+        );
+    }
+
+    private Command getTrackCoralCommand() {
+        return new RunCommand(() -> {
+            CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL);
+            distanceFromTrackedCoral = calculateDistanceFromTrackedCoral();
+        });
+    }
+
+    public static Translation2d calculateDistanceFromTrackedCoral() {
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
+        final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
+        if (trackedObjectPositionOnField == null)
+            return null;
+
+        final Translation2d difference = robotPose.getTranslation().minus(trackedObjectPositionOnField);
+        Translation2d robotToTrackedCoralDistance = difference.rotateBy(robotPose.getRotation().unaryMinus());
+        Logger.recordOutput("IntakeAssist/TrackedCoralDistance", robotToTrackedCoralDistance);
+        return robotToTrackedCoralDistance;
+    }
+
+    public static Command getAssistIntakeCommand(Supplier<Translation2d> distanceFromTrackedCoral) {
+        return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+                () -> AutonomousConstants.INTAKE_ASSIST_MODE.shouldAssistX ? getXAssistedPower(distanceFromTrackedCoral.get()) : getXJoystickPower(),
+                () -> AutonomousConstants.INTAKE_ASSIST_MODE.shouldAssistY ? getYAssistedPower(distanceFromTrackedCoral.get()) : getYJoystickPower(),
+                () -> AutonomousConstants.INTAKE_ASSIST_MODE.shouldAssistTheta ? getThetaAssistedPower(distanceFromTrackedCoral.get()) : OperatorConstants.DRIVER_CONTROLLER.getRightX()
+        );
+    }
+
+    private static double getXAssistedPower(Translation2d distanceFromTrackedCoral) {
+        return calculateTranslationAssistPower(distanceFromTrackedCoral.getX(), X_PID_CONTROLLER, getXJoystickPower());
+    }
+
+    private static double getYAssistedPower(Translation2d distanceFromTrackedCoral) {
+        return calculateTranslationAssistPower(distanceFromTrackedCoral.getY(), Y_PID_CONTROLLER, getYJoystickPower());
+    }
+
+    private static double getThetaAssistedPower(Translation2d distanceFromTrackedCoral) {
+        return calculateRotationAssistPower(distanceFromTrackedCoral.getAngle().plus(Rotation2d.k180deg));
+    }
+
+    private static double getXJoystickPower() {
+        final Rotation2d robotHeading = RobotContainer.SWERVE.getDriveRelativeAngle();
+
+        final double
+                joystickX = OperatorConstants.DRIVER_CONTROLLER.getLeftY(),
+                joystickY = OperatorConstants.DRIVER_CONTROLLER.getLeftX();
+        final double
+                xValue = CommandConstants.calculateDriveStickAxisValue(joystickX),
+                yValue = CommandConstants.calculateDriveStickAxisValue(joystickY);
+
+        return (xValue * robotHeading.getCos()) + (yValue * robotHeading.getSin());
+    }
+
+    private static double getYJoystickPower() {
+        final Rotation2d robotHeading = RobotContainer.SWERVE.getDriveRelativeAngle();
+
+        final double
+                joystickX = OperatorConstants.DRIVER_CONTROLLER.getLeftY(),
+                joystickY = OperatorConstants.DRIVER_CONTROLLER.getLeftX();
+        final double
+                xValue = CommandConstants.calculateDriveStickAxisValue(joystickX),
+                yValue = CommandConstants.calculateDriveStickAxisValue(joystickY);
+
+        return (yValue * robotHeading.getCos()) - (xValue * robotHeading.getSin());
+    }
+
+    private static double calculateTranslationAssistPower(double distance, ProfiledPIDController pidController, double joystickValue) {
+        final double
+                assistPower = pidController.calculate(distance) * AutonomousConstants.INTAKE_ASSIST_SCALAR,
+                stickPower = joystickValue * (1 - AutonomousConstants.INTAKE_ASSIST_SCALAR);
+        return assistPower + stickPower;
+    }
+
+    private static double calculateRotationAssistPower(Rotation2d angleOffset) {
+        final double
+                assistPower = THETA_PID_CONTROLLER.calculate(-angleOffset.getRadians()) * AutonomousConstants.INTAKE_ASSIST_SCALAR,
+                stickPower = OperatorConstants.DRIVER_CONTROLLER.getRightX() * (1 - AutonomousConstants.INTAKE_ASSIST_SCALAR);
+        return assistPower + stickPower;
+    }
+
+    public enum AssistMode {
+        FULL_ASSIST(true, true, true),
+        ALIGN_ASSIST(false, true, true),
+        ASSIST_ROTATION(false, false, true);
+
+        final boolean
+                shouldAssistX,
+                shouldAssistY,
+                shouldAssistTheta;
+
+        AssistMode(boolean shouldAssistX, boolean shouldAssistY, boolean shouldAssistTheta) {
+            this.shouldAssistX = shouldAssistX;
+            this.shouldAssistY = shouldAssistY;
+            this.shouldAssistTheta = shouldAssistTheta;
+        }
+    }
+}

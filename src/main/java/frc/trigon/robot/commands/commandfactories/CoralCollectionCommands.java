@@ -4,6 +4,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.commands.commandclasses.IntakeAssistCommand;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
@@ -18,17 +19,14 @@ import org.trigon.utilities.flippable.FlippablePose2d;
 public class CoralCollectionCommands {
     public static boolean
             SHOULD_IGNORE_LOLLIPOP_CORAL = true,
+            SHOULD_ASSIST_INTAKE = true,
             SHOULD_KEEP_INTAKE_OPEN = true;
 
     public static Command getFloorCoralCollectionCommand() {
         return new ParallelCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
-                getScheduleCoralLoadingWhenCollectedCommand()
-//                SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
-//                        () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftY()),
-//                        () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
-//                        CommandConstants::calculateTargetHeadingFromJoystickAngle
-//                ).asProxy()
+                getScheduleCoralLoadingWhenCollectedCommand(),
+                new IntakeAssistCommand().asProxy().onlyWhile(() -> SHOULD_ASSIST_INTAKE)
         );
     }
 

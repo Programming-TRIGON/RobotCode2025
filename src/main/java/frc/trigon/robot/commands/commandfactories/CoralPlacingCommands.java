@@ -7,9 +7,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
+import frc.trigon.robot.constants.AutonomousConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
-import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.misc.ReefChooser;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
@@ -127,7 +127,7 @@ public class CoralPlacingCommands {
     private static Command getOpenElevatorWhenCloseToReefCommand(boolean shouldScoreRight) {
         return GeneralCommands.runWhen(
                 ElevatorCommands.getSetTargetStateCommand(REEF_CHOOSER::getElevatorState),
-                () -> calculateDistanceToTargetScoringPose(shouldScoreRight) < PathPlannerConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR
+                () -> calculateDistanceToTargetScoringPose(shouldScoreRight) < AutonomousConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR
         );
     }
 
@@ -135,7 +135,7 @@ public class CoralPlacingCommands {
         return new SequentialCommandGroup(
                 SwerveCommands.getDriveToPoseCommand(
                         () -> CoralPlacingCommands.calculateClosestScoringPose(shouldScoreRight),
-                        PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
+                        AutonomousConstants.DRIVE_TO_REEF_CONSTRAINTS
                 ),
                 GeneralCommands.getFieldRelativeDriveCommand()
         );

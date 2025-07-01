@@ -8,9 +8,9 @@ import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
+import frc.trigon.robot.constants.AutonomousConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
-import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.misc.ReefChooser;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
@@ -170,7 +170,7 @@ public class AlgaeManipulationCommands {
         return new SequentialCommandGroup(
                 SwerveCommands.getDriveToPoseCommand(
                         AlgaeManipulationCommands::calculateClosestAlgaeCollectionPose,
-                        PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
+                        AutonomousConstants.DRIVE_TO_REEF_CONSTRAINTS
                 ),
                 SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                         () -> fieldRelativePowersToSelfRelativeXPower(OperatorConstants.DRIVER_CONTROLLER.getLeftY(), OperatorConstants.DRIVER_CONTROLLER.getLeftX()),

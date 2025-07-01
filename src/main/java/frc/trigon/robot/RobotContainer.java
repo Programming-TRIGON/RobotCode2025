@@ -16,10 +16,10 @@ import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandclasses.CoralAlignmentCommand;
 import frc.trigon.robot.commands.commandclasses.LEDAutoSetupCommand;
 import frc.trigon.robot.commands.commandfactories.*;
+import frc.trigon.robot.constants.AutonomousConstants;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
-import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.poseestimation.poseestimator.PoseEstimator;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulator;
@@ -73,7 +73,7 @@ public class RobotContainer {
      */
     private void initializeGeneralSystems() {
         Flippable.init();
-        PathPlannerConstants.init();
+        AutonomousConstants.init();
     }
 
     private void configureBindings() {
@@ -114,8 +114,8 @@ public class RobotContainer {
     }
 
     private void bindSetters() {
-        OperatorConstants.ENABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER.onTrue(CommandConstants.ENABLE_IGNORE_LOLLIPOP_CORAL_COMMAND);
-        OperatorConstants.DISABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER.onTrue(CommandConstants.DISABLE_IGNORE_LOLLIPOP_CORAL_COMMAND);
+        OperatorConstants.ENABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER.onTrue(CommandConstants.ENABLE_INTAKE_ASSIST_COMMAND);
+        OperatorConstants.DISABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER.onTrue(CommandConstants.DISABLE_INTAKE_ASSIST_COMMAND);
         OperatorConstants.ENABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
         OperatorConstants.DISABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
         OperatorConstants.TOGGLE_SHOULD_KEEP_INTAKE_OPEN_TRIGGER.onTrue(CommandConstants.TOGGLE_SHOULD_KEEP_INTAKE_OPEN_COMMAND);
@@ -140,11 +140,11 @@ public class RobotContainer {
             final PathPlannerAuto autoNonMirrored = new PathPlannerAuto(autoName);
             final PathPlannerAuto autoMirrored = new PathPlannerAuto(autoName, true);
 
-            if (!PathPlannerConstants.DEFAULT_AUTO_NAME.isEmpty() && PathPlannerConstants.DEFAULT_AUTO_NAME.equals(autoName)) {
+            if (!AutonomousConstants.DEFAULT_AUTO_NAME.isEmpty() && AutonomousConstants.DEFAULT_AUTO_NAME.equals(autoName)) {
                 hasDefault = true;
                 autoChooser.addDefaultOption(autoNonMirrored.getName(), autoNonMirrored);
                 autoChooser.addOption(autoMirrored.getName() + "Mirrored", autoMirrored);
-            } else if (!PathPlannerConstants.DEFAULT_AUTO_NAME.isEmpty() && PathPlannerConstants.DEFAULT_AUTO_NAME.equals(autoName + "Mirrored")) {
+            } else if (!AutonomousConstants.DEFAULT_AUTO_NAME.isEmpty() && AutonomousConstants.DEFAULT_AUTO_NAME.equals(autoName + "Mirrored")) {
                 hasDefault = true;
                 autoChooser.addDefaultOption(autoMirrored.getName() + "Mirrored", autoMirrored);
                 autoChooser.addOption(autoNonMirrored.getName(), autoNonMirrored);

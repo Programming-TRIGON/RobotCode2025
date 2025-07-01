@@ -10,6 +10,7 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.math.util.Units;
 import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.commands.commandclasses.IntakeAssistCommand;
 import frc.trigon.robot.commands.commandfactories.AutonomousCommands;
 import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
@@ -27,14 +28,16 @@ import org.trigon.utilities.flippable.Flippable;
 import java.io.IOException;
 
 /**
- * A class that contains the constants and configurations for everything related to PathPlanner.
+ * A class that contains the constants and configurations for everything related to the 15-second autonomous period at the start of the match.
  */
-public class PathPlannerConstants {
+public class AutonomousConstants {
     public static final PathConstraints DRIVE_TO_REEF_CONSTRAINTS = new PathConstraints(2.5, 4, Units.degreesToRadians(450), Units.degreesToRadians(900));
     public static final double MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR = 2.2;
     public static final String DEFAULT_AUTO_NAME = "FloorAutonomousRight6Branches";
     public static final RobotConfig ROBOT_CONFIG = getRobotConfig();
-    public static final double FEEDFORWARD_SCALAR = 0.57;
+    public static final double
+            FEEDFORWARD_SCALAR = 0.57,
+            INTAKE_ASSIST_SCALAR = 0.5;
 
     private static final PIDConstants
             AUTO_TRANSLATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
@@ -47,6 +50,8 @@ public class PathPlannerConstants {
             AUTO_TRANSLATION_PID_CONSTANTS,
             AUTO_ROTATION_PID_CONSTANTS
     );
+
+    public static final IntakeAssistCommand.AssistMode INTAKE_ASSIST_MODE = IntakeAssistCommand.AssistMode.FULL_ASSIST;
 
     /**
      * Initializes PathPlanner. This needs to be called before any PathPlanner function can be used.
