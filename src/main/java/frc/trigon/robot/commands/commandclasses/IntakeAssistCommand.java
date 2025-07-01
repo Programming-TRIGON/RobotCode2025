@@ -44,7 +44,7 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
                 GeneralCommands.getContinuousConditionalCommand(
                         GeneralCommands.getFieldRelativeDriveCommand(),
                         getAssistIntakeCommand(() -> distanceFromTrackedCoral),
-                        () -> distanceFromTrackedCoral == null
+                        () -> CAMERA.getTrackedObjectFieldRelativePosition() == null
                 )
         );
     }
