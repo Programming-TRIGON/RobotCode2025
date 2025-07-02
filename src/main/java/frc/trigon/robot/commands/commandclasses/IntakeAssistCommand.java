@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.CommandConstants;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
-import frc.trigon.robot.constants.AutonomousConstants;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
@@ -70,9 +69,9 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
 
     public static Command getAssistIntakeCommand(Supplier<Translation2d> distanceFromTrackedCoral) {
         return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                () -> AutonomousConstants.INTAKE_ASSIST_MODE.shouldAssistX ? getXAssistedPower(distanceFromTrackedCoral.get()) : getXJoystickPower(),
-                () -> AutonomousConstants.INTAKE_ASSIST_MODE.shouldAssistY ? getYAssistedPower(distanceFromTrackedCoral.get()) : getYJoystickPower(),
-                () -> AutonomousConstants.INTAKE_ASSIST_MODE.shouldAssistTheta ? getThetaAssistedPower(distanceFromTrackedCoral.get()) : OperatorConstants.DRIVER_CONTROLLER.getRightX()
+                () -> OperatorConstants.INTAKE_ASSIST_MODE.shouldAssistX ? getXAssistedPower(distanceFromTrackedCoral.get()) : getXJoystickPower(),
+                () -> OperatorConstants.INTAKE_ASSIST_MODE.shouldAssistY ? getYAssistedPower(distanceFromTrackedCoral.get()) : getYJoystickPower(),
+                () -> OperatorConstants.INTAKE_ASSIST_MODE.shouldAssistTheta ? getThetaAssistedPower(distanceFromTrackedCoral.get()) : OperatorConstants.DRIVER_CONTROLLER.getRightX()
         );
     }
 
@@ -116,15 +115,15 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
 
     private static double calculateTranslationAssistPower(double distance, ProfiledPIDController pidController, double joystickValue) {
         final double
-                assistPower = pidController.calculate(distance) * AutonomousConstants.INTAKE_ASSIST_SCALAR,
-                stickPower = joystickValue * (1 - AutonomousConstants.INTAKE_ASSIST_SCALAR);
+                assistPower = pidController.calculate(distance) * OperatorConstants.INTAKE_ASSIST_SCALAR,
+                stickPower = joystickValue * (1 - OperatorConstants.INTAKE_ASSIST_SCALAR);
         return assistPower + stickPower;
     }
 
     private static double calculateRotationAssistPower(Rotation2d angleOffset) {
         final double
-                assistPower = THETA_PID_CONTROLLER.calculate(-angleOffset.getRadians()) * AutonomousConstants.INTAKE_ASSIST_SCALAR,
-                stickPower = OperatorConstants.DRIVER_CONTROLLER.getRightX() * (1 - AutonomousConstants.INTAKE_ASSIST_SCALAR);
+                assistPower = THETA_PID_CONTROLLER.calculate(-angleOffset.getRadians()) * OperatorConstants.INTAKE_ASSIST_SCALAR,
+                stickPower = OperatorConstants.DRIVER_CONTROLLER.getRightX() * (1 - OperatorConstants.INTAKE_ASSIST_SCALAR);
         return assistPower + stickPower;
     }
 

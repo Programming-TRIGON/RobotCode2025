@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.commands.commandclasses.IntakeAssistCommand;
 import frc.trigon.robot.misc.ReefChooser;
 import org.trigon.hardware.misc.KeyboardController;
 import org.trigon.hardware.misc.XboxController;
@@ -28,6 +29,9 @@ public class OperatorConstants {
     public static final double
             POV_DIVIDER = 2,
             ROTATION_STICK_SPEED_DIVIDER = 1;
+
+    public static final double INTAKE_ASSIST_SCALAR = 0.5;
+    public static final IntakeAssistCommand.AssistMode INTAKE_ASSIST_MODE = IntakeAssistCommand.AssistMode.FULL_ASSIST;
 
     public static final Trigger
             LED_AUTO_SETUP_TRIGGER = OPERATOR_CONTROLLER.backtick(),

@@ -10,7 +10,6 @@ import com.pathplanner.lib.path.PathConstraints;
 import com.pathplanner.lib.pathfinding.Pathfinding;
 import edu.wpi.first.math.util.Units;
 import frc.trigon.robot.RobotContainer;
-import frc.trigon.robot.commands.commandclasses.IntakeAssistCommand;
 import frc.trigon.robot.commands.commandfactories.AutonomousCommands;
 import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
@@ -35,9 +34,7 @@ public class AutonomousConstants {
     public static final double MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR = 2.2;
     public static final String DEFAULT_AUTO_NAME = "FloorAutonomousRight6Branches";
     public static final RobotConfig ROBOT_CONFIG = getRobotConfig();
-    public static final double
-            FEEDFORWARD_SCALAR = 0.57,
-            INTAKE_ASSIST_SCALAR = 0.5;
+    public static final double FEEDFORWARD_SCALAR = 0.57;
 
     private static final PIDConstants
             AUTO_TRANSLATION_PID_CONSTANTS = RobotHardwareStats.isSimulation() ?
@@ -50,8 +47,6 @@ public class AutonomousConstants {
             AUTO_TRANSLATION_PID_CONSTANTS,
             AUTO_ROTATION_PID_CONSTANTS
     );
-
-    public static final IntakeAssistCommand.AssistMode INTAKE_ASSIST_MODE = IntakeAssistCommand.AssistMode.FULL_ASSIST;
 
     /**
      * Initializes PathPlanner. This needs to be called before any PathPlanner function can be used.
