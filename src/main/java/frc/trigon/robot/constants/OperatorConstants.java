@@ -30,8 +30,8 @@ public class OperatorConstants {
             POV_DIVIDER = 2,
             ROTATION_STICK_SPEED_DIVIDER = 1;
 
-    public static final double INTAKE_ASSIST_SCALAR = 0.5;
-    public static final IntakeAssistCommand.AssistMode INTAKE_ASSIST_MODE = IntakeAssistCommand.AssistMode.FULL_ASSIST;
+    public static final double INTAKE_ASSIST_SCALAR = 0.8;
+    public static final IntakeAssistCommand.AssistMode INTAKE_ASSIST_MODE = IntakeAssistCommand.AssistMode.ALIGN_ASSIST;
 
     public static final Trigger
             LED_AUTO_SETUP_TRIGGER = OPERATOR_CONTROLLER.backtick(),
