@@ -100,7 +100,7 @@ public class RobotContainer {
 
         OperatorConstants.RESET_AMP_ALIGNER_TRIGGER.whileTrue(AlgaeManipulationCommands.getResetAmpAlignerCommand());
 
-        OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());//TODO: Add collection assist
+        OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
         OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionCommand());
         OperatorConstants.RIGHT_SCORE_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand(true));
         OperatorConstants.LEFT_SCORE_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand(false));
@@ -114,8 +114,8 @@ public class RobotContainer {
     }
 
     private void bindSetters() {
-        OperatorConstants.ENABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER.onTrue(CommandConstants.ENABLE_INTAKE_ASSIST_COMMAND);
-        OperatorConstants.DISABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER.onTrue(CommandConstants.DISABLE_INTAKE_ASSIST_COMMAND);
+        OperatorConstants.ENABLE_INTAKE_ASSIST_TRIGGER.onTrue(CommandConstants.ENABLE_INTAKE_ASSIST_COMMAND);
+        OperatorConstants.DISABLE_INTAKE_ASSIST_TRIGGER.onTrue(CommandConstants.DISABLE_INTAKE_ASSIST_COMMAND);
         OperatorConstants.ENABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
         OperatorConstants.DISABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
         OperatorConstants.TOGGLE_SHOULD_KEEP_INTAKE_OPEN_TRIGGER.onTrue(CommandConstants.TOGGLE_SHOULD_KEEP_INTAKE_OPEN_COMMAND);
