@@ -46,6 +46,7 @@ public class CameraConstants {
     );
     public static final ObjectPoseEstimator OBJECT_POSE_ESTIMATOR = new ObjectPoseEstimator(
             0.5,
+            ObjectPoseEstimator.DistanceCalculationMethod.ROTATION_AND_TRANSLATION,
             SimulatedGamePieceConstants.GamePieceType.CORAL,
             OBJECT_DETECTION_CAMERA
     );
@@ -62,7 +63,7 @@ public class CameraConstants {
                     ROBOT_CENTER_TO_RIGHT_REEF_TAG_CAMERA,
                     REEF_TAG_CAMERA_STANDARD_DEVIATIONS
             );
-//            FEEDER_TAG_CAMERA = new AprilTagCamera(
+    //            FEEDER_TAG_CAMERA = new AprilTagCamera(
 //                    AprilTagCameraConstants.AprilTagCameraType.PHOTON_CAMERA,
 //                    "CoralStationTagCamera",
 //                    ROBOT_CENTER_TO_FEEDER_TAG_CAMERA,

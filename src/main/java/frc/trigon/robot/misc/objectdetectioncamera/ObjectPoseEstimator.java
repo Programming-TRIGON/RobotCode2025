@@ -16,6 +16,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
     private final ObjectDetectionCamera[] cameras;
     private final double deletionThresholdSeconds;
     private final SimulatedGamePieceConstants.GamePieceType gamePieceType;
+    private final double translationScale, rotationScale;
 
     /**
      * Constructs an ObjectPoseEstimator for estimating the positions of objects detected by cameras.
@@ -24,15 +25,17 @@ public class ObjectPoseEstimator extends SubsystemBase {
      * @param gamePieceType            the type of game piece to track
      * @param cameras                  the cameras used for detecting objects
      */
-    public ObjectPoseEstimator(double deletionThresholdSeconds, SimulatedGamePieceConstants.GamePieceType gamePieceType, ObjectDetectionCamera... cameras) {
+    public ObjectPoseEstimator(double deletionThresholdSeconds, DistanceCalculationMethod distanceCalculationMethod, SimulatedGamePieceConstants.GamePieceType gamePieceType, ObjectDetectionCamera... cameras) {
         this.deletionThresholdSeconds = deletionThresholdSeconds;
         this.gamePieceType = gamePieceType;
         this.cameras = cameras;
         this.knownObjectPositions = new HashMap<>();
+        this.translationScale = distanceCalculationMethod.translationScale;
+        this.rotationScale = distanceCalculationMethod.rotationScale;
     }
 
     /**
-     * Updates the object positions based on the cameras's detected objects.
+     * Updates the object positions based on the cameras detected objects.
      * Removes objects that have not been detected for {@link ObjectPoseEstimator#deletionThresholdSeconds}.
      */
     @Override
@@ -114,12 +117,28 @@ public class ObjectPoseEstimator extends SubsystemBase {
 
         for (int i = 1; i < objectsTranslations.length; i++) {
             final Translation2d currentObjectTranslation = objectsTranslations[i];
-            final double bestObjectDifference = pose.getDistance(bestObjectTranslation);
-            final double currentObjectDifference = pose.getDistance(currentObjectTranslation);
-            if (currentObjectDifference < bestObjectDifference)
+            final double bestObjectScore = calculateObjectDistanceScore(bestObjectTranslation, pose);
+            final double currentObjectScore = calculateObjectDistanceScore(currentObjectTranslation, pose);
+            if (currentObjectScore < bestObjectScore)
                 bestObjectTranslation = currentObjectTranslation;
         }
         return bestObjectTranslation;
+    }
+
+    /**
+     * Calculates the score of an object.
+     * The "distance score" is a unit used to calculate the distance between 2 poses. It factors in both translation and rotation differences by scaling the units.
+     *
+     * @param objectTranslation the translation of the object on the field
+     * @param pose              the pose to which the distance is measured from
+     * @return the objects "distance score"
+     */
+    private double calculateObjectDistanceScore(Translation2d objectTranslation, Translation2d pose) {
+        final double translationDifference = pose.getDistance(objectTranslation);
+        final double xDifference = Math.abs(pose.getX() - objectTranslation.getX());
+        final double yDifference = Math.abs(pose.getY() - objectTranslation.getY());
+        final double rotationDifference = Math.tan(yDifference / xDifference);
+        return translationDifference * translationScale + rotationDifference * rotationScale;
     }
 
     private void updateObjectPositions() {
@@ -150,5 +169,19 @@ public class ObjectPoseEstimator extends SubsystemBase {
 
     private boolean isTooOld(double timestamp) {
         return Timer.getTimestamp() - timestamp > deletionThresholdSeconds;
+    }
+
+    public enum DistanceCalculationMethod {
+        ROTATION(0, 1),
+        TRANSLATION(1, 0),
+        ROTATION_AND_TRANSLATION(1, 0.1); // this treats 10 cm translation as 1 degree of rotation when calculating the distance between two poses
+
+        final double translationScale;
+        final double rotationScale;
+
+        DistanceCalculationMethod(double translationScale, double rotationScale) {
+            this.translationScale = translationScale;
+            this.rotationScale = rotationScale;
+        }
     }
 }
