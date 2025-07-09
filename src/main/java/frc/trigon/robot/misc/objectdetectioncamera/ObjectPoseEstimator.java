@@ -16,7 +16,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
     private final ObjectDetectionCamera[] cameras;
     private final double deletionThresholdSeconds;
     private final SimulatedGamePieceConstants.GamePieceType gamePieceType;
-    private final double translationScale, rotationScale;
+    private final double rotationToTranslation;
 
     /**
      * Constructs an ObjectPoseEstimator for estimating the positions of objects detected by cameras.
@@ -30,8 +30,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
         this.gamePieceType = gamePieceType;
         this.cameras = cameras;
         this.knownObjectPositions = new HashMap<>();
-        this.translationScale = distanceCalculationMethod.translationScale;
-        this.rotationScale = distanceCalculationMethod.rotationScale;
+        this.rotationToTranslation = distanceCalculationMethod.rotationToTranslation;
     }
 
     /**
@@ -68,24 +67,23 @@ public class ObjectPoseEstimator extends SubsystemBase {
      */
     public void removeClosestObjectToIntake(Transform2d intakeTransform) {
         final Pose2d robotPose = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose();
-        final Translation2d intakePosition = robotPose.transformBy(intakeTransform).getTranslation();
-        knownObjectPositions.remove(getClosestObjectToPose(intakePosition));
+        knownObjectPositions.remove(getClosestObjectToPose(robotPose.transformBy(intakeTransform)));
     }
 
     /**
      * Removes the closest object to a given pose from the list of objects in the pose estimator.
      *
-     * @param pose the pose to which the removed object is closest
+     * @param fieldRelativePose the pose to which the removed object is closest
      */
-    public void removeClosestObjectToPose(Translation2d pose) {
-        final Translation2d closestObject = getClosestObjectToPose(pose);
+    public void removeClosestObjectToPose(Pose2d fieldRelativePose) {
+        final Translation2d closestObject = getClosestObjectToPose(fieldRelativePose);
         knownObjectPositions.remove(closestObject);
     }
 
     /**
      * Removes a specific object from the list of known objects in the pose estimator.
      *
-     * @param objectPosition the position of the object to be removed
+     * @param objectPosition the position of the object to be removed. Must be the precise position as stored in the pose estimator.
      */
     public void removeObject(Translation2d objectPosition) {
         knownObjectPositions.remove(objectPosition);
@@ -100,7 +98,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
      * @return the best object's 2D position on the field (z is assumed to be 0)
      */
     public Translation2d getClosestObjectToRobot() {
-        return getClosestObjectToPose(RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation());
+        return getClosestObjectToPose(RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose());
     }
 
     /**
@@ -109,7 +107,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
      * @param pose the pose to which the returned object is closest
      * @return the closest object's position on the field, or null if no objects are known
      */
-    public Translation2d getClosestObjectToPose(Translation2d pose) {
+    public Translation2d getClosestObjectToPose(Pose2d pose) {
         final Translation2d[] objectsTranslations = knownObjectPositions.keySet().toArray(Translation2d[]::new);
         if (knownObjectPositions.isEmpty())
             return null;
@@ -117,28 +115,29 @@ public class ObjectPoseEstimator extends SubsystemBase {
 
         for (int i = 1; i < objectsTranslations.length; i++) {
             final Translation2d currentObjectTranslation = objectsTranslations[i];
-            final double bestObjectScore = calculateObjectDistanceScore(bestObjectTranslation, pose);
-            final double currentObjectScore = calculateObjectDistanceScore(currentObjectTranslation, pose);
-            if (currentObjectScore < bestObjectScore)
+            final double bestObjectRating = calculateObjectDistanceRating(bestObjectTranslation, pose);
+            final double currentObjectRating = calculateObjectDistanceRating(currentObjectTranslation, pose);
+            if (currentObjectRating < bestObjectRating)
                 bestObjectTranslation = currentObjectTranslation;
         }
         return bestObjectTranslation;
     }
 
     /**
-     * Calculates the score of an object.
-     * The "distance score" is a unit used to calculate the distance between 2 poses. It factors in both translation and rotation differences by scaling the units.
+     * Calculates the rating of an object.
+     * The "distance rating" is a unit used to calculate the distance between 2 poses.
+     * It factors in both translation and rotation differences by scaling the units depending on the {@link DistanceCalculationMethod}.
      *
      * @param objectTranslation the translation of the object on the field
      * @param pose              the pose to which the distance is measured from
-     * @return the objects "distance score"
+     * @return the objects "distance rating"
      */
-    private double calculateObjectDistanceScore(Translation2d objectTranslation, Translation2d pose) {
-        final double translationDifference = pose.getDistance(objectTranslation);
+    private double calculateObjectDistanceRating(Translation2d objectTranslation, Pose2d pose) {
+        final double translationDifference = pose.getTranslation().getDistance(objectTranslation);
         final double xDifference = Math.abs(pose.getX() - objectTranslation.getX());
         final double yDifference = Math.abs(pose.getY() - objectTranslation.getY());
-        final double rotationDifference = Math.tan(yDifference / xDifference);
-        return translationDifference * translationScale + rotationDifference * rotationScale;
+        final double rotationDifferenceDegrees = Math.abs(pose.getRotation().getDegrees() - Math.atan2(yDifference, xDifference));
+        return translationDifference * rotationToTranslation + rotationDifferenceDegrees * (1 - rotationToTranslation);
     }
 
     private void updateObjectPositions() {
@@ -172,16 +171,20 @@ public class ObjectPoseEstimator extends SubsystemBase {
     }
 
     public enum DistanceCalculationMethod {
-        ROTATION(0, 1),
-        TRANSLATION(1, 0),
-        ROTATION_AND_TRANSLATION(1, 0.1); // this treats 10 cm translation as 1 degree of rotation when calculating the distance between two poses
+        ROTATION(0),
+        TRANSLATION(1),
+        ROTATION_AND_TRANSLATION(0.1);
 
-        final double translationScale;
-        final double rotationScale;
+        /**
+         * The ratio of rotation to translation in the distance rating calculation.
+         * A value of 0 means only rotation is considered, 1 means only translation is considered.
+         * Values in between are the ratio of rotation to translation in the distance rating calculation.
+         * For example, a value of 0.1 means that 9 cm of translation is considered equivalent to 1 degree of rotation.
+         */
+        final double rotationToTranslation;
 
-        DistanceCalculationMethod(double translationScale, double rotationScale) {
-            this.translationScale = translationScale;
-            this.rotationScale = rotationScale;
+        DistanceCalculationMethod(double rotationToTranslation) {
+            this.rotationToTranslation = rotationToTranslation;
         }
     }
 }

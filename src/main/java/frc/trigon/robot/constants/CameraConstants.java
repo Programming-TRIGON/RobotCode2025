@@ -21,6 +21,7 @@ public class CameraConstants {
                     0.02,
                     0.1
             );
+    private static final double CORAL_POSE_ESTIMATOR_DELETION_THRESHOLD_SECONDS = 0.5;
 
     private static final Transform3d
             ROBOT_CENTER_TO_OBJECT_DETECTION_CAMERA = new Transform3d(
@@ -44,8 +45,8 @@ public class CameraConstants {
             "ObjectDetectionCamera",
             ROBOT_CENTER_TO_OBJECT_DETECTION_CAMERA
     );
-    public static final ObjectPoseEstimator OBJECT_POSE_ESTIMATOR = new ObjectPoseEstimator(
-            0.5,
+    public static final ObjectPoseEstimator CORAL_POSE_ESTIMATOR = new ObjectPoseEstimator(
+            CORAL_POSE_ESTIMATOR_DELETION_THRESHOLD_SECONDS,
             ObjectPoseEstimator.DistanceCalculationMethod.ROTATION_AND_TRANSLATION,
             SimulatedGamePieceConstants.GamePieceType.CORAL,
             OBJECT_DETECTION_CAMERA

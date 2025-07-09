@@ -27,7 +27,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
     private static final ProfiledPIDController X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(2.8, 5)) :
             new ProfiledPIDController(2.4, 0, 0, new TrapezoidProfile.Constraints(2.65, 5.5));
-    private static final ObjectPoseEstimator POSE_ESTIMATOR = CameraConstants.OBJECT_POSE_ESTIMATOR;
+    private static final ObjectPoseEstimator CORAL_POSE_ESTIMATOR = CameraConstants.CORAL_POSE_ESTIMATOR;
     private Translation2d distanceFromTrackedCoral;
 
     public CoralAutoDriveCommand() {
@@ -36,7 +36,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
                 GeneralCommands.getContinuousConditionalCommand(
                         getDriveToCoralCommand(() -> distanceFromTrackedCoral),
                         GeneralCommands.getFieldRelativeDriveCommand(),
-                        () -> POSE_ESTIMATOR.getClosestObjectToRobot() != null
+                        () -> CORAL_POSE_ESTIMATOR.getClosestObjectToRobot() != null
                 )
         );
     }
@@ -49,7 +49,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
 
     public static Translation2d calculateDistanceFromTrackedCoral() {
         final Pose2d robotPose = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose();
-        final Translation2d trackedObjectPositionOnField = POSE_ESTIMATOR.getClosestObjectToRobot();
+        final Translation2d trackedObjectPositionOnField = CORAL_POSE_ESTIMATOR.getClosestObjectToRobot();
         if (trackedObjectPositionOnField == null)
             return null;
 
@@ -84,7 +84,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
 
     public static FlippableRotation2d calculateTargetAngle() {
         final Pose2d robotPose = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose();
-        final Translation2d trackedObjectFieldRelativePosition = POSE_ESTIMATOR.getClosestObjectToRobot();
+        final Translation2d trackedObjectFieldRelativePosition = CORAL_POSE_ESTIMATOR.getClosestObjectToRobot();
         if (trackedObjectFieldRelativePosition == null)
             return null;
 
