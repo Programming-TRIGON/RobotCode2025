@@ -97,7 +97,7 @@ public class AutonomousCommands {
 
     public static Command getDriveToReefWithoutHittingAlgaeCommand(FieldConstants.ReefClockPosition[] reefClockPositions) {
         return new SequentialCommandGroup(
-                new InstantCommand(() -> TARGET_SCORING_POSE = calculateClosestScoringPose(true, reefClockPositions, false)),
+                new InstantCommand(() -> TARGET_SCORING_POSE = calculateClosestScoringPose(true, reefClockPositions, false)),//TODO: Always stay behind bc of gripper aiming
                 new WaitUntilCommand(() -> TARGET_SCORING_POSE != null).raceWith(SwerveCommands.getClosedLoopSelfRelativeDriveCommand(() -> 0, () -> 0, () -> 0)),
                 SwerveCommands.getDriveToPoseCommand(() -> calculateClosestScoringPose(true, reefClockPositions, true), AutonomousConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly().until(RobotContainer.ELEVATOR::isOverAlgaeHitRange),
                 SwerveCommands.getDriveToPoseCommand(() -> TARGET_SCORING_POSE, AutonomousConstants.DRIVE_TO_REEF_CONSTRAINTS).repeatedly()
