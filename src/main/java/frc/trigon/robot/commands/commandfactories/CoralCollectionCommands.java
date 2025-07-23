@@ -26,7 +26,7 @@ public class CoralCollectionCommands {
         return new ParallelCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
                 getScheduleCoralLoadingWhenCollectedCommand(),
-                new IntakeAssistCommand().asProxy().onlyWhile(() -> SHOULD_ASSIST_INTAKE)
+                new IntakeAssistCommand(OperatorConstants.DEFAULT_INTAKE_ASSIST_MODE).asProxy().onlyWhile(() -> SHOULD_ASSIST_INTAKE)
         );
     }
 

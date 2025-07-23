@@ -31,7 +31,7 @@ public class OperatorConstants {
             ROTATION_STICK_SPEED_DIVIDER = 1;
 
     public static final double INTAKE_ASSIST_SCALAR = 0.8;
-    public static final IntakeAssistCommand.AssistMode INTAKE_ASSIST_MODE = IntakeAssistCommand.AssistMode.ALIGN_ASSIST;
+    public static final IntakeAssistCommand.AssistMode DEFAULT_INTAKE_ASSIST_MODE = IntakeAssistCommand.AssistMode.ALIGN_ASSIST;
 
     public static final Trigger
             LED_AUTO_SETUP_TRIGGER = OPERATOR_CONTROLLER.backtick(),

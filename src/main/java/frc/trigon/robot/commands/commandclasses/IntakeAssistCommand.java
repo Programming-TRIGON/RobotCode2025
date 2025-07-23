@@ -36,13 +36,13 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
                     new ProfiledPIDController(2.4, 0, 0, new TrapezoidProfile.Constraints(2.65, 5.5));
     private Translation2d distanceFromTrackedCoral;
 
-    public IntakeAssistCommand() {
+    public IntakeAssistCommand(AssistMode assistMode) {
         addCommands(
                 new InstantCommand(CAMERA::initializeTracking),
                 getTrackCoralCommand(),
                 GeneralCommands.getContinuousConditionalCommand(
                         GeneralCommands.getFieldRelativeDriveCommand(),
-                        getAssistIntakeCommand(() -> distanceFromTrackedCoral),
+                        getAssistIntakeCommand(assistMode, () -> distanceFromTrackedCoral),
                         () -> CAMERA.getTrackedObjectFieldRelativePosition() == null
                 )
         );
@@ -67,24 +67,24 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
         return robotToTrackedCoralDistance;
     }
 
-    public static Command getAssistIntakeCommand(Supplier<Translation2d> distanceFromTrackedCoral) {
+    public static Command getAssistIntakeCommand(AssistMode assistMode, Supplier<Translation2d> distanceFromTrackedCoral) {
         return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                () -> OperatorConstants.INTAKE_ASSIST_MODE.shouldAssistX ? getXAssistedPower(distanceFromTrackedCoral.get()) : getXJoystickPower(),
-                () -> OperatorConstants.INTAKE_ASSIST_MODE.shouldAssistY ? getYAssistedPower(distanceFromTrackedCoral.get()) : getYJoystickPower(),
-                () -> OperatorConstants.INTAKE_ASSIST_MODE.shouldAssistTheta ? getThetaAssistedPower(distanceFromTrackedCoral.get()) : OperatorConstants.DRIVER_CONTROLLER.getRightX()
+                () -> OperatorConstants.DEFAULT_INTAKE_ASSIST_MODE.shouldAssistX ? getXAssistedPower(assistMode, distanceFromTrackedCoral.get()) : getXJoystickPower(),
+                () -> OperatorConstants.DEFAULT_INTAKE_ASSIST_MODE.shouldAssistY ? getYAssistedPower(assistMode, distanceFromTrackedCoral.get()) : getYJoystickPower(),
+                () -> OperatorConstants.DEFAULT_INTAKE_ASSIST_MODE.shouldAssistTheta ? getThetaAssistedPower(assistMode, distanceFromTrackedCoral.get()) : OperatorConstants.DRIVER_CONTROLLER.getRightX()
         );
     }
 
-    private static double getXAssistedPower(Translation2d distanceFromTrackedCoral) {
-        return calculateTranslationAssistPower(distanceFromTrackedCoral.getX(), X_PID_CONTROLLER, getXJoystickPower());
+    private static double getXAssistedPower(AssistMode assistMode, Translation2d distanceFromTrackedCoral) {
+        return calculateTranslationAssistPower(assistMode, distanceFromTrackedCoral.getX(), X_PID_CONTROLLER, getXJoystickPower());
     }
 
-    private static double getYAssistedPower(Translation2d distanceFromTrackedCoral) {
-        return calculateTranslationAssistPower(distanceFromTrackedCoral.getY(), Y_PID_CONTROLLER, getYJoystickPower());
+    private static double getYAssistedPower(AssistMode assistMode, Translation2d distanceFromTrackedCoral) {
+        return calculateTranslationAssistPower(assistMode, distanceFromTrackedCoral.getY(), Y_PID_CONTROLLER, getYJoystickPower());
     }
 
-    private static double getThetaAssistedPower(Translation2d distanceFromTrackedCoral) {
-        return calculateRotationAssistPower(distanceFromTrackedCoral.getAngle().plus(Rotation2d.k180deg));
+    private static double getThetaAssistedPower(AssistMode assistMode, Translation2d distanceFromTrackedCoral) {
+        return calculateRotationAssistPower(assistMode, distanceFromTrackedCoral.getAngle().plus(Rotation2d.k180deg));
     }
 
     private static double getXJoystickPower() {
@@ -113,21 +113,38 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
         return (yValue * robotHeading.getCos()) - (xValue * robotHeading.getSin());
     }
 
-    private static double calculateTranslationAssistPower(double distance, ProfiledPIDController pidController, double joystickValue) {
+    private static double calculateTranslationAssistPower(AssistMode assistMode, double distance, ProfiledPIDController pidController, double joystickValue) {
+        final double pidOutput = pidController.calculate(distance);
+
+        if (assistMode.equals(AssistMode.ALTERNATE_ASSIST))
+            return calculateAlternateAssistPower(pidOutput, joystickValue);
+
         final double
-                assistPower = pidController.calculate(distance) * OperatorConstants.INTAKE_ASSIST_SCALAR,
+                assistPower = pidOutput * OperatorConstants.INTAKE_ASSIST_SCALAR,
                 stickPower = joystickValue * (1 - OperatorConstants.INTAKE_ASSIST_SCALAR);
         return assistPower + stickPower;
     }
 
-    private static double calculateRotationAssistPower(Rotation2d angleOffset) {
+    private static double calculateRotationAssistPower(AssistMode assistMode, Rotation2d angleOffset) {
         final double
-                assistPower = THETA_PID_CONTROLLER.calculate(-angleOffset.getRadians()) * OperatorConstants.INTAKE_ASSIST_SCALAR,
-                stickPower = OperatorConstants.DRIVER_CONTROLLER.getRightX() * (1 - OperatorConstants.INTAKE_ASSIST_SCALAR);
+                pidOutput = THETA_PID_CONTROLLER.calculate(angleOffset.getRadians()),
+                joystickValue = OperatorConstants.DRIVER_CONTROLLER.getRightX();
+
+        if (assistMode.equals(AssistMode.ALTERNATE_ASSIST))
+            return calculateAlternateAssistPower(pidOutput, joystickValue);
+
+        final double
+                assistPower = pidOutput * OperatorConstants.INTAKE_ASSIST_SCALAR,
+                stickPower = joystickValue * (1 - OperatorConstants.INTAKE_ASSIST_SCALAR);
         return assistPower + stickPower;
     }
 
+    private static double calculateAlternateAssistPower(double pidOutput, double joystickValue) {
+        return pidOutput * (1 - Math.abs(joystickValue)) * Math.signum(joystickValue) + joystickValue;
+    }
+
     public enum AssistMode {
+        ALTERNATE_ASSIST(true, true, true),
         FULL_ASSIST(true, true, true),
         ALIGN_ASSIST(false, true, true),
         ASSIST_ROTATION(false, false, true);
