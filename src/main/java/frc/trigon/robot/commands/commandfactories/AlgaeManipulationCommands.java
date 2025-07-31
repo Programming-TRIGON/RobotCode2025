@@ -86,7 +86,7 @@ public class AlgaeManipulationCommands {
         return new ParallelCommandGroup(
                 getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF),
                 getOpenElevatorForAlgaeCommand()
-        ).until(() -> isScoreAlgaeButtonPressed() && RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.REST_WITH_ALGAE) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.HOLD_ALGAE) && RobotContainer.GRIPPER.isMovingSlowly()).andThen(
+        ).until(() -> isScoreAlgaeButtonPressed() && !RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.COLLECT_ALGAE_FROM_L3) && RobotContainer.GRIPPER.isMovingSlowly()).andThen(
                 getScoreAlgaeCommand().asProxy()
         );
     }
@@ -147,7 +147,7 @@ public class AlgaeManipulationCommands {
                         () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftY()),
                         () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
                         () -> new FlippableRotation2d(Rotation2d.k180deg, true)
-                ).asProxy()
+                ).asProxy().onlyWhile(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY)
         );
     }
 
