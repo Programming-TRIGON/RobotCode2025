@@ -96,10 +96,10 @@ public class CommandConstants {
      * @return the power to apply to the robot
      */
     public static double calculateShiftModeValue(double minimumPower) {
-        final double squaredShiftModeValue = Math.sqrt(DRIVER_CONTROLLER.getRightTriggerAxis());
+        final double squaredShiftModeValue = !OperatorConstants.SWERVE_BOOST_TRIGGER.getAsBoolean() ? 1 : Math.sqrt(DRIVER_CONTROLLER.getRightTriggerAxis());
         final double minimumShiftValueCoefficient = 1 - (1 / minimumPower);
 
-        return 1 - (OperatorConstants.SWERVE_BOOST_TRIGGER.getAsBoolean() ? squaredShiftModeValue : 1) * minimumShiftValueCoefficient;
+        return 1 - squaredShiftModeValue * minimumShiftValueCoefficient;
     }
 
     /**
