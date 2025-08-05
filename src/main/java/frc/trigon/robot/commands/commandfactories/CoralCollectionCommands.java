@@ -32,13 +32,13 @@ public class CoralCollectionCommands {
 
     public static Command getFeederCoralCollectionCommand() {
         return new ConditionalCommand(
-                getInitiateFeederCoralCollectionCommand().unless(RobotContainer.GRIPPER::hasGamePiece),
+                getFeederCoralCollectionFromIntakeCommand().unless(RobotContainer.GRIPPER::hasGamePiece),
                 getFeederCoralCollectionFromGripperCommand().asProxy(),
                 () -> CoralCollectionCommands.isIntakeFacingFeeder() || RobotContainer.ALGAE_MANIPULATOR.isOpen()
         );
     }
 
-    private static Command getInitiateFeederCoralCollectionCommand() {
+    public static Command getFeederCoralCollectionFromIntakeCommand() {
         return new ParallelCommandGroup(
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FEEDER),
                 getScheduleCoralLoadingWhenCollectedCommand()

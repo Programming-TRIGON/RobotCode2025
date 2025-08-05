@@ -162,7 +162,7 @@ public class AlgaeManipulationCommands {
                         () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftY()),
                         () -> CommandConstants.calculateDriveStickAxisValue(OperatorConstants.DRIVER_CONTROLLER.getLeftX()),
                         () -> new FlippableRotation2d(Rotation2d.fromDegrees(90), true)
-                ).asProxy()
+                ).asProxy().onlyWhile(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY)
         ).until(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_ALGAE_IN_PROCESSOR) && !OperatorConstants.CONTINUE_TRIGGER.getAsBoolean());
     }
 
