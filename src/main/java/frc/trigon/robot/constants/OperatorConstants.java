@@ -3,8 +3,8 @@ package frc.trigon.robot.constants;
 import edu.wpi.first.wpilibj.RobotController;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.IntakeAssistCommand;
+import frc.trigon.robot.commands.commandfactories.AlgaeManipulationCommands;
 import frc.trigon.robot.misc.ReefChooser;
 import org.trigon.hardware.misc.KeyboardController;
 import org.trigon.hardware.misc.XboxController;
@@ -47,17 +47,18 @@ public class OperatorConstants {
             RESET_AMP_ALIGNER_TRIGGER = OPERATOR_CONTROLLER.v(),
             FLOOR_CORAL_COLLECTION_TRIGGER = DRIVER_CONTROLLER.leftTrigger().or(OPERATOR_CONTROLLER.c()),
             FEEDER_CORAL_COLLECTION_TRIGGER = OPERATOR_CONTROLLER.f().or(DRIVER_CONTROLLER.start()),
-            RIGHT_SCORE_TRIGGER = OPERATOR_CONTROLLER.m().or(createScoreTrigger(DRIVER_CONTROLLER.rightStick().and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()), true)),
-            LEFT_SCORE_TRIGGER = OPERATOR_CONTROLLER.b().or(createScoreTrigger(DRIVER_CONTROLLER.leftStick().and(() -> !RobotContainer.ALGAE_MANIPULATOR.isOpen()), false)),
-            EJECT_CORAL_TRIGGER = OPERATOR_CONTROLLER.e().or(DRIVER_CONTROLLER.x()),
+            RIGHT_SCORE_TRIGGER = OPERATOR_CONTROLLER.m().or(createScoreTrigger(DRIVER_CONTROLLER.rightStick().and(() -> !AlgaeManipulationCommands.IS_HOLDING_ALGAE), true)),
+            LEFT_SCORE_TRIGGER = OPERATOR_CONTROLLER.b().or(createScoreTrigger(DRIVER_CONTROLLER.leftStick().and(() -> !AlgaeManipulationCommands.IS_HOLDING_ALGAE), false)),
+            EJECT_CORAL_TRIGGER = OPERATOR_CONTROLLER.e().or(DRIVER_CONTROLLER.x().and(() -> !AlgaeManipulationCommands.IS_HOLDING_ALGAE)),
             UNLOAD_CORAL_TRIGGER = OPERATOR_CONTROLLER.z().or(DRIVER_CONTROLLER.back()),
             COLLECT_ALGAE_FROM_REEF_TRIGGER = OPERATOR_CONTROLLER.a().or(DRIVER_CONTROLLER.rightBumper()),
             COLLECT_ALGAE_FROM_L3_OVERRIDE_TRIGGER = DRIVER_CONTROLLER.leftStick().or(DRIVER_CONTROLLER.rightStick()),
             COLLECT_ALGAE_FROM_LOLLIPOP_TRIGGER = OPERATOR_CONTROLLER.l().or(DRIVER_CONTROLLER.leftBumper()),
             COLLECT_ALGAE_FROM_FLOOR_TRIGGER = OPERATOR_CONTROLLER.s(),
             ROLL_ALGAE_ON_FLOOR_TRIGGER = OPERATOR_CONTROLLER.w(),
-            SCORE_ALGAE_IN_NET_TRIGGER = OPERATOR_CONTROLLER.n().or(createScoreTrigger(DRIVER_CONTROLLER.rightStick().and(RobotContainer.ALGAE_MANIPULATOR::isOpen), true)),
-            SCORE_ALGAE_IN_PROCESSOR_TRIGGER = OPERATOR_CONTROLLER.j().or(createScoreTrigger(DRIVER_CONTROLLER.leftStick().and(RobotContainer.ALGAE_MANIPULATOR::isOpen), false));
+            SCORE_ALGAE_IN_NET_TRIGGER = OPERATOR_CONTROLLER.n().or(createScoreTrigger(DRIVER_CONTROLLER.rightStick().and(() -> AlgaeManipulationCommands.IS_HOLDING_ALGAE), true)),
+            SCORE_ALGAE_IN_PROCESSOR_TRIGGER = OPERATOR_CONTROLLER.j().or(createScoreTrigger(DRIVER_CONTROLLER.leftStick().and(() -> AlgaeManipulationCommands.IS_HOLDING_ALGAE), false)),
+            STOP_ALGAE_AUTO_ALIGN_OVERRIDE_TRIGGER = DRIVER_CONTROLLER.x().and(() -> AlgaeManipulationCommands.IS_HOLDING_ALGAE);
     public static final Trigger
             ENABLE_INTAKE_ASSIST_TRIGGER = OPERATOR_CONTROLLER.o(),
             DISABLE_INTAKE_ASSIST_TRIGGER = OPERATOR_CONTROLLER.p(),
