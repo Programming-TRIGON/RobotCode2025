@@ -22,7 +22,7 @@ import org.trigon.utilities.flippable.FlippablePose2d;
 import org.trigon.utilities.flippable.FlippableTranslation2d;
 
 public class CoralPlacingCommands {
-    public static boolean SHOULD_SCORE_AUTONOMOUSLY = true;
+    public static boolean SHOULD_SCORE_AUTONOMOUSLY = false;
     private static final ReefChooser REEF_CHOOSER = OperatorConstants.REEF_CHOOSER;
 
     public static Command getScoreInReefCommand(boolean shouldScoreRight) {

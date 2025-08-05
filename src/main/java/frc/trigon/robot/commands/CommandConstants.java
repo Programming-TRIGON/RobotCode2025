@@ -99,7 +99,7 @@ public class CommandConstants {
         final double squaredShiftModeValue = Math.sqrt(DRIVER_CONTROLLER.getRightTriggerAxis());
         final double minimumShiftValueCoefficient = 1 - (1 / minimumPower);
 
-        return 1 - squaredShiftModeValue * minimumShiftValueCoefficient;
+        return 1 - (OperatorConstants.SWERVE_BOOST_TRIGGER.getAsBoolean() ? squaredShiftModeValue : 1) * minimumShiftValueCoefficient;
     }
 
     /**

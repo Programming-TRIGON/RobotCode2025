@@ -19,8 +19,8 @@ import org.trigon.utilities.flippable.FlippablePose2d;
 public class CoralCollectionCommands {
     public static boolean
             SHOULD_IGNORE_LOLLIPOP_CORAL = false,
-            SHOULD_ASSIST_INTAKE = true,
-            SHOULD_KEEP_INTAKE_OPEN = true;
+            SHOULD_ASSIST_INTAKE = false,
+            SHOULD_KEEP_INTAKE_OPEN = false;
 
     public static Command getFloorCoralCollectionCommand() {
         return new ParallelCommandGroup(
