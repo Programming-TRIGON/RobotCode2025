@@ -28,14 +28,19 @@ import java.util.Map;
 
 public class AlgaeManipulationCommands {
     private static final ReefChooser REEF_CHOOSER = OperatorConstants.REEF_CHOOSER;
+    public static boolean IS_HOLDING_ALGAE = false;
 
     public static Command getCollectAlgaeFromLollipopCommand() {
         return new SequentialCommandGroup(
+                new InstantCommand(() -> IS_HOLDING_ALGAE = true),
                 CoralCollectionCommands.getUnloadCoralCommand().onlyIf(RobotContainer.GRIPPER::hasGamePiece).asProxy(),
                 getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_LOLLIPOP).asProxy()
                         .until(AlgaeManipulationCommands::isScoreAlgaeButtonPressed),
                 getScoreAlgaeCommand().asProxy()
-        ).raceWith(getScoreNetEndingConditionCommand(), getScoreProcessorEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
+        )
+                .raceWith(getScoreNetEndingConditionCommand(), getScoreProcessorEndingConditionCommand())
+                .andThen(AlgaeManipulationCommands::reloadAfterScore)
+                .finallyDo(() -> IS_HOLDING_ALGAE = false);
     }
 
     public static Command getCollectAlgaeFromReefCommand() {
@@ -44,7 +49,9 @@ public class AlgaeManipulationCommands {
                 getCollectAlgaeFromReefManuallyCommand().asProxy()
         )
                 .alongWith(getAlignToReefCommand().onlyIf(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY).asProxy())
-                .raceWith(getScoreNetEndingConditionCommand(), getScoreProcessorEndingConditionCommand()).andThen(AlgaeManipulationCommands::reloadAfterScore);
+                .raceWith(getScoreNetEndingConditionCommand(), getScoreProcessorEndingConditionCommand())
+                .andThen(AlgaeManipulationCommands::reloadAfterScore)
+                .finallyDo(() -> IS_HOLDING_ALGAE = false);
     }
 
     public static Command getCollectAlgaeFromFloorCommand() {
@@ -75,18 +82,18 @@ public class AlgaeManipulationCommands {
     }
 
     private static Command getScoreNetEndingConditionCommand() {
-        return new WaitUntilCommand(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_ALGAE_IN_NET) || RobotContainer.GRIPPER.atState(GripperConstants.GripperState.QUICK_SCORE_ALGAE_IN_NET)).andThen(new WaitCommand(0.1));
+        return new WaitUntilCommand(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_ALGAE_IN_NET)).andThen(new WaitCommand(0.1)).andThen(new WaitUntilCommand(() -> !OperatorConstants.SCORE_ALGAE_IN_NET_TRIGGER.getAsBoolean()));
     }
 
     private static Command getScoreProcessorEndingConditionCommand() {
-        return new WaitUntilCommand(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_ALGAE_IN_PROCESSOR) && !OperatorConstants.CONTINUE_TRIGGER.getAsBoolean());
+        return new WaitUntilCommand(() -> RobotContainer.GRIPPER.atState(GripperConstants.GripperState.SCORE_ALGAE_IN_PROCESSOR)).andThen(new WaitCommand(0.1)).andThen(new WaitUntilCommand(() -> !OperatorConstants.SCORE_ALGAE_IN_PROCESSOR_TRIGGER.getAsBoolean()));
     }
 
     private static Command getCollectAlgaeFromReefManuallyCommand() {
         return new ParallelCommandGroup(
                 getGripAlgaeCommand(GripperConstants.GripperState.COLLECT_ALGAE_FROM_REEF),
                 getOpenElevatorForAlgaeCommand()
-        ).until(() -> isScoreAlgaeButtonPressed() && !RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.COLLECT_ALGAE_FROM_L3) && RobotContainer.GRIPPER.isMovingSlowly()).andThen(
+        ).until(() -> isScoreAlgaeButtonPressed() && RobotContainer.ELEVATOR.atState(ElevatorConstants.ElevatorState.REST_WITH_ALGAE) && RobotContainer.GRIPPER.atState(GripperConstants.GripperState.HOLD_ALGAE)).andThen(
                 getScoreAlgaeCommand().asProxy()
         );
     }
@@ -179,7 +186,7 @@ public class AlgaeManipulationCommands {
                 )
         ).raceWith(
                 new WaitCommand(1).andThen(new WaitUntilCommand(RobotContainer.GRIPPER::isMovingSlowly)),
-                new WaitUntilCommand(OperatorConstants.CONTINUE_TRIGGER)
+                new WaitUntilCommand(OperatorConstants.STOP_ALGAE_AUTO_ALIGN_OVERRIDE_TRIGGER)
         );
     }
 
