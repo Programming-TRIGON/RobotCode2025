@@ -54,8 +54,6 @@ public class OperatorConstants {
             COLLECT_ALGAE_FROM_REEF_TRIGGER = OPERATOR_CONTROLLER.a().or(DRIVER_CONTROLLER.rightBumper()),
             COLLECT_ALGAE_FROM_L3_OVERRIDE_TRIGGER = DRIVER_CONTROLLER.leftStick().or(DRIVER_CONTROLLER.rightStick()),
             COLLECT_ALGAE_FROM_LOLLIPOP_TRIGGER = OPERATOR_CONTROLLER.l().or(DRIVER_CONTROLLER.leftBumper()),
-            COLLECT_ALGAE_FROM_FLOOR_TRIGGER = OPERATOR_CONTROLLER.s(),
-            ROLL_ALGAE_ON_FLOOR_TRIGGER = OPERATOR_CONTROLLER.w(),
             SCORE_ALGAE_IN_NET_TRIGGER = OPERATOR_CONTROLLER.n().or(createScoreTrigger(DRIVER_CONTROLLER.rightStick().and(() -> AlgaeManipulationCommands.IS_HOLDING_ALGAE), true)),
             SCORE_ALGAE_IN_PROCESSOR_TRIGGER = OPERATOR_CONTROLLER.j().or(createScoreTrigger(DRIVER_CONTROLLER.leftStick().and(() -> AlgaeManipulationCommands.IS_HOLDING_ALGAE), false)),
             STOP_ALGAE_AUTO_ALIGN_OVERRIDE_TRIGGER = DRIVER_CONTROLLER.x().and(() -> AlgaeManipulationCommands.IS_HOLDING_ALGAE);
