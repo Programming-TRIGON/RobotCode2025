@@ -109,8 +109,6 @@ public class RobotContainer {
 
         OperatorConstants.COLLECT_ALGAE_FROM_REEF_TRIGGER.toggleOnTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
         OperatorConstants.COLLECT_ALGAE_FROM_LOLLIPOP_TRIGGER.toggleOnTrue(AlgaeManipulationCommands.getCollectAlgaeFromLollipopCommand());
-        OperatorConstants.COLLECT_ALGAE_FROM_FLOOR_TRIGGER.toggleOnTrue(AlgaeManipulationCommands.getCollectAlgaeFromFloorCommand());
-        OperatorConstants.ROLL_ALGAE_ON_FLOOR_TRIGGER.toggleOnTrue(AlgaeManipulationCommands.getRollAlgaeOnFloorCommand());
     }
 
     private void bindSetters() {

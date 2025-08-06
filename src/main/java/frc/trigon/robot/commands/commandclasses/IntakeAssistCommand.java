@@ -1,5 +1,6 @@
 package frc.trigon.robot.commands.commandclasses;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.controller.ProfiledPIDController;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -69,25 +70,25 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
 
     public static Command getAssistIntakeCommand(AssistMode assistMode, Supplier<Translation2d> distanceFromTrackedCoral) {
         return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                () -> OperatorConstants.DEFAULT_INTAKE_ASSIST_MODE.shouldAssistX ? getXAssistedPower(assistMode, distanceFromTrackedCoral.get()) : getXJoystickPower(),
-                () -> OperatorConstants.DEFAULT_INTAKE_ASSIST_MODE.shouldAssistY ? getYAssistedPower(assistMode, distanceFromTrackedCoral.get()) : getYJoystickPower(),
+                () -> OperatorConstants.DEFAULT_INTAKE_ASSIST_MODE.shouldAssistX ? getXAssistedPower(assistMode, distanceFromTrackedCoral.get()) : getSelfRelativeXJoystickPower(),
+                () -> OperatorConstants.DEFAULT_INTAKE_ASSIST_MODE.shouldAssistY ? getYAssistedPower(assistMode, distanceFromTrackedCoral.get()) : getSelfRelativeYJoystickPower(),
                 () -> OperatorConstants.DEFAULT_INTAKE_ASSIST_MODE.shouldAssistTheta ? getThetaAssistedPower(assistMode, distanceFromTrackedCoral.get()) : OperatorConstants.DRIVER_CONTROLLER.getRightX()
         );
     }
 
     private static double getXAssistedPower(AssistMode assistMode, Translation2d distanceFromTrackedCoral) {
-        return calculateTranslationAssistPower(assistMode, distanceFromTrackedCoral.getX(), X_PID_CONTROLLER, getXJoystickPower());
+        return calculateTranslationAssistPower(assistMode, distanceFromTrackedCoral.getX(), X_PID_CONTROLLER, getSelfRelativeXJoystickPower());
     }
 
     private static double getYAssistedPower(AssistMode assistMode, Translation2d distanceFromTrackedCoral) {
-        return calculateTranslationAssistPower(assistMode, distanceFromTrackedCoral.getY(), Y_PID_CONTROLLER, getYJoystickPower());
+        return calculateTranslationAssistPower(assistMode, distanceFromTrackedCoral.getY(), Y_PID_CONTROLLER, getSelfRelativeYJoystickPower());
     }
 
     private static double getThetaAssistedPower(AssistMode assistMode, Translation2d distanceFromTrackedCoral) {
         return calculateRotationAssistPower(assistMode, distanceFromTrackedCoral.getAngle().plus(Rotation2d.k180deg));
     }
 
-    private static double getXJoystickPower() {
+    private static double getSelfRelativeXJoystickPower() {
         final Rotation2d robotHeading = RobotContainer.SWERVE.getDriveRelativeAngle();
 
         final double
@@ -100,7 +101,7 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
         return (xValue * robotHeading.getCos()) + (yValue * robotHeading.getSin());
     }
 
-    private static double getYJoystickPower() {
+    private static double getSelfRelativeYJoystickPower() {
         final Rotation2d robotHeading = RobotContainer.SWERVE.getDriveRelativeAngle();
 
         final double
@@ -118,29 +119,30 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
 
         if (assistMode.equals(AssistMode.ALTERNATE_ASSIST))
             return calculateAlternateAssistPower(pidOutput, joystickValue);
-
-        final double
-                assistPower = pidOutput * OperatorConstants.INTAKE_ASSIST_SCALAR,
-                stickPower = joystickValue * (1 - OperatorConstants.INTAKE_ASSIST_SCALAR);
-        return assistPower + stickPower;
+        return calculateNormalAssistPower(pidOutput, joystickValue);
     }
 
     private static double calculateRotationAssistPower(AssistMode assistMode, Rotation2d angleOffset) {
         final double
-                pidOutput = THETA_PID_CONTROLLER.calculate(angleOffset.getRadians()),
+                pidOutput = MathUtil.clamp(THETA_PID_CONTROLLER.calculate(angleOffset.getRadians()), -1, 1),
                 joystickValue = OperatorConstants.DRIVER_CONTROLLER.getRightX();
 
         if (assistMode.equals(AssistMode.ALTERNATE_ASSIST))
             return calculateAlternateAssistPower(pidOutput, joystickValue);
+        return calculateNormalAssistPower(pidOutput, joystickValue);
+    }
 
+    private static double calculateAlternateAssistPower(double pidOutput, double joystickValue) {
+        if (joystickValue == 0)
+            return pidOutput;
+        return pidOutput * (1 - Math.cbrt(joystickValue)) + joystickValue;
+    }
+
+    private static double calculateNormalAssistPower(double pidOutput, double joystickValue) {
         final double
                 assistPower = pidOutput * OperatorConstants.INTAKE_ASSIST_SCALAR,
                 stickPower = joystickValue * (1 - OperatorConstants.INTAKE_ASSIST_SCALAR);
         return assistPower + stickPower;
-    }
-
-    private static double calculateAlternateAssistPower(double pidOutput, double joystickValue) {
-        return pidOutput * (1 - Math.abs(joystickValue)) * Math.signum(joystickValue) + joystickValue;
     }
 
     public enum AssistMode {
