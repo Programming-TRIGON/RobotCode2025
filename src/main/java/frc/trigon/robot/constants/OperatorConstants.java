@@ -30,7 +30,7 @@ public class OperatorConstants {
             POV_DIVIDER = 2,
             ROTATION_STICK_SPEED_DIVIDER = 1;
 
-    public static final double INTAKE_ASSIST_SCALAR = 0.8;
+    public static final double INTAKE_ASSIST_SCALAR = 0;
     public static final IntakeAssistCommand.AssistMode DEFAULT_INTAKE_ASSIST_MODE = IntakeAssistCommand.AssistMode.ALTERNATE_ASSIST;
 
     public static final Trigger
