@@ -165,7 +165,7 @@ public class SwerveCommands {
     }
 
     private static Command createOnTheFlyPathCommand(FlippablePose2d targetPose, PathConstraints constraints) {
-        final Pose2d currentPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
+        final Pose2d currentPose = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose();
         final List<Waypoint> waypoints = PathPlannerPath.waypointsFromPoses(
                 currentPose,
                 targetPose.get()

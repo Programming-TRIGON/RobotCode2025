@@ -45,7 +45,7 @@ public class Robot extends LoggedRobot {
     @Override
     public void autonomousInit() {
         RobotContainer.SWERVE.initializeDrive(true);
-        RobotContainer.POSE_ESTIMATOR.resetOdometry();
+        RobotContainer.ROBOT_POSE_ESTIMATOR.resetOdometry();
         autonomousCommand = robotContainer.getAutonomousCommand();
 
         if (autonomousCommand != null)
@@ -65,8 +65,8 @@ public class Robot extends LoggedRobot {
 
     @Override
     public void simulationPeriodic() {
-        if (!RobotHardwareStats.isReplay())
-            AprilTagCameraConstants.VISION_SIMULATION.update(RobotContainer.POSE_ESTIMATOR.getEstimatedOdometryPose());
+        if (RobotHardwareStats.isSimulation())
+            AprilTagCameraConstants.VISION_SIMULATION.update(RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedOdometryPose());
         SimulationFieldHandler.update();
     }
 
