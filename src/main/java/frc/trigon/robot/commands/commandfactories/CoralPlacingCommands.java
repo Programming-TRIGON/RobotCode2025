@@ -98,7 +98,7 @@ public class CoralPlacingCommands {
                 GripperCommands.getPrepareForStateCommand(REEF_CHOOSER::getGripperState).raceWith(
                         new SequentialCommandGroup(
                                 new WaitUntilCommand(() -> canAutonomouslyReleaseFromGripper(shouldScoreRight)),
-                                new WaitUntilChangeCommand<>(RobotContainer.ROBOT_POSE_ESTIMATOR::getEstimatedRobotPose)
+                                new WaitUntilChangeCommand<>(RobotContainer.POSE_ESTIMATOR::getEstimatedRobotPose)
                         )
                 ).until(OperatorConstants.CONTINUE_TRIGGER),
                 GripperCommands.getSetTargetStateCommand(REEF_CHOOSER::getGripperState).finallyDo(OperatorConstants.REEF_CHOOSER::switchReefSide)
@@ -117,7 +117,7 @@ public class CoralPlacingCommands {
                 GripperCommands.getPrepareForScoringInL4Command(REEF_CHOOSER::calculateTargetScoringPose).raceWith(
                         new SequentialCommandGroup(
                                 new WaitUntilCommand(() -> canAutonomouslyReleaseFromGripper(shouldScoreRight)),
-                                new WaitUntilChangeCommand<>(RobotContainer.ROBOT_POSE_ESTIMATOR::getEstimatedRobotPose)
+                                new WaitUntilChangeCommand<>(RobotContainer.POSE_ESTIMATOR::getEstimatedRobotPose)
                         )
                 ).until(OperatorConstants.CONTINUE_TRIGGER),
                 GripperCommands.getScoreInL4Command(REEF_CHOOSER::calculateTargetScoringPose).finallyDo(OperatorConstants.REEF_CHOOSER::switchReefSide)
@@ -142,13 +142,13 @@ public class CoralPlacingCommands {
     }
 
     private static double calculateDistanceToTargetScoringPose(boolean shouldScoreRight) {
-        final Translation2d currentTranslation = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
+        final Translation2d currentTranslation = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
         final Translation2d targetTranslation = calculateClosestScoringPose(shouldScoreRight).get().getTranslation();
         return currentTranslation.getDistance(targetTranslation);
     }
 
     public static FlippablePose2d calculateClosestScoringPose(boolean shouldScoreRight) {
-        final Translation2d robotPositionOnField = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
+        final Translation2d robotPositionOnField = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
         final Translation2d reefCenterPosition = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
         final Rotation2d[] reefClockAngles = FieldConstants.REEF_CLOCK_ANGLES;
         final Transform2d

@@ -14,13 +14,7 @@ public class CameraConstants {
             REEF_TAG_CAMERA_STANDARD_DEVIATIONS = new StandardDeviations(
             0.015,
             0.01
-
-    ),
-            FEEDER_TAG_CAMERA_STANDARD_DEVIATIONS = new StandardDeviations(
-                    0.02,
-                    0.1
-            );
-    public static final double CORAL_POSE_ESTIMATOR_DELETION_THRESHOLD_SECONDS = 0.5;
+    );
 
     private static final Transform3d
             ROBOT_CENTER_TO_OBJECT_DETECTION_CAMERA = new Transform3d(

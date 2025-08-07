@@ -28,7 +28,7 @@ import java.util.Map;
 /**
  * A class that estimates the robot's pose using team 6328's custom pose estimator.
  */
-public class RobotPoseEstimator implements AutoCloseable {
+public class PoseEstimator implements AutoCloseable {
     private final SwerveDrivePoseEstimator swerveDrivePoseEstimator = createSwerveDrivePoseEstimator();
     private final SwerveDriveOdometry swerveDriveOdometry = createSwerveDriveOdometry();
     private final Field2d field = new Field2d();
@@ -43,7 +43,7 @@ public class RobotPoseEstimator implements AutoCloseable {
      * @param relativeRobotPoseSource the relative robot pose source that should be used to update the pose estimator
      * @param aprilTagCameras         the apriltag cameras that should be used to update the relative robot pose source
      */
-    public RobotPoseEstimator(RelativeRobotPoseSource relativeRobotPoseSource, AprilTagCamera... aprilTagCameras) {
+    public PoseEstimator(RelativeRobotPoseSource relativeRobotPoseSource, AprilTagCamera... aprilTagCameras) {
         this.aprilTagCameras = aprilTagCameras;
         this.relativeRobotPoseSource = relativeRobotPoseSource;
         this.shouldUseRelativeRobotPoseSource = true;
@@ -57,7 +57,7 @@ public class RobotPoseEstimator implements AutoCloseable {
      *
      * @param aprilTagCameras the cameras that should be used to update the pose estimator
      */
-    public RobotPoseEstimator(AprilTagCamera... aprilTagCameras) {
+    public PoseEstimator(AprilTagCamera... aprilTagCameras) {
         this.aprilTagCameras = aprilTagCameras;
         this.relativeRobotPoseSource = null;
         this.shouldUseRelativeRobotPoseSource = false;

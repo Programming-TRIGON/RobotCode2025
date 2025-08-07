@@ -9,7 +9,9 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
-import frc.trigon.robot.misc.objectdetectioncamera.ObjectPoseEstimator;
+import frc.trigon.robot.constants.CameraConstants;
+import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
+import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.littletonrobotics.junction.Logger;
@@ -26,29 +28,31 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
     private static final ProfiledPIDController X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(2.8, 5)) :
             new ProfiledPIDController(2.4, 0, 0, new TrapezoidProfile.Constraints(2.65, 5.5));
-    private static final ObjectPoseEstimator CORAL_POSE_ESTIMATOR = RobotContainer.CORAL_POSE_ESTIMATOR;
+    private static final ObjectDetectionCamera CAMERA = CameraConstants.OBJECT_DETECTION_CAMERA;
     private Translation2d distanceFromTrackedCoral;
 
     public CoralAutoDriveCommand() {
         addCommands(
+                new InstantCommand(CAMERA::initializeTracking),
                 getTrackCoralCommand(),
                 GeneralCommands.getContinuousConditionalCommand(
                         getDriveToCoralCommand(() -> distanceFromTrackedCoral),
                         GeneralCommands.getFieldRelativeDriveCommand(),
-                        () -> CORAL_POSE_ESTIMATOR.getClosestObjectToRobot() != null
+                        () -> CAMERA.getTrackedObjectFieldRelativePosition() != null
                 )
         );
     }
 
     private Command getTrackCoralCommand() {
         return new RunCommand(() -> {
+            CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL);
             distanceFromTrackedCoral = calculateDistanceFromTrackedCoral();
         });
     }
 
     public static Translation2d calculateDistanceFromTrackedCoral() {
-        final Pose2d robotPose = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose();
-        final Translation2d trackedObjectPositionOnField = CORAL_POSE_ESTIMATOR.getClosestObjectToRobot();
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
+        final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
         if (trackedObjectPositionOnField == null)
             return null;
 
@@ -82,8 +86,8 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
     }
 
     public static FlippableRotation2d calculateTargetAngle() {
-        final Pose2d robotPose = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose();
-        final Translation2d trackedObjectFieldRelativePosition = CORAL_POSE_ESTIMATOR.getClosestObjectToRobot();
+        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
+        final Translation2d trackedObjectFieldRelativePosition = CAMERA.getTrackedObjectFieldRelativePosition();
         if (trackedObjectFieldRelativePosition == null)
             return null;
 

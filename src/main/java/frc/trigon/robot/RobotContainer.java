@@ -20,9 +20,7 @@ import frc.trigon.robot.constants.AutonomousConstants;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
-import frc.trigon.robot.misc.objectdetectioncamera.ObjectPoseEstimator;
-import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
-import frc.trigon.robot.poseestimation.poseestimator.RobotPoseEstimator;
+import frc.trigon.robot.poseestimation.poseestimator.PoseEstimator;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulator;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorCommands;
@@ -41,15 +39,9 @@ import org.trigon.utilities.flippable.Flippable;
 import java.util.List;
 
 public class RobotContainer {
-    public static final RobotPoseEstimator ROBOT_POSE_ESTIMATOR = new RobotPoseEstimator(
+    public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator(
             CameraConstants.LEFT_REEF_TAG_CAMERA,
             CameraConstants.RIGHT_REEF_TAG_CAMERA
-    );
-    public static final ObjectPoseEstimator CORAL_POSE_ESTIMATOR = new ObjectPoseEstimator(
-            CameraConstants.CORAL_POSE_ESTIMATOR_DELETION_THRESHOLD_SECONDS,
-            ObjectPoseEstimator.DistanceCalculationMethod.ROTATION_AND_TRANSLATION,
-            SimulatedGamePieceConstants.GamePieceType.CORAL,
-            CameraConstants.OBJECT_DETECTION_CAMERA
     );
     public static final Swerve SWERVE = new Swerve();
     public static final AlgaeManipulator ALGAE_MANIPULATOR = new AlgaeManipulator();
