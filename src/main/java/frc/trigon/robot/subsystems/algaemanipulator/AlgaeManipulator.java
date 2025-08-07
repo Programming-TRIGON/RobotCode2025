@@ -3,12 +3,14 @@ package frc.trigon.robot.subsystems.algaemanipulator;
 import com.ctre.phoenix6.controls.MotionMagicVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VoltageOut;
-import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.*;
 import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
+import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
+import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXMotor;
 import org.trigon.hardware.phoenix6.talonfx.TalonFXSignal;
 import org.trigon.utilities.Conversions;
@@ -58,6 +60,8 @@ public class AlgaeManipulator extends MotorSubsystem {
                 getCurrentAngle(),
                 Rotation2d.fromRotations(angleMotor.getSignal(TalonFXSignal.CLOSED_LOOP_REFERENCE))
         );
+
+        Logger.recordOutput("Poses/Components/AlgaeManipulatorPose", calculateVisualizationPose());
     }
 
     @Override
@@ -67,6 +71,10 @@ public class AlgaeManipulator extends MotorSubsystem {
 
     public boolean isOpen() {
         return angleMotor.getSignal(TalonFXSignal.POSITION) > Conversions.degreesToRotations(70);
+    }
+
+    public void resetPosition() {
+        angleMotor.setPosition(0);
     }
 
     public boolean atState(AlgaeManipulatorConstants.AlgaeManipulatorState state) {
@@ -98,6 +106,17 @@ public class AlgaeManipulator extends MotorSubsystem {
 
     void setTargetAngle(Rotation2d targetAngle) {
         angleMotor.setControl(positionRequest.withPosition(targetAngle.getRotations()));
+    }
+
+    private Pose3d calculateVisualizationPose() {
+        final Pose3d currentGripperPose = RobotContainer.GRIPPER.calculateVisualizationPose();
+        final Pose3d gripperOrigin = currentGripperPose.transformBy(AlgaeManipulatorConstants.GRIPPER_TO_ALGAE_MANIPULATOR);
+
+        final Transform3d pitchTransform = new Transform3d(
+                new Translation3d(0, 0, 0),
+                new Rotation3d(0, getCurrentAngle().getRadians(), 0)
+        );
+        return gripperOrigin.transformBy(pitchTransform);
     }
 
     private Rotation2d getCurrentAngle() {
