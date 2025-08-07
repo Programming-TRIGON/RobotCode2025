@@ -9,7 +9,6 @@ import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
-import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.constants.PathPlannerConstants;
@@ -66,7 +65,7 @@ public class AutonomousCommands {
 
     public static Command getDriveToCoralCommand(boolean isRight) {
         return new SequentialCommandGroup(
-                getFindCoralCommand(isRight).unless(() -> CameraConstants.CORAL_POSE_ESTIMATOR.getClosestObjectToRobot() != null).until(() -> CameraConstants.CORAL_POSE_ESTIMATOR.getClosestObjectToRobot() != null),
+                getFindCoralCommand(isRight).unless(() -> RobotContainer.CORAL_POSE_ESTIMATOR.getClosestObjectToRobot() != null).until(() -> RobotContainer.CORAL_POSE_ESTIMATOR.getClosestObjectToRobot() != null),
                 new ParallelCommandGroup(
                         CoralAutoDriveCommand.getDriveToCoralCommand(CoralAutoDriveCommand::calculateDistanceFromTrackedCoral)
                 ).withTimeout(1.5)

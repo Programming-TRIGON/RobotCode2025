@@ -11,7 +11,6 @@ import edu.wpi.first.math.kinematics.SwerveDriveOdometry;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.poseestimation.apriltagcamera.AprilTagCamera;
@@ -29,7 +28,7 @@ import java.util.Map;
 /**
  * A class that estimates the robot's pose using team 6328's custom pose estimator.
  */
-public class RobotPoseEstimator extends SubsystemBase implements AutoCloseable {
+public class RobotPoseEstimator implements AutoCloseable {
     private final SwerveDrivePoseEstimator swerveDrivePoseEstimator = createSwerveDrivePoseEstimator();
     private final SwerveDriveOdometry swerveDriveOdometry = createSwerveDriveOdometry();
     private final Field2d field = new Field2d();
@@ -71,7 +70,6 @@ public class RobotPoseEstimator extends SubsystemBase implements AutoCloseable {
         field.close();
     }
 
-    @Override
     public void periodic() {
         if (shouldUseRelativeRobotPoseSource)
             updateFromRelativeRobotPoseSource();

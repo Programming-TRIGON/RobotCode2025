@@ -124,7 +124,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
     }
 
     /**
-     * Calculates the rating of an object.
+     * Calculates the "distance rating" of an object.
      * The "distance rating" is a unit used to calculate the distance between 2 poses.
      * It factors in both translation and rotation differences by scaling the units depending on the {@link DistanceCalculationMethod}.
      *

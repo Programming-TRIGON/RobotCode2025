@@ -9,7 +9,6 @@ import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
-import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectPoseEstimator;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
@@ -27,7 +26,7 @@ public class CoralAutoDriveCommand extends ParallelCommandGroup {
     private static final ProfiledPIDController X_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
             new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(2.8, 5)) :
             new ProfiledPIDController(2.4, 0, 0, new TrapezoidProfile.Constraints(2.65, 5.5));
-    private static final ObjectPoseEstimator CORAL_POSE_ESTIMATOR = CameraConstants.CORAL_POSE_ESTIMATOR;
+    private static final ObjectPoseEstimator CORAL_POSE_ESTIMATOR = RobotContainer.CORAL_POSE_ESTIMATOR;
     private Translation2d distanceFromTrackedCoral;
 
     public CoralAutoDriveCommand() {

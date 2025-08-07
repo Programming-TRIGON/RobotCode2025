@@ -70,6 +70,7 @@ public class Swerve extends MotorSubsystem {
         Phoenix6SignalThread.SIGNALS_LOCK.unlock();
 
         updatePoseEstimatorStates();
+        RobotContainer.ROBOT_POSE_ESTIMATOR.periodic();
 //        updateNetworkTables();
     }
 
