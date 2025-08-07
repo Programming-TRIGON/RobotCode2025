@@ -75,7 +75,7 @@ public class SimulationFieldHandler {
     }
 
     private static void updateCollection() {
-        final Pose3d robotPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose());
+        final Pose3d robotPose = new Pose3d(RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose());
         final Pose3d
                 coralCollectionPose = robotPose.plus(toTransform(RobotContainer.CORAL_INTAKE.calculateCoralCollectionPose())),
                 algaeCollectionPose = robotPose.plus(toTransform(new Pose3d()));
@@ -158,7 +158,7 @@ public class SimulationFieldHandler {
     }
 
     private static void ejectCoralFromGripper(SimulatedGamePiece ejectedCoral) {
-        final Pose3d robotPose = new Pose3d(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose());
+        final Pose3d robotPose = new Pose3d(RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose());
         final Pose3d robotRelativeGripperReleasePose = RobotContainer.GRIPPER.calculateCoralReleasePoint();
         final Translation3d robotRelativeReleaseVelocity = RobotContainer.GRIPPER.getRobotRelativeExitVelocity();
         final ChassisSpeeds swerveWheelSpeeds = RobotContainer.SWERVE.getSelfRelativeVelocity();
@@ -209,7 +209,7 @@ public class SimulationFieldHandler {
      * @return the position of the held game piece relative to the field
      */
     private static Pose3d calculateHeldGamePieceFieldRelativePose(Pose3d robotRelativeHeldGamePiecePosition) {
-        final Pose3d robotPose3d = new Pose3d(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose());
+        final Pose3d robotPose3d = new Pose3d(RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose());
         return robotPose3d.plus(toTransform(robotRelativeHeldGamePiecePosition));
     }
 

@@ -26,7 +26,6 @@ import org.trigon.utilities.mechanisms.SpeedMechanism2d;
 
 import java.util.function.DoubleSupplier;
 
-
 public class GripperConstants {
     public static final int
             GRIPPING_MOTOR_ID = 14,

@@ -29,7 +29,7 @@ public class CoralAlignmentCommand extends ParallelCommandGroup {
                     var a = CAMERA.getTargetObjectsRotations(SimulatedGamePieceConstants.GamePieceType.CORAL);
                     if (a.length == 0)
                         return null;
-                    return new FlippableRotation2d(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose().getRotation().plus(a[0].toRotation2d()), false);
+                    return new FlippableRotation2d(RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose().getRotation().plus(a[0].toRotation2d()), false);
                 }
         );
     }
