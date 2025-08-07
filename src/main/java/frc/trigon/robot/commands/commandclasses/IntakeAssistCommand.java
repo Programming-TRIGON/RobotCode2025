@@ -7,7 +7,6 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.RunCommand;
 import frc.trigon.robot.RobotContainer;
@@ -16,7 +15,6 @@ import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.OperatorConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectDetectionCamera;
-import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.littletonrobotics.junction.Logger;
 import org.trigon.hardware.RobotHardwareStats;
@@ -39,31 +37,27 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
 
     public IntakeAssistCommand(AssistMode assistMode) {
         addCommands(
-                new InstantCommand(CAMERA::initializeTracking),
                 getTrackCoralCommand(),
                 GeneralCommands.getContinuousConditionalCommand(
                         GeneralCommands.getFieldRelativeDriveCommand(),
                         getAssistIntakeCommand(assistMode, () -> distanceFromTrackedCoral),
-                        () -> CAMERA.getTrackedObjectFieldRelativePosition() == null
+                        () -> RobotContainer.CORAL_POSE_ESTIMATOR.getClosestObjectToRobot() == null
                 )
         );
     }
 
     private Command getTrackCoralCommand() {
-        return new RunCommand(() -> {
-            CAMERA.trackObject(SimulatedGamePieceConstants.GamePieceType.CORAL);
-            distanceFromTrackedCoral = calculateDistanceFromTrackedCoral();
-        });
+        return new RunCommand(() -> distanceFromTrackedCoral = calculateDistanceFromTrackedCoral());
     }
 
     public static Translation2d calculateDistanceFromTrackedCoral() {
-        final Pose2d robotPose = RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose();
-        final Translation2d trackedObjectPositionOnField = CAMERA.getTrackedObjectFieldRelativePosition();
+        final Pose2d robotPose = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose();
+        final Translation2d trackedObjectPositionOnField = RobotContainer.CORAL_POSE_ESTIMATOR.getClosestObjectToRobot();
         if (trackedObjectPositionOnField == null)
             return null;
 
         final Translation2d difference = robotPose.getTranslation().minus(trackedObjectPositionOnField);
-        Translation2d robotToTrackedCoralDistance = difference.rotateBy(robotPose.getRotation().unaryMinus());
+        final Translation2d robotToTrackedCoralDistance = difference.rotateBy(robotPose.getRotation().unaryMinus());
         Logger.recordOutput("IntakeAssist/TrackedCoralDistance", robotToTrackedCoralDistance);
         return robotToTrackedCoralDistance;
     }
@@ -135,7 +129,8 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
     private static double calculateAlternateAssistPower(double pidOutput, double joystickValue) {
         if (joystickValue == 0)
             return pidOutput;
-        return pidOutput * (1 - Math.cbrt(joystickValue)) + joystickValue;
+        final double joystickPower = Math.cbrt(joystickValue);
+        return pidOutput * (1 - joystickPower) + joystickPower;
     }
 
     private static double calculateNormalAssistPower(double pidOutput, double joystickValue) {
