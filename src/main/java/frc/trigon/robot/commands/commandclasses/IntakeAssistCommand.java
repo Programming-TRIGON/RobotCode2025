@@ -65,7 +65,8 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
                         () -> translationAssistPowerSupplier.get().getX(),
                         () -> translationAssistPowerSupplier.get().getY(),
                         () -> calculateThetaPower(assistMode, distanceFromTrackedCoral.get())
-                ));
+                )
+        );
     }
 
     private Command getTrackCoralCommand() {
