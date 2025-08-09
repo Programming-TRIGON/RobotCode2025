@@ -52,6 +52,8 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
 
     /**
      * Returns a command that assists the intake of a game piece at the given location.
+     * This command is for intaking a game piece with a specific robot-relative position.
+     * To create an intake assist command that selects the closest game piece automatically, use {@link IntakeAssistCommand#IntakeAssistCommand(AssistMode)} instead.
      *
      * @param assistMode               the type of assistance
      * @param distanceFromTrackedCoral the position of the game piece relative to the robot
@@ -59,11 +61,11 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
      */
     public static Command getAssistIntakeCommand(AssistMode assistMode, Supplier<Translation2d> distanceFromTrackedCoral) {
         final Translation2d translationPower = calculateTranslationPower(assistMode, distanceFromTrackedCoral.get());
-        final double rotationPower = calculateRotationPower(assistMode, distanceFromTrackedCoral.get());
+        final double thetaPower = calculateThetaPower(assistMode, distanceFromTrackedCoral.get());
         return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                 translationPower::getX,
                 translationPower::getY,
-                () -> rotationPower
+                () -> thetaPower
         );
     }
 
@@ -87,16 +89,16 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
         final Translation2d joystickPower = new Translation2d(OperatorConstants.DRIVER_CONTROLLER.getLeftY(), OperatorConstants.DRIVER_CONTROLLER.getLeftX());
         final Translation2d selfRelativeJoystickPower = joystickPower.rotateBy(RobotContainer.SWERVE.getDriveRelativeAngle());
 
-        final double xPIDOutput = X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getX());
-        final double yPIDOutput = Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getY());
+        final double xPIDOutput = clampToOutputRange(X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getX()));
+        final double yPIDOutput = clampToOutputRange(Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getY()));
 
         if (assistMode.equals(AssistMode.ALTERNATE_ASSIST))
             return calculateAlternateAssistTranslationPower(selfRelativeJoystickPower, xPIDOutput, yPIDOutput);
         return calculateNormalAssistTranslationPower(assistMode, joystickPower, xPIDOutput, yPIDOutput);
     }
 
-    private static double calculateRotationPower(AssistMode assistMode, Translation2d distanceFromTrackedCoral) {
-        return calculateRotationAssistPower(assistMode, distanceFromTrackedCoral.getAngle().plus(Rotation2d.k180deg));
+    private static double calculateThetaPower(AssistMode assistMode, Translation2d distanceFromTrackedCoral) {
+        return calculateThetaAssistPower(assistMode, distanceFromTrackedCoral.getAngle().plus(Rotation2d.k180deg));
     }
 
     private static Translation2d calculateAlternateAssistTranslationPower(Translation2d joystickValue, double xPIDOutput, double yPIDOutput) {
@@ -122,14 +124,18 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
         return new Translation2d(xPower, yPower);
     }
 
-    private static double calculateRotationAssistPower(AssistMode assistMode, Rotation2d angleOffset) {
+    private static double calculateThetaAssistPower(AssistMode assistMode, Rotation2d angleOffset) {
         final double
-                pidOutput = MathUtil.clamp(THETA_PID_CONTROLLER.calculate(angleOffset.getRadians()), -1, 1),
+                pidOutput = clampToOutputRange(THETA_PID_CONTROLLER.calculate(angleOffset.getRadians())),
                 joystickValue = OperatorConstants.DRIVER_CONTROLLER.getRightX();
 
         if (assistMode.equals(AssistMode.ALTERNATE_ASSIST))
             return calculateAlternateAssistPower(pidOutput, joystickValue, joystickValue);
         return calculateNormalAssistPower(pidOutput, joystickValue);
+    }
+
+    private static double clampToOutputRange(double value) {
+        return MathUtil.clamp(value, -1, 1);
     }
 
     private static double calculateAlternateAssistPower(double pidOutput, double pidScalar, double joystickPower) {
