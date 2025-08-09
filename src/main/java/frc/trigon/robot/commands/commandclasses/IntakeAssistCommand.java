@@ -6,9 +6,7 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.trajectory.TrapezoidProfile;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.RunCommand;
+import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
 import frc.trigon.robot.constants.OperatorConstants;
@@ -45,7 +43,7 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
                 GeneralCommands.getContinuousConditionalCommand(
                         GeneralCommands.getFieldRelativeDriveCommand(),
                         getAssistIntakeCommand(assistMode, () -> distanceFromTrackedCoral),
-                        () -> RobotContainer.CORAL_POSE_ESTIMATOR.getClosestObjectToRobot() == null
+                        () -> RobotContainer.CORAL_POSE_ESTIMATOR.getClosestObjectToRobot() == null || distanceFromTrackedCoral == null
                 )
         );
     }
@@ -60,13 +58,14 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
      * @return the command
      */
     public static Command getAssistIntakeCommand(AssistMode assistMode, Supplier<Translation2d> distanceFromTrackedCoral) {
-        final Translation2d translationPower = calculateTranslationPower(assistMode, distanceFromTrackedCoral.get());
-        final double thetaPower = calculateThetaPower(assistMode, distanceFromTrackedCoral.get());
-        return SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                translationPower::getX,
-                translationPower::getY,
-                () -> thetaPower
-        );
+        final Supplier<Translation2d> translationAssistPowerSupplier = () -> calculateTranslationPower(assistMode, distanceFromTrackedCoral.get());
+        return new SequentialCommandGroup(
+                new InstantCommand(() -> resetPIDControllers(distanceFromTrackedCoral.get())),
+                SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+                        () -> translationAssistPowerSupplier.get().getX(),
+                        () -> translationAssistPowerSupplier.get().getY(),
+                        () -> calculateThetaPower(assistMode, distanceFromTrackedCoral.get())
+                ));
     }
 
     private Command getTrackCoralCommand() {
@@ -87,14 +86,14 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
 
     private static Translation2d calculateTranslationPower(AssistMode assistMode, Translation2d distanceFromTrackedCoral) {
         final Translation2d joystickPower = new Translation2d(OperatorConstants.DRIVER_CONTROLLER.getLeftY(), OperatorConstants.DRIVER_CONTROLLER.getLeftX());
-        final Translation2d selfRelativeJoystickPower = joystickPower.rotateBy(RobotContainer.SWERVE.getDriveRelativeAngle());
+        final Translation2d selfRelativeJoystickPower = joystickPower.rotateBy(RobotContainer.SWERVE.getDriveRelativeAngle().unaryMinus());
 
         final double xPIDOutput = clampToOutputRange(X_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getX()));
         final double yPIDOutput = clampToOutputRange(Y_PID_CONTROLLER.calculate(distanceFromTrackedCoral.getY()));
 
         if (assistMode.equals(AssistMode.ALTERNATE_ASSIST))
             return calculateAlternateAssistTranslationPower(selfRelativeJoystickPower, xPIDOutput, yPIDOutput);
-        return calculateNormalAssistTranslationPower(assistMode, joystickPower, xPIDOutput, yPIDOutput);
+        return calculateNormalAssistTranslationPower(assistMode, selfRelativeJoystickPower, xPIDOutput, yPIDOutput);
     }
 
     private static double calculateThetaPower(AssistMode assistMode, Translation2d distanceFromTrackedCoral) {
@@ -102,7 +101,7 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
     }
 
     private static Translation2d calculateAlternateAssistTranslationPower(Translation2d joystickValue, double xPIDOutput, double yPIDOutput) {
-        final double pidScalar = joystickValue.getNorm();
+        final double pidScalar = Math.cbrt(joystickValue.getNorm());
         final double
                 xJoystickPower = Math.cbrt(joystickValue.getX()),
                 yJoystickPower = Math.cbrt(joystickValue.getY());
@@ -126,7 +125,7 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
 
     private static double calculateThetaAssistPower(AssistMode assistMode, Rotation2d angleOffset) {
         final double
-                pidOutput = clampToOutputRange(THETA_PID_CONTROLLER.calculate(angleOffset.getRadians())),
+                pidOutput = clampToOutputRange(THETA_PID_CONTROLLER.calculate(-angleOffset.getRadians())),
                 joystickValue = OperatorConstants.DRIVER_CONTROLLER.getRightX();
 
         if (assistMode.equals(AssistMode.ALTERNATE_ASSIST))
@@ -145,6 +144,12 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
     private static double calculateNormalAssistPower(double pidOutput, double joystickPower) {
         final double intakeAssistScalar = OperatorConstants.INTAKE_ASSIST_SCALAR;
         return (pidOutput * intakeAssistScalar) + (joystickPower * (1 - intakeAssistScalar));
+    }
+
+    private static void resetPIDControllers(Translation2d distanceFromTrackedCoral) {
+        X_PID_CONTROLLER.reset(distanceFromTrackedCoral.getX(), RobotContainer.SWERVE.getSelfRelativeVelocity().vxMetersPerSecond);
+        Y_PID_CONTROLLER.reset(distanceFromTrackedCoral.getY(), RobotContainer.SWERVE.getSelfRelativeVelocity().vyMetersPerSecond);
+        THETA_PID_CONTROLLER.reset(distanceFromTrackedCoral.getAngle().getRadians(), RobotContainer.SWERVE.getSelfRelativeVelocity().omegaRadiansPerSecond);
     }
 
     /**
