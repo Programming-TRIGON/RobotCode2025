@@ -138,7 +138,7 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
     }
 
     private static double calculateAlternateAssistPower(double pidOutput, double pidScalar, double joystickPower) {
-        return pidOutput * (1 - pidScalar) + joystickPower;
+        return pidOutput * (1 - Math.abs(pidScalar)) + joystickPower;
     }
 
     private static double calculateNormalAssistPower(double pidOutput, double joystickPower) {
