@@ -54,7 +54,7 @@ public class CoralCollectionCommands {
     }
 
     private static boolean isIntakeFacingFeeder() {
-        final Pose2d robotPose = new FlippablePose2d(RobotContainer.POSE_ESTIMATOR.getEstimatedRobotPose(), true).get();
+        final Pose2d robotPose = new FlippablePose2d(RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose(), true).get();
         final Rotation2d
                 robotHeading = robotPose.getRotation(),
                 leftFeederAngle = FieldConstants.LEFT_FEEDER_ANGLE;

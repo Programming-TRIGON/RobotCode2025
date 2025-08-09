@@ -13,14 +13,15 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
-import frc.trigon.robot.commands.commandclasses.CoralAlignmentCommand;
 import frc.trigon.robot.commands.commandclasses.LEDAutoSetupCommand;
 import frc.trigon.robot.commands.commandfactories.*;
 import frc.trigon.robot.constants.AutonomousConstants;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
-import frc.trigon.robot.poseestimation.poseestimator.PoseEstimator;
+import frc.trigon.robot.misc.objectdetectioncamera.ObjectPoseEstimator;
+import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
+import frc.trigon.robot.poseestimation.poseestimator.RobotPoseEstimator;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulator;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorCommands;
@@ -39,9 +40,15 @@ import org.trigon.utilities.flippable.Flippable;
 import java.util.List;
 
 public class RobotContainer {
-    public static final PoseEstimator POSE_ESTIMATOR = new PoseEstimator(
+    public static final RobotPoseEstimator ROBOT_POSE_ESTIMATOR = new RobotPoseEstimator(
             CameraConstants.LEFT_REEF_TAG_CAMERA,
             CameraConstants.RIGHT_REEF_TAG_CAMERA
+    );
+    public static final ObjectPoseEstimator CORAL_POSE_ESTIMATOR = new ObjectPoseEstimator(
+            CameraConstants.CORAL_POSE_ESTIMATOR_DELETION_THRESHOLD_SECONDS,
+            ObjectPoseEstimator.DistanceCalculationMethod.ROTATION_AND_TRANSLATION,
+            SimulatedGamePieceConstants.GamePieceType.CORAL,
+            CameraConstants.OBJECT_DETECTION_CAMERA
     );
     public static final Swerve SWERVE = new Swerve();
     public static final AlgaeManipulator ALGAE_MANIPULATOR = new AlgaeManipulator();
@@ -95,9 +102,7 @@ public class RobotContainer {
         OperatorConstants.RESET_HEADING_TRIGGER.onTrue(CommandConstants.RESET_HEADING_COMMAND);
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
         OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CommandConstants.WHEEL_RADIUS_CHARACTERIZATION_COMMAND);
-
-        OperatorConstants.OPERATOR_CONTROLLER.f3().whileTrue(new CoralAlignmentCommand());
-
+        
         OperatorConstants.RESET_AMP_ALIGNER_TRIGGER.whileTrue(AlgaeManipulationCommands.getResetAmpAlignerCommand());
 
         OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
