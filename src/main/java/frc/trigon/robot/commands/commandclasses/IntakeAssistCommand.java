@@ -28,7 +28,7 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
                     new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(2.8, 5)) :
                     new ProfiledPIDController(0.3, 0, 0.03, new TrapezoidProfile.Constraints(2.65, 5.5)),
             THETA_PID_CONTROLLER = RobotHardwareStats.isSimulation() ?
-                    new ProfiledPIDController(0.5, 0, 0, new TrapezoidProfile.Constraints(2.8, 5)) :
+                    new ProfiledPIDController(0.4, 0, 0, new TrapezoidProfile.Constraints(2.8, 5)) :
                     new ProfiledPIDController(2.4, 0, 0, new TrapezoidProfile.Constraints(2.65, 5.5));
     private Translation2d distanceFromTrackedCoral;
 
@@ -58,19 +58,21 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
      * @return the command
      */
     public static Command getAssistIntakeCommand(AssistMode assistMode, Supplier<Translation2d> distanceFromTrackedCoral) {
-        final Supplier<Translation2d> translationAssistPowerSupplier = () -> calculateTranslationPower(assistMode, distanceFromTrackedCoral.get());
         return new SequentialCommandGroup(
                 new InstantCommand(() -> resetPIDControllers(distanceFromTrackedCoral.get())),
                 SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-                        () -> translationAssistPowerSupplier.get().getX(),
-                        () -> translationAssistPowerSupplier.get().getY(),
+                        () -> calculateTranslationPower(assistMode, distanceFromTrackedCoral.get()).getX(),
+                        () -> calculateTranslationPower(assistMode, distanceFromTrackedCoral.get()).getY(),
                         () -> calculateThetaPower(assistMode, distanceFromTrackedCoral.get())
                 )
         );
     }
 
     private Command getTrackCoralCommand() {
-        return new RunCommand(() -> distanceFromTrackedCoral = calculateDistanceFromTrackedCoral());
+        return new RunCommand(() -> {
+            if (RobotContainer.CORAL_POSE_ESTIMATOR.getClosestObjectToRobot() != null)
+                distanceFromTrackedCoral = calculateDistanceFromTrackedCoral();
+        });
     }
 
     private static Translation2d calculateDistanceFromTrackedCoral() {
@@ -98,7 +100,7 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
     }
 
     private static double calculateThetaPower(AssistMode assistMode, Translation2d distanceFromTrackedCoral) {
-        return calculateThetaAssistPower(assistMode, distanceFromTrackedCoral.getAngle().plus(Rotation2d.k180deg));
+        return calculateThetaAssistPower(assistMode, distanceFromTrackedCoral.getAngle().plus(Rotation2d.k180deg).unaryMinus());
     }
 
     private static Translation2d calculateAlternateAssistTranslationPower(Translation2d joystickValue, double xPIDOutput, double yPIDOutput) {
@@ -124,9 +126,9 @@ public class IntakeAssistCommand extends ParallelCommandGroup {
         return new Translation2d(xPower, yPower);
     }
 
-    private static double calculateThetaAssistPower(AssistMode assistMode, Rotation2d angleOffset) {
+    private static double calculateThetaAssistPower(AssistMode assistMode, Rotation2d thetaOffset) {
         final double
-                pidOutput = clampToOutputRange(THETA_PID_CONTROLLER.calculate(-angleOffset.getRadians())),
+                pidOutput = clampToOutputRange(THETA_PID_CONTROLLER.calculate(thetaOffset.getRadians())),
                 joystickValue = OperatorConstants.DRIVER_CONTROLLER.getRightX();
 
         if (assistMode.equals(AssistMode.ALTERNATE_ASSIST))

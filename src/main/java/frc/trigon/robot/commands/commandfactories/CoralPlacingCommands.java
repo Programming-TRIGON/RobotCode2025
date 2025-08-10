@@ -115,10 +115,7 @@ public class CoralPlacingCommands {
     private static Command scoreFromGripperInL4Command(boolean shouldScoreRight) {
         return new SequentialCommandGroup(
                 GripperCommands.getPrepareForScoringInL4Command(REEF_CHOOSER::calculateTargetScoringPose).raceWith(
-                        new SequentialCommandGroup(
-                                new WaitUntilCommand(() -> canAutonomouslyReleaseFromGripper(shouldScoreRight)),
-                                new WaitUntilChangeCommand<>(RobotContainer.ROBOT_POSE_ESTIMATOR::getEstimatedRobotPose)
-                        )
+                        new WaitUntilCommand(() -> canAutonomouslyReleaseFromGripper(shouldScoreRight))
                 ).until(OperatorConstants.CONTINUE_TRIGGER),
                 GripperCommands.getScoreInL4Command(REEF_CHOOSER::calculateTargetScoringPose).finallyDo(OperatorConstants.REEF_CHOOSER::switchReefSide)
         );
