@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
+import org.littletonrobotics.junction.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,6 +42,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
     public void periodic() {
         updateObjectPositions();
         removeOldObjects();
+        Logger.recordOutput("ObjectPoseEstimator/knownObjectPositions", knownObjectPositions.keySet().toArray(Translation2d[]::new));
     }
 
     /**
@@ -57,7 +59,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
      */
     public void removeClosestObjectToRobot() {
         final Translation2d closestObject = getClosestObjectToRobot();
-        knownObjectPositions.remove(closestObject);
+        removeObject(closestObject);
     }
 
     /**
@@ -67,7 +69,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
      */
     public void removeClosestObjectToIntake(Transform2d intakeTransform) {
         final Pose2d robotPose = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose();
-        knownObjectPositions.remove(getClosestObjectToPose(robotPose.transformBy(intakeTransform)));
+        removeObject(getClosestObjectToPosition(robotPose.transformBy(intakeTransform).getTranslation()));
     }
 
     /**
@@ -76,8 +78,13 @@ public class ObjectPoseEstimator extends SubsystemBase {
      * @param fieldRelativePose the pose to which the removed object is closest
      */
     public void removeClosestObjectToPose(Pose2d fieldRelativePose) {
-        final Translation2d closestObject = getClosestObjectToPose(fieldRelativePose);
-        knownObjectPositions.remove(closestObject);
+        final Translation2d closestObject = getClosestObjectToPosition(fieldRelativePose.getTranslation());
+        removeObject(closestObject);
+    }
+
+    public void removeClosestObjectToPosition(Translation2d position) {
+        final Translation2d closestObject = getClosestObjectToPosition(position);
+        removeObject(closestObject);
     }
 
     /**
@@ -98,27 +105,30 @@ public class ObjectPoseEstimator extends SubsystemBase {
      * @return the best object's 2D position on the field (z is assumed to be 0)
      */
     public Translation2d getClosestObjectToRobot() {
-        return getClosestObjectToPose(RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose());
+        return getClosestObjectToPosition(RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation());
     }
 
+
     /**
-     * Gets the position of the closest object to a given pose on the field.
+     * Gets the position of the closest object to a given position on the field.
      *
-     * @param pose the pose to which the returned object is closest
+     * @param position the position to which the returned object is closest
      * @return the closest object's position on the field, or null if no objects are known
      */
-    public Translation2d getClosestObjectToPose(Pose2d pose) {
+    public Translation2d getClosestObjectToPosition(Translation2d position) {
         final Translation2d[] objectsTranslations = knownObjectPositions.keySet().toArray(Translation2d[]::new);
         if (knownObjectPositions.isEmpty())
             return null;
         Translation2d bestObjectTranslation = objectsTranslations[0];
+        double closestObjectDistance = position.getDistance(bestObjectTranslation);
 
         for (int i = 1; i < objectsTranslations.length; i++) {
             final Translation2d currentObjectTranslation = objectsTranslations[i];
-            final double bestObjectRating = calculateObjectDistanceRating(bestObjectTranslation, pose);
-            final double currentObjectRating = calculateObjectDistanceRating(currentObjectTranslation, pose);
-            if (currentObjectRating < bestObjectRating)
+            final double currentObjectDistance = position.getDistance(currentObjectTranslation);
+            if (currentObjectDistance < closestObjectDistance) {
+                closestObjectDistance = currentObjectDistance;
                 bestObjectTranslation = currentObjectTranslation;
+            }
         }
         return bestObjectTranslation;
     }
@@ -156,7 +166,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
                 }
 
                 if (closestObjectToVisibleObjectDistanceMeters < ObjectDetectionCameraConstants.TRACKED_OBJECT_TOLERANCE_METERS && knownObjectPositions.get(closestObjectToVisibleObject) != currentTimestamp)
-                    knownObjectPositions.remove(closestObjectToVisibleObject);
+                    removeObject(closestObjectToVisibleObject);
                 knownObjectPositions.put(visibleObject, currentTimestamp);
             }
         }
