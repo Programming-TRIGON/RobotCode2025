@@ -26,7 +26,9 @@ public class ObjectPoseEstimator extends SubsystemBase {
      * @param gamePieceType            the type of game piece to track
      * @param cameras                  the cameras used for detecting objects
      */
-    public ObjectPoseEstimator(double deletionThresholdSeconds, DistanceCalculationMethod distanceCalculationMethod, SimulatedGamePieceConstants.GamePieceType gamePieceType, ObjectDetectionCamera... cameras) {
+    public ObjectPoseEstimator(double deletionThresholdSeconds, DistanceCalculationMethod distanceCalculationMethod,
+                               SimulatedGamePieceConstants.GamePieceType gamePieceType,
+                               ObjectDetectionCamera... cameras) {
         this.deletionThresholdSeconds = deletionThresholdSeconds;
         this.gamePieceType = gamePieceType;
         this.cameras = cameras;

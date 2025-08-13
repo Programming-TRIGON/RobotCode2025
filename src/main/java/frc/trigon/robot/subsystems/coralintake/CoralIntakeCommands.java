@@ -6,7 +6,9 @@ import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import edu.wpi.first.wpilibj2.command.StartEndCommand;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
+import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
+import frc.trigon.robot.constants.OperatorConstants;
 import org.trigon.commands.GearRatioCalculationCommand;
 import org.trigon.commands.NetworkTablesCommand;
 
@@ -41,7 +43,7 @@ public class CoralIntakeCommands {
         return GeneralCommands.getContinuousConditionalCommand(
                 getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.COLLECT_FROM_FLOOR),
                 getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST),
-                () -> CoralCollectionCommands.SHOULD_KEEP_INTAKE_OPEN
+                () -> CoralCollectionCommands.SHOULD_KEEP_INTAKE_OPEN && !OperatorConstants.REEF_CHOOSER.getScoringLevel().equals(CoralPlacingCommands.ScoringLevel.L1_CORAL_INTAKE)
         );
     }
 
