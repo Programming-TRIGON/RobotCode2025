@@ -27,8 +27,7 @@ public abstract class MotorSubsystem extends edu.wpi.first.wpilibj2.command.Subs
     private static final List<MotorSubsystem> REGISTERED_SUBSYSTEMS = new ArrayList<>();
     private static final Trigger DISABLED_TRIGGER = new Trigger(DriverStation::isDisabled);
     private static final Executor BRAKE_MODE_EXECUTOR = Executors.newFixedThreadPool(8);
-    //    private static final LoggedNetworkBoolean ENABLE_EXTENSIVE_LOGGING = new LoggedNetworkBoolean("/SmartDashboard/EnableExtensiveLogging", !DriverStation.isFMSAttached());
-    private static final LoggedNetworkBoolean ENABLE_EXTENSIVE_LOGGING = new LoggedNetworkBoolean("/SmartDashboard/EnableExtensiveLogging", false);
+    private static final LoggedNetworkBoolean ENABLE_EXTENSIVE_LOGGING = new LoggedNetworkBoolean("/SmartDashboard/EnableExtensiveLogging", RobotHardwareStats.isSimulation());
 
     static {
         DISABLED_TRIGGER.onTrue(new InstantCommand(() -> forEach(MotorSubsystem::stop)).ignoringDisable(true));
@@ -61,7 +60,6 @@ public abstract class MotorSubsystem extends edu.wpi.first.wpilibj2.command.Subs
      * @param brake whether the motors should brake or coast
      */
     public static void setAllSubsystemsBrakeAsync(boolean brake) {
-//        CompletableFuture.runAsync(() -> forEach((subsystem) -> subsystem.setBrake(brake)));
         BRAKE_MODE_EXECUTOR.execute(() -> forEach((subsystem) -> subsystem.setBrake(brake)));
     }
 

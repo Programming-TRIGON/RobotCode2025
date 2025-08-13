@@ -79,15 +79,6 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
         inputs.visibleTagIDs = getVisibleTagIDs(visibleNotHatefulTags);
         inputs.poseAmbiguity = latestResult.getMultiTagResult().isPresent() ? 0 : bestTag.getPoseAmbiguity();
         inputs.distancesFromTags = getDistancesFromTags(visibleNotHatefulTags);
-        inputs.hasConstrainedResult = false;
-    }
-
-    private PhotonTrackedTarget getBestTag(PhotonPipelineResult result) {
-        for (PhotonTrackedTarget tag : result.getTargets()) {
-            if (FieldConstants.TAG_ID_TO_POSE.containsKey(tag.getFiducialId()))
-                return tag;
-        }
-        return null;
     }
 
     private void updateSolvePNPPoses(AprilTagCameraInputsAutoLogged inputs, PhotonPipelineResult latestResult, PhotonTrackedTarget bestTag) {
@@ -111,6 +102,7 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
         inputs.alternateCameraSolvePNPPose = tagPose.transformBy(alternateTargetToCamera);
 
 //        updateConstrainedSolvePNPPose(inputs, latestResult);
+        inputs.hasConstrainedResult = false;
     }
 
     private void updateConstrainedSolvePNPPose(AprilTagCameraInputsAutoLogged inputs, PhotonPipelineResult latestResult) {
@@ -172,20 +164,20 @@ public class AprilTagPhotonCameraIO extends AprilTagCameraIO {
         return Arrays.copyOf(visibleTagIDs, index);
     }
 
-    private int[] getVisibleTagIDs(PhotonTrackedTarget[] targets) {
-        final int[] visibleTagIDs = new int[targets.length];
+    private int[] getVisibleTagIDs(PhotonTrackedTarget[] tags) {
+        final int[] visibleTagIDs = new int[tags.length];
 
         for (int i = 0; i < visibleTagIDs.length; i++)
-            visibleTagIDs[i] = targets[i].getFiducialId();
+            visibleTagIDs[i] = tags[i].getFiducialId();
 
         return visibleTagIDs;
     }
 
-    private double[] getDistancesFromTags(PhotonTrackedTarget[] targets) {
-        final double[] distances = new double[targets.length];
+    private double[] getDistancesFromTags(PhotonTrackedTarget[] tags) {
+        final double[] distances = new double[tags.length];
 
-        for (int i = 0; i < targets.length; i++)
-            distances[i] = getDistanceFromTarget(targets[i]);
+        for (int i = 0; i < tags.length; i++)
+            distances[i] = getDistanceFromTarget(tags[i]);
 
         return distances;
     }

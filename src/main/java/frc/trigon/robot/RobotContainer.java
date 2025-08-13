@@ -13,14 +13,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.commands.CommandConstants;
-import frc.trigon.robot.commands.commandclasses.CoralAlignmentCommand;
-import frc.trigon.robot.commands.commandclasses.CoralAutoDriveCommand;
 import frc.trigon.robot.commands.commandclasses.LEDAutoSetupCommand;
 import frc.trigon.robot.commands.commandfactories.*;
+import frc.trigon.robot.constants.AutonomousConstants;
 import frc.trigon.robot.constants.CameraConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
-import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.misc.objectdetectioncamera.ObjectPoseEstimator;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
 import frc.trigon.robot.poseestimation.poseestimator.RobotPoseEstimator;
@@ -29,7 +27,6 @@ import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulator;
 import frc.trigon.robot.subsystems.algaemanipulator.AlgaeManipulatorCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntake;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
-import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
 import frc.trigon.robot.subsystems.elevator.Elevator;
 import frc.trigon.robot.subsystems.elevator.ElevatorCommands;
 import frc.trigon.robot.subsystems.elevator.ElevatorConstants;
@@ -83,7 +80,7 @@ public class RobotContainer {
      */
     private void initializeGeneralSystems() {
         Flippable.init();
-        PathPlannerConstants.init();
+        AutonomousConstants.init();
     }
 
     private void configureBindings() {
@@ -95,7 +92,7 @@ public class RobotContainer {
     private void bindDefaultCommands() {
         SWERVE.setDefaultCommand(GeneralCommands.getFieldRelativeDriveCommand());
         ALGAE_MANIPULATOR.setDefaultCommand(AlgaeManipulatorCommands.getDefaultCommand());
-        CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.REST));
+        CORAL_INTAKE.setDefaultCommand(CoralIntakeCommands.getCoralIntakeDefaultCommand());
         ELEVATOR.setDefaultCommand(ElevatorCommands.getSetTargetStateCommand(ElevatorConstants.ElevatorState.REST));
         GRIPPER.setDefaultCommand(GripperCommands.getGripperDefaultCommand());
     }
@@ -103,30 +100,28 @@ public class RobotContainer {
     private void bindControllerCommands() {
         OperatorConstants.LED_AUTO_SETUP_TRIGGER.onTrue(new LEDAutoSetupCommand(() -> autoChooser.get().getName()));
         OperatorConstants.RESET_HEADING_TRIGGER.onTrue(CommandConstants.RESET_HEADING_COMMAND);
-//        OperatorConstants.DRIVE_FROM_DPAD_TRIGGER.whileTrue(CommandConstants.SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND);
-//        OperatorConstants.TOGGLE_ROTATION_MODE_TRIGGER.onTrue(GeneralCommands.getToggleRotationModeCommand());
         OperatorConstants.TOGGLE_BRAKE_TRIGGER.onTrue(GeneralCommands.getToggleBrakeCommand());
-        OperatorConstants.RESET_AMP_ALIGNER_TRIGGER.whileTrue(AlgaeManipulationCommands.getResetAmpAlignerCommand());
-        OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.and(OperatorConstants.LEFT_MULTIFUNCTION_TRIGGER).whileTrue(new CoralAutoDriveCommand());
-
-        OperatorConstants.OPERATOR_CONTROLLER.f3().whileTrue(new CoralAlignmentCommand());
-        OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
-        OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionCommand());
-        OperatorConstants.SCORE_CORAL_IN_REEF_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand());
-
         OperatorConstants.DEBUGGING_TRIGGER.whileTrue(CommandConstants.WHEEL_RADIUS_CHARACTERIZATION_COMMAND);
+
+        OperatorConstants.RESET_AMP_ALIGNER_TRIGGER.whileTrue(AlgaeManipulationCommands.getResetAmpAlignerCommand());
+
+        OperatorConstants.FLOOR_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFloorCoralCollectionCommand());
+        OperatorConstants.FEEDER_CORAL_COLLECTION_TRIGGER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionFromIntakeCommand());
+        OperatorConstants.RIGHT_SCORE_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand(true));
+        OperatorConstants.LEFT_SCORE_TRIGGER.whileTrue(CoralPlacingCommands.getScoreInReefCommand(false));
         OperatorConstants.EJECT_CORAL_TRIGGER.whileTrue(EjectionCommands.getEjectCoralCommand());
         OperatorConstants.UNLOAD_CORAL_TRIGGER.whileTrue(CoralCollectionCommands.getUnloadCoralCommand());
+
         OperatorConstants.COLLECT_ALGAE_FROM_REEF_TRIGGER.toggleOnTrue(AlgaeManipulationCommands.getCollectAlgaeFromReefCommand());
         OperatorConstants.COLLECT_ALGAE_FROM_LOLLIPOP_TRIGGER.toggleOnTrue(AlgaeManipulationCommands.getCollectAlgaeFromLollipopCommand());
-        OperatorConstants.FEEDER_CORAL_COLLECTION_WITH_GRIPPER.whileTrue(CoralCollectionCommands.getFeederCoralCollectionFromGripperCommand());
     }
 
     private void bindSetters() {
-        OperatorConstants.ENABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER.onTrue(CommandConstants.ENABLE_IGNORE_LOLLIPOP_CORAL_COMMAND);
-        OperatorConstants.DISABLE_IGNORE_LOLLIPOP_CORAL_TRIGGER.onTrue(CommandConstants.DISABLE_IGNORE_LOLLIPOP_CORAL_COMMAND);
+        OperatorConstants.ENABLE_INTAKE_ASSIST_TRIGGER.onTrue(CommandConstants.ENABLE_INTAKE_ASSIST_COMMAND);
+        OperatorConstants.DISABLE_INTAKE_ASSIST_TRIGGER.onTrue(CommandConstants.DISABLE_INTAKE_ASSIST_COMMAND);
         OperatorConstants.ENABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
         OperatorConstants.DISABLE_AUTONOMOUS_REEF_SCORING_TRIGGER.onTrue(CommandConstants.DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND);
+        OperatorConstants.TOGGLE_SHOULD_KEEP_INTAKE_OPEN_TRIGGER.onTrue(CommandConstants.TOGGLE_SHOULD_KEEP_INTAKE_OPEN_COMMAND);
     }
 
     private void configureSysIdBindings(MotorSubsystem subsystem) {
@@ -148,11 +143,11 @@ public class RobotContainer {
             final PathPlannerAuto autoNonMirrored = new PathPlannerAuto(autoName);
             final PathPlannerAuto autoMirrored = new PathPlannerAuto(autoName, true);
 
-            if (!PathPlannerConstants.DEFAULT_AUTO_NAME.isEmpty() && PathPlannerConstants.DEFAULT_AUTO_NAME.equals(autoName)) {
+            if (!AutonomousConstants.DEFAULT_AUTO_NAME.isEmpty() && AutonomousConstants.DEFAULT_AUTO_NAME.equals(autoName)) {
                 hasDefault = true;
                 autoChooser.addDefaultOption(autoNonMirrored.getName(), autoNonMirrored);
                 autoChooser.addOption(autoMirrored.getName() + "Mirrored", autoMirrored);
-            } else if (!PathPlannerConstants.DEFAULT_AUTO_NAME.isEmpty() && PathPlannerConstants.DEFAULT_AUTO_NAME.equals(autoName + "Mirrored")) {
+            } else if (!AutonomousConstants.DEFAULT_AUTO_NAME.isEmpty() && AutonomousConstants.DEFAULT_AUTO_NAME.equals(autoName + "Mirrored")) {
                 hasDefault = true;
                 autoChooser.addDefaultOption(autoMirrored.getName() + "Mirrored", autoMirrored);
                 autoChooser.addOption(autoNonMirrored.getName(), autoNonMirrored);

@@ -65,8 +65,6 @@ public class ReefChooser {
         OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L2_TRIGGER.onTrue(getSetTargetLevelCommand(() -> CoralPlacingCommands.ScoringLevel.L2));
         OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L3_TRIGGER.onTrue(getSetTargetLevelCommand(() -> CoralPlacingCommands.ScoringLevel.L3));
         OperatorConstants.SET_TARGET_SCORING_REEF_LEVEL_L4_TRIGGER.onTrue(getSetTargetLevelCommand(() -> CoralPlacingCommands.ScoringLevel.L4));
-        OperatorConstants.INCREMENT_TARGET_SCORING_LEVEL_TRIGGER.onTrue(getSetTargetLevelCommand(this::getIncrementedScoringLevel));
-        OperatorConstants.DECREMENT_TARGET_SCORING_LEVEL_TRIGGER.onTrue(getSetTargetLevelCommand(this::getDecrementedScoringLevel));
     }
 
     private Command getSetTargetLevelCommand(Supplier<CoralPlacingCommands.ScoringLevel> scoringLevel) {
