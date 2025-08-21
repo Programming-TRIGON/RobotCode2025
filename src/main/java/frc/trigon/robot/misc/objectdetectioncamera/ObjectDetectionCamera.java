@@ -99,7 +99,6 @@ public class ObjectDetectionCamera extends SubsystemBase {
         if (robotPoseAtResultTimestamp == null)
             return new Translation2d();
         final Pose3d cameraPose = new Pose3d(robotPoseAtResultTimestamp).plus(robotCenterToCamera);
-        objectRotation = new Rotation3d(objectRotation.getX(), -objectRotation.getY(), objectRotation.getZ());
         final Pose3d objectRotationStart = cameraPose.plus(new Transform3d(0, 0, 0, objectRotation));
 
         final double cameraZ = cameraPose.getTranslation().getZ();

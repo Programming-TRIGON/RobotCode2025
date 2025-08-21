@@ -44,7 +44,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
     public void periodic() {
         updateObjectPositions();
         removeOldObjects();
-        Logger.recordOutput("ObjectPoseEstimator/knownObjectPositions", knownObjectPositions.keySet().toArray(Translation2d[]::new));
+        Logger.recordOutput("ObjectPoseEstimator/knownObjectPositions", getObjectsOnField().toArray(Translation2d[]::new));
     }
 
     /**
