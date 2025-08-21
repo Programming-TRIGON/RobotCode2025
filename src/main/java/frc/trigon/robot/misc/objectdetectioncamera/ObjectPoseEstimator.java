@@ -14,30 +14,30 @@ import java.util.HashMap;
 
 public class ObjectPoseEstimator extends SubsystemBase {
     private final HashMap<Translation2d, Double> knownObjectPositions;
-    private final ObjectDetectionCamera[] cameras;
+    private final ObjectDetectionCamera camera;
     private final double deletionThresholdSeconds;
     private final SimulatedGamePieceConstants.GamePieceType gamePieceType;
     private final double rotationToTranslation;
 
     /**
-     * Constructs an ObjectPoseEstimator for estimating the positions of objects detected by cameras.
+     * Constructs an ObjectPoseEstimator for estimating the positions of objects detected by camera.
      *
      * @param deletionThresholdSeconds the time in seconds after which an object is considered old and removed
      * @param gamePieceType            the type of game piece to track
-     * @param cameras                  the cameras used for detecting objects
+     * @param camera                   the camera used for detecting objects
      */
     public ObjectPoseEstimator(double deletionThresholdSeconds, DistanceCalculationMethod distanceCalculationMethod,
                                SimulatedGamePieceConstants.GamePieceType gamePieceType,
-                               ObjectDetectionCamera... cameras) {
+                               ObjectDetectionCamera camera) {
         this.deletionThresholdSeconds = deletionThresholdSeconds;
         this.gamePieceType = gamePieceType;
-        this.cameras = cameras;
+        this.camera = camera;
         this.knownObjectPositions = new HashMap<>();
         this.rotationToTranslation = distanceCalculationMethod.rotationToTranslation;
     }
 
     /**
-     * Updates the object positions based on the cameras detected objects.
+     * Updates the object positions based on the camera detected objects.
      * Removes objects that have not been detected for {@link ObjectPoseEstimator#deletionThresholdSeconds}.
      */
     @Override
@@ -99,7 +99,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
     }
 
     /**
-     * Gets the position of the closest object on the field from the 3D rotation of the object relative to the cameras.
+     * Gets the position of the closest object on the field from the 3D rotation of the object relative to the camera.
      * This assumes the object is on the ground.
      * Once it is known that the object is on the ground,
      * one can simply find the transform from the camera to the ground and apply it to the object's rotation.
@@ -154,23 +154,21 @@ public class ObjectPoseEstimator extends SubsystemBase {
 
     private void updateObjectPositions() {
         final double currentTimestamp = Timer.getTimestamp();
-        for (ObjectDetectionCamera camera : this.cameras) {
-            for (Translation2d visibleObject : camera.getObjectPositionsOnField(gamePieceType)) {
-                Translation2d closestObjectToVisibleObject = new Translation2d();
-                double closestObjectToVisibleObjectDistanceMeters = Double.POSITIVE_INFINITY;
+        for (Translation2d visibleObject : camera.getObjectPositionsOnField(gamePieceType)) {
+            Translation2d closestObjectToVisibleObject = new Translation2d();
+            double closestObjectToVisibleObjectDistanceMeters = Double.POSITIVE_INFINITY;
 
-                for (Translation2d knownObject : knownObjectPositions.keySet()) {
-                    final double currentObjectDistanceMeters = visibleObject.getDistance(knownObject);
-                    if (currentObjectDistanceMeters < closestObjectToVisibleObjectDistanceMeters) {
-                        closestObjectToVisibleObjectDistanceMeters = currentObjectDistanceMeters;
-                        closestObjectToVisibleObject = knownObject;
-                    }
+            for (Translation2d knownObject : knownObjectPositions.keySet()) {
+                final double currentObjectDistanceMeters = visibleObject.getDistance(knownObject);
+                if (currentObjectDistanceMeters < closestObjectToVisibleObjectDistanceMeters) {
+                    closestObjectToVisibleObjectDistanceMeters = currentObjectDistanceMeters;
+                    closestObjectToVisibleObject = knownObject;
                 }
-
-                if (closestObjectToVisibleObjectDistanceMeters < ObjectDetectionCameraConstants.TRACKED_OBJECT_TOLERANCE_METERS && knownObjectPositions.get(closestObjectToVisibleObject) != currentTimestamp)
-                    removeObject(closestObjectToVisibleObject);
-                knownObjectPositions.put(visibleObject, currentTimestamp);
             }
+
+            if (closestObjectToVisibleObjectDistanceMeters < ObjectDetectionCameraConstants.TRACKED_OBJECT_TOLERANCE_METERS && knownObjectPositions.get(closestObjectToVisibleObject) != currentTimestamp)
+                removeObject(closestObjectToVisibleObject);
+            knownObjectPositions.put(visibleObject, currentTimestamp);
         }
     }
 
