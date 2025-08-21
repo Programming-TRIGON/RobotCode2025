@@ -13,7 +13,7 @@ import java.util.HashMap;
 
 public class ObjectPoseEstimator extends SubsystemBase {
     private final HashMap<Translation2d, Double> knownObjectPositions;
-    private final ObjectDetectionCamera[] cameras;
+    private final ObjectDetectionCamera camera;
     private final double deletionThresholdSeconds;
     private final SimulatedGamePieceConstants.GamePieceType gamePieceType;
     private final double rotationToTranslation;
@@ -23,12 +23,12 @@ public class ObjectPoseEstimator extends SubsystemBase {
      *
      * @param deletionThresholdSeconds the time in seconds after which an object is considered old and removed
      * @param gamePieceType            the type of game piece to track
-     * @param cameras                  the cameras used for detecting objects
+     * @param camera                   the camera used for detecting objects
      */
-    public ObjectPoseEstimator(double deletionThresholdSeconds, DistanceCalculationMethod distanceCalculationMethod, SimulatedGamePieceConstants.GamePieceType gamePieceType, ObjectDetectionCamera... cameras) {
+    public ObjectPoseEstimator(double deletionThresholdSeconds, DistanceCalculationMethod distanceCalculationMethod, SimulatedGamePieceConstants.GamePieceType gamePieceType, ObjectDetectionCamera camera) {
         this.deletionThresholdSeconds = deletionThresholdSeconds;
         this.gamePieceType = gamePieceType;
-        this.cameras = cameras;
+        this.camera = camera;
         this.knownObjectPositions = new HashMap<>();
         this.rotationToTranslation = distanceCalculationMethod.rotationToTranslation;
     }
@@ -142,23 +142,21 @@ public class ObjectPoseEstimator extends SubsystemBase {
 
     private void updateObjectPositions() {
         final double currentTimestamp = Timer.getTimestamp();
-        for (ObjectDetectionCamera camera : this.cameras) {
-            for (Translation2d visibleObject : camera.getObjectPositionsOnField(gamePieceType)) {
-                Translation2d closestObjectToVisibleObject = new Translation2d();
-                double closestObjectToVisibleObjectDistanceMeters = Double.POSITIVE_INFINITY;
+        for (Translation2d visibleObject : camera.getObjectPositionsOnField(gamePieceType)) {
+            Translation2d closestObjectToVisibleObject = new Translation2d();
+            double closestObjectToVisibleObjectDistanceMeters = Double.POSITIVE_INFINITY;
 
-                for (Translation2d knownObject : knownObjectPositions.keySet()) {
-                    final double currentObjectDistanceMeters = visibleObject.getDistance(knownObject);
-                    if (currentObjectDistanceMeters < closestObjectToVisibleObjectDistanceMeters) {
-                        closestObjectToVisibleObjectDistanceMeters = currentObjectDistanceMeters;
-                        closestObjectToVisibleObject = knownObject;
-                    }
+            for (Translation2d knownObject : knownObjectPositions.keySet()) {
+                final double currentObjectDistanceMeters = visibleObject.getDistance(knownObject);
+                if (currentObjectDistanceMeters < closestObjectToVisibleObjectDistanceMeters) {
+                    closestObjectToVisibleObjectDistanceMeters = currentObjectDistanceMeters;
+                    closestObjectToVisibleObject = knownObject;
                 }
-
-                if (closestObjectToVisibleObjectDistanceMeters < ObjectDetectionCameraConstants.TRACKED_OBJECT_TOLERANCE_METERS && knownObjectPositions.get(closestObjectToVisibleObject) != currentTimestamp)
-                    knownObjectPositions.remove(closestObjectToVisibleObject);
-                knownObjectPositions.put(visibleObject, currentTimestamp);
             }
+
+            if (closestObjectToVisibleObjectDistanceMeters < ObjectDetectionCameraConstants.TRACKED_OBJECT_TOLERANCE_METERS && knownObjectPositions.get(closestObjectToVisibleObject) != currentTimestamp)
+                knownObjectPositions.remove(closestObjectToVisibleObject);
+            knownObjectPositions.put(visibleObject, currentTimestamp);
         }
     }
 
