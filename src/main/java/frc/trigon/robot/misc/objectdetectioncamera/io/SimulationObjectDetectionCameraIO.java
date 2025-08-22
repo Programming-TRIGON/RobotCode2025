@@ -145,7 +145,7 @@ public class SimulationObjectDetectionCameraIO extends ObjectDetectionCameraIO {
     private void logVisibleGamePieces(ArrayList<Pair<SimulatedGamePiece, Rotation3d>>[] visibleGamePieces) {
         for (int i = 0; i < visibleGamePieces.length; i++) {
             final String gamePieceTypeName = SimulatedGamePieceConstants.GamePieceType.getNameFromID(i);
-            Logger.recordOutput(hostname + "/Visible" + gamePieceTypeName, mapSimulatedGamePieceListToPoseArray(visibleGamePieces[i]));
+            Logger.recordOutput(hostname + "/Visible" + gamePieceTypeName + "poses", mapSimulatedGamePieceListToPoseArray(visibleGamePieces[i]));
         }
     }
 
