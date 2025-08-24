@@ -7,40 +7,44 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.misc.simulatedfield.SimulatedGamePieceConstants;
+import org.littletonrobotics.junction.Logger;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 
 public class ObjectPoseEstimator extends SubsystemBase {
     private final HashMap<Translation2d, Double> knownObjectPositions;
-    private final ObjectDetectionCamera[] cameras;
+    private final ObjectDetectionCamera camera;
     private final double deletionThresholdSeconds;
     private final SimulatedGamePieceConstants.GamePieceType gamePieceType;
     private final double rotationToTranslation;
 
     /**
-     * Constructs an ObjectPoseEstimator for estimating the positions of objects detected by cameras.
+     * Constructs an ObjectPoseEstimator for estimating the positions of objects detected by camera.
      *
      * @param deletionThresholdSeconds the time in seconds after which an object is considered old and removed
      * @param gamePieceType            the type of game piece to track
-     * @param cameras                  the cameras used for detecting objects
+     * @param camera                   the camera used for detecting objects
      */
-    public ObjectPoseEstimator(double deletionThresholdSeconds, DistanceCalculationMethod distanceCalculationMethod, SimulatedGamePieceConstants.GamePieceType gamePieceType, ObjectDetectionCamera... cameras) {
+    public ObjectPoseEstimator(double deletionThresholdSeconds, DistanceCalculationMethod distanceCalculationMethod,
+                               SimulatedGamePieceConstants.GamePieceType gamePieceType,
+                               ObjectDetectionCamera camera) {
         this.deletionThresholdSeconds = deletionThresholdSeconds;
         this.gamePieceType = gamePieceType;
-        this.cameras = cameras;
+        this.camera = camera;
         this.knownObjectPositions = new HashMap<>();
         this.rotationToTranslation = distanceCalculationMethod.rotationToTranslation;
     }
 
     /**
-     * Updates the object positions based on the cameras detected objects.
+     * Updates the object positions based on the camera detected objects.
      * Removes objects that have not been detected for {@link ObjectPoseEstimator#deletionThresholdSeconds}.
      */
     @Override
     public void periodic() {
         updateObjectPositions();
         removeOldObjects();
+        Logger.recordOutput("ObjectPoseEstimator/knownObjectPositions", getObjectsOnField().toArray(Translation2d[]::new));
     }
 
     /**
@@ -57,7 +61,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
      */
     public void removeClosestObjectToRobot() {
         final Translation2d closestObject = getClosestObjectToRobot();
-        knownObjectPositions.remove(closestObject);
+        removeObject(closestObject);
     }
 
     /**
@@ -67,7 +71,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
      */
     public void removeClosestObjectToIntake(Transform2d intakeTransform) {
         final Pose2d robotPose = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose();
-        knownObjectPositions.remove(getClosestObjectToPose(robotPose.transformBy(intakeTransform)));
+        removeObject(getClosestObjectToPosition(robotPose.transformBy(intakeTransform).getTranslation()));
     }
 
     /**
@@ -76,8 +80,13 @@ public class ObjectPoseEstimator extends SubsystemBase {
      * @param fieldRelativePose the pose to which the removed object is closest
      */
     public void removeClosestObjectToPose(Pose2d fieldRelativePose) {
-        final Translation2d closestObject = getClosestObjectToPose(fieldRelativePose);
-        knownObjectPositions.remove(closestObject);
+        final Translation2d closestObject = getClosestObjectToPosition(fieldRelativePose.getTranslation());
+        removeObject(closestObject);
+    }
+
+    public void removeClosestObjectToPosition(Translation2d position) {
+        final Translation2d closestObject = getClosestObjectToPosition(position);
+        removeObject(closestObject);
     }
 
     /**
@@ -90,7 +99,7 @@ public class ObjectPoseEstimator extends SubsystemBase {
     }
 
     /**
-     * Gets the position of the closest object on the field from the 3D rotation of the object relative to the cameras.
+     * Gets the position of the closest object on the field from the 3D rotation of the object relative to the camera.
      * This assumes the object is on the ground.
      * Once it is known that the object is on the ground,
      * one can simply find the transform from the camera to the ground and apply it to the object's rotation.
@@ -98,27 +107,30 @@ public class ObjectPoseEstimator extends SubsystemBase {
      * @return the best object's 2D position on the field (z is assumed to be 0)
      */
     public Translation2d getClosestObjectToRobot() {
-        return getClosestObjectToPose(RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose());
+        return getClosestObjectToPosition(RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation());
     }
 
+
     /**
-     * Gets the position of the closest object to a given pose on the field.
+     * Gets the position of the closest object to a given position on the field.
      *
-     * @param pose the pose to which the returned object is closest
+     * @param position the position to which the returned object is closest
      * @return the closest object's position on the field, or null if no objects are known
      */
-    public Translation2d getClosestObjectToPose(Pose2d pose) {
+    public Translation2d getClosestObjectToPosition(Translation2d position) {
         final Translation2d[] objectsTranslations = knownObjectPositions.keySet().toArray(Translation2d[]::new);
         if (knownObjectPositions.isEmpty())
             return null;
         Translation2d bestObjectTranslation = objectsTranslations[0];
+        double closestObjectDistance = position.getDistance(bestObjectTranslation);
 
         for (int i = 1; i < objectsTranslations.length; i++) {
             final Translation2d currentObjectTranslation = objectsTranslations[i];
-            final double bestObjectRating = calculateObjectDistanceRating(bestObjectTranslation, pose);
-            final double currentObjectRating = calculateObjectDistanceRating(currentObjectTranslation, pose);
-            if (currentObjectRating < bestObjectRating)
+            final double currentObjectDistance = position.getDistance(currentObjectTranslation);
+            if (currentObjectDistance < closestObjectDistance) {
+                closestObjectDistance = currentObjectDistance;
                 bestObjectTranslation = currentObjectTranslation;
+            }
         }
         return bestObjectTranslation;
     }
@@ -142,23 +154,21 @@ public class ObjectPoseEstimator extends SubsystemBase {
 
     private void updateObjectPositions() {
         final double currentTimestamp = Timer.getTimestamp();
-        for (ObjectDetectionCamera camera : this.cameras) {
-            for (Translation2d visibleObject : camera.getObjectPositionsOnField(gamePieceType)) {
-                Translation2d closestObjectToVisibleObject = new Translation2d();
-                double closestObjectToVisibleObjectDistanceMeters = Double.POSITIVE_INFINITY;
+        for (Translation2d visibleObject : camera.getObjectPositionsOnField(gamePieceType)) {
+            Translation2d closestObjectToVisibleObject = new Translation2d();
+            double closestObjectToVisibleObjectDistanceMeters = Double.POSITIVE_INFINITY;
 
-                for (Translation2d knownObject : knownObjectPositions.keySet()) {
-                    final double currentObjectDistanceMeters = visibleObject.getDistance(knownObject);
-                    if (currentObjectDistanceMeters < closestObjectToVisibleObjectDistanceMeters) {
-                        closestObjectToVisibleObjectDistanceMeters = currentObjectDistanceMeters;
-                        closestObjectToVisibleObject = knownObject;
-                    }
+            for (Translation2d knownObject : knownObjectPositions.keySet()) {
+                final double currentObjectDistanceMeters = visibleObject.getDistance(knownObject);
+                if (currentObjectDistanceMeters < closestObjectToVisibleObjectDistanceMeters) {
+                    closestObjectToVisibleObjectDistanceMeters = currentObjectDistanceMeters;
+                    closestObjectToVisibleObject = knownObject;
                 }
-
-                if (closestObjectToVisibleObjectDistanceMeters < ObjectDetectionCameraConstants.TRACKED_OBJECT_TOLERANCE_METERS && knownObjectPositions.get(closestObjectToVisibleObject) != currentTimestamp)
-                    knownObjectPositions.remove(closestObjectToVisibleObject);
-                knownObjectPositions.put(visibleObject, currentTimestamp);
             }
+
+            if (closestObjectToVisibleObjectDistanceMeters < ObjectDetectionCameraConstants.TRACKED_OBJECT_TOLERANCE_METERS && knownObjectPositions.get(closestObjectToVisibleObject) != currentTimestamp)
+                removeObject(closestObjectToVisibleObject);
+            knownObjectPositions.put(visibleObject, currentTimestamp);
         }
     }
 

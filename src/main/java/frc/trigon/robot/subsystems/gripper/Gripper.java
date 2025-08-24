@@ -8,9 +8,11 @@ import edu.wpi.first.units.Units;
 import edu.wpi.first.wpilibj.sysid.SysIdRoutineLog;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine;
 import frc.trigon.robot.RobotContainer;
+import frc.trigon.robot.misc.simulatedfield.SimulationFieldHandler;
 import frc.trigon.robot.subsystems.MotorSubsystem;
 import org.littletonrobotics.junction.AutoLogOutput;
 import org.littletonrobotics.junction.Logger;
+import org.trigon.hardware.RobotHardwareStats;
 import org.trigon.hardware.misc.simplesensor.SimpleSensor;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderEncoder;
 import org.trigon.hardware.phoenix6.cancoder.CANcoderSignal;
@@ -106,8 +108,16 @@ public class Gripper extends MotorSubsystem {
         return grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE) <= GripperConstants.MINIMUM_VOLTAGE_FOR_EJECTING;
     }
 
+    public boolean isReleasingAlgae() {
+        return grippingMotor.getSignal(TalonFXSignal.MOTOR_VOLTAGE) > -2;
+    }
+
     public boolean isOpenForElevator() {
         return getCurrentEncoderAngle().getDegrees() > GripperConstants.MINIMUM_OPEN_FOR_ELEVATOR_ANGLE.getDegrees();
+    }
+
+    public Translation3d calculateAlgaeReleaseVelocity() {
+        return new Translation3d(3, 0, 0).rotateBy(new Rotation3d(0, getCurrentEncoderAngle().getRadians() + 2, 0));
     }
 
     @AutoLogOutput(key = "Gripper/HasGamePiece")
@@ -143,7 +153,12 @@ public class Gripper extends MotorSubsystem {
 
     @AutoLogOutput
     public boolean isMovingSlowly() {
-        return Math.abs(grippingMotor.getSignal(TalonFXSignal.VELOCITY)) < 4;
+        return Math.abs(grippingMotor.getSignal(TalonFXSignal.VELOCITY)) < 4 || (RobotHardwareStats.isSimulation() && SimulationFieldHandler.isHoldingAlgae());
+    }
+
+    public Pose3d calculateAlgaeCollectionPose() {
+        return calculateVisualizationPose()
+                .transformBy(GripperConstants.GRIPPER_TO_HELD_ALGAE);
     }
 
     void prepareForState(GripperConstants.GripperState targetState) {
@@ -173,11 +188,11 @@ public class Gripper extends MotorSubsystem {
         setTargetVoltage(targetGrippingVoltage);
     }
 
-    void setTargetStateWithCurrent(Rotation2d targetAngle, double targetGrippingCurrent) {
+    void setTargetStateWhileHoldingAlgae(Rotation2d targetAngle, double targetGrippingVoltage) {
         positionRequest.Slot = 1;
         scalePositionRequestSpeed(targetState.speedScalar);
         setTargetAngle(targetAngle);
-        grippingMotor.setControl(voltageRequest.withOutput(targetGrippingCurrent));
+        setTargetVoltage(targetGrippingVoltage);
     }
 
     private void scalePositionRequestSpeed(double speedScalar) {
@@ -195,7 +210,7 @@ public class Gripper extends MotorSubsystem {
         grippingMotor.setControl(voltageRequest.withOutput(targetGrippingVoltage));
     }
 
-    private Pose3d calculateVisualizationPose() {
+    public Pose3d calculateVisualizationPose() {
         final Pose3d currentElevatorPose = RobotContainer.ELEVATOR.getFirstStageComponentPose();
         final Pose3d gripperOrigin = currentElevatorPose.transformBy(GripperConstants.ELEVATOR_TO_GRIPPER);
 

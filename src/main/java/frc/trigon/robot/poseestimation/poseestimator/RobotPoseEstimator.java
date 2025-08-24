@@ -93,7 +93,7 @@ public class RobotPoseEstimator implements AutoCloseable {
     public void resetPose(Pose2d newPose) {
         RobotContainer.SWERVE.setHeading(newPose.getRotation());
 
-        swerveDrivePoseEstimator.resetPose(newPose); // TODO: Might not work as intended
+        swerveDrivePoseEstimator.resetPose(newPose);
         swerveDriveOdometry.resetPose(newPose);
         if (shouldUseRelativeRobotPoseSource)
             relativeRobotPoseSource.resetOffset(newPose);

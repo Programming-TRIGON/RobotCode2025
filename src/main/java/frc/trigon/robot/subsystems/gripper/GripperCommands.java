@@ -42,9 +42,9 @@ public class GripperCommands {
         );
     }
 
-    public static Command getSetTargetStateWithCurrentCommand(GripperConstants.GripperState targetState) {
+    public static Command getSetTargetStateWhileHoldingAlgaeCommand(GripperConstants.GripperState targetState) {
         return new StartEndCommand(
-                () -> RobotContainer.GRIPPER.setTargetStateWithCurrent(targetState.targetAngle, targetState.targetGripperVoltage),
+                () -> RobotContainer.GRIPPER.setTargetStateWhileHoldingAlgae(targetState.targetAngle, targetState.targetGripperVoltage),
                 RobotContainer.GRIPPER::stop,
                 RobotContainer.GRIPPER
         );

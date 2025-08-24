@@ -7,9 +7,9 @@ import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.wpilibj2.command.*;
 import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandclasses.WaitUntilChangeCommand;
+import frc.trigon.robot.constants.AutonomousConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
-import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.misc.ReefChooser;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeCommands;
 import frc.trigon.robot.subsystems.coralintake.CoralIntakeConstants;
@@ -25,35 +25,27 @@ public class CoralPlacingCommands {
     public static boolean SHOULD_SCORE_AUTONOMOUSLY = true;
     private static final ReefChooser REEF_CHOOSER = OperatorConstants.REEF_CHOOSER;
 
-    public static Command getScoreInReefCommand() {
+    public static Command getScoreInReefCommand(boolean shouldScoreRight) {
         return new ConditionalCommand(
-                getCoralIntakeScoringSequenceCommand().asProxy(),
-                getScoreInReefFromGripperCommand().asProxy(),
+                getScoreInReefFromCoralIntakeCommand().asProxy(),
+                getScoreInReefFromGripperCommand(shouldScoreRight).asProxy(),
                 () -> REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_CORAL_INTAKE
-        ).raceWith(getWaitUntilScoringTargetChangesCommand()).repeatedly();
-    }
-
-    private static Command getWaitUntilScoringTargetChangesCommand() {
-        return new ParallelRaceGroup(
-                new WaitUntilChangeCommand<>(REEF_CHOOSER::getClockPosition),
-                new WaitUntilChangeCommand<>(REEF_CHOOSER::getReefSide),
-                new WaitUntilChangeCommand<>(OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER::getAsBoolean)
         );
     }
 
-    private static Command getScoreInReefFromGripperCommand() {
+    private static Command getScoreInReefFromGripperCommand(boolean shouldScoreRight) {
         return GeneralCommands.getContinuousConditionalCommand(
-                getAutonomouslyScoreInReefFromGripperCommand().asProxy(),
+                getAutonomouslyScoreInReefFromGripperCommand(shouldScoreRight).asProxy(),
                 getManuallyScoreInReefFromGripperCommand().asProxy(),
-                () -> SHOULD_SCORE_AUTONOMOUSLY && !OperatorConstants.LEFT_MULTIFUNCTION_TRIGGER.getAsBoolean() && REEF_CHOOSER.getScoringLevel() != ScoringLevel.L1_GRIPPER
+                () -> SHOULD_SCORE_AUTONOMOUSLY && REEF_CHOOSER.getScoringLevel() != ScoringLevel.L1_GRIPPER
         ).until(() -> REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_CORAL_INTAKE);
     }
 
-    private static Command getCoralIntakeScoringSequenceCommand() {
+    private static Command getScoreInReefFromCoralIntakeCommand() {
         return new SequentialCommandGroup(
                 CoralCollectionCommands.getUnloadCoralCommand().onlyIf(RobotContainer.GRIPPER::hasGamePiece),
                 CoralIntakeCommands.getPrepareForStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1).until(CoralPlacingCommands::canContinueScoringFromCoralIntake),
-                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1_BOOST).withTimeout(0.07),
+                CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1_BOOST).withTimeout(0.05),
                 CoralIntakeCommands.getSetTargetStateCommand(CoralIntakeConstants.CoralIntakeState.SCORE_L1)
         ).until(() -> REEF_CHOOSER.getScoringLevel() != ScoringLevel.L1_CORAL_INTAKE);
     }
@@ -67,91 +59,98 @@ public class CoralPlacingCommands {
         );
     }
 
-    private static Command getAutonomouslyScoreInReefFromGripperCommand() {
-        return new ParallelCommandGroup(
+    private static Command getAutonomouslyScoreInReefFromGripperCommand(boolean shouldScoreRight) {
+        return new ParallelRaceGroup(
                 CoralCollectionCommands.getLoadCoralCommand().asProxy().andThen(
                         new ParallelCommandGroup(
-                                getOpenElevatorWhenCloseToReefCommand().raceWith(new WaitUntilChangeCommand<>(REEF_CHOOSER::getElevatorState)).repeatedly(),
-                                getAutoGripperScoringSequenceCommand()
-                        ).asProxy()
+                                getOpenElevatorWhenCloseToReefCommand(shouldScoreRight),
+                                getAutoGripperScoringSequenceCommand(shouldScoreRight)
+                        ).asProxy().raceWith(new WaitUntilChangeCommand<>(REEF_CHOOSER::getElevatorState)).repeatedly()
                 ),
-                getAutonomousDriveToReefThenManualDriveCommand()
-        );
+                getAutonomousDriveToReefThenManualDriveCommand(shouldScoreRight)
+        ).andThen();
     }
 
     private static Command getGripperScoringSequenceCommand() {
         return new SequentialCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF)
                         .unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState()) || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L2 || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_GRIPPER)
-                        .until(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())),
+                        .until(RobotContainer.ELEVATOR::isCloseEnoughToOpenGripper),
                 scoreFromGripperReefChooserCommand()
         );
     }
 
-    private static Command getAutoGripperScoringSequenceCommand() {
+    private static Command getAutoGripperScoringSequenceCommand(boolean shouldScoreRight) {
         return new SequentialCommandGroup(
                 GripperCommands.getSetTargetStateCommand(GripperConstants.GripperState.OPEN_FOR_NOT_HITTING_REEF)
                         .unless(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState()) || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L2 || REEF_CHOOSER.getScoringLevel() == ScoringLevel.L1_GRIPPER)
-                        .until(() -> RobotContainer.ELEVATOR.atState(REEF_CHOOSER.getElevatorState())),
+                        .until(RobotContainer.ELEVATOR::isCloseEnoughToOpenGripper),
                 new ConditionalCommand(
-                        scoreFromGripperInL4Command(),
-                        scoreFromGripperReefChooserCommand(),
+                        scoreFromGripperInL4Command(shouldScoreRight),
+                        scoreFromGripperReefChooserCommand(shouldScoreRight),
                         () -> REEF_CHOOSER.getScoringLevel() == ScoringLevel.L4
                 )
         );
     }
 
-    private static Command scoreFromGripperReefChooserCommand() {
+    private static Command scoreFromGripperReefChooserCommand(boolean shouldScoreRight) {
         return new SequentialCommandGroup(
-                GripperCommands.getPrepareForStateCommand(REEF_CHOOSER::getGripperState).until(CoralPlacingCommands::canContinueScoringFromGripper),
+                GripperCommands.getPrepareForStateCommand(REEF_CHOOSER::getGripperState).raceWith(
+                        new SequentialCommandGroup(
+                                new WaitUntilCommand(() -> canAutonomouslyReleaseFromGripper(shouldScoreRight)),
+                                new WaitUntilChangeCommand<>(RobotContainer.ROBOT_POSE_ESTIMATOR::getEstimatedRobotPose)
+                        )
+                ).until(OperatorConstants.CONTINUE_TRIGGER),
                 GripperCommands.getSetTargetStateCommand(REEF_CHOOSER::getGripperState).finallyDo(OperatorConstants.REEF_CHOOSER::switchReefSide)
         );
     }
 
-    private static Command scoreFromGripperInL4Command() {
+    private static Command scoreFromGripperReefChooserCommand() {
         return new SequentialCommandGroup(
-                GripperCommands.getPrepareForScoringInL4Command(CoralPlacingCommands::calculateTargetScoringPose).until(CoralPlacingCommands::canContinueScoringFromGripper),
-                GripperCommands.getScoreInL4Command(CoralPlacingCommands::calculateTargetScoringPose).finallyDo(OperatorConstants.REEF_CHOOSER::switchReefSide)
+                GripperCommands.getPrepareForStateCommand(REEF_CHOOSER::getGripperState).until(OperatorConstants.CONTINUE_TRIGGER),
+                GripperCommands.getSetTargetStateCommand(REEF_CHOOSER::getGripperState).finallyDo(OperatorConstants.REEF_CHOOSER::switchReefSide)
         );
     }
 
-    private static Command getOpenElevatorWhenCloseToReefCommand() {
+    private static Command scoreFromGripperInL4Command(boolean shouldScoreRight) {
+        return new SequentialCommandGroup(
+                GripperCommands.getPrepareForScoringInL4Command(REEF_CHOOSER::calculateTargetScoringPose).raceWith(
+                        new WaitUntilCommand(() -> canAutonomouslyReleaseFromGripper(shouldScoreRight))
+                ).until(OperatorConstants.CONTINUE_TRIGGER),
+                GripperCommands.getScoreInL4Command(REEF_CHOOSER::calculateTargetScoringPose).finallyDo(OperatorConstants.REEF_CHOOSER::switchReefSide)
+        );
+    }
+
+    private static Command getOpenElevatorWhenCloseToReefCommand(boolean shouldScoreRight) {
         return GeneralCommands.runWhen(
                 ElevatorCommands.getSetTargetStateCommand(REEF_CHOOSER::getElevatorState),
-                () -> calculateDistanceToTargetScoringPose() < PathPlannerConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR
+                () -> calculateDistanceToTargetScoringPose(shouldScoreRight) < AutonomousConstants.MINIMUM_DISTANCE_FROM_REEF_TO_OPEN_ELEVATOR
         );
     }
 
-    private static Command getAutonomousDriveToReefThenManualDriveCommand() {
+    private static Command getAutonomousDriveToReefThenManualDriveCommand(boolean shouldScoreRight) {
         return new SequentialCommandGroup(
                 SwerveCommands.getDriveToPoseCommand(
-                        CoralPlacingCommands::calculateTargetScoringPose,
-                        PathPlannerConstants.DRIVE_TO_REEF_CONSTRAINTS
+                        () -> CoralPlacingCommands.calculateClosestScoringPose(shouldScoreRight),
+                        AutonomousConstants.DRIVE_TO_REEF_CONSTRAINTS
                 ),
                 GeneralCommands.getFieldRelativeDriveCommand()
         );
     }
 
-    public static FlippablePose2d calculateTargetScoringPose() {
-        if (OperatorConstants.RIGHT_MULTIFUNCTION_TRIGGER.getAsBoolean())
-            return REEF_CHOOSER.calculateTargetScoringPose();
-        return calculateClosestScoringPose();
-    }
-
-    private static double calculateDistanceToTargetScoringPose() {
+    private static double calculateDistanceToTargetScoringPose(boolean shouldScoreRight) {
         final Translation2d currentTranslation = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
-        final Translation2d targetTranslation = calculateTargetScoringPose().get().getTranslation();
+        final Translation2d targetTranslation = calculateClosestScoringPose(shouldScoreRight).get().getTranslation();
         return currentTranslation.getDistance(targetTranslation);
     }
 
-    public static FlippablePose2d calculateClosestScoringPose() {
+    public static FlippablePose2d calculateClosestScoringPose(boolean shouldScoreRight) {
         final Translation2d robotPositionOnField = RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose().getTranslation();
         final Translation2d reefCenterPosition = new FlippableTranslation2d(FieldConstants.BLUE_REEF_CENTER_TRANSLATION, true).get();
         final Rotation2d[] reefClockAngles = FieldConstants.REEF_CLOCK_ANGLES;
         final Transform2d
                 reefCenterToScoringPose = new Transform2d(FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_X_TRANSFORM_METERS, 0, new Rotation2d()),
                 scoringPoseToRightBranch = new Transform2d(0, FieldConstants.REEF_CENTER_TO_TARGET_SCORING_POSITION_Y_TRANSFORM_METERS, new Rotation2d());
-        final boolean shouldScoreOnRightBranch = REEF_CHOOSER.getReefSide().doesFlipYTransformWhenFacingDriverStation;
 
         double distanceFromClosestScoringPoseMeters = Double.POSITIVE_INFINITY;
         Pose2d closestScoringPose = new Pose2d();
@@ -166,19 +165,17 @@ public class CoralPlacingCommands {
             }
         }
 
-        return new FlippablePose2d(closestScoringPose.transformBy(shouldScoreOnRightBranch ? scoringPoseToRightBranch : scoringPoseToRightBranch.inverse()), false);
+        return new FlippablePose2d(closestScoringPose.transformBy(shouldScoreRight ? scoringPoseToRightBranch : scoringPoseToRightBranch.inverse()), false);
     }
 
     private static boolean canContinueScoringFromCoralIntake() {
-        return RobotContainer.CORAL_INTAKE.atTargetAngle() &&
-                OperatorConstants.CONTINUE_TRIGGER.getAsBoolean();
+        return OperatorConstants.CONTINUE_TRIGGER.getAsBoolean();
     }
 
-    private static boolean canContinueScoringFromGripper() {
+    private static boolean canAutonomouslyReleaseFromGripper(boolean shouldScoreRight) {
         return RobotContainer.ELEVATOR.atTargetState() &&
                 RobotContainer.GRIPPER.atTargetAngle() &&
-                OperatorConstants.CONTINUE_TRIGGER.getAsBoolean();
-//                RobotContainer.SWERVE.atPose(calculateTargetScoringPose());
+                RobotContainer.SWERVE.atPose(calculateClosestScoringPose(shouldScoreRight));
     }
 
     /**

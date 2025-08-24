@@ -75,11 +75,15 @@ public class Elevator extends MotorSubsystem {
         masterMotor.setControl(voltageRequest.withOutput(targetVoltage));
     }
 
+    public boolean isCloseEnoughToOpenGripper() {
+        return calculateTargetStateDistance() < 0.3;
+    }
+
     public boolean willCurrentMovementMoveThroughHitRange() {
         return willMovementMoveThroughHitRange(metersToRotations(targetState.targetPositionMeters));
     }
 
-    public boolean isElevatorOverAlgaeHitRange() {
+    public boolean isOverAlgaeHitRange() {
         return getPositionRotations() > ElevatorConstants.GRIPPER_HITTING_ALGAE_UPPER_BOUND_POSITION_ROTATIONS;
     }
 
@@ -93,8 +97,11 @@ public class Elevator extends MotorSubsystem {
 
     @AutoLogOutput(key = "Elevator/AtTargetState")
     public boolean atTargetState() {
-        final double currentToTargetStateDifference = Math.abs(targetState.targetPositionMeters - getPositionMeters());
-        return currentToTargetStateDifference < ElevatorConstants.POSITION_TOLERANCE_METERS;
+        return calculateTargetStateDistance() < ElevatorConstants.POSITION_TOLERANCE_METERS;
+    }
+
+    private double calculateTargetStateDistance() {
+        return Math.abs(targetState.targetPositionMeters - getPositionMeters());
     }
 
     public double metersToRotations(double positionMeters) {

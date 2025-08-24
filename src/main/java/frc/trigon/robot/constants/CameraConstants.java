@@ -14,11 +14,7 @@ public class CameraConstants {
             REEF_TAG_CAMERA_STANDARD_DEVIATIONS = new StandardDeviations(
             0.015,
             0.01
-    ),
-            FEEDER_TAG_CAMERA_STANDARD_DEVIATIONS = new StandardDeviations(
-                    0.02,
-                    0.1
-            );
+    );
     public static final double CORAL_POSE_ESTIMATOR_DELETION_THRESHOLD_SECONDS = 0.5;
 
     private static final Transform3d
@@ -56,10 +52,4 @@ public class CameraConstants {
                     ROBOT_CENTER_TO_RIGHT_REEF_TAG_CAMERA,
                     REEF_TAG_CAMERA_STANDARD_DEVIATIONS
             );
-//            FEEDER_TAG_CAMERA = new AprilTagCamera(
-//                    AprilTagCameraConstants.AprilTagCameraType.PHOTON_CAMERA,
-//                    "CoralStationTagCamera",
-//                    ROBOT_CENTER_TO_FEEDER_TAG_CAMERA,
-//                    FEEDER_TAG_CAMERA_STANDARD_DEVIATIONS
-//            );
 }

@@ -9,9 +9,9 @@ import frc.trigon.robot.RobotContainer;
 import frc.trigon.robot.commands.commandfactories.CoralCollectionCommands;
 import frc.trigon.robot.commands.commandfactories.CoralPlacingCommands;
 import frc.trigon.robot.commands.commandfactories.GeneralCommands;
+import frc.trigon.robot.constants.AutonomousConstants;
 import frc.trigon.robot.constants.FieldConstants;
 import frc.trigon.robot.constants.OperatorConstants;
-import frc.trigon.robot.constants.PathPlannerConstants;
 import frc.trigon.robot.subsystems.swerve.SwerveCommands;
 import org.trigon.commands.CameraPositionCalculationCommand;
 import org.trigon.commands.WheelRadiusCharacterizationCommand;
@@ -27,14 +27,14 @@ public class CommandConstants {
     private static final XboxController DRIVER_CONTROLLER = OperatorConstants.DRIVER_CONTROLLER;
     private static final double
             MINIMUM_TRANSLATION_SHIFT_POWER = 0.30,
-            MINIMUM_ROTATION_SHIFT_POWER = 0.4;
+            MINIMUM_ROTATION_SHIFT_POWER = 0.4;//TODO: Calibrate with real robot
     private static final double JOYSTICK_ORIENTED_ROTATION_DEADBAND = 0.07;
 
     public static final Command
-            FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_TO_REEF_SECTIONS_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
+            FIELD_RELATIVE_DRIVE_WITH_JOYSTICK_ORIENTED_ROTATION_COMMAND = SwerveCommands.getClosedLoopFieldRelativeDriveCommand(
             () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftY()),
             () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftX()),
-            CommandConstants::calculateJoystickOrientedToReefSectionsTargetAngle
+            CommandConstants::calculateTargetHeadingFromJoystickAngle
     ),
             SELF_RELATIVE_DRIVE_COMMAND = SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
                     () -> calculateDriveStickAxisValue(DRIVER_CONTROLLER.getLeftY()),
@@ -42,14 +42,13 @@ public class CommandConstants {
                     () -> calculateRotationStickAxisValue(DRIVER_CONTROLLER.getRightX())
             ),
             RESET_HEADING_COMMAND = new InstantCommand(RobotContainer.ROBOT_POSE_ESTIMATOR::resetHeading),
-    //    RESET_HEADING_COMMAND = new InstantCommand(() -> RobotContainer.ROBOT_POSE_ESTIMATOR.resetPose(RobotContainer.ROBOT_POSE_ESTIMATOR.getEstimatedRobotPose())),
-    SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND = SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
-            () -> getXPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
-            () -> getYPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
-            () -> 0
-    ),
+            SELF_RELATIVE_DRIVE_FROM_DPAD_COMMAND = SwerveCommands.getClosedLoopSelfRelativeDriveCommand(
+                    () -> getXPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
+                    () -> getYPowerFromPov(DRIVER_CONTROLLER.getPov()) / OperatorConstants.POV_DIVIDER / calculateShiftModeValue(MINIMUM_TRANSLATION_SHIFT_POWER),
+                    () -> 0
+            ),
             WHEEL_RADIUS_CHARACTERIZATION_COMMAND = new WheelRadiusCharacterizationCommand(
-                    PathPlannerConstants.ROBOT_CONFIG.moduleLocations,
+                    AutonomousConstants.ROBOT_CONFIG.moduleLocations,
                     RobotContainer.SWERVE::getDriveWheelPositionsRadians,
                     () -> RobotContainer.SWERVE.getHeading().getRadians(),
                     (omegaRadiansPerSecond) -> RobotContainer.SWERVE.selfRelativeDriveWithoutSetpointGeneration(new ChassisSpeeds(0, 0, omegaRadiansPerSecond), null),
@@ -65,8 +64,9 @@ public class CommandConstants {
     public static final Command
             ENABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = true).ignoringDisable(true),
             DISABLE_AUTONOMOUS_REEF_SCORING_COMMAND = new InstantCommand(() -> CoralPlacingCommands.SHOULD_SCORE_AUTONOMOUSLY = false).ignoringDisable(true),
-            ENABLE_IGNORE_LOLLIPOP_CORAL_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_IGNORE_LOLLIPOP_CORAL = true).ignoringDisable(true),
-            DISABLE_IGNORE_LOLLIPOP_CORAL_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_IGNORE_LOLLIPOP_CORAL = false).ignoringDisable(true);
+            ENABLE_INTAKE_ASSIST_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_ASSIST_INTAKE = true).ignoringDisable(true),
+            DISABLE_INTAKE_ASSIST_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_ASSIST_INTAKE = false).ignoringDisable(true),
+            TOGGLE_SHOULD_KEEP_INTAKE_OPEN_COMMAND = new InstantCommand(() -> CoralCollectionCommands.SHOULD_KEEP_INTAKE_OPEN = !CoralCollectionCommands.SHOULD_KEEP_INTAKE_OPEN);
 
     /**
      * Calculates the target drive power from an axis value by dividing it by the shift mode value.
@@ -106,9 +106,9 @@ public class CommandConstants {
      * Calculates the target rotation value from the joystick's angle. Used for joystick oriented rotation.
      * Joystick oriented rotation is when the robot rotates directly to the joystick's angle.
      *
-     * @return the rotation value
+     * @return the target heading
      */
-    public static FlippableRotation2d calculateJoystickOrientedToReefSectionsTargetAngle() {
+    public static FlippableRotation2d calculateTargetHeadingFromJoystickAngle() {
         final double
                 xPower = DRIVER_CONTROLLER.getRightX(),
                 yPower = DRIVER_CONTROLLER.getRightY();
